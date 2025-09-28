@@ -6,7 +6,20 @@
   <title>Contact Us - The Oven Vibe | Sundargarh Takeaway</title>
   <link rel="stylesheet" href="style.css" />
 
-  <!-- Styles moved to style.css -->
+  <!-- Inline styles for consistency (same as FAQ) -->
+  <style>
+    body { font-family: Inter, sans-serif; margin:0; background:#fff; color:#111; }
+    header { padding:16px; border-bottom:1px solid #eee; }
+    header a { text-decoration:none; color:var(--brand-red,#ad210a); font-weight:bold; }
+    .faq-container { max-width:900px; margin:20px auto; padding:0 16px; }
+    h1 { color:var(--brand-red,#ad210a); }
+    p { margin-top:8px; line-height:1.5; }
+    .qr-section { display:flex; gap:32px; justify-content:center; align-items:center; margin:24px 0; flex-wrap:wrap; }
+    .qr-card { text-align:center; }
+    .qr-card img { width:140px; height:auto; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.08); margin-bottom:8px; }
+    .qr-card div { font-size:0.98rem; color:#444; font-weight:600; }
+    iframe { width:100%; height:1600px; border:none; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
+  </style>
 </head>
 <body>
 
@@ -25,7 +38,7 @@
         <a href="https://wa.me/919692261138" target="_blank" rel="noopener noreferrer">
           <img src="static/images/brand_images/whatsapp_QR_code.webp" alt="WhatsApp QR code" loading="lazy" />
         </a>
-  <div>WhatsApp</div>
+        <div>WhatsApp</div>
       </div>
       <div class="qr-card">
         <a href="https://instagram.com/theovenvibe" target="_blank" rel="noopener noreferrer">
@@ -37,32 +50,9 @@
 
     <!-- Google Form embed -->
     <iframe
-      id="contactFormIframe"
       src="https://docs.google.com/forms/d/e/1FAIpQLSe904p8LQBV3Dh5w-_sWOJzmFNT_DXoAVMoYfx_UguIuJflTA/viewform?embedded=true"
-      width="100%"
-  height="3000"
-      frameborder="0"
-      marginheight="0"
-      marginwidth="0"
       loading="lazy"
     >Loading…</iframe>
-
-    <script>
-    // Auto-resize Google Form iframe based on content
-    function resizeIframe() {
-      var iframe = document.getElementById('contactFormIframe');
-      if (!iframe) return;
-      try {
-        var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
-        if (innerDoc && innerDoc.body && innerDoc.body.scrollHeight) {
-          iframe.style.height = (innerDoc.body.scrollHeight + 40) + 'px';
-        }
-      } catch (e) {
-        // Cross-origin, fallback to static height
-      }
-    }
-    document.getElementById('contactFormIframe').addEventListener('load', resizeIframe);
-    </script>
   </div>
 
   <!-- FOOTER (same as FAQ) -->
