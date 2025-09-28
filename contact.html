@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Contact Us - The Oven Vibe | Sundargarh Takeaway</title>
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Styles moved to style.css -->
+</head>
+<body>
+
+  <header>
+    <a href="index.html">← Back to Home</a>
+  </header>
+
+  <div class="faq-container">
+    <h1>Contact Us</h1>
+    <p>We’d love to hear from you! For <strong>quick orders</strong>, use WhatsApp.
+       For <strong>party orders</strong> or queries, fill out the form below 👇</p>
+
+    <!-- QR section -->
+    <div class="qr-section">
+      <div class="qr-card">
+        <a href="https://wa.me/919692261138" target="_blank" rel="noopener noreferrer">
+          <img src="static/images/brand_images/whatsapp_QR_code.webp" alt="WhatsApp QR code" loading="lazy" />
+        </a>
+  <div>WhatsApp</div>
+      </div>
+      <div class="qr-card">
+        <a href="https://instagram.com/theovenvibe" target="_blank" rel="noopener noreferrer">
+          <img src="static/images/brand_images/instagram_QR_code.webp" alt="Instagram QR code" loading="lazy" />
+        </a>
+        <div>Instagram</div>
+      </div>
+    </div>
+
+    <!-- Google Form embed -->
+    <iframe
+      id="contactFormIframe"
+      src="https://docs.google.com/forms/d/e/1FAIpQLSe904p8LQBV3Dh5w-_sWOJzmFNT_DXoAVMoYfx_UguIuJflTA/viewform?embedded=true"
+      width="100%"
+  height="3000"
+      frameborder="0"
+      marginheight="0"
+      marginwidth="0"
+      loading="lazy"
+    >Loading…</iframe>
+
+    <script>
+    // Auto-resize Google Form iframe based on content
+    function resizeIframe() {
+      var iframe = document.getElementById('contactFormIframe');
+      if (!iframe) return;
+      try {
+        var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+        if (innerDoc && innerDoc.body && innerDoc.body.scrollHeight) {
+          iframe.style.height = (innerDoc.body.scrollHeight + 40) + 'px';
+        }
+      } catch (e) {
+        // Cross-origin, fallback to static height
+      }
+    }
+    document.getElementById('contactFormIframe').addEventListener('load', resizeIframe);
+    </script>
+  </div>
+
+  <!-- FOOTER (same as FAQ) -->
+  <footer class="footer" id="footer">
+    <div class="footer-columns">
+      <!-- left -->
+      <div class="col">
+        <img src="static/images/brand_images/The Oven vibe_logo.webp" alt="logo small" class="logo-sm" loading="lazy" />
+        <h4>Contact Us</h4>
+        <p class="address">Sundargarh, Odisha</p>
+        <p class="note"><strong>Takeaway only</strong> · Order 30 min prior</p>
+        <div class="contact-details">
+          <span class="contact-line">
+            <img src="static/images/svg/Phone.svg" class="icon-sm" alt="phone" loading="lazy"/> <a href="tel:+919692261138">9692261138</a>
+          </span>
+          <span class="contact-line">
+            <img src="static/images/svg/Envelope.svg" class="icon-sm" alt="email" loading="lazy"/> <a href="mailto:theovenvibe@gmail.com">theovenvibe@gmail.com</a>
+          </span>
+        </div>
+      </div>
+
+      <!-- middle -->
+      <div class="col">
+        <h4>Quick Links</h4>
+        <ul class="quick-links row-links">
+          <li><a href="index.html#menu">Menu</a></li>
+          <li><a href="index.html#why">Why Us</a></li>
+          <li><a href="index.html#party">Party Orders</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="https://wa.me/919692261138" target="_blank">WhatsApp</a></li>
+          <li><a href="https://instagram.com/theovenvibe" target="_blank">Instagram</a></li>
+          <li><a href="https://www.google.com/maps?q=22%C2%B007'01.0%22N+84%C2%B002'16.5%22E" target="_blank">Location (Google Maps)</a></li>
+        </ul>
+      </div>
+
+      <!-- right -->
+      <div class="col">
+        <h4>Follow Us</h4>
+        <div class="socials row-socials">
+          <a href="https://wa.me/919692261138" target="_blank" aria-label="WhatsApp">
+            <img src="static/images/svg/whatsapp.svg" alt="whatsapp icon" class="social-icon" loading="lazy"/>
+          </a>
+          <a href="https://instagram.com/theovenvibe" target="_blank" aria-label="Instagram">
+            <img src="static/images/svg/instagram.svg" alt="instagram icon" class="social-icon" loading="lazy"/>
+          </a>
+          <a href="https://www.google.com/maps?q=22%C2%B007'01.0%22N+84%C2%B002'16.5%22E" target="_blank" aria-label="Google Maps">
+            <img src="static/images/svg/googlemaps.svg" alt="maps icon" class="social-icon" loading="lazy"/>
+          </a>
+          <a href="#" target="_blank" aria-label="Facebook">
+            <img src="static/images/svg/facebook.svg" alt="facebook icon" class="social-icon" loading="lazy"/>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- bottom copyright bar -->
+    <div class="copyright-bar">
+      <p>© 2025 The Oven Vibe. All rights reserved.</p>
+    </div>
+  </footer>
+</body>
+</html>

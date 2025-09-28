@@ -5,6 +5,40 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>The Oven Vibe — Sundargarh, Odisha</title>
   <meta name="description" content="The Oven Vibe — Oven-baked takeaway from Sundargarh. Order via WhatsApp."/>
+  <meta name="keywords" content="oven vibe, pizza, burger, fries, snacks, pasta, takeaway, Sundargarh, Odisha, cloud kitchen, restaurant, WhatsApp order" />
+  <!-- Schema.org Restaurant Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Restaurant",
+    "name": "The Oven Vibe",
+    "image": "https://theovenvibe.github.io/static/images/brand_images/The%20Oven%20vibe_logo.webp",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Sundargarh",
+      "addressLocality": "Sundargarh",
+      "addressRegion": "Odisha",
+      "addressCountry": "IN"
+    },
+    "telephone": "+91-9692261138",
+    "email": "theovenvibe@gmail.com",
+    "servesCuisine": ["Pizza", "Burger", "Fries", "Snacks", "Pasta"],
+    "url": "https://theovenvibe.github.io/",
+    "menu": "https://theovenvibe.github.io/menu.json",
+    "priceRange": "₹69-₹349",
+    "openingHours": "Mo-Su 11:00-21:00",
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "reviewCount": "120"
+    },
+    "sameAs": [
+      "https://instagram.com/theovenvibe",
+      "https://wa.me/919692261138",
+      "https://www.google.com/maps?q=22%C2%B007'01.0%22N+84%C2%B002'16.5%22E"
+    ]
+  }
+  </script>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -12,7 +46,7 @@
   <!-- STICKY NAVIGATION BAR -->
   <nav class="main-navbar">
     <div class="nav-left">
-      <img src="static/images/brand_images/The Oven vibe_logo.webp" alt="The Oven Vibe logo" class="logo big-logo" />
+  <img src="static/images/brand_images/The Oven vibe_logo.webp" alt="The Oven Vibe logo" class="logo big-logo" loading="lazy" />
       <span class="vibe-tagline">Fresh · Hot · Oven-baked</span>
     </div>
     <button class="nav-toggle" aria-label="Open menu">
@@ -21,23 +55,24 @@
       <span class="nav-toggle-bar"></span>
     </button>
     <ul class="nav-links">
-      <li><a href="#menu">Menu</a></li>
-      <li><a href="#sec-combos">Combos</a></li>
-      <li><a href="#addonsSection">Add-ons</a></li>
-      <li><a href="#party">Party Orders</a></li>
-      <li><a href="#why">Why Us</a></li>
-      <li><a href="#footer">Contact</a></li>
-      <li class="nav-call"><a href="tel:+919692261138">Call: 9692261138</a></li>
+  <li><a href="#menu">Menu</a></li>
+  <li><a href="#sec-combos">Combos</a></li>
+  <li><a href="#addonsSection">Add-ons</a></li>
+  <li><a href="#party">Party Orders</a></li>
+  <li><a href="#why">Why Us</a></li>
+  <li><a href="faq.html">FAQ</a></li>
+  <li><a href="contact.html">Contact</a></li>
+  <li class="nav-call"><a href="tel:+919692261138">Call: 9692261138</a></li>
     </ul>
   </nav>
 
   <!-- HERO with CTA banner (replaced QR) -->
   <section class="hero">
     <div class="hero-inner">
-      <img src="static/images/brand_images/The Oven Vibe_Hero_lable.webp" alt="Hero" class="hero-img" />
+  <img src="static/images/brand_images/The Oven Vibe_Hero_lable.webp" alt="Hero" class="hero-img" loading="lazy" />
       <a class="hero-cta" href="https://wa.me/919692261138" target="_blank" rel="noopener noreferrer" style="flex-direction:column;align-items:center;text-align:center;">
         <span style="display:flex;align-items:center;justify-content:center;gap:8px;font-size:1.08rem;font-weight:700;">
-          <img src="static/images/svg/whatsapp.svg" alt="whatsapp icon" class="icon-sm" />
+    <img src="static/images/svg/whatsapp.svg" alt="whatsapp icon" class="icon-sm" loading="lazy" />
           Order now on WhatsApp
         </span>
         <span style="display:block;font-size:0.97rem;color:#ffe5e0;font-weight:600;margin-top:4px;">TAKEAWAY &bull; Order 30 min prior</span>
@@ -63,7 +98,7 @@
       <div class="wa-banner">
         <a class="hero-cta" href="https://wa.me/919692261138" target="_blank" rel="noopener noreferrer" style="flex-direction:column;align-items:center;text-align:center;">
           <span style="display:flex;align-items:center;justify-content:center;gap:8px;font-size:1.08rem;font-weight:700;">
-            <img src="static/images/svg/whatsapp.svg" alt="whatsapp icon" class="icon-sm" />
+            <img src="static/images/svg/whatsapp.svg" alt="whatsapp icon" class="icon-sm" loading="lazy" />
             Order now on WhatsApp
           </span>
           <span style="display:block;font-size:0.97rem;color:#ffe5e0;font-weight:600;margin-top:4px;">TAKEAWAY &bull; Order 30 min prior</span>
@@ -98,6 +133,8 @@
         </article>
       </div>
     </section>
+
+    <!-- FAQ SECTION REMOVED -->
   </main>
 
   <!-- FOOTER (energized black) -->
@@ -105,16 +142,16 @@
     <div class="footer-columns">
       <!-- left -->
       <div class="col">
-        <img src="static/images/brand_images/The Oven vibe_logo.webp" alt="logo small" class="logo-sm" />
+  <img src="static/images/brand_images/The Oven vibe_logo.webp" alt="logo small" class="logo-sm" loading="lazy" />
         <h4>Contact Us</h4>
         <p class="address">Sundargarh, Odisha</p>
         <p class="note"><strong>Takeaway only</strong> · Order 30 min prior</p>
         <div class="contact-details">
           <span class="contact-line">
-            <img src="static/images/svg/Phone.svg" class="icon-sm" alt="phone"/> <a href="tel:+919692261138">9692261138</a>
+            <img src="static/images/svg/Phone.svg" class="icon-sm" alt="phone" loading="lazy"/> <a href="tel:+919692261138">9692261138</a>
           </span>
           <span class="contact-line">
-            <img src="static/images/svg/Envelope.svg" class="icon-sm" alt="email"/> <a href="mailto:theovenvibe@gmail.com">theovenvibe@gmail.com</a>
+            <img src="static/images/svg/Envelope.svg" class="icon-sm" alt="email" loading="lazy"/> <a href="mailto:theovenvibe@gmail.com">theovenvibe@gmail.com</a>
           </span>
         </div>
       </div>
@@ -126,6 +163,7 @@
           <li><a href="#menu">Menu</a></li>
           <li><a href="#why">Why Us</a></li>
           <li><a href="#party">Party Orders</a></li>
+          <li><a href="faq.html">FAQ</a></li>
           <li><a href="https://wa.me/919692261138" target="_blank">WhatsApp</a></li>
           <li><a href="https://instagram.com/theovenvibe" target="_blank">Instagram</a></li>
           <li><a href="https://www.google.com/maps?q=22%C2%B007'01.0%22N+84%C2%B002'16.5%22E" target="_blank">Location (Google Maps)</a></li>
@@ -137,16 +175,16 @@
         <h4>Follow Us</h4>
         <div class="socials row-socials">
           <a href="https://wa.me/919692261138" target="_blank" aria-label="WhatsApp">
-            <img src="static/images/svg/whatsapp.svg" alt="whatsapp icon" class="social-icon"/>
+            <img src="static/images/svg/whatsapp.svg" alt="whatsapp icon" class="social-icon" loading="lazy"/>
           </a>
           <a href="https://instagram.com/theovenvibe" target="_blank" aria-label="Instagram">
-            <img src="static/images/svg/instagram.svg" alt="instagram icon" class="social-icon"/>
+            <img src="static/images/svg/instagram.svg" alt="instagram icon" class="social-icon" loading="lazy"/>
           </a>
           <a href="https://www.google.com/maps?q=22%C2%B007'01.0%22N+84%C2%B002'16.5%22E" target="_blank" aria-label="Google Maps">
-            <img src="static/images/svg/googlemaps.svg" alt="maps icon" class="social-icon"/>
+            <img src="static/images/svg/googlemaps.svg" alt="maps icon" class="social-icon" loading="lazy"/>
           </a>
           <a href="#" target="_blank" aria-label="Facebook">
-            <img src="static/images/svg/facebook.svg" alt="facebook icon" class="social-icon"/>
+            <img src="static/images/svg/facebook.svg" alt="facebook icon" class="social-icon" loading="lazy"/>
           </a>
         </div>
       </div>

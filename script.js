@@ -138,11 +138,12 @@ function renderMenuSections(data){
 
       const thumb = document.createElement("div");
       thumb.className = "thumb";
-      const img = document.createElement("img");
-      img.src = imagePath(item.product_code);
-      img.alt = item.display_name || item.item_name;
-      img.onerror = () => { img.src = PLACEHOLDER; img.style.opacity = 0.9; };
-      thumb.appendChild(img);
+  const img = document.createElement("img");
+  img.src = imagePath(item.product_code);
+  img.alt = item.display_name || item.item_name;
+  img.loading = "lazy";
+  img.onerror = () => { img.src = PLACEHOLDER; img.style.opacity = 0.9; };
+  thumb.appendChild(img);
 
       const meta = document.createElement("div");
       meta.className = "meta";
@@ -213,11 +214,13 @@ function renderCombos(data){
 
     const thumb = document.createElement("div");
     thumb.className = "thumb";
-    const img = document.createElement("img");
-    // Use combo_code image if available
-    img.src = c.combo_code ? imagePath(c.combo_code, 'combo') : PLACEHOLDER;
-    img.onerror = () => img.src = PLACEHOLDER;
-    thumb.appendChild(img);
+  const img = document.createElement("img");
+  // Use combo_code image if available
+  img.src = c.combo_code ? imagePath(c.combo_code, 'combo') : PLACEHOLDER;
+  img.alt = c.combo_name;
+  img.loading = "lazy";
+  img.onerror = () => img.src = PLACEHOLDER;
+  thumb.appendChild(img);
 
     const meta = document.createElement("div");
     meta.className = "meta";
@@ -258,11 +261,12 @@ function renderAddons(data){
     // Use add-on image from add_on_images folder
     const thumb = document.createElement("div");
     thumb.className = "thumb";
-    const img = document.createElement("img");
-    img.src = a.addon_code ? imagePath(a.addon_code, 'addon') : PLACEHOLDER;
-    img.alt = a.addon_name;
-    img.onerror = () => { img.src = PLACEHOLDER; img.style.opacity = 0.9; };
-    thumb.appendChild(img);
+  const img = document.createElement("img");
+  img.src = a.addon_code ? imagePath(a.addon_code, 'addon') : PLACEHOLDER;
+  img.alt = a.addon_name;
+  img.loading = "lazy";
+  img.onerror = () => { img.src = PLACEHOLDER; img.style.opacity = 0.9; };
+  thumb.appendChild(img);
 
     const meta = document.createElement("div");
     meta.className = "meta";
