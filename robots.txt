@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://theovenvibe.github.io/sitemap.xml

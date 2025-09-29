@@ -8,6 +8,7 @@
       name="description"
       content="The Oven Vibe — Oven-baked takeaway from Sundargarh. Order via WhatsApp."
     />
+    <h1 class="hidden">The Oven Vibe — Oven-baked takeaway in Sundargarh, Odisha</h1>
     <meta
       name="keywords"
       content="oven vibe, pizza, burger, fries, snacks, pasta, takeaway, Sundargarh, Odisha, cloud kitchen, restaurant, WhatsApp order"
@@ -45,7 +46,19 @@
         ]
       }
     </script>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="preload" as="style" href="style.css" />
+    <link rel="stylesheet" href="style.css" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="style.css" /></noscript>
+    <link rel="canonical" href="https://theovenvibe.github.io/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="The Oven Vibe — Sundargarh, Odisha" />
+    <meta property="og:description" content="The Oven Vibe — Oven-baked takeaway from Sundargarh. Order via WhatsApp." />
+    <meta property="og:url" content="https://theovenvibe.github.io/" />
+    <meta property="og:image" content="https://theovenvibe.github.io/static/images/brand_images/The%20Oven%20Vibe_Hero_lable.webp" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="The Oven Vibe — Sundargarh, Odisha" />
+    <meta name="twitter:description" content="Oven-baked takeaway from Sundargarh. Order via WhatsApp." />
+    <meta name="twitter:image" content="https://theovenvibe.github.io/static/images/brand_images/The%20Oven%20Vibe_Hero_lable.webp" />
     <!-- Preload LCP hero image (AVIF) -->
     <link
       rel="preload"
@@ -62,18 +75,16 @@
         <picture>
           <source
             type="image/avif"
-            srcset="static/images/brand_images/The Oven vibe_logo.avif"
+            srcset="static/images/brand_images/optimized/The_Oven_vibe_logo_128px.avif 128w, static/images/brand_images/optimized/The_Oven_vibe_logo_48px.avif 48w"
+            sizes="(min-width: 900px) 90px, 56px"
           />
           <source
             type="image/webp"
-            srcset="static/images/brand_images/The Oven vibe_logo.webp"
-          />
-          <source
-            type="image/jxl"
-            srcset="static/images/brand_images/The Oven vibe_logo.jxl"
+            srcset="static/images/brand_images/optimized/The_Oven_vibe_logo_128px.webp 128w, static/images/brand_images/optimized/The_Oven_vibe_logo_48px.webp 48w"
+            sizes="(min-width: 900px) 90px, 56px"
           />
           <img
-            src="static/images/brand_images/The Oven vibe_logo.webp"
+            src="static/images/brand_images/optimized/The_Oven_vibe_logo_128px.webp"
             alt="The Oven Vibe logo"
             class="logo big-logo"
             loading="lazy"
@@ -109,11 +120,13 @@
         <picture class="hero-media">
           <source
             type="image/avif"
-            srcset="static/images/brand_images/The Oven Vibe_Hero_lable.avif"
+            srcset="static/images/brand_images/The Oven Vibe_Hero_lable.avif 1080w"
+            sizes="(min-width: 1200px) 640px, (min-width: 900px) 560px, 92vw"
           />
           <source
             type="image/webp"
-            srcset="static/images/brand_images/The Oven Vibe_Hero_lable.webp"
+            srcset="static/images/brand_images/The Oven Vibe_Hero_lable.webp 1080w"
+            sizes="(min-width: 1200px) 640px, (min-width: 900px) 560px, 92vw"
           />
           <source
             type="image/jxl"
@@ -230,20 +243,10 @@
         <!-- left -->
         <div class="col">
           <picture>
-            <source
-              type="image/avif"
-              srcset="static/images/brand_images/The Oven vibe_logo.avif"
-            />
-            <source
-              type="image/webp"
-              srcset="static/images/brand_images/The Oven vibe_logo.webp"
-            />
-            <source
-              type="image/jxl"
-              srcset="static/images/brand_images/The Oven vibe_logo.jxl"
-            />
+            <source type="image/avif" srcset="static/images/brand_images/optimized/The_Oven_vibe_logo_48px.avif 48w, static/images/brand_images/optimized/The_Oven_vibe_logo_128px.avif 128w" sizes="48px" />
+            <source type="image/webp" srcset="static/images/brand_images/optimized/The_Oven_vibe_logo_48px.webp 48w, static/images/brand_images/optimized/The_Oven_vibe_logo_128px.webp 128w" sizes="48px" />
             <img
-              src="static/images/brand_images/The Oven vibe_logo.webp"
+              src="static/images/brand_images/optimized/The_Oven_vibe_logo_48px.webp"
               alt="logo small"
               class="logo-sm"
               loading="lazy"
@@ -365,5 +368,6 @@
     </footer>
 
     <script src="script.js" defer></script>
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
   </body>
 </html>
