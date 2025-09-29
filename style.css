@@ -130,10 +130,7 @@ header a { text-decoration: none; color: var(--brand-red); font-weight: bold; }
 .why-card { background: #fff; padding: 14px; border-radius: 10px; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.03); }
 .why-card h3 { color: var(--brand-red); margin: 0 0 8px; }
 /* Reduce initial layout work and CLS for large content blocks */
-.menu-section, .party, .why {
-  content-visibility: auto;
-  contain-intrinsic-size: 600px;
-}
+/* content-visibility removed to avoid layout estimation shifts */
 
 /* ========== Footer ========== */
 .footer { background: #050505; color: #fff; padding: 24px 12px; }
