@@ -129,11 +129,16 @@ header a { text-decoration: none; color: var(--brand-red); font-weight: bold; }
 .why-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
 .why-card { background: #fff; padding: 14px; border-radius: 10px; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.03); }
 .why-card h3 { color: var(--brand-red); margin: 0 0 8px; }
+/* Reduce initial layout work and CLS for large content blocks */
+.menu-section, .party, .why {
+  content-visibility: auto;
+  contain-intrinsic-size: 600px;
+}
 
 /* ========== Footer ========== */
 .footer { background: #050505; color: #fff; padding: 24px 12px; }
 .footer-columns { max-width: var(--max-width); margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 18px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.06); }
-.footer .col h4 { color: var(--brand-red); }
+.footer .col h4 { color: #fff; }
 .footer .logo-sm { height: 48px; margin-bottom: 6px; }
 .footer a { color: #ddd; text-decoration: none; }
 .social-icon { width: 28px; height: 28px; filter: grayscale(100%) brightness(2) invert(1); }
