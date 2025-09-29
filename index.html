@@ -62,13 +62,15 @@
       rel="preload"
       as="image"
       href="static/images/brand_images/The Oven Vibe_Hero_lable.avif"
+      imagesrcset="static/images/brand_images/optimized/The_Oven_Vibe_Hero_lable_640px.avif 640w, static/images/brand_images/The Oven Vibe_Hero_lable.avif 1080w"
+      imagesizes="(min-width: 1200px) 640px, (min-width: 900px) 560px, 92vw"
       type="image/avif"
       fetchpriority="high"
     />
   </head>
   <body>
     <!-- STICKY NAVIGATION BAR -->
-    <nav class="main-navbar">
+    <nav class="main-navbar" role="navigation">
       <div class="nav-left">
         <picture>
           <source
@@ -92,12 +94,12 @@
         </picture>
         <span class="vibe-tagline">Fresh · Hot · Oven-baked</span>
       </div>
-      <button class="nav-toggle" aria-label="Open menu">
+      <button class="nav-toggle" aria-label="Open menu" aria-controls="siteNav" aria-expanded="false">
         <span class="nav-toggle-bar"></span>
         <span class="nav-toggle-bar"></span>
         <span class="nav-toggle-bar"></span>
       </button>
-      <ul class="nav-links">
+      <ul class="nav-links" id="siteNav">
         <li><a href="#menu">Menu</a></li>
         <li><a href="#sec-combos">Combos</a></li>
         <li><a href="#addonsSection">Add-ons</a></li>
@@ -118,12 +120,12 @@
         <picture class="hero-media">
           <source
             type="image/avif"
-            srcset="static/images/brand_images/The Oven Vibe_Hero_lable.avif 1080w"
+            srcset="static/images/brand_images/optimized/The_Oven_Vibe_Hero_lable_640px.avif 640w, static/images/brand_images/The Oven Vibe_Hero_lable.avif 1080w"
             sizes="(min-width: 1200px) 640px, (min-width: 900px) 560px, 92vw"
           />
           <source
             type="image/webp"
-            srcset="static/images/brand_images/The Oven Vibe_Hero_lable.webp 1080w"
+            srcset="static/images/brand_images/optimized/The_Oven_Vibe_Hero_lable_640px.webp 640w, static/images/brand_images/The Oven Vibe_Hero_lable.webp 1080w"
             sizes="(min-width: 1200px) 640px, (min-width: 900px) 560px, 92vw"
           />
           <source
@@ -153,6 +155,8 @@
               alt="whatsapp icon"
               class="icon-sm"
               loading="lazy"
+              width="22"
+              height="22"
             />
             Order now on WhatsApp
           </span>
@@ -333,6 +337,8 @@
                 alt="instagram icon"
                 class="social-icon"
                 loading="lazy"
+                width="28"
+                height="28"
               />
             </a>
             <a
@@ -345,6 +351,8 @@
                 alt="maps icon"
                 class="social-icon"
                 loading="lazy"
+                width="28"
+                height="28"
               />
             </a>
             <a href="#" target="_blank" aria-label="Facebook">

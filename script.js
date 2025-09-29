@@ -9,6 +9,8 @@ document.addEventListener("DOMContentLoaded", function () {
   if (navToggle && navLinks) {
     navToggle.addEventListener("click", function () {
       navLinks.classList.toggle("open");
+      const isOpen = navLinks.classList.contains("open");
+      navToggle.setAttribute("aria-expanded", String(isOpen));
     });
     // Close menu on any link click (mobile)
     navLinks.querySelectorAll("a").forEach((link) => {
