@@ -130,10 +130,10 @@
       "product_code": "BRD002",
       "item_id": 15,
       "category": "Bread & Snacks",
-      "item_name": "Stuffed Cheese Kulcha",
-      "display_name": "Cheesy Kulcha Bomb",
+      "item_name": "Masala Cheese Kulcha",
+      "display_name": "Cheesy Masala Kulcha",
       "price": 99,
-      "description": "Kulcha stuffed with gooey cheese"
+      "description": "Masala Kulcha topped with gooey cheese."
     },
     {
       "product_code": "SNK001",
@@ -218,53 +218,84 @@
     }
   ],
   "Add_Ons": [
-    { "addon_code": "ADD001", "addon_name": "Extra Cheese", "price": 29, "best_for": "Pizza, Fries, Burgers, Sandwich" },
-    { "addon_code": "ADD002", "addon_name": "Tomato Slices", "price": 19, "best_for": "Pizza, Burgers, Sandwich" },
-    { "addon_code": "ADD003", "addon_name": "Onion Slices", "price": 19, "best_for": "Pizza, Burgers, Sandwich" },
-    { "addon_code": "ADD004", "addon_name": "Capsicum", "price": 25, "best_for": "Pizza, Sandwich" },
-    { "addon_code": "ADD005", "addon_name": "Corn", "price": 25, "best_for": "Pizza, Garlic Bread" },
-    { "addon_code": "ADD006", "addon_name": "Extra Paneer", "price": 39, "best_for": "Pizza, Burgers, Sandwich" },
-    { "addon_code": "ADD007", "addon_name": "Garlic Butter", "price": 15, "best_for": "Bread, Pizza" },
-    { "addon_code": "ADD008", "addon_name": "Oregano/Herbs", "price": 10, "best_for": "Fries, Pizza, Bread" },
-    { "addon_code": "ADD009", "addon_name": "Cheese Dip", "price": 25, "best_for": "Fries, Snacks" },
-    { "addon_code": "ADD010", "addon_name": "Peri Peri Dip", "price": 19, "best_for": "Fries, Pizza, Snacks" }
+    {
+      "addon_code": "ADD001",
+      "addon_name": "Extra Cheese",
+      "price": 29,
+      "best_for": "Pizza, Fries, Burgers, Sandwich"
+    },
+    {
+      "addon_code": "ADD002",
+      "addon_name": "Corn",
+      "price": 25,
+      "best_for": "Pizza, Garlic Bread"
+    },
+    {
+      "addon_code": "ADD003",
+      "addon_name": "Extra Paneer",
+      "price": 39,
+      "best_for": "Pizza, Burgers, Sandwich"
+    },
+    {
+      "addon_code": "ADD004",
+      "addon_name": "Garlic Butter",
+      "price": 15,
+      "best_for": "Bread, Pizza"
+    },
+    {
+      "addon_code": "ADD005",
+      "addon_name": "Oregano/Herbs",
+      "price": 10,
+      "best_for": "Fries, Pizza, Bread"
+    },
+    {
+      "addon_code": "ADD006",
+      "addon_name": "Cheese Dip",
+      "price": 25,
+      "best_for": "Fries, Snacks"
+    },
+    {
+      "addon_code": "ADD007",
+      "addon_name": "Peri Peri Dip",
+      "price": 19,
+      "best_for": "Fries, Pizza, Snacks"
+    }
   ],
-"Combos": [
-  {
-    "combo_code": "CMB001",
-    "combo_name": "Fiesta Pizza Combo",
-    "items_included": ["PIZ001", "FRY003", "Drink"],
-    "combo_price": 249,
-    "trap_logic": "Slightly above ₹200 → nudges single pizza buyers to spend more by adding sides."
-  },
-  {
-    "combo_code": "CMB002",
-    "combo_name": "Burger Feast Box",
-    "items_included": ["BUR001", "FRY001", "Drink"],
-    "combo_price": 199,
-    "trap_logic": "Just under ₹200 → creates a 'value box' trap for 2 people."
-  },
-  {
-    "combo_code": "CMB003",
-    "combo_name": "Snack Platter",
-    "items_included": ["SNK002", "SNK003", "BRD001"],
-    "combo_price": 299,
-    "trap_logic": "Falls short of ₹399 → tempts customer to add 1 more item to reach the next offer."
-  },
-  {
-    "combo_code": "CMB004",
-    "combo_name": "Sandwich Meal Box",
-    "items_included": ["SND001", "FRY001", "Drink"],
-    "combo_price": 229,
-    "trap_logic": "Crosses ₹200 mark but stays below ₹250 → feels affordable yet premium."
-  },
-  {
-    "combo_code": "CMB005",
-    "combo_name": "Pasta Treat Combo",
-    "items_included": ["PAS001", "FRY002", "Drink"],
-    "combo_price": 349,
-    "trap_logic": "Strategically under ₹399 → encourages upsell of sides or dessert."
-  }
-]
-
+  "Combos": [
+    {
+      "combo_code": "CMB001",
+      "combo_name": "Fiesta Pizza Combo",
+      "items_included": ["PIZ001", "FRY003", "Drink"],
+      "combo_price": 249,
+      "trap_logic": "Slightly above ₹200 → nudges single pizza buyers to spend more by adding sides."
+    },
+    {
+      "combo_code": "CMB002",
+      "combo_name": "Burger Feast Box",
+      "items_included": ["BUR001", "FRY001", "Drink"],
+      "combo_price": 199,
+      "trap_logic": "Just under ₹200 → creates a 'value box' trap for 2 people."
+    },
+    {
+      "combo_code": "CMB003",
+      "combo_name": "Snack Platter",
+      "items_included": ["SNK002", "SNK003", "BRD001"],
+      "combo_price": 299,
+      "trap_logic": "Falls short of ₹399 → tempts customer to add 1 more item to reach the next offer."
+    },
+    {
+      "combo_code": "CMB004",
+      "combo_name": "Sandwich Meal Box",
+      "items_included": ["SND001", "FRY001", "Drink"],
+      "combo_price": 229,
+      "trap_logic": "Crosses ₹200 mark but stays below ₹250 → feels affordable yet premium."
+    },
+    {
+      "combo_code": "CMB005",
+      "combo_name": "Pasta Treat Combo",
+      "items_included": ["PAS001", "FRY002", "Drink"],
+      "combo_price": 349,
+      "trap_logic": "Strategically under ₹399 → encourages upsell of sides or dessert."
+    }
+  ]
 }
