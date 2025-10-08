@@ -43,12 +43,15 @@ This is a **modern, responsive cloud kitchen website** built to showcase:
 ├── blog.html             # Blog posts
 ├── faq.html              # Frequently Asked Questions
 ├── contact.html          # Contact page
+├── robots.txt            # Search engine instructions
+├── sitemap.xml           # Sitemap for SEO
 ├── style.css             # Main styles
 ├── script.js             # JavaScript functionality
 ├── static/
 │   ├── images/           # Logos, hero, add-ons, blog images
 │   └── svg/              # Icons (WhatsApp, phone, email)
 └── README.md             # Project documentation
+
 ```
 
 ---
