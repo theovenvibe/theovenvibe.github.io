@@ -31,23 +31,50 @@
       "product_code": "PIZ004",
       "item_id": 4,
       "category": "Pizza",
-      "item_name": "Corn Pizza",
-      "display_name": "Sweet Corn Treat",
-      "price": 149,
-      "description": "Fresh corn on soft crust"
-    },
-    {
-      "product_code": "PIZ005",
-      "item_id": 5,
-      "category": "Pizza",
       "item_name": "Capsicum Pizza",
       "display_name": "Crunchy Capsicum Pizza",
       "price": 159,
       "description": "Bell peppers with cheese"
     },
     {
+      "product_code": "PIZ005",
+      "item_id": 5,
+      "category": "Pizza",
+      "item_name": "Tamato Pizza",
+      "display_name": "Classic Tomato Pizza",
+      "price": 129,
+      "description": "Simple tomato base with cheese & herbs"
+    },
+    {
       "product_code": "PIZ006",
       "item_id": 6,
+      "category": "Pizza",
+      "item_name": "Cheese Pizza",
+      "display_name": "Ultimate Cheese Delight",
+      "price": 169,
+      "description": "Loaded with melted mozzarella cheese"
+    },
+    {
+      "product_code": "PIZ007",
+      "item_id": 7,
+      "category": "Pizza",
+      "item_name": "Onion Capsicum Pizza",
+      "display_name": "Veggie Onion Capsicum Pizza",
+      "price": 179,
+      "description": "Fresh onion & capsicum on cheesy base"
+    },
+    {
+      "product_code": "PIZ008",
+      "item_id": 8,
+      "category": "Pizza",
+      "item_name": "The Oven Vibe Special Pizza",
+      "display_name": "The Oven Vibe Special",
+      "price": 199,
+      "description": "Signature mix of paneer, capsicum, corn & secret sauce"
+    },
+    {
+      "product_code": "PIZ009",
+      "item_id": 9,
       "category": "Pizza",
       "item_name": "Bread Pizza",
       "display_name": "Mini Breadza",
@@ -80,6 +107,15 @@
       "display_name": "Cheesy Melt Burger",
       "price": 139,
       "description": "Cheese-stuffed patty with mayo"
+    },
+    {
+      "product_code": "BUR004",
+      "item_id": 10,
+      "category": "Burger",
+      "item_name": "Mini Burger",
+      "display_name": "Mini Bite Burger",
+      "price": 89,
+      "description": "Mini soft bun with aloo patty & mayo"
     },
     {
       "product_code": "FRY001",
@@ -266,36 +302,31 @@
       "combo_code": "CMB001",
       "combo_name": "Fiesta Pizza Combo",
       "items_included": ["PIZ001", "FRY003", "Drink"],
-      "combo_price": 249,
-      "trap_logic": "Slightly above ₹200 → nudges single pizza buyers to spend more by adding sides."
+      "combo_price": 249
     },
     {
       "combo_code": "CMB002",
       "combo_name": "Burger Feast Box",
       "items_included": ["BUR001", "FRY001", "Drink"],
-      "combo_price": 199,
-      "trap_logic": "Just under ₹200 → creates a 'value box' trap for 2 people."
+      "combo_price": 199
     },
     {
       "combo_code": "CMB003",
       "combo_name": "Snack Platter",
       "items_included": ["SNK002", "SNK003", "BRD001"],
-      "combo_price": 299,
-      "trap_logic": "Falls short of ₹399 → tempts customer to add 1 more item to reach the next offer."
+      "combo_price": 299
     },
     {
       "combo_code": "CMB004",
       "combo_name": "Sandwich Meal Box",
       "items_included": ["SND001", "FRY001", "Drink"],
-      "combo_price": 229,
-      "trap_logic": "Crosses ₹200 mark but stays below ₹250 → feels affordable yet premium."
+      "combo_price": 229
     },
     {
       "combo_code": "CMB005",
       "combo_name": "Pasta Treat Combo",
       "items_included": ["PAS001", "FRY002", "Drink"],
-      "combo_price": 349,
-      "trap_logic": "Strategically under ₹399 → encourages upsell of sides or dessert."
+      "combo_price": 349
     }
   ]
 }
