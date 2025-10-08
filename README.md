@@ -1,6 +1,6 @@
 # 🍕 The Oven Vibe — Sundargarh, Odisha
 
-![The Oven Vibe Logo](https://theovenvibe.github.io/static/images/brand_images/The_Oven_Vibe_logo.webp)
+![The Oven Vibe Logo](https://theovenvibe.netlify.app/static/images/brand_images/The_Oven_Vibe_logo.webp)
 
 Welcome to **The Oven Vibe** — your go-to **fresh, hot, oven-baked takeaway** cloud kitchen in Sundargarh, Odisha! We serve mouth-watering **pizzas, burgers, fries, snacks, and pasta**, all made to order and delivered fresh to you.
 
