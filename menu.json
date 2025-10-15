@@ -24,7 +24,7 @@
       "category": "Pizza",
       "item_name": "Onion Pizza",
       "display_name": "Zesty Onion Feast",
-      "price": 149,
+      "price": 159,
       "description": "Crisp onions with oregano seasoning"
     },
     {
@@ -33,7 +33,7 @@
       "category": "Pizza",
       "item_name": "Capsicum Pizza",
       "display_name": "Crunchy Capsicum Pizza",
-      "price": 159,
+      "price": 169,
       "description": "Bell peppers with cheese"
     },
     {
@@ -42,7 +42,7 @@
       "category": "Pizza",
       "item_name": "Tamato Pizza",
       "display_name": "Classic Tomato Pizza",
-      "price": 129,
+      "price": 139,
       "description": "Simple tomato base with cheese & herbs"
     },
     {
@@ -114,7 +114,7 @@
       "category": "Burger",
       "item_name": "Mini Burger",
       "display_name": "Mini Bite Burger",
-      "price": 89,
+      "price": 99,
       "description": "Mini soft bun with aloo patty & mayo"
     },
     {
@@ -195,7 +195,7 @@
       "category": "Snacks",
       "item_name": "Mini Cheese Corn Balls",
       "display_name": "Cheesy Corn Bites",
-      "price": 119,
+      "price": 129,
       "description": "Mini balls with corn & cheese filling"
     },
     {
@@ -240,7 +240,7 @@
       "category": "Sandwich",
       "item_name": "Cheese Chilli Sandwich",
       "display_name": "Fiery Cheese Chilli",
-      "price": 79,
+      "price": 89,
       "description": "Spicy cheese & chilli filling"
     },
     {
@@ -249,7 +249,7 @@
       "category": "Sandwich",
       "item_name": "Chutney Sandwich",
       "display_name": "Tangy Green Chutney",
-      "price": 69,
+      "price": 79,
       "description": "Fresh chutney with veggies"
     }
   ],
