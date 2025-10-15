@@ -104,10 +104,36 @@ header a { text-decoration: none; color: var(--brand-red); font-weight: bold; }
 .menu-section header { display: flex; justify-content: space-between; align-items: center; padding: 8px 4px; background: #fff; border-radius: 8px; border-left: 6px solid var(--brand-red); }
 .menu-section header h3 { margin: 0; font-size: 1rem; font-weight: 800; }
 .menu-items { display: block; padding: 8px 0; }
-.item { display: flex; gap: 10px; align-items: flex-start; padding: 10px 4px; border-bottom: 1px solid #f3f3f3; }
+.item { display: flex; gap: 10px; align-items: flex-start; padding: 10px 4px; border-bottom: 1px solid #f3f3f3; position: relative; }
 .item:last-child { border-bottom: none; }
 .item .thumb { flex: 0 0 88px; aspect-ratio: 1 / 1; }
 .item .thumb img { width: 100%; height: 100%; max-width: 120px; max-height: 120px; object-fit: contain; border-radius: 8px; background: #fff; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04); }
+
+/* Item Status Styles */
+.item.coming-soon::after {
+  content: "COMING SOON";
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: #ffc107;
+  color: rgba(0,0,0,0.8);
+  padding: 2px 6px;
+  font-size: 12px;
+  border-radius: 3px;
+  font-weight: 600;
+}
+.item.out-of-stock::after {
+  content: "OUT OF STOCK";
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: #dc3545;
+  color: #fff;
+  padding: 2px 6px;
+  font-size: 12px;
+  border-radius: 3px;
+  font-weight: 600;
+}
 .item .meta { flex: 1; display: flex; flex-direction: column; }
 .item .meta h4 { margin: 0; font-size: 1rem; }
 .item .meta p { margin: 6px 0 0; color: var(--muted); font-size: 0.9rem; }
@@ -115,9 +141,35 @@ header a { text-decoration: none; color: var(--brand-red); font-weight: bold; }
 
 /* ========== Combos ========== */
 .combo-list { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 8px; }
-.combo { display: flex; gap: 12px; align-items: center; padding: 10px; border-radius: 10px; background: #fff; border: 1px solid #f2f2f2; }
+.combo { display: flex; gap: 12px; align-items: center; padding: 10px; border-radius: 10px; background: #fff; border: 1px solid #f2f2f2; position: relative; }
 .combo .thumb { flex: 0 0 88px; aspect-ratio: 1 / 1; }
 .combo .thumb img { width: 100%; height: 100%; object-fit: contain; }
+
+/* Combo Status Styles */
+.combo.coming-soon::after {
+  content: "COMING SOON";
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: #ffc107;
+  color: rgba(0,0,0,0.8);
+  padding: 2px 6px;
+  font-size: 12px;
+  border-radius: 3px;
+  font-weight: 600;
+}
+.combo.out-of-stock::after {
+  content: "OUT OF STOCK";
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: #dc3545;
+  color: #fff;
+  padding: 2px 6px;
+  font-size: 12px;
+  border-radius: 3px;
+  font-weight: 600;
+}
 .combo .meta h4 { margin: 0; font-size: 1rem; }
 .combo .meta .price { color: var(--brand-red); font-weight: 800; margin-top: 6px; }
 

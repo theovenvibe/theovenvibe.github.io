@@ -194,6 +194,13 @@ function renderMenuSections(data) {
     items.forEach((item) => {
       const itm = document.createElement("article");
       itm.className = "item";
+      
+      // Apply status classes if item is not available
+      if (item.status === "coming-soon") {
+        itm.classList.add("coming-soon");
+      } else if (item.status === "out-of-stock") {
+        itm.classList.add("out-of-stock");
+      }
 
       const thumb = document.createElement("div");
       thumb.className = "thumb";
@@ -275,6 +282,13 @@ function renderCombos(data) {
   combos.forEach((c) => {
     const box = document.createElement("div");
     box.className = "combo";
+    
+    // Apply status classes if combo is not available
+    if (c.status === "coming-soon") {
+      box.classList.add("coming-soon");
+    } else if (c.status === "out-of-stock") {
+      box.classList.add("out-of-stock");
+    }
 
     const thumb = document.createElement("div");
     thumb.className = "thumb";
@@ -346,6 +360,13 @@ function renderAddons(data) {
   addons.forEach((a) => {
     const itm = document.createElement("article");
     itm.className = "item";
+    
+    // Apply status classes if addon is not available
+    if (a.status === "coming-soon") {
+      itm.classList.add("coming-soon");
+    } else if (a.status === "out-of-stock") {
+      itm.classList.add("out-of-stock");
+    }
 
     const thumb = document.createElement("div");
     thumb.className = "thumb";
