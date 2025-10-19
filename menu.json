@@ -2,13 +2,13 @@
   "_comment": "Item status can be: 'available' (default), 'coming-soon', or 'out-of-stock'. Just comment/uncomment the line you need.",
   "Menu_Items": [
     {
-      "product_code": "PIZ001",
-      "item_id": 1,
+      "product_code": "PIZ003",
+      "item_id": 3,
       "category": "Pizza",
-      "item_name": "Paneer Tikka Pizza",
-      "display_name": "Herb Paneer Delight",
-      "price": 189,
-      "description": "Smoky paneer tikka with cheese & herbs",
+      "item_name": "Onion Pizza",
+      "display_name": "Zesty Onion Feast Pizza",
+      "price": 99,
+      "description": "Crisp onions with oregano seasoning",
       "status": "available"
     },
     {
@@ -16,29 +16,9 @@
       "item_id": 2,
       "category": "Pizza",
       "item_name": "Corn & Cheese Pizza",
-      "display_name": "Golden Corn Classic",
-      "price": 179,
+      "display_name": "Golden Corn Classic Pizza",
+      "price": 129,
       "description": "Cheesy base loaded with sweet corn",
-      "status": "available"
-    },
-    {
-      "product_code": "PIZ003",
-      "item_id": 3,
-      "category": "Pizza",
-      "item_name": "Onion Pizza",
-      "display_name": "Zesty Onion Feast",
-      "price": 159,
-      "description": "Crisp onions with oregano seasoning",
-      "status": "available"
-    },
-    {
-      "product_code": "PIZ004",
-      "item_id": 4,
-      "category": "Pizza",
-      "item_name": "Capsicum Pizza",
-      "display_name": "Crunchy Capsicum Pizza",
-      "price": 169,
-      "description": "Bell peppers with cheese",
       "status": "available"
     },
     {
@@ -47,18 +27,28 @@
       "category": "Pizza",
       "item_name": "Tamato Pizza",
       "display_name": "Classic Tomato Pizza",
-      "price": 139,
+      "price": 129,
       "description": "Simple tomato base with cheese & herbs",
       "status": "available"
     },
     {
-      "product_code": "PIZ006",
-      "item_id": 6,
+      "product_code": "PIZ001",
+      "item_id": 1,
       "category": "Pizza",
-      "item_name": "Cheese Pizza",
-      "display_name": "Ultimate Cheese Delight",
-      "price": 169,
-      "description": "Loaded with melted mozzarella cheese",
+      "item_name": "Paneer Tikka Pizza",
+      "display_name": "Herb Paneer Delight Pizza",
+      "price": 139,
+      "description": "Smoky paneer tikka with cheese & herbs",
+      "status": "available"
+    },
+    {
+      "product_code": "PIZ004",
+      "item_id": 4,
+      "category": "Pizza",
+      "item_name": "Capsicum Pizza",
+      "display_name": "Crunchy Capsicum Pizza",
+      "price": 179,
+      "description": "Bell peppers with cheese",
       "status": "available"
     },
     {
@@ -67,8 +57,18 @@
       "category": "Pizza",
       "item_name": "Onion Capsicum Pizza",
       "display_name": "Veggie Onion Capsicum Pizza",
-      "price": 179,
+      "price": 199,
       "description": "Fresh onion & capsicum on cheesy base",
+      "status": "available"
+    },
+    {
+      "product_code": "PIZ006",
+      "item_id": 6,
+      "category": "Pizza",
+      "item_name": "Cheese Pizza",
+      "display_name": "Ultimate Cheese Delight Pizza",
+      "price": 219,
+      "description": "Loaded with melted mozzarella cheese",
       "status": "available"
     },
     {
@@ -76,9 +76,9 @@
       "item_id": 8,
       "category": "Pizza",
       "item_name": "The Oven Vibe Special Pizza",
-      "display_name": "The Oven Vibe Special",
-      "price": 199,
-      "description": "Signature mix of paneer, capsicum, corn & secret sauce",
+      "display_name": "The Oven Vibe Special Pizza",
+      "price": 239,
+      "description": "A handcrafted Neapolitan-style pizza with an Indian twist — freshly baked with paneer, capsicum, sweet corn, and our signature spiced sauce. Soft, charred crust with bold desi flavours that define The Oven Vibe.",
       "status": "available"
     },
     {
@@ -87,8 +87,18 @@
       "category": "Pizza",
       "item_name": "Bread Pizza",
       "display_name": "Mini Breadza",
-      "price": 99,
+      "price": 79,
       "description": "Small cheesy bread pizza",
+      "status": "available"
+    },
+    {
+      "product_code": "BUR004",
+      "item_id": 10,
+      "category": "Burger",
+      "item_name": "Mini Burger",
+      "display_name": "Mini Bite Burger",
+      "price": 49,
+      "description": "Mini soft bun with aloo patty & mayo",
       "status": "available"
     },
     {
@@ -97,8 +107,18 @@
       "category": "Burger",
       "item_name": "Aloo Tikki Burger",
       "display_name": "Classic Aloo Burger",
-      "price": 109,
+      "price": 69,
       "description": "Spiced aloo tikki with sauce",
+      "status": "available"
+    },
+    {
+      "product_code": "BUR003",
+      "item_id": 9,
+      "category": "Burger",
+      "item_name": "Cheese Burger",
+      "display_name": "Cheesy Melt Burger",
+      "price": 119,
+      "description": "Cheese-stuffed patty with mayo",
       "status": "available"
     },
     {
@@ -112,43 +132,13 @@
       "status": "available"
     },
     {
-      "product_code": "BUR003",
-      "item_id": 9,
-      "category": "Burger",
-      "item_name": "Cheese Burger",
-      "display_name": "Cheesy Melt Burger",
-      "price": 139,
-      "description": "Cheese-stuffed patty with mayo",
-      "status": "available"
-    },
-    {
-      "product_code": "BUR004",
-      "item_id": 10,
-      "category": "Burger",
-      "item_name": "Mini Burger",
-      "display_name": "Mini Bite Burger",
-      "price": 89,
-      "description": "Mini soft bun with aloo patty & mayo",
-      "status": "available"
-    },
-    {
       "product_code": "FRY001",
       "item_id": 10,
       "category": "Fries",
       "item_name": "French Fries (Small)",
       "display_name": "Classic Fries – Small",
-      "price": 69,
+      "price": 59,
       "description": "Crisp golden fries",
-      "status": "available"
-    },
-    {
-      "product_code": "FRY002",
-      "item_id": 11,
-      "category": "Fries",
-      "item_name": "French Fries (Large)",
-      "display_name": "Classic Fries – Large",
-      "price": 119,
-      "description": "Extra portion of golden fries",
       "status": "available"
     },
     {
@@ -157,8 +147,18 @@
       "category": "Fries",
       "item_name": "Peri Peri Fries (Small)",
       "display_name": "Spicy Peri Fries – Small",
-      "price": 89,
+      "price": 79,
       "description": "Tossed in peri-peri spice",
+      "status": "available"
+    },
+    {
+      "product_code": "FRY002",
+      "item_id": 11,
+      "category": "Fries",
+      "item_name": "French Fries (Large)",
+      "display_name": "Classic Fries – Large",
+      "price": 89,
+      "description": "Extra portion of golden fries",
       "status": "available"
     },
     {
@@ -167,24 +167,24 @@
       "category": "Fries",
       "item_name": "Peri Peri Fries (Large)",
       "display_name": "Spicy Peri Fries – Large",
-      "price": 149,
+      "price": 99,
       "description": "Bigger share of spicy fries",
       "status": "available"
     },
     {
       "product_code": "BRD001",
       "item_id": 14,
-      "category": "Bread & Snacks",
+      "category": "Bread",
       "item_name": "Cheese Garlic Bread",
-      "display_name": "Cheesy Garlic Toast",
-      "price": 79,
+      "display_name": "Cheesy Garlic Bread Toast",
+      "price": 89,
       "description": "Garlic butter with melted cheese",
       "status": "available"
     },
     {
       "product_code": "BRD002",
       "item_id": 15,
-      "category": "Bread & Snacks",
+      "category": "Bread",
       "item_name": "Masala Cheese Kulcha",
       "display_name": "Cheesy Masala Kulcha",
       "price": 99,
@@ -197,18 +197,8 @@
       "category": "Snacks",
       "item_name": "Peri Peri Makhana",
       "display_name": "Crunchy Peri Makhana",
-      "price": 89,
+      "price": 79,
       "description": "Healthy roasted makhana tossed in spice",
-      "status": "available"
-    },
-    {
-      "product_code": "SNK002",
-      "item_id": 17,
-      "category": "Snacks",
-      "item_name": "Paneer Pops",
-      "display_name": "Paneer Popcorn Bites",
-      "price": 119,
-      "description": "Crispy fried paneer bites",
       "status": "available"
     },
     {
@@ -217,9 +207,19 @@
       "category": "Snacks",
       "item_name": "Mini Cheese Corn Balls",
       "display_name": "Cheesy Corn Bites",
-      "price": 129,
+      "price": 99,
       "description": "Mini balls with corn & cheese filling",
       "status": "coming-soon"
+    },
+    {
+      "product_code": "SNK002",
+      "item_id": 17,
+      "category": "Snacks",
+      "item_name": "Paneer Pops",
+      "display_name": "Paneer Popcorn Bites",
+      "price": 109,
+      "description": "Crispy fried paneer bites",
+      "status": "available"
     },
     {
       "product_code": "PAS001",
@@ -227,7 +227,7 @@
       "category": "Pasta",
       "item_name": "White Sauce Pasta",
       "display_name": "Creamy Alfredo Pasta",
-      "price": 199,
+      "price": 149,
       "description": "Pasta in rich white sauce",
       "status": "available"
     },
@@ -237,7 +237,7 @@
       "category": "Veg Fry",
       "item_name": "Masala Corn Fry",
       "display_name": "Tangy Masala Corn",
-      "price": 59,
+      "price": 69,
       "description": "Corn kernels tossed with spice",
       "status": "available"
     },
@@ -247,28 +247,8 @@
       "category": "Veg Fry",
       "item_name": "Cheese Corn Fry",
       "display_name": "Cheesy Corn Mix",
-      "price": 69,
+      "price": 109,
       "description": "Corn with cheese & herbs",
-      "status": "available"
-    },
-    {
-      "product_code": "SND001",
-      "item_id": 22,
-      "category": "Sandwich",
-      "item_name": "Paneer Tikka Sandwich",
-      "display_name": "Paneer Tikka Grill",
-      "price": 129,
-      "description": "Grilled sandwich stuffed with paneer",
-      "status": "available"
-    },
-    {
-      "product_code": "SND002",
-      "item_id": 23,
-      "category": "Sandwich",
-      "item_name": "Cheese Chilli Sandwich",
-      "display_name": "Fiery Cheese Chilli",
-      "price": 89,
-      "description": "Spicy cheese & chilli filling",
       "status": "available"
     },
     {
@@ -277,8 +257,28 @@
       "category": "Sandwich",
       "item_name": "Chutney Sandwich",
       "display_name": "Tangy Green Chutney",
-      "price": 79,
+      "price": 39,
       "description": "Fresh chutney with veggies",
+      "status": "available"
+    },
+    {
+      "product_code": "SND002",
+      "item_id": 23,
+      "category": "Sandwich",
+      "item_name": "Cheese Chilli Sandwich",
+      "display_name": "Fiery Cheese Chilli",
+      "price": 129,
+      "description": "Spicy cheese & chilli filling",
+      "status": "available"
+    },
+    {
+      "product_code": "SND001",
+      "item_id": 22,
+      "category": "Sandwich",
+      "item_name": "Paneer Tikka Sandwich",
+      "display_name": "Paneer Tikka Grill",
+      "price": 149,
+      "description": "Grilled sandwich stuffed with paneer",
       "status": "available"
     }
   ],
@@ -335,38 +335,38 @@
   ],
   "Combos": [
     {
-      "combo_code": "CMB001",
-      "combo_name": "Fiesta Pizza Combo",
-      "items_included": ["PIZ001", "FRY003", "Drink"],
-      "combo_price": 249,
-      "status": "available"
-    },
-    {
       "combo_code": "CMB002",
       "combo_name": "Burger Feast Box",
       "items_included": ["BUR001", "FRY001", "Drink"],
-      "combo_price": 199,
-      "status": "available"
-    },
-    {
-      "combo_code": "CMB003",
-      "combo_name": "Snack Platter",
-      "items_included": ["SNK002", "SNK003", "BRD001"],
-      "combo_price": 299,
+      "combo_price": 139,
       "status": "available"
     },
     {
       "combo_code": "CMB004",
       "combo_name": "Sandwich Meal Box",
       "items_included": ["SND001", "FRY001", "Drink"],
-      "combo_price": 229,
+      "combo_price": 209,
+      "status": "available"
+    },
+    {
+      "combo_code": "CMB001",
+      "combo_name": "Fiesta Pizza Combo",
+      "items_included": ["PIZ001", "FRY003", "Drink"],
+      "combo_price": 219,
       "status": "available"
     },
     {
       "combo_code": "CMB005",
       "combo_name": "Pasta Treat Combo",
       "items_included": ["PAS001", "FRY002", "Drink"],
-      "combo_price": 349,
+      "combo_price": 239,
+      "status": "available"
+    },
+    {
+      "combo_code": "CMB003",
+      "combo_name": "Snack Platter",
+      "items_included": ["SNK002", "SNK003", "BRD001"],
+      "combo_price": 269,
       "status": "available"
     }
   ]

@@ -19,7 +19,7 @@
         "@context": "https://schema.org",
         "@type": "Restaurant",
         "name": "The Oven Vibe",
-        "image": "https://theovenvibe.netlify.app/static/images/brand_images/The%20Oven%20vibe_logo.webp",
+        "image": "https://theovenvibe.github.io/static/images/brand_images/The%20Oven%20vibe_logo.webp",
         "address": {
           "@type": "PostalAddress",
           "streetAddress": "Sundargarh",
@@ -31,8 +31,8 @@
         "telephone": "+91-9692261138",
         "email": "theovenvibe@gmail.com",
         "servesCuisine": ["Pizza", "Burger", "Fries", "Snacks", "Pasta"],
-        "url": "https://theovenvibe.netlify.app/",
-        "menu": "https://theovenvibe.netlify.app/menu.json",
+        "url": "https://theovenvibe.github.io/",
+        "menu": "https://theovenvibe.github.io/menu.json",
         "priceRange": "₹69-₹349",
         "openingHours": "Mo-Su 11:00-21:00",
         "aggregateRating": {
@@ -48,17 +48,17 @@
       }
     </script>
     <link rel="stylesheet" href="style.css" />
-    <link rel="canonical" href="https://theovenvibe.netlify.app/" />
+    <link rel="canonical" href="https://theovenvibe.github.io/" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="The Oven Vibe — Sundargarh, Odisha" />
     <meta
       property="og:description"
       content="The Oven Vibe — Oven-baked takeaway from Sundargarh. Order via WhatsApp."
     />
-    <meta property="og:url" content="https://theovenvibe.netlify.app/" />
+    <meta property="og:url" content="https://theovenvibe.github.io/" />
     <meta
       property="og:image"
-      content="https://theovenvibe.netlify.app/static/images/brand_images/The%20Oven%20Vibe_Hero_lable.webp"
+      content="https://theovenvibe.github.io/static/images/brand_images/The%20Oven%20Vibe_Hero_lable.webp"
     />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="The Oven Vibe — Sundargarh, Odisha" />
@@ -68,7 +68,7 @@
     />
     <meta
       name="twitter:image"
-      content="https://theovenvibe.netlify.app/static/images/brand_images/The%20Oven%20Vibe_Hero_lable.webp"
+      content="https://theovenvibe.github.io/static/images/brand_images/The%20Oven%20Vibe_Hero_lable.webp"
     />
     <!-- Preload LCP hero image (AVIF) -->
     <link
@@ -82,6 +82,9 @@
     />
   </head>
   <body>
+    <!-- FAILOVER SYSTEM - Must be first in body -->
+    <script src="failover.js" async></script>
+    
     <!-- STICKY NAVIGATION BAR -->
     <nav class="main-navbar" role="navigation">
       <div class="nav-left">
