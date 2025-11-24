@@ -80,6 +80,7 @@ async function init() {
     const res = await fetch(MENU_JSON, { credentials: "omit" });
     const data = await res.json();
     window.menuData = data;
+    validateMenuData(data);
 
     renderMenuSections(data); // Main menu categories
     renderCombos(data); // Combos section
@@ -101,6 +102,25 @@ function safeText(s) {
   return String(s || "");
 }
 
+function validateMenuData(d) {
+  if (
+    !d ||
+    !Array.isArray(d.Menu_Items) ||
+    !Array.isArray(d.Add_ons) ||
+    !Array.isArray(d.Combos)
+  ) {
+    throw new Error("Invalid menu.json structure");
+  }
+  const req = ["product_code", "category", "item_name", "price"];
+  d.Menu_Items.forEach((it) => {
+    req.forEach((k) => {
+      if (!(k in it)) {
+        throw new Error("Invalid item: " + (it.product_code || it.item_name));
+      }
+    });
+  });
+}
+
 // Directory by asset type
 function imageBaseDir(type) {
   if (type === "addon") return "static/images/add_on_images/";
@@ -111,15 +131,18 @@ function imageBaseDir(type) {
 // Create <picture> with AVIF > WebP > JXL, fallback <img> uses WebP
 function buildPicture(code, type, alt, className = "") {
   const pic = document.createElement("picture");
+  
+  // If no code provided, use placeholder directly
   if (!code) {
     const img = document.createElement("img");
     img.src = PLACEHOLDER;
-    img.alt = safeText(alt);
+    img.alt = safeText(alt) + " (photo unavailable)";
     img.loading = "lazy";
     if (className) img.className = className;
     pic.appendChild(img);
     return pic;
   }
+  
   const dir = imageBaseDir(type);
   const avif = `${dir}${code}.avif`;
   const webp = `${dir}${code}.webp`;
@@ -136,14 +159,20 @@ function buildPicture(code, type, alt, className = "") {
   s3.srcset = jxl;
 
   const img = document.createElement("img");
-  img.src = webp; // widely supported fallback
+  img.src = PLACEHOLDER; // Start with placeholder as fallback
   img.alt = safeText(alt);
   img.loading = "lazy";
   if (className) img.className = className;
-  img.onerror = () => {
-    img.src = PLACEHOLDER;
-    img.style.opacity = 0.9;
+  
+  // Try to load the actual image
+  const testImg = new Image();
+  testImg.onload = () => {
+    img.src = webp; // If test passes, use the real image
   };
+  testImg.onerror = () => {
+    img.src = PLACEHOLDER; // If test fails, keep placeholder
+  };
+  testImg.src = webp; // Test with webp
 
   pic.appendChild(s1);
   pic.appendChild(s2);
@@ -189,41 +218,111 @@ function renderMenuSections(data) {
       }
     });
 
-    // Render each item in this category
+    // Group items by product_code to handle variants (Half/Full, Small/Large)
     const items = data.Menu_Items.filter((i) => i.category === cat);
+    const groupedByCode = {};
     items.forEach((item) => {
+      if (!groupedByCode[item.product_code]) {
+        groupedByCode[item.product_code] = [];
+      }
+      groupedByCode[item.product_code].push(item);
+    });
+
+    // Update count badge to show unique products only
+    const uniqueCount = Object.keys(groupedByCode).length;
+    badge.innerText = uniqueCount + " items";
+
+    // Render each unique product (with variants grouped together)
+    // Sort by item_id to maintain menu order
+    const sortedEntries = Object.entries(groupedByCode).sort((a, b) => {
+      const idA = a[1][0].item_id || 0;
+      const idB = b[1][0].item_id || 0;
+      return idA - idB;
+    });
+    
+    sortedEntries.forEach(([productCode, itemsWithCode]) => {
+      const mainItem = itemsWithCode[0]; // Use first item for basic display info
       const itm = document.createElement("article");
       itm.className = "item";
-      
+
       // Apply status classes if item is not available
-      if (item.status === "coming-soon") {
+      if (mainItem.status === "coming-soon") {
         itm.classList.add("coming-soon");
-      } else if (item.status === "out-of-stock") {
+      } else if (mainItem.status === "out-of-stock") {
         itm.classList.add("out-of-stock");
       }
 
       const thumb = document.createElement("div");
       thumb.className = "thumb";
       const pic = buildPicture(
-        item.product_code,
+        mainItem.product_code,
         "product",
-        item.display_name || item.item_name
+        mainItem.display_name || mainItem.item_name
       );
       thumb.appendChild(pic);
+      const imgEl1 = pic.querySelector("img");
 
       const meta = document.createElement("div");
       meta.className = "meta";
       const title = document.createElement("h4");
-      title.innerText = item.display_name || item.item_name;
+      title.innerText = mainItem.display_name || mainItem.item_name;
       const desc = document.createElement("p");
-      desc.innerText = item.description || "";
-      const price = document.createElement("div");
-      price.className = "price";
-      price.innerText = "₹" + item.price;
+      desc.innerText = mainItem.description || "";
 
       meta.appendChild(title);
       meta.appendChild(desc);
-      meta.appendChild(price);
+
+      // Add variant prices (if multiple variants exist)
+      if (itemsWithCode.length > 1) {
+        const priceContainer = document.createElement("div");
+        priceContainer.className = "variant-prices";
+        priceContainer.style.display = "flex";
+        priceContainer.style.gap = "10px";
+        priceContainer.style.marginTop = "8px";
+        priceContainer.style.flexWrap = "wrap";
+
+        itemsWithCode.forEach((variant) => {
+          const priceBtn = document.createElement("button");
+          priceBtn.className = "price-variant";
+          priceBtn.style.padding = "6px 12px";
+          priceBtn.style.borderRadius = "6px";
+          priceBtn.style.border = "1px solid #ddd";
+          priceBtn.style.background = "#f9f9f9";
+          priceBtn.style.cursor = "pointer";
+          priceBtn.style.fontSize = "0.9rem";
+          priceBtn.style.fontWeight = "600";
+          priceBtn.style.transition = "all 0.2s";
+          
+          // Determine variant label (Half/Full, Small/Large, etc)
+          let variantLabel = "₹" + variant.price;
+          if (variant.item_name.includes("Half")) variantLabel = "Half: ₹" + variant.price;
+          else if (variant.item_name.includes("Full")) variantLabel = "Full: ₹" + variant.price;
+          else if (variant.item_name.includes("Small")) variantLabel = "Small: ₹" + variant.price;
+          else if (variant.item_name.includes("Large")) variantLabel = "Large: ₹" + variant.price;
+          
+          priceBtn.textContent = variantLabel;
+          
+          priceBtn.addEventListener("mouseover", () => {
+            priceBtn.style.background = "#ad210a";
+            priceBtn.style.color = "#fff";
+            priceBtn.style.borderColor = "#ad210a";
+          });
+          priceBtn.addEventListener("mouseout", () => {
+            priceBtn.style.background = "#f9f9f9";
+            priceBtn.style.color = "#000";
+            priceBtn.style.borderColor = "#ddd";
+          });
+          
+          priceContainer.appendChild(priceBtn);
+        });
+        meta.appendChild(priceContainer);
+      } else {
+        // Single price for non-variant items
+        const price = document.createElement("div");
+        price.className = "price";
+        price.innerText = "₹" + mainItem.price;
+        meta.appendChild(price);
+      }
 
       itm.appendChild(thumb);
       itm.appendChild(meta);
@@ -282,7 +381,7 @@ function renderCombos(data) {
   combos.forEach((c) => {
     const box = document.createElement("div");
     box.className = "combo";
-    
+
     // Apply status classes if combo is not available
     if (c.status === "coming-soon") {
       box.classList.add("coming-soon");
@@ -294,16 +393,31 @@ function renderCombos(data) {
     thumb.className = "thumb";
     const pic = buildPicture(c.combo_code, "combo", c.combo_name);
     thumb.appendChild(pic);
+    const imgEl2 = pic.querySelector("img");
 
     const meta = document.createElement("div");
     meta.className = "meta";
     const title = document.createElement("h4");
     title.innerText = c.combo_name;
     const descr = document.createElement("p");
-    const readableItems = (c.items_included || [])
-      .map((code) => codeToName[code] || code)
-      .join(", ");
-    descr.innerText = "Includes: " + readableItems;
+    
+    // Extract just the items part from description (everything after "] ")
+    let itemsText = "Includes: ";
+    if (c.description) {
+      // Description format: "[Veg preparation] Item1+Item2+Coke..."
+      // Extract everything after the first "] "
+      const parts = c.description.split("] ");
+      if (parts.length > 1) {
+        itemsText = "Includes: " + parts[1];
+      }
+    } else {
+      // Fallback to items_included if no description
+      const readableItems = (c.items_included || [])
+        .map((code) => codeToName[code] || code)
+        .join(", ");
+      itemsText = "Includes: " + readableItems;
+    }
+    descr.innerText = itemsText;
     const price = document.createElement("div");
     price.className = "price";
     price.innerText = "₹" + c.combo_price;
@@ -329,7 +443,7 @@ function renderAddons(data) {
   const target = document.getElementById("addonsList");
   if (!target) return;
   target.innerHTML = "";
-  const addons = data.Add_Ons || [];
+  const addons = data.Add_ons || [];
 
   // Update header with count
   const header = document.getElementById("addonsHeader");
@@ -360,7 +474,7 @@ function renderAddons(data) {
   addons.forEach((a) => {
     const itm = document.createElement("article");
     itm.className = "item";
-    
+
     // Apply status classes if addon is not available
     if (a.status === "coming-soon") {
       itm.classList.add("coming-soon");
@@ -370,8 +484,11 @@ function renderAddons(data) {
 
     const thumb = document.createElement("div");
     thumb.className = "thumb";
-    const pic = buildPicture(a.addon_code, "addon", a.addon_name);
+    // Use image_code if available, otherwise fallback to addon_code
+    const imageCode = a.image_code || a.addon_code;
+    const pic = buildPicture(imageCode, "addon", a.addon_name);
     thumb.appendChild(pic);
+    const imgEl3 = pic.querySelector("img");
 
     const meta = document.createElement("div");
     meta.className = "meta";
@@ -381,7 +498,7 @@ function renderAddons(data) {
     desc.innerText = a.best_for ? `Best for: ${a.best_for}` : "";
     const price = document.createElement("div");
     price.className = "price";
-    price.innerText = "₹" + a.price;
+    price.innerText = "₹" + a.addon_price;
 
     meta.appendChild(title);
     meta.appendChild(desc);

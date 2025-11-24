@@ -106,7 +106,7 @@ header a { text-decoration: none; color: var(--brand-red); font-weight: bold; }
 .menu-items { display: block; padding: 8px 0; }
 .item { display: flex; gap: 10px; align-items: flex-start; padding: 10px 4px; border-bottom: 1px solid #f3f3f3; position: relative; }
 .item:last-child { border-bottom: none; }
-.item .thumb { flex: 0 0 88px; aspect-ratio: 1 / 1; }
+.item .thumb { flex: 0 0 88px; aspect-ratio: 1 / 1; position: relative; }
 .item .thumb img { width: 100%; height: 100%; max-width: 120px; max-height: 120px; object-fit: contain; border-radius: 8px; background: #fff; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04); }
 
 /* Item Status Styles */
@@ -136,13 +136,13 @@ header a { text-decoration: none; color: var(--brand-red); font-weight: bold; }
 }
 .item .meta { flex: 1; display: flex; flex-direction: column; }
 .item .meta h4 { margin: 0; font-size: 1rem; }
-.item .meta p { margin: 6px 0 0; color: var(--muted); font-size: 0.9rem; }
-.item .meta .price { margin-top: 8px; color: var(--brand-red); font-weight: 800; }
+.item .meta p { margin: 6px 0 0; color: var(--muted); font-size: 0.9rem; flex-grow: 1; }
+.item .meta .price { margin-top: auto; color: var(--brand-red); font-weight: 800; }
 
 /* ========== Combos ========== */
 .combo-list { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 8px; }
 .combo { display: flex; gap: 12px; align-items: center; padding: 10px; border-radius: 10px; background: #fff; border: 1px solid #f2f2f2; position: relative; }
-.combo .thumb { flex: 0 0 88px; aspect-ratio: 1 / 1; }
+.combo .thumb { flex: 0 0 88px; aspect-ratio: 1 / 1; position: relative; }
 .combo .thumb img { width: 100%; height: 100%; object-fit: contain; }
 
 /* Combo Status Styles */
@@ -236,6 +236,10 @@ iframe { width: 100%; height: 600px; border: none; border-radius: 8px; box-shado
 /* Ensure collapsed sections stay hidden at all breakpoints */
 .menu-items.hidden, .combo-list.hidden, #addonsList.hidden { display: none !important; }
 .center { text-align: center; }
+
+/* Temporary image indicator */
+.temp-img { border: 2px dashed var(--brand-red); border-radius: 8px; background: #fff7f7; }
+.thumb.temp-image::after { content: "TEMP"; position: absolute; top: 8px; left: 8px; background: #ffc107; color: rgba(0,0,0,0.85); padding: 2px 6px; font-size: 12px; border-radius: 3px; font-weight: 600; }
 
 /* ========== Responsive refinements ========== */
 @media (min-width: 900px) {

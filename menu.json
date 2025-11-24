@@ -1,352 +1,374 @@
 {
-  "_comment": "Item status can be: 'available' (default), 'coming-soon', or 'out-of-stock'. Just comment/uncomment the line you need.",
+  "_comment": "Menu data organized exactly as per Zomato catalogue",
   "Menu_Items": [
     {
-      "product_code": "PIZ003",
-      "item_id": 3,
-      "category": "Pizza",
-      "item_name": "Onion Pizza",
-      "display_name": "Zesty Onion Feast Pizza",
-      "price": 99,
-      "description": "Crisp onions with oregano seasoning",
-      "status": "available"
-    },
-    {
-      "product_code": "PIZ002",
-      "item_id": 2,
-      "category": "Pizza",
-      "item_name": "Corn & Cheese Pizza",
-      "display_name": "Golden Corn Classic Pizza",
-      "price": 119,
-      "description": "Cheesy base loaded with sweet corn",
-      "status": "available"
-    },
-    {
-      "product_code": "PIZ005",
-      "item_id": 5,
-      "category": "Pizza",
-      "item_name": "Tamato Pizza",
-      "display_name": "Classic Tomato Pizza",
-      "price": 119,
-      "description": "Simple tomato base with cheese & herbs",
-      "status": "available"
-    },
-    {
-      "product_code": "PIZ001",
+      "product_code": "751393909",
       "item_id": 1,
-      "category": "Pizza",
-      "item_name": "Paneer Tikka Pizza",
-      "display_name": "Herb Paneer Delight Pizza",
-      "price": 149,
-      "description": "Smoky paneer tikka with cheese & herbs",
+      "category": "Fried Rice Bowls",
+      "subcategory": "Classic Veg Fried Rice",
+      "item_name": "Veg Fried Rice",
+      "display_name": "Veg Fried Rice",
+      "price": 99,
+      "description": "[Veg preparation] Fluffy wok tossed basmati rice with crunchy carrots, beans and sweet corn. Light soy seasoning a hint of black pepper finished with a squeeze of lemon. Served hot in a leak proof box a balanced everyday plate for quick lunches or dinners.",
       "status": "available"
     },
     {
-      "product_code": "PIZ004",
-      "item_id": 4,
-      "category": "Pizza",
-      "item_name": "Capsicum Pizza",
-      "display_name": "Crunchy Capsicum Pizza",
+      "product_code": "751393910",
+      "item_id": 2,
+      "category": "Fried Rice Bowls",
+      "subcategory": "Classic Veg Fried Rice",
+      "item_name": "Garlic Fried Rice",
+      "display_name": "Garlic Fried Rice",
+      "price": 109,
+      "description": "[Veg preparation] Aromatic fried rice kissed with roasted garlic and butter notes. Stir fried with julienne capsicum and corn mild, fragrant and comforting. Topped with thin garlic chips on request for extra crunch.",
+      "status": "available"
+    },
+    {
+      "product_code": "751393911",
+      "item_id": 3,
+      "category": "Fried Rice Bowls",
+      "subcategory": "Spicy and Signature Indo Chinese",
+      "item_name": "Schezwan Fried Rice",
+      "display_name": "Schezwan Fried Rice 🌶️",
       "price": 119,
-      "description": "Bell peppers with cheese",
+      "description": "[Veg preparation] Smoky, tangy and spicy our house made schezwan paste is wok fried with rice, cabbage, capsicum and onions. Bold red colour, slight char and a balanced heat that builds with each bite.",
       "status": "available"
     },
     {
-      "product_code": "PIZ007",
-      "item_id": 7,
-      "category": "Pizza",
-      "item_name": "Onion Capsicum Pizza",
-      "display_name": "Veggie Onion Capsicum Pizza",
+      "product_code": "751393912",
+      "item_id": 4,
+      "category": "Fried Rice Bowls",
+      "subcategory": "Premium Veg Protein Bowls",
+      "item_name": "Paneer Fried Rice",
+      "display_name": "Paneer Fried Rice",
       "price": 149,
-      "description": "Fresh onion & capsicum on cheesy base",
+      "description": "[Veg preparation] Large, soft cubes of marinated paneer, pan seared and tossed with wok fried rice, crisp vegetables and tangy Indo Chinese sauce. High protein, filling and flavorful.",
       "status": "available"
     },
     {
-      "product_code": "PIZ006",
+      "product_code": "751397746",
+      "item_id": 5,
+      "category": "Fried Rice Bowls",
+      "subcategory": "Premium Veg Protein Bowls",
+      "item_name": "Mixed Treasure Fried Rice",
+      "display_name": "Mixed Treasure Fried Rice",
+      "price": 169,
+      "description": "[Veg preparation] Feast in a box paneer, baby corn, capsicum and roasted cashews in a rich slightly sweet savory wok sauce.",
+      "status": "available"
+    },
+    {
+      "product_code": "745802369",
       "item_id": 6,
       "category": "Pizza",
-      "item_name": "Cheese Pizza",
-      "display_name": "Ultimate Cheese Delight Pizza",
-      "price": 109,
-      "description": "Loaded with melted mozzarella cheese",
+      "subcategory": "Pizza",
+      "item_name": "Zesty Onion Feast Pizza",
+      "display_name": "Zesty Onion Feast Pizza [Regular, 7 inches] 👨‍🍳",
+      "price": 99,
+      "description": "[veg preparation] Crisp onions with oregano seasoning.",
       "status": "available"
     },
     {
-      "product_code": "PIZ009",
+      "product_code": "745802358",
+      "item_id": 7,
+      "category": "Pizza",
+      "subcategory": "Pizza",
+      "item_name": "Ultimate Cheese Delight Pizza",
+      "display_name": "Ultimate Cheese Delight Pizza [Regular, 7 inches] 👨‍🍳",
+      "price": 109,
+      "description": "[veg preparation] Loaded with melted Mozzarella cheese.",
+      "status": "available"
+    },
+    {
+      "product_code": "745802385",
+      "item_id": 8,
+      "category": "Pizza",
+      "subcategory": "Pizza",
+      "item_name": "Golden Corn Classic Pizza",
+      "display_name": "Golden Corn Classic Pizza [Regular, 7 inches] 👨‍🍳",
+      "price": 119,
+      "description": "[veg preparation] Golden Corn Classic Pizza loaded with sweet corn, melting cheese, sliced black olives, and red paprika.",
+      "status": "available"
+    },
+    {
+      "product_code": "745802381",
       "item_id": 9,
       "category": "Pizza",
-      "item_name": "Bread Pizza",
-      "display_name": "Mini Breadza",
-      "price": 89,
-      "description": "Small cheesy bread pizza",
+      "subcategory": "Pizza",
+      "item_name": "Crunchy Capsicum Pizza",
+      "display_name": "Crunchy Capsicum Pizza [Regular, 7 inches] 👨‍🍳",
+      "price": 119,
+      "description": "[veg preparation] Bell peppers with cheese.",
       "status": "available"
     },
     {
-      "product_code": "BUR001",
-      "item_id": 7,
-      "category": "Burger",
-      "item_name": "Aloo Tikki Burger",
-      "display_name": "Classic Aloo Burger",
-      "price": 89,
-      "description": "Spiced aloo tikki with sauce",
-      "status": "available"
-    },
-    {
-      "product_code": "BUR003",
-      "item_id": 9,
-      "category": "Burger",
-      "item_name": "Cheese Burger",
-      "display_name": "Cheesy Melt Burger",
-      "price": 109,
-      "description": "Cheese-stuffed patty with mayo",
-      "status": "available"
-    },
-    {
-      "product_code": "BUR002",
-      "item_id": 8,
-      "category": "Burger",
-      "item_name": "Paneer Burger",
-      "display_name": "Paneer King Burger",
-      "price": 139,
-      "description": "Crispy paneer patty & cheese",
-      "status": "available"
-    },
-    {
-      "product_code": "FRY001",
+      "product_code": "745802364",
       "item_id": 10,
-      "category": "Fries",
-      "item_name": "French Fries (Small)",
-      "display_name": "Classic Fries – Small",
-      "price": 49,
-      "description": "Crisp golden fries",
+      "category": "Pizza",
+      "subcategory": "Pizza",
+      "item_name": "Herb Paneer Delight Pizza",
+      "display_name": "Herb Paneer Delight Pizza [Regular, 7 inches] 👨‍🍳",
+      "price": 149,
+      "description": "[veg preparation] Loaded Smoky Paneer Tikka Pizza topped with melting cheese, jalapenos, and red paprika.",
       "status": "available"
     },
     {
-      "product_code": "FRY003",
-      "item_id": 12,
-      "category": "Fries",
-      "item_name": "Peri Peri Fries (Small)",
-      "display_name": "Spicy Peri Fries – Small",
-      "price": 59,
-      "description": "Tossed in peri-peri spice",
-      "status": "available"
-    },
-    {
-      "product_code": "FRY002",
+      "product_code": "752649876",
       "item_id": 11,
-      "category": "Fries",
-      "item_name": "French Fries (Large)",
-      "display_name": "Classic Fries – Large",
-      "price": 69,
-      "description": "Extra portion of golden fries",
+      "category": "Pizza",
+      "subcategory": "Pizza",
+      "item_name": "Paneer Makhni Royale Pizza",
+      "display_name": "Paneer Makhni Royale Pizza [Regular, 7 inches] 👨‍🍳",
+      "price": 169,
+      "description": "[Veg preparation] Soft paneer cubes cooked in creamy makhni sauce with cashew paste.",
       "status": "available"
     },
     {
-      "product_code": "FRY004",
+      "product_code": "751732822",
+      "item_id": 12,
+      "category": "Pizza",
+      "subcategory": "Pizza",
+      "item_name": "Mushroom Supreme Pizza",
+      "display_name": "Mushroom Supreme Pizza [Regular, 7 inches] 👨‍🍳",
+      "price": 159,
+      "description": "[Veg preparation] A rich, fully loaded mushroom pizza with juicy mushroom, jalapenos, red paprika and melting cheese.",
+      "status": "available"
+    },
+    {
+      "product_code": "745802365",
       "item_id": 13,
-      "category": "Fries",
-      "item_name": "Peri Peri Fries (Large)",
-      "display_name": "Spicy Peri Fries – Large",
-      "price": 99,
-      "description": "Bigger share of spicy fries",
+      "category": "Pizza",
+      "subcategory": "Pizza",
+      "item_name": "Vegie Onion Capsicum Pizza",
+      "display_name": "Vegie Onion Capsicum Pizza [Regular, 7 inches] 👨‍🍳",
+      "price": 149,
+      "description": "[veg preparation] Fresh onion and capsicum on cheesy base.",
       "status": "available"
     },
     {
-      "product_code": "BRD001",
+      "product_code": "751793935",
       "item_id": 14,
-      "category": "Bread",
-      "item_name": "Cheese Garlic Bread",
+      "category": "Pasta",
+      "subcategory": "Pasta",
+      "item_name": "Creamy Alfredo Pasta",
+      "display_name": "Creamy Alfredo Pasta (Fusilli)",
+      "price": 149,
+      "description": "[veg preparation] Rich and velvety white-sauce pasta made with perfectly cooked fusilli tossed in creamy Alfredo sauce.",
+      "status": "available"
+    },
+    {
+      "product_code": "752770847",
+      "item_id": 15,
+      "category": "Pasta",
+      "subcategory": "Pasta",
+      "item_name": "Classic Red Sauce Pasta",
+      "display_name": "Classic Red Sauce Pasta (Penne) 🌶️",
+      "price": 129,
+      "description": "[veg preparation] Authentic Italian-style red sauce pasta made using penne simmered in slow-cooked tangy tomato sauce.",
+      "status": "available"
+    },
+    {
+      "product_code": "752623129",
+      "item_id": 16,
+      "category": "Grilled Sandwiches",
+      "subcategory": "Sandwiches",
+      "item_name": "Tangy Green Chutney Sandwich",
+      "display_name": "Tangy Green Chutney Sandwich",
+      "price": 59,
+      "description": "[Veg preparation] Fresh chutney with veggies.",
+      "status": "available"
+    },
+    {
+      "product_code": "752623130",
+      "item_id": 17,
+      "category": "Grilled Sandwiches",
+      "subcategory": "Sandwiches",
+      "item_name": "Fiery Cheese Chilli Sandwich",
+      "display_name": "Fiery Cheese Chilli Sandwich 🌶️ 🌶️",
+      "price": 89,
+      "description": "[veg preparation] Spicy cheese and chilli filing.",
+      "status": "available"
+    },
+    {
+      "product_code": "752623131",
+      "item_id": 18,
+      "category": "Grilled Sandwiches",
+      "subcategory": "Sandwiches",
+      "item_name": "Paneer Tikka Grilled Sandwich",
+      "display_name": "Paneer Tikka Grilled Sandwich",
+      "price": 119,
+      "description": "[veg preparation] Grilled sandwich stuffed with paneer.",
+      "status": "available"
+    },
+    {
+      "product_code": "745802374",
+      "item_id": 19,
+      "category": "Sides & Snacks",
+      "subcategory": "Snacks",
+      "item_name": "Classic French Fries",
+      "display_name": "Classic French Fries",
+      "price": 69,
+      "description": "[veg preparation] Crisp golden fries.",
+      "status": "available"
+    },
+    {
+      "product_code": "745802351",
+      "item_id": 20,
+      "category": "Sides & Snacks",
+      "subcategory": "Snacks",
+      "item_name": "Spicy Peri French Fries",
+      "display_name": "Spicy Peri French Fries",
+      "price": 89,
+      "description": "[veg preparation] Tossed in peri peri spice.",
+      "status": "available"
+    },
+    {
+      "product_code": "745802387",
+      "item_id": 21,
+      "category": "Sides & Snacks",
+      "subcategory": "Snacks",
+      "item_name": "Cheesy Garlic Bread Toast",
       "display_name": "Cheesy Garlic Bread Toast",
       "price": 79,
-      "description": "Garlic butter with melted cheese",
+      "description": "[veg preparation] Garlic butter with melted cheese.",
       "status": "available"
     },
     {
-      "product_code": "BRD002",
-      "item_id": 15,
-      "category": "Bread",
-      "item_name": "Masala Cheese Kulcha",
-      "display_name": "Cheesy Masala Kulcha",
-      "price": 99,
-      "description": "Masala Kulcha topped with gooey cheese.",
-      "status": "coming-soon"
-    },
-    {
-      "product_code": "SNK001",
-      "item_id": 16,
-      "category": "Snacks",
-      "item_name": "Peri Peri Makhana",
-      "display_name": "Crunchy Peri Makhana",
-      "price": 79,
-      "description": "Healthy roasted makhana tossed in spice",
-      "status": "available"
-    },
-    {
-      "product_code": "SNK003",
-      "item_id": 18,
-      "category": "Snacks",
-      "item_name": "Mini Cheese Corn Balls",
-      "display_name": "Cheesy Corn Bites",
-      "price": 99,
-      "description": "Mini balls with corn & cheese filling",
-      "status": "coming-soon"
-    },
-    {
-      "product_code": "SNK002",
-      "item_id": 17,
-      "category": "Snacks",
-      "item_name": "Paneer Pops",
-      "display_name": "Paneer Popcorn Bites",
-      "price": 109,
-      "description": "Crispy fried paneer bites",
-      "status": "available"
-    },
-    {
-      "product_code": "PAS001",
-      "item_id": 19,
-      "category": "Pasta",
-      "item_name": "White Sauce Pasta",
-      "display_name": "Creamy Alfredo Pasta",
-      "price": 149,
-      "description": "Pasta in rich white sauce",
-      "status": "coming-soon"
-    },
-    {
-      "product_code": "VEG001",
-      "item_id": 20,
-      "category": "Veg Fry",
-      "item_name": "Masala Corn Fry",
+      "product_code": "745802356",
+      "item_id": 22,
+      "category": "Sides & Snacks",
+      "subcategory": "Snacks",
+      "item_name": "Tangy Masala Corn",
       "display_name": "Tangy Masala Corn",
       "price": 69,
-      "description": "Corn kernels tossed with spice",
+      "description": "[veg preparation] Corn kernels tossed with spice.",
       "status": "available"
     },
     {
-      "product_code": "VEG002",
-      "item_id": 21,
-      "category": "Veg Fry",
-      "item_name": "Cheese Corn Fry",
+      "product_code": "745802367",
+      "item_id": 23,
+      "category": "Sides & Snacks",
+      "subcategory": "Snacks",
+      "item_name": "Cheesy Corn Mix",
       "display_name": "Cheesy Corn Mix",
       "price": 99,
-      "description": "Corn with cheese & herbs",
+      "description": "[veg preparation] Corn with cheese and herbs.",
       "status": "available"
     },
     {
-      "product_code": "SND003",
+      "product_code": "745802352",
       "item_id": 24,
-      "category": "Sandwich",
-      "item_name": "Chutney Sandwich",
-      "display_name": "Tangy Green Chutney",
-      "price": 59,
-      "description": "Fresh chutney with veggies",
-      "status": "available"
-    },
-    {
-      "product_code": "SND002",
-      "item_id": 23,
-      "category": "Sandwich",
-      "item_name": "Cheese Chilli Sandwich",
-      "display_name": "Fiery Cheese Chilli",
-      "price": 89,
-      "description": "Spicy cheese & chilli filling",
-      "status": "available"
-    },
-    {
-      "product_code": "SND001",
-      "item_id": 22,
-      "category": "Sandwich",
-      "item_name": "Paneer Tikka Sandwich",
-      "display_name": "Paneer Tikka Grill",
-      "price": 119,
-      "description": "Grilled sandwich stuffed with paneer",
-      "status": "available"
-    }
-  ],
-  "Add_Ons": [
-    {
-      "addon_code": "ADD001",
-      "addon_name": "Extra Cheese",
-      "price": 19,
-      "best_for": "Pizza, Fries, Burgers, Sandwich",
-      "status": "available"
-    },
-    {
-      "addon_code": "ADD002",
-      "addon_name": "Corn",
-      "price": 6,
-      "best_for": "Pizza, Garlic Bread",
-      "status": "available"
-    },
-    {
-      "addon_code": "ADD003",
-      "addon_name": "Extra Paneer",
-      "price": 39,
-      "best_for": "Pizza, Burgers, Sandwich",
-      "status": "available"
-    },
-    {
-      "addon_code": "ADD004",
-      "addon_name": "Garlic Butter",
-      "price": 11,
-      "best_for": "Bread, Pizza",
-      "status": "available"
-    },
-    {
-      "addon_code": "ADD005",
-      "addon_name": "Oregano/Herbs",
-      "price": 3,
-      "best_for": "Fries, Pizza, Bread",
-      "status": "available"
-    },
-    {
-      "addon_code": "ADD006",
-      "addon_name": "Cheese Dip",
-      "price": 19,
-      "best_for": "Fries, Snacks",
-      "status": "available"
-    },
-    {
-      "addon_code": "ADD007",
-      "addon_name": "Peri Peri Dip",
-      "price": 19,
-      "best_for": "Fries, Pizza, Snacks",
+      "category": "Sides & Snacks",
+      "subcategory": "Snacks",
+      "item_name": "Crunchy Peri Makhana",
+      "display_name": "Crunchy Peri Makhana [25 g]",
+      "price": 79,
+      "description": "[veg preparation] Healthy roasted makhana tossed in spice.",
       "status": "available"
     }
   ],
   "Combos": [
     {
-      "combo_code": "CMB002",
-      "combo_name": "Burger Feast Box",
-      "items_included": ["BUR001", "FRY001", "Drink"],
-      "combo_price": 169,
+      "combo_code": "752694444",
+      "combo_name": "Veg Fried Rice Meal Box Combo",
+      "combo_price": 109,
+      "description": "[Veg preparation] Veg Fried Rice+Coke Soft Beverage [250 ml]",
+      "items_included": [
+        "751393909"
+      ],
       "status": "available"
     },
     {
-      "combo_code": "CMB004",
-      "combo_name": "Sandwich Meal Box",
-      "items_included": ["SND001", "FRY001", "Drink"],
-      "combo_price": 209,
+      "combo_code": "752694468",
+      "combo_name": "Schezwan Fried Rice Meal Box Combo 🌶️",
+      "combo_price": 129,
+      "description": "[Veg preparation] Schezwan Fried Rice+Coke Soft Beverage [250 ml]",
+      "items_included": [
+        "751393911"
+      ],
       "status": "available"
     },
     {
-      "combo_code": "CMB001",
+      "combo_code": "745802348",
       "combo_name": "Fiesta Pizza Combo",
-      "items_included": ["PIZ001", "FRY003", "Drink"],
       "combo_price": 269,
+      "description": "[Veg preparation] Herb Paneer Delight Pizza [Regular, 7 inches]+Spicy Peri Fries [Small]+Coke Soft Beverage [250 ml]",
+      "items_included": [
+        "745802364",
+        "745802351"
+      ],
       "status": "available"
     },
     {
-      "combo_code": "CMB005",
+      "combo_code": "745802384",
       "combo_name": "Pasta Treat Combo",
-      "items_included": ["PAS001", "FRY002", "Drink"],
       "combo_price": 239,
-      "status": "coming-soon"
+      "description": "[Veg preparation] Creamy Alfredo Pasta (Fusilli)+Classic Fries [Large]+Coke Soft Beverage [250 ml]",
+      "items_included": [
+        "751793935",
+        "745802374"
+      ],
+      "status": "available"
     },
     {
-      "combo_code": "CMB003",
-      "combo_name": "Snack Platter",
-      "items_included": ["SNK002", "SNK003", "BRD001"],
-      "combo_price": 229,
+      "combo_code": "745802354",
+      "combo_name": "Sandwich Meal Box Combo",
+      "combo_price": 209,
+      "description": "[Veg preparation] Paneer Tikka Grilled Sandwich+Classic Fries [Small]+Coke Soft Beverage [250 ml]",
+      "items_included": [
+        "752623131",
+        "745802374"
+      ],
+      "status": "available"
+    }
+  ],
+  "Add_ons": [
+    {
+      "addon_code": "747584635",
+      "addon_name": "Cheese Dip",
+      "addon_price": 19,
+      "image_code": "ADD006",
+      "status": "available"
+    },
+    {
+      "addon_code": "747584636",
+      "addon_name": "Cheese",
+      "addon_price": 19,
+      "image_code": "ADD001",
+      "status": "available"
+    },
+    {
+      "addon_code": "747584638",
+      "addon_name": "Garlic Butter",
+      "addon_price": 11,
+      "image_code": "ADD004",
+      "status": "available"
+    },
+    {
+      "addon_code": "747584739",
+      "addon_name": "Sweet Corn",
+      "addon_price": 6,
+      "image_code": "ADD002",
+      "status": "available"
+    },
+    {
+      "addon_code": "747584740",
+      "addon_name": "Paneer Tikka",
+      "addon_price": 39,
+      "image_code": "ADD003",
+      "status": "available"
+    },
+    {
+      "addon_code": "747584741",
+      "addon_name": "Oregano",
+      "addon_price": 3,
+      "image_code": "ADD005",
+      "status": "available"
+    },
+    {
+      "addon_code": "747584970",
+      "addon_name": "Peri Peri Dip",
+      "addon_price": 19,
+      "image_code": "ADD007",
       "status": "available"
     }
   ]

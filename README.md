@@ -72,6 +72,29 @@ Hosted for free on **Netlify**: [https://theovenvibe.netlify.app](https://theove
 
 ## 💌 Contact & Orders
 
+## 🖼️ Temporary Image Placeholder Process
+
+To standardize UX when product images are missing, a temporary placeholder is used automatically:
+
+- Placeholder asset: `static/images/product_images/placeholder.svg`
+- Auto-fallback behavior: If an image fails to load or a product has no `product_code`, the UI shows the placeholder with a dashed border and a TEMP badge.
+- Where implemented: Rendering logic in `script.js` uses `PLACEHOLDER` and applies classes `temp-img` and `temp-image`.
+
+How to replace with real images later:
+
+1. Prepare images for each product/add-on/combo using this naming:
+   - Products: `static/images/product_images/<PRODUCT_CODE>.avif|webp|jxl`
+   - Add-ons: `static/images/add_on_images/<ADDON_CODE>.avif|webp|jxl`
+   - Combos: `static/images/combo_images/<COMBO_CODE>.avif|webp|jxl`
+2. Keep aspect ratio square; recommended max 640×640, optimized AVIF/WebP/JXL.
+3. After placing files, ensure the related codes exist in `menu.json` (e.g., `product_code`).
+4. No code changes required; the site will pick up images automatically and the TEMP indicator will disappear.
+
+Notes:
+
+- Prices are displayed from `menu.json` and must not be changed by assets.
+- For accessibility and SEO, `alt` text includes the product name; placeholders add “(temporary image)”.
+
 - 📱 WhatsApp: [+91-9692261138](https://wa.me/9192261138)
 - ✉️ Email: theovenvibe@gmail.com
 - 📸 Instagram: [@theovenvibe](https://instagram.com/theovenvibe)
