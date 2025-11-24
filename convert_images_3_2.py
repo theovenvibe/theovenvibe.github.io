@@ -7,9 +7,9 @@ import os
 import subprocess
 from pathlib import Path
 
-SOURCE_DIR = "/home/milanbeherazyx/theovenvibe.github.io/static/images/menu zomato"
-PRODUCT_DIR = "/home/milanbeherazyx/theovenvibe.github.io/static/images/product_images"
-COMBO_DIR = "/home/milanbeherazyx/theovenvibe.github.io/static/images/combo_images"
+SOURCE_DIR = "./static/images/menu zomato"
+PRODUCT_DIR = "./static/images/product_images"
+COMBO_DIR = "./static/images/combo_images"
 
 IMAGE_MAPPING = {
     "Fried Rice Bowls": {
@@ -17,6 +17,7 @@ IMAGE_MAPPING = {
         "Garlic Fried Rice": "751393910",
         "Schezwan Fried Rice": "751393911",
         "Paneer Fried Rice": "751393912",
+        "Mixed Tresure Fried Rice Zomato": "751397746",
     },
     "Pizza": {
         "Zesty Onion Feast Pizza [Regular, 7 inches]": "745802369",
@@ -51,23 +52,25 @@ IMAGE_MAPPING = {
     },
 }
 
+
 def convert_to_formats(source_file, dest_base_path, dest_dir):
     """Convert image to AVIF, WebP, JXL in 3:2 ratio without white borders"""
     try:
         # Use ImageMagick to crop to 3:2 and convert
         # gravity center crops from center, -extent adds canvas (we don't want that)
         # Instead, we'll resize to fit 3:2 ratio
-        
+
         # First, get image dimensions
         identify_cmd = f"identify -format '%wx%h' '{source_file}'"
-        result = subprocess.run(identify_cmd, shell=True, capture_output=True, text=True)
+        result = subprocess.run(identify_cmd, shell=True,
+                                capture_output=True, text=True)
         if result.returncode != 0:
             print(f"  ❌ Could not identify {source_file}")
             return False
-        
+
         dimensions = result.stdout.strip()
         print(f"  Original: {dimensions}")
-        
+
         # Convert to AVIF (3:2 ratio, no padding)
         avif_cmd = f"""convert '{source_file}' \
             -auto-orient \
@@ -76,9 +79,9 @@ def convert_to_formats(source_file, dest_base_path, dest_dir):
             -gravity center \
             -extent 600x400 \
             '{dest_base_path}.avif'"""
-        
+
         subprocess.run(avif_cmd, shell=True, check=False)
-        
+
         # Convert to WebP
         webp_cmd = f"""convert '{source_file}' \
             -auto-orient \
@@ -87,9 +90,9 @@ def convert_to_formats(source_file, dest_base_path, dest_dir):
             -gravity center \
             -extent 600x400 \
             '{dest_base_path}.webp'"""
-        
+
         subprocess.run(webp_cmd, shell=True, check=False)
-        
+
         # Convert to JXL
         jxl_cmd = f"""convert '{source_file}' \
             -auto-orient \
@@ -98,30 +101,31 @@ def convert_to_formats(source_file, dest_base_path, dest_dir):
             -gravity center \
             -extent 600x400 \
             '{dest_base_path}.jxl'"""
-        
+
         subprocess.run(jxl_cmd, shell=True, check=False)
-        
+
         print(f"  ✅ Converted to AVIF/WebP/JXL (600x400 - 3:2 ratio)")
         return True
-        
+
     except Exception as e:
         print(f"  ❌ Error: {e}")
         return False
 
+
 def process_images():
     """Process all images from menu zomato folder"""
-    
+
     for category, items in IMAGE_MAPPING.items():
         source_category_dir = os.path.join(SOURCE_DIR, category)
-        
+
         if not os.path.exists(source_category_dir):
             print(f"⚠️  {category} dir not found")
             continue
-        
+
         dest_dir = COMBO_DIR if category == "Combo" else PRODUCT_DIR
-        
+
         print(f"\n📁 Processing {category}...")
-        
+
         for display_name, catalogue_id in items.items():
             # Find the image file
             found = False
@@ -129,14 +133,15 @@ def process_images():
                 if display_name in file or file.replace(" (Penne)", "").replace(" (Fusilli)", "") == display_name:
                     source_file = os.path.join(source_category_dir, file)
                     dest_base = os.path.join(dest_dir, catalogue_id)
-                    
+
                     print(f"  🖼️  {display_name}")
                     convert_to_formats(source_file, dest_base, dest_dir)
                     found = True
                     break
-            
+
             if not found:
                 print(f"  ⚠️  Image not found: {display_name}")
+
 
 if __name__ == "__main__":
     print("🔄 Converting images to 3:2 ratio without white borders...\n")

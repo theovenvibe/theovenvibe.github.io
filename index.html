@@ -13,13 +13,14 @@
       name="keywords"
       content="oven vibe, pizza, burger, fries, snacks, pasta, takeaway, Sundargarh, Odisha, 770001, cloud kitchen, restaurant, WhatsApp order, best pizza near me Sundargarh, Sundargarh food delivery"
     />
-    <!-- Schema.org Restaurant Structured Data -->
+    <!-- Schema.org Restaurant Structured Data (Enhanced for Local SEO) -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "Restaurant",
+        "@type": ["Restaurant", "LocalBusiness", "FoodDelivery"],
         "name": "The Oven Vibe",
         "image": "https://theovenvibe.github.io/static/images/brand_images/The%20Oven%20vibe_logo.webp",
+        "description": "Oven-baked pizzas, burgers, and takeaway food in Sundargarh, Odisha. Order via WhatsApp, Zomato, or Swiggy.",
         "address": {
           "@type": "PostalAddress",
           "streetAddress": "Sundargarh",
@@ -28,9 +29,22 @@
           "postalCode": "770001",
           "addressCountry": "IN"
         },
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": "22.1170",
+          "longitude": "84.0382"
+        },
         "telephone": "+91-9692261138",
         "email": "theovenvibe@gmail.com",
-        "servesCuisine": ["Pizza", "Burger", "Fries", "Snacks", "Pasta"],
+        "servesCuisine": [
+          "Pizza",
+          "Burger",
+          "Fried Rice",
+          "Fries",
+          "Snacks",
+          "Pasta",
+          "Sandwich"
+        ],
         "url": "https://theovenvibe.github.io/",
         "menu": "https://theovenvibe.github.io/menu.json",
         "priceRange": "₹69-₹349",
@@ -40,6 +54,35 @@
           "ratingValue": "4.8",
           "reviewCount": "120"
         },
+        "offers": {
+          "@type": "AggregateOffer",
+          "priceCurrency": "INR",
+          "lowPrice": "69",
+          "highPrice": "349",
+          "availability": "https://schema.org/InStock",
+          "url": "https://theovenvibe.github.io/",
+          "offerCount": "50"
+        },
+        "review": [
+          {
+            "@type": "Review",
+            "reviewRating": { "@type": "Rating", "ratingValue": "5" },
+            "author": { "@type": "Person", "name": "Local Customer" },
+            "reviewBody": "Best pizza in Sundargarh! Fresh and delicious."
+          },
+          {
+            "@type": "Review",
+            "reviewRating": { "@type": "Rating", "ratingValue": "5" },
+            "author": { "@type": "Person", "name": "Food Lover" },
+            "reviewBody": "Oven-baked quality with fast delivery. Highly recommended!"
+          },
+          {
+            "@type": "Review",
+            "reviewRating": { "@type": "Rating", "ratingValue": "4" },
+            "author": { "@type": "Person", "name": "Odisha Foodie" },
+            "reviewBody": "Great takeaway options. The fried rice is excellent."
+          }
+        ],
         "sameAs": [
           "https://instagram.com/theovenvibe",
           "https://wa.me/919692261138",

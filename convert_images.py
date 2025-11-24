@@ -15,7 +15,7 @@ IMAGE_MAPPING = {
         "Garlic Fried Rice": "751393910",
         "Schezwan Fried Rice": "751393911",
         "Paneer Fried Rice": "751393912",
-        "Mixed Treasure Fried Rice": "751397746",
+        "Mixed Tresure Fried Rice Zomato": "751397746",
     },
     # Pizza
     "Pizza": {
@@ -59,9 +59,10 @@ IMAGE_MAPPING = {
     },
 }
 
-SOURCE_DIR = "/home/milanbeherazyx/theovenvibe.github.io/static/images/menu zomato"
-PRODUCT_DIR = "/home/milanbeherazyx/theovenvibe.github.io/static/images/product_images"
-COMBO_DIR = "/home/milanbeherazyx/theovenvibe.github.io/static/images/combo_images"
+SOURCE_DIR = "./static/images/menu zomato"
+PRODUCT_DIR = "./static/images/product_images"
+COMBO_DIR = "./static/images/combo_images"
+
 
 def convert_to_3_2_avif(source_file, dest_file, catalogue_id):
     """Convert image to 3:2 aspect ratio AVIF format"""
@@ -78,9 +79,10 @@ def convert_to_3_2_avif(source_file, dest_file, catalogue_id):
             '-quality', '85',
             dest_file
         ]
-        
+
         subprocess.run(cmd, check=True, capture_output=True)
-        print(f"✅ Converted {catalogue_id}: {os.path.basename(source_file)} → {os.path.basename(dest_file)}")
+        print(
+            f"✅ Converted {catalogue_id}: {os.path.basename(source_file)} → {os.path.basename(dest_file)}")
         return True
     except subprocess.CalledProcessError as e:
         print(f"❌ Error converting {source_file}: {e}")
@@ -89,20 +91,21 @@ def convert_to_3_2_avif(source_file, dest_file, catalogue_id):
         print(f"❌ Unexpected error for {catalogue_id}: {e}")
         return False
 
+
 def process_images():
     """Process all images from menu zomato folder"""
     converted_count = 0
     failed_count = 0
-    
+
     for category, items in IMAGE_MAPPING.items():
         source_category_dir = os.path.join(SOURCE_DIR, category)
-        
+
         if not os.path.exists(source_category_dir):
             print(f"⚠️  Category dir not found: {source_category_dir}")
             continue
-        
+
         dest_dir = COMBO_DIR if category == "Combo" else PRODUCT_DIR
-        
+
         for display_name, catalogue_id in items.items():
             # Try to find the image file in this category
             found = False
@@ -110,24 +113,27 @@ def process_images():
                 file_path = os.path.join(source_category_dir, file)
                 if not os.path.isfile(file_path):
                     continue
-                    
+
                 # Check if this is the right file
                 if display_name in file or file.replace(" (Penne)", "").replace(" (Fusilli)", "") == display_name:
                     # Convert to AVIF with 3:2 aspect ratio
                     dest_file = os.path.join(dest_dir, f"{catalogue_id}.avif")
-                    
+
                     if convert_to_3_2_avif(file_path, dest_file, catalogue_id):
                         converted_count += 1
                     else:
                         failed_count += 1
-                    
+
                     found = True
                     break
-            
-            if not found:
-                print(f"⚠️  Image not found for: {display_name} ({catalogue_id})")
 
-    print(f"\n✅ Conversion complete! Converted: {converted_count}, Failed: {failed_count}")
+            if not found:
+                print(
+                    f"⚠️  Image not found for: {display_name} ({catalogue_id})")
+
+    print(
+        f"\n✅ Conversion complete! Converted: {converted_count}, Failed: {failed_count}")
+
 
 if __name__ == "__main__":
     print("🔄 Converting images to 3:2 format AVIF...\n")
