@@ -4,7 +4,7 @@
 
 Welcome to **The Oven Vibe** — your go-to **fresh, hot, oven-baked takeaway** cloud kitchen in Sundargarh, Odisha! We serve mouth-watering **pizzas, burgers, fries, snacks, and pasta**, all made to order and delivered fresh to you.
 
-Check out our live website: [https://theovenvibe.netlify.app](https://theovenvibe.netlify.app)
+Check out our live website: [https://theovenvibe.github.io](https://theovenvibe.github.io)
 
 ---
 
@@ -17,7 +17,7 @@ This is a **modern, responsive cloud kitchen website** built to showcase:
 - Party & bulk order options
 - SEO-friendly structured data
 - Fast-loading modern images (AVIF, WebP, JXL)
-- Continuous deployment via **GitHub → Netlify**
+- Hosted on **GitHub Pages**
 
 ---
 
@@ -30,7 +30,7 @@ This is a **modern, responsive cloud kitchen website** built to showcase:
 | ✅ Menu Management   | Update combos & add-ons via `menu.json` |
 | ✅ SEO Optimized     | Schema.org, Open Graph & Twitter cards  |
 | ✅ Modern Images     | AVIF, WebP & JXL formats                |
-| ✅ Free Hosting      | Netlify deployment, automatic updates   |
+| ✅ Free Hosting      | GitHub Pages hosting, free forever      |
 
 ---
 
@@ -58,15 +58,12 @@ This is a **modern, responsive cloud kitchen website** built to showcase:
 
 ## 🚀 Deployment
 
-Hosted for free on **Netlify**: [https://theovenvibe.netlify.app](https://theovenvibe.netlify.app)
+Hosted for free on **GitHub Pages**: [https://theovenvibe.github.io](https://theovenvibe.github.io)
 
 **Continuous Deployment Setup:**
 
-1. Connect your GitHub repository to Netlify.
-2. Set **Base directory** → `/`
-3. Set **Publish directory** → `/` (for plain HTML)
-4. Leave **Build command** empty if no build tool.
-5. Push updates to `main` branch → Netlify automatically deploys.
+1. Push updates to `main` branch → GitHub Pages automatically deploys.
+2. Site is always available at `https://theovenvibe.github.io`
 
 ---
 
