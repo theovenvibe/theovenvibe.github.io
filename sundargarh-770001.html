@@ -175,36 +175,80 @@
     </main>
     <footer class="footer" id="footer">
       <div class="footer-columns">
+        <!-- left -->
         <div class="col">
-          <h4>Contact</h4>
-          <p class="address">Sundargarh, Odisha 770001</p>
+          <a href="index.html">
+            <picture>
+              <source
+                type="image/avif"
+                srcset="
+                  static/images/brand_images/optimized/The_Oven_vibe_logo_48px.avif   48w,
+                  static/images/brand_images/optimized/The_Oven_vibe_logo_128px.avif 128w
+                "
+                sizes="48px"
+              />
+              <source
+                type="image/webp"
+                srcset="
+                  static/images/brand_images/optimized/The_Oven_vibe_logo_48px.webp   48w,
+                  static/images/brand_images/optimized/The_Oven_vibe_logo_128px.webp 128w
+                "
+                sizes="48px"
+              />
+              <img
+                src="static/images/brand_images/optimized/The_Oven_vibe_logo_48px.webp"
+                alt="logo small"
+                class="logo-sm"
+                loading="lazy"
+                width="48"
+                height="48"
+              />
+            </picture>
+          </a>
+          <h4>Contact Us</h4>
+          <p class="address">Sundargarh, Odisha</p>
+          <p class="note">
+            <strong>Takeaway only</strong> · Order 30 min prior
+          </p>
           <div class="contact-details">
-            <span class="contact-line"
-              ><img
+            <span class="contact-line">
+              <img
                 src="static/images/svg/Phone.svg"
                 class="icon-sm"
                 alt="phone"
                 loading="lazy"
-              /><a href="tel:+919692261138">9692261138</a></span
-            >
-            <span class="contact-line"
-              ><img
+              />
+              <a href="tel:+919692261138">9692261138</a>
+            </span>
+            <span class="contact-line">
+              <img
                 src="static/images/svg/Envelope.svg"
                 class="icon-sm"
                 alt="email"
                 loading="lazy"
-              /><a href="mailto:theovenvibe@gmail.com"
-                >theovenvibe@gmail.com</a
-              ></span
-            >
+              />
+              <a href="mailto:theovenvibe@gmail.com">theovenvibe@gmail.com</a>
+            </span>
           </div>
         </div>
+
+        <!-- middle -->
         <div class="col">
-          <h4>Links</h4>
+          <h4>Quick Links</h4>
           <ul class="quick-links row-links">
             <li><a href="index.html#menu">Menu</a></li>
+            <li><a href="index.html#party">Party Orders</a></li>
+            <li><a href="index.html#why">Why Us</a></li>
             <li><a href="faq.html">FAQ</a></li>
+            <li><a href="blog.html">Blog</a></li>
             <li><a href="contact.html">Contact</a></li>
+            <li>
+              <a
+                href="sundargarh-770001.html"
+                title="Sundargarh 770001 — Local page"
+                >Sundargarh 770001</a
+              >
+            </li>
             <li>
               <a href="https://wa.me/919692261138" target="_blank">WhatsApp</a>
             </li>
@@ -213,6 +257,7 @@
                 href="https://link.zomato.com/xqzv/rshare?id=11990877930563aa9&utm_source=site&utm_medium=footer&utm_campaign=delivery"
                 target="_blank"
                 rel="noopener noreferrer"
+                title="Order on Zomato — Sundargarh (770001)"
                 >Zomato</a
               >
             </li>
@@ -221,14 +266,41 @@
                 href="https://www.swiggy.com/direct/brand/710285?source=swiggy-direct&subSource=generic&utm_source=site&utm_medium=footer&utm_campaign=delivery"
                 target="_blank"
                 rel="noopener noreferrer"
+                title="Order on Swiggy — Sundargarh (770001)"
                 >Swiggy</a
+              >
+            </li>
+            <li>
+              <a href="https://instagram.com/theovenvibe" target="_blank"
+                >Instagram</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://www.google.com/maps?q=22%C2%B007'01.0%22N+84%C2%B002'16.5%22E"
+                target="_blank"
+                >Location (Google Maps)</a
               >
             </li>
           </ul>
         </div>
+
+        <!-- right -->
         <div class="col">
-          <h4>Follow</h4>
+          <h4>Follow Us</h4>
           <div class="socials row-socials">
+            <a
+              href="https://wa.me/919692261138"
+              target="_blank"
+              aria-label="WhatsApp"
+            >
+              <img
+                src="static/images/svg/whatsapp.svg"
+                alt="whatsapp icon"
+                class="social-icon"
+                loading="lazy"
+              />
+            </a>
             <a
               href="https://instagram.com/theovenvibe"
               target="_blank"
@@ -239,11 +311,37 @@
                 alt="instagram icon"
                 class="social-icon"
                 loading="lazy"
+                width="28"
+                height="28"
+              />
+            </a>
+            <a
+              href="https://www.google.com/maps?q=22%C2%B007'01.0%22N+84%C2%B002'16.5%22E"
+              target="_blank"
+              aria-label="Google Maps"
+            >
+              <img
+                src="static/images/svg/googlemaps.svg"
+                alt="maps icon"
+                class="social-icon"
+                loading="lazy"
+                width="28"
+                height="28"
+              />
+            </a>
+            <a href="#" target="_blank" aria-label="Facebook">
+              <img
+                src="static/images/svg/facebook.svg"
+                alt="facebook icon"
+                class="social-icon"
+                loading="lazy"
               />
             </a>
           </div>
         </div>
       </div>
+
+      <!-- bottom copyright bar -->
       <div class="copyright-bar">
         <p>© 2025 The Oven Vibe. All rights reserved.</p>
       </div>
