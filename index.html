@@ -1,6 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- Google Tag Manager -->
+    <script>
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != "dataLayer" ? "&l=" + l : "";
+        j.async = true;
+        j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, "script", "dataLayer", "GTM-T92PVM4C");
+    </script>
+    <!-- End Google Tag Manager -->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>The Oven Vibe — Sundargarh, Odisha</title>
@@ -191,38 +205,50 @@
     </script>
   </head>
   <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript
+      ><iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-T92PVM4C"
+        height="0"
+        width="0"
+        style="display: none; visibility: hidden"
+      ></iframe
+    ></noscript>
+    <!-- End Google Tag Manager (noscript) -->
     <!-- FAILOVER SYSTEM - Must be first in body -->
     <script src="failover.js" async></script>
 
     <!-- STICKY NAVIGATION BAR -->
     <nav class="main-navbar" role="navigation">
       <div class="nav-left">
-        <picture>
-          <source
-            type="image/avif"
-            srcset="
-              static/images/brand_images/optimized/The_Oven_vibe_logo_128px.avif 128w,
-              static/images/brand_images/optimized/The_Oven_vibe_logo_48px.avif   48w
-            "
-            sizes="(min-width: 900px) 90px, 56px"
-          />
-          <source
-            type="image/webp"
-            srcset="
-              static/images/brand_images/optimized/The_Oven_vibe_logo_128px.webp 128w,
-              static/images/brand_images/optimized/The_Oven_vibe_logo_48px.webp   48w
-            "
-            sizes="(min-width: 900px) 90px, 56px"
-          />
-          <img
-            src="static/images/brand_images/optimized/The_Oven_vibe_logo_128px.webp"
-            alt="The Oven Vibe logo"
-            class="logo big-logo"
-            loading="lazy"
-            width="90"
-            height="90"
-          />
-        </picture>
+        <a href="index.html" class="logo-link">
+          <picture>
+            <source
+              type="image/avif"
+              srcset="
+                static/images/brand_images/optimized/The_Oven_vibe_logo_128px.avif 128w,
+                static/images/brand_images/optimized/The_Oven_vibe_logo_48px.avif   48w
+              "
+              sizes="(min-width: 900px) 90px, 56px"
+            />
+            <source
+              type="image/webp"
+              srcset="
+                static/images/brand_images/optimized/The_Oven_vibe_logo_128px.webp 128w,
+                static/images/brand_images/optimized/The_Oven_vibe_logo_48px.webp   48w
+              "
+              sizes="(min-width: 900px) 90px, 56px"
+            />
+            <img
+              src="static/images/brand_images/optimized/The_Oven_vibe_logo_128px.webp"
+              alt="The Oven Vibe logo"
+              class="logo big-logo"
+              loading="lazy"
+              width="90"
+              height="90"
+            />
+          </picture>
+        </a>
         <span class="vibe-tagline">Fresh · Hot · Oven-baked</span>
       </div>
       <button
@@ -297,27 +323,29 @@
             fetchpriority="high"
             width="1080"
             height="1080"
+            style="margin: 0 auto; display: block"
           />
         </picture>
-        <a
-          class="hero-cta"
-          href="https://wa.me/919692261138"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <span class="cta-label">
-            <img
-              src="static/images/svg/whatsapp.svg"
-              alt="whatsapp icon"
-              class="icon-sm"
-              loading="lazy"
-              width="22"
-              height="22"
-            />
-            Order now on WhatsApp
-          </span>
-          <span class="cta-subtext">TAKEAWAY • Order 30 min prior</span>
-        </a>
+
+        <div class="hero-content">
+          <h1>ONLY TAKEAWAY & HOME DELIVERY AVAILABLE</h1>
+          <p class="delivery-highlight">
+            <strong>Delivery starts at just ₹29</strong>
+          </p>
+          <p class="delivery-details">
+            <span class="d-line"
+              >₹29 for 0–2 km, ₹59 for 2–4 km, ₹99 for 4–8 km</span
+            >
+            <span class="d-line"
+              ><strong>FREE delivery on orders above ₹599</strong> (within 0–8
+              km).</span
+            >
+          </p>
+          <p class="availability">
+            We are also available on <strong>Zomato</strong> and
+            <strong>Swiggy</strong>.
+          </p>
+        </div>
       </div>
     </section>
 
@@ -393,39 +421,167 @@
           </article>
         </div>
       </section>
+
+      <!-- LATEST BLOGS -->
+      <section class="latest-blogs" id="latest-blogs">
+        <h2>Latest Food Stories 🍕</h2>
+        <div class="blog-grid">
+          <!-- Blog Card 5 (Newest) -->
+          <article class="blog-card">
+            <div class="blog-card-img-wrapper">
+              <picture>
+                <source
+                  type="image/avif"
+                  srcset="static/images/blog_images/blog_5.avif"
+                />
+                <source
+                  type="image/webp"
+                  srcset="static/images/blog_images/blog_5.webp"
+                />
+                <img
+                  src="static/images/blog_images/blog_5.webp"
+                  alt="Cloud Kitchen Future"
+                  class="blog-card-img"
+                  loading="lazy"
+                  width="400"
+                  height="225"
+                />
+              </picture>
+            </div>
+            <div class="blog-card-content">
+              <h3>Why Cloud Kitchens Are the Future of Food</h3>
+              <p>
+                Discover why cloud kitchens are changing the food scene in
+                Sundargarh. Faster delivery, affordable pricing, and fresh food.
+              </p>
+              <a href="blog-cloud-kitchen-future.html" class="read-more"
+                >Read Story →</a
+              >
+            </div>
+          </article>
+
+          <!-- Blog Card 4 -->
+          <article class="blog-card">
+            <div class="blog-card-img-wrapper">
+              <picture>
+                <source
+                  type="image/avif"
+                  srcset="static/images/blog_images/blog_4.avif"
+                />
+                <source
+                  type="image/webp"
+                  srcset="static/images/blog_images/blog_4.webp"
+                />
+                <img
+                  src="static/images/blog_images/blog_4.webp"
+                  alt="Pizza Under 300"
+                  class="blog-card-img"
+                  loading="lazy"
+                  width="400"
+                  height="225"
+                />
+              </picture>
+            </div>
+            <div class="blog-card-content">
+              <h3>Pizza Under ₹300 in Sundargarh</h3>
+              <p>
+                Looking for pizza under ₹300? Discover budget-friendly student
+                pizza options that are tasty and filling.
+              </p>
+              <a href="blog-pizza-under-300.html" class="read-more"
+                >Read Story →</a
+              >
+            </div>
+          </article>
+
+          <!-- Blog Card 3 -->
+          <article class="blog-card">
+            <div class="blog-card-img-wrapper">
+              <picture>
+                <source
+                  type="image/avif"
+                  srcset="static/images/blog_images/blog_3.avif"
+                />
+                <source
+                  type="image/webp"
+                  srcset="static/images/blog_images/blog_3.webp"
+                />
+                <img
+                  src="static/images/blog_images/blog_3.webp"
+                  alt="Best Late-Night Food"
+                  class="blog-card-img"
+                  loading="lazy"
+                  width="400"
+                  height="225"
+                />
+              </picture>
+            </div>
+            <div class="blog-card-content">
+              <h3>Best Late-Night Food in Sundargarh</h3>
+              <p>
+                Late-night cravings? Discover the best food options to order
+                after 9 PM in Sundargarh.
+              </p>
+              <a href="blog-late-night-food.html" class="read-more"
+                >Read Story →</a
+              >
+            </div>
+          </article>
+        </div>
+        <div style="text-align: center; margin-top: 20px">
+          <a
+            href="blog.html"
+            class="cta"
+            style="display: inline-block; padding: 10px 20px"
+            >View All Stories</a
+          >
+        </div>
+      </section>
     </main>
+
+    <!-- Sticky WhatsApp Button -->
+    <a
+      href="https://wa.me/919692261138"
+      class="sticky-wa-btn"
+      target="_blank"
+      aria-label="Chat on WhatsApp"
+    >
+      <img src="static/images/svg/whatsapp.svg" alt="WhatsApp" loading="lazy" />
+    </a>
 
     <!-- FOOTER (energized black) -->
     <footer class="footer" id="footer">
       <div class="footer-columns">
         <!-- left -->
         <div class="col">
-          <picture>
-            <source
-              type="image/avif"
-              srcset="
-                static/images/brand_images/optimized/The_Oven_vibe_logo_48px.avif   48w,
-                static/images/brand_images/optimized/The_Oven_vibe_logo_128px.avif 128w
-              "
-              sizes="48px"
-            />
-            <source
-              type="image/webp"
-              srcset="
-                static/images/brand_images/optimized/The_Oven_vibe_logo_48px.webp   48w,
-                static/images/brand_images/optimized/The_Oven_vibe_logo_128px.webp 128w
-              "
-              sizes="48px"
-            />
-            <img
-              src="static/images/brand_images/optimized/The_Oven_vibe_logo_48px.webp"
-              alt="logo small"
-              class="logo-sm"
-              loading="lazy"
-              width="48"
-              height="48"
-            />
-          </picture>
+          <a href="index.html">
+            <picture>
+              <source
+                type="image/avif"
+                srcset="
+                  static/images/brand_images/optimized/The_Oven_vibe_logo_48px.avif   48w,
+                  static/images/brand_images/optimized/The_Oven_vibe_logo_128px.avif 128w
+                "
+                sizes="48px"
+              />
+              <source
+                type="image/webp"
+                srcset="
+                  static/images/brand_images/optimized/The_Oven_vibe_logo_48px.webp   48w,
+                  static/images/brand_images/optimized/The_Oven_vibe_logo_128px.webp 128w
+                "
+                sizes="48px"
+              />
+              <img
+                src="static/images/brand_images/optimized/The_Oven_vibe_logo_48px.webp"
+                alt="logo small"
+                class="logo-sm"
+                loading="lazy"
+                width="48"
+                height="48"
+              />
+            </picture>
+          </a>
           <h4>Contact Us</h4>
           <p class="address">Sundargarh, Odisha</p>
           <p class="note">

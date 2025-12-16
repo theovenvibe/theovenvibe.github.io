@@ -1,3 +1,25 @@
+# Robots.txt for The Oven Vibe
+
 User-agent: *
 Allow: /
+# Disallow internal development files
+Disallow: /*.py$
+Disallow: /*.md$
+Disallow: /requirements.txt
+Disallow: /.vscode/
+Disallow: /menu%20zomato/
+
+# Google search crawler
+User-agent: Googlebot
+Allow: /
+
+# Google image crawler
+User-agent: Googlebot-Image
+Allow: /
+
+# Priority sections (Explicitly Allowed)
+Allow: /menu/
+Allow: /blog/
+
+# Sitemap
 Sitemap: https://theovenvibe.github.io/sitemap.xml
