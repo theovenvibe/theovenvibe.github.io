@@ -1,3 +1,9 @@
+// Global variables to track pending accordion opens
+let pendingAccordionOpens = {
+  combos: false,
+  addons: false
+};
+
 // ===============================
 // Navigation interactions (minimal, runs on DOMContentLoaded)
 // ===============================
@@ -86,14 +92,16 @@ document.addEventListener("DOMContentLoaded", function () {
           const comboSection = document.querySelector("#sec-combos");
           if (comboSection) {
             target = comboSection;
-            // Open the combos accordion
-            setTimeout(() => {
-              comboSection.classList.add("active");
-              const content = comboSection.querySelector(".accordion-content");
-              if (content) {
-                content.style.maxHeight = content.scrollHeight + "px";
-              }
-            }, 100);
+            // Mark for opening after menu loads
+            pendingAccordionOpens.combos = true;
+            // Try to open immediately if already loaded
+            const header = comboSection.querySelector(".accordion-header");
+            if (header && !comboSection.classList.contains("active")) {
+              header.click();
+            }
+          } else {
+            // Accordion not loaded yet, mark for later
+            pendingAccordionOpens.combos = true;
           }
         }
 
@@ -102,17 +110,19 @@ document.addEventListener("DOMContentLoaded", function () {
           const addonsSection = document.querySelector("#addonsSection");
           if (addonsSection) {
             target = addonsSection;
-            // Find and open the add-ons accordion
-            setTimeout(() => {
-              const accordion = addonsSection.querySelector(".accordion-item");
-              if (accordion) {
-                accordion.classList.add("active");
-                const content = accordion.querySelector(".accordion-content");
-                if (content) {
-                  content.style.maxHeight = content.scrollHeight + "px";
-                }
+            // Mark for opening after menu loads
+            pendingAccordionOpens.addons = true;
+            // Try to open immediately if already loaded
+            const accordion = addonsSection.querySelector(".accordion-item");
+            if (accordion) {
+              const header = accordion.querySelector(".accordion-header");
+              if (header && !accordion.classList.contains("active")) {
+                header.click();
               }
-            }, 100);
+            }
+          } else {
+            // Accordion not loaded yet, mark for later
+            pendingAccordionOpens.addons = true;
           }
         }
 
@@ -300,6 +310,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // 3. Render Add-ons (Separate Section)
       renderAddons(data.Add_ons);
+
+      // 4. Handle pending accordion opens
+      setTimeout(() => {
+        if (pendingAccordionOpens.combos) {
+          const comboSection = document.querySelector("#sec-combos");
+          if (comboSection) {
+            const header = comboSection.querySelector(".accordion-header");
+            if (header && !comboSection.classList.contains("active")) {
+              header.click();
+            }
+          }
+        }
+
+        if (pendingAccordionOpens.addons) {
+          const addonsSection = document.querySelector("#addonsSection");
+          if (addonsSection) {
+            const accordion = addonsSection.querySelector(".accordion-item");
+            if (accordion) {
+              const header = accordion.querySelector(".accordion-header");
+              if (header && !accordion.classList.contains("active")) {
+                header.click();
+              }
+            }
+          }
+        }
+
+        // Reset pending flags
+        pendingAccordionOpens.combos = false;
+        pendingAccordionOpens.addons = false;
+      }, 100);
     })
     .catch((err) => console.error("Error loading menu:", err));
 });
