@@ -1,3 +1,27 @@
+# Security Headers
+<IfModule mod_headers.c>
+  # Content Security Policy - prevent XSS attacks
+  Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' www.googletagmanager.com www.google-analytics.com mc.yandex.ru *.yandex.ru cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' fonts.gstatic.com; connect-src 'self' www.google-analytics.com mc.yandex.ru *.yandex.ru www.googletagmanager.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+  
+  # HSTS - enforce HTTPS with preload
+  Header set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+  
+  # X-Frame-Options - prevent clickjacking
+  Header set X-Frame-Options "DENY"
+  
+  # X-Content-Type-Options - prevent MIME sniffing
+  Header set X-Content-Type-Options "nosniff"
+  
+  # X-XSS-Protection - enable browser XSS filter
+  Header set X-XSS-Protection "1; mode=block"
+  
+  # Referrer-Policy - control referrer information
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+  
+  # Permissions-Policy - control browser features
+  Header set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=()"
+</IfModule>
+
 # Enable GZIP compression
 <IfModule mod_deflate.c>
   AddOutputFilterByType DEFLATE text/plain
@@ -11,35 +35,6 @@
   AddOutputFilterByType DEFLATE application/javascript
   AddOutputFilterByType DEFLATE application/x-javascript
   AddOutputFilterByType DEFLATE image/svg+xml
-</IfModule>
-
-# Set cache expiration times
-<IfModule mod_expires.c>
-  ExpiresActive On
-  
-  # Default cache expiration: 1 day
-  ExpiresDefault "access plus 1 day"
-  
-  # Cache HTML for 1 hour
-  ExpiresByType text/html "access plus 1 hour"
-  
-  # Cache CSS and JavaScript for 1 year
-  ExpiresByType text/css "access plus 1 year"
-  ExpiresByType application/javascript "access plus 1 year"
-  ExpiresByType text/javascript "access plus 1 year"
-  
-  # Cache images for 1 year
-  ExpiresByType image/avif "access plus 1 year"
-  ExpiresByType image/webp "access plus 1 year"
-  ExpiresByType image/jxl "access plus 1 year"
-  ExpiresByType image/jpeg "access plus 1 year"
-  ExpiresByType image/png "access plus 1 year"
-  ExpiresByType image/gif "access plus 1 year"
-  ExpiresByType image/svg+xml "access plus 1 year"
-  
-  # Cache JSON for 7 days
-  ExpiresByType application/json "access plus 7 days"
-  ExpiresByType application/ld+json "access plus 7 days"
 </IfModule>
 
 # Add Cache-Control headers
