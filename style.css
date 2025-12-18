@@ -16,7 +16,7 @@
   --color-bg-body: #f9fafb; /* Light Grey Background */
   --color-bg-surface: #ffffff; /* White Surface */
   --color-text-main: #111827; /* Almost Black */
-  --color-text-muted: #6b7280; /* Muted Grey */
+  --color-text-muted: #4b5563; /* Improved contrast - darker grey */
   --color-border: #e5e7eb; /* Light Border */
 
   /* Typography */
@@ -1174,7 +1174,7 @@ p {
 
 .read-more {
   margin-top: auto;
-  color: var(--color-primary);
+  color: var(--color-primary-dark);
   font-weight: 700;
   font-size: 0.9rem;
   display: inline-flex;
@@ -1183,11 +1183,11 @@ p {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   text-decoration: none;
-  transition: color var(--transition-fast);
+  transition: color var(--transition-fast), text-decoration var(--transition-fast);
 }
 
 .read-more:hover {
-  color: var(--color-primary-dark);
+  color: var(--color-primary);
   text-decoration: underline;
 }
 
