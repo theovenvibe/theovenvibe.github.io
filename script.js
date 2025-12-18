@@ -84,7 +84,12 @@ document.addEventListener("DOMContentLoaded", function () {
         // Special handling: scroll to WhatsApp banner instead of #menu
         if (href === "#menu") {
           const waBanner = document.querySelector(".hero-cta");
-          if (waBanner) target = waBanner;
+          if (waBanner) {
+            target = waBanner;
+          } else {
+            // If no banner, scroll to the menu section itself
+            target = document.querySelector("#menu");
+          }
         }
 
         // Special handling: open Combos section when clicked
@@ -130,6 +135,10 @@ document.addEventListener("DOMContentLoaded", function () {
         if (target) {
           e.preventDefault();
           target.scrollIntoView({ behavior: "smooth", block: "start" });
+          // Add a small delay to ensure proper scroll positioning
+          setTimeout(() => {
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
+          }, 100);
         }
       }
     });
