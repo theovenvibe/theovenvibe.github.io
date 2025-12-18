@@ -319,7 +319,6 @@ p {
 
 /* Grid inside accordion - no padding wrapper, grid handles its own spacing */
 .accordion-content .menu-items {
-  padding: 1rem;
   margin: 0;
 }
 
@@ -904,12 +903,6 @@ p {
   opacity: 0;
   pointer-events: none;
   transition: max-height 300ms ease, opacity 200ms ease;
-}
-
-.menu-items {
-  max-height: 5000px;
-  opacity: 1;
-  pointer-events: auto;
 }
 
 /* Responsive breakpoints for menu items */
