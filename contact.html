@@ -2,11 +2,18 @@
 <html lang="en">
   <head>
     <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-T92PVM4C');</script>
+    <script>
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != "dataLayer" ? "&l=" + l : "";
+        j.async = true;
+        j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, "script", "dataLayer", "GTM-T92PVM4C");
+    </script>
     <!-- End Google Tag Manager -->
     <meta
       name="description"
@@ -100,270 +107,211 @@
   </head>
   <body>
     <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T92PVM4C"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <noscript
+      ><iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-T92PVM4C"
+        height="0"
+        width="0"
+        style="display: none; visibility: hidden"
+      ></iframe
+    ></noscript>
     <!-- End Google Tag Manager (noscript) -->
     <!-- FAILOVER SYSTEM - Must be first in body -->
     <script src="failover.js" async></script>
 
-    <header>
-      <a href="index.html">← Back to Home</a>
-    </header>
-
-    <div class="faq-container">
-      <h1>Contact Us</h1>
-      <p>
-        We’d love to hear from you! For <strong>quick orders</strong>, use
-        WhatsApp. For <strong>party orders</strong> or queries, fill out the
-        form below 👇
-      </p>
-
-      <!-- QR section -->
-      <div class="qr-section">
-        <div class="qr-card">
-          <a
-            href="https://wa.me/919692261138"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <picture>
-              <source
-                type="image/avif"
-                srcset="static/images/brand_images/whatsapp_QR_code.avif"
-              />
-              <source
-                type="image/webp"
-                srcset="static/images/brand_images/whatsapp_QR_code.webp"
-              />
-              <source
-                type="image/jxl"
-                srcset="static/images/brand_images/whatsapp_QR_code.jxl"
-              />
-              <img
-                src="static/images/brand_images/whatsapp_QR_code.webp"
-                alt="WhatsApp QR code"
-                loading="lazy"
-                width="140"
-                height="140"
-              />
-            </picture>
-          </a>
-          <div>WhatsApp</div>
-        </div>
-        <div class="qr-card">
-          <a
-            href="https://instagram.com/theovenvibe"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <picture>
-              <source
-                type="image/avif"
-                srcset="static/images/brand_images/instagram_QR_code.avif"
-              />
-              <source
-                type="image/webp"
-                srcset="static/images/brand_images/instagram_QR_code.webp"
-              />
-              <source
-                type="image/jxl"
-                srcset="static/images/brand_images/instagram_QR_code.jxl"
-              />
-              <img
-                src="static/images/brand_images/instagram_QR_code.webp"
-                alt="Instagram QR code"
-                loading="lazy"
-                width="140"
-                height="140"
-              />
-            </picture>
-          </a>
-          <div>Instagram</div>
-        </div>
-      </div>
-
-      <!-- Google Form embed -->
-      <iframe
-        class="contact-form-iframe"
-        src="https://docs.google.com/forms/d/e/1FAIpQLSe904p8LQBV3Dh5w-_sWOJzmFNT_DXoAVMoYfx_UguIuJflTA/viewform?embedded=true"
-        loading="lazy"
-        >Loading…</iframe
-      >
-    </div>
-
-    <!-- FOOTER (same as FAQ) -->
-    <footer class="footer" id="footer">
-      <div class="footer-columns">
-        <!-- left -->
-        <div class="col">
-          <a href="index.html">
+    <!-- STICKY NAVIGATION BAR -->
+    <nav class="main-navbar" role="navigation">
+      <div class="nav-container">
+        <div class="nav-brand">
+          <a href="index.html" class="logo-link">
             <picture>
               <source
                 type="image/avif"
                 srcset="
-                  static/images/brand_images/optimized/The_Oven_vibe_logo_48px.avif   48w,
-                  static/images/brand_images/optimized/The_Oven_vibe_logo_128px.avif 128w
+                  static/images/brand_images/optimized/The_Oven_vibe_logo_128px.avif 128w,
+                  static/images/brand_images/optimized/The_Oven_vibe_logo_48px.avif   48w
                 "
-                sizes="48px"
+                sizes="(min-width: 900px) 48px, 48px"
               />
               <source
                 type="image/webp"
                 srcset="
-                  static/images/brand_images/optimized/The_Oven_vibe_logo_48px.webp   48w,
-                  static/images/brand_images/optimized/The_Oven_vibe_logo_128px.webp 128w
+                  static/images/brand_images/optimized/The_Oven_vibe_logo_128px.webp 128w,
+                  static/images/brand_images/optimized/The_Oven_vibe_logo_48px.webp   48w
                 "
-                sizes="48px"
+                sizes="(min-width: 900px) 48px, 48px"
               />
               <img
-                src="static/images/brand_images/optimized/The_Oven_vibe_logo_48px.webp"
-                alt="logo small"
-                class="logo-sm"
+                src="static/images/brand_images/optimized/The_Oven_vibe_logo_128px.webp"
+                alt="The Oven Vibe logo"
+                class="logo-img"
                 loading="lazy"
                 width="48"
                 height="48"
               />
             </picture>
           </a>
-          <h4>Contact Us</h4>
-          <p class="address">Sundargarh, Odisha</p>
-          <p class="note">
-            <strong>Takeaway only</strong> · Order 30 min prior
-          </p>
-          <div class="contact-details">
-            <span class="contact-line">
-              <img
-                src="static/images/svg/Phone.svg"
-                class="icon-sm"
-                alt="phone"
-                loading="lazy"
-              />
-              <a href="tel:+919692261138">9692261138</a>
-            </span>
-            <span class="contact-line">
-              <img
-                src="static/images/svg/Envelope.svg"
-                class="icon-sm"
-                alt="email"
-                loading="lazy"
-              />
-              <a href="mailto:theovenvibe@gmail.com">theovenvibe@gmail.com</a>
-            </span>
-          </div>
+          <span class="brand-text">The Oven Vibe</span>
         </div>
 
-        <!-- middle -->
-        <div class="col">
-          <h4>Quick Links</h4>
-          <ul class="quick-links row-links">
-            <li><a href="index.html#menu">Menu</a></li>
-            <li><a href="index.html#party">Party Orders</a></li>
-            <li><a href="index.html#why">Why Us</a></li>
-            <li><a href="faq.html">FAQ</a></li>
-            <li><a href="blog.html">Blog</a></li>
-            <li><a href="contact.html">Contact</a></li>
-            <li>
-              <a
-                href="sundargarh-770001.html"
-                title="Sundargarh 770001 — Local page"
-                >Sundargarh 770001</a
+        <ul class="nav-links" id="siteNav">
+          <li class="dropdown">
+            <div class="dropdown-trigger">
+              <a href="index.html#menu" class="nav-link">Menu</a>
+              <svg
+                class="dropdown-arrow"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
               >
-            </li>
-            <li>
-              <a href="https://wa.me/919692261138" target="_blank">WhatsApp</a>
-            </li>
-            <li>
-              <a
-                href="https://link.zomato.com/xqzv/rshare?id=11990877930563aa9&utm_source=site&utm_medium=footer&utm_campaign=delivery"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Order on Zomato — Sundargarh (770001)"
-                >Zomato</a
-              >
-            </li>
-            <li>
-              <a
-                href="https://www.swiggy.com/direct/brand/710285?source=swiggy-direct&subSource=generic&utm_source=site&utm_medium=footer&utm_campaign=delivery"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Order on Swiggy — Sundargarh (770001)"
-                >Swiggy</a
-              >
-            </li>
-            <li>
-              <a href="https://instagram.com/theovenvibe" target="_blank"
-                >Instagram</a
-              >
-            </li>
-            <li>
-              <a
-                href="https://www.google.com/maps?q=22%C2%B007'01.0%22N+84%C2%B002'16.5%22E"
-                target="_blank"
-                >Location (Google Maps)</a
-              >
-            </li>
-          </ul>
-        </div>
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
+            <ul class="dropdown-menu">
+              <li>
+                <a href="index.html#menu" class="dropdown-item">All Items</a>
+              </li>
+              <li>
+                <a href="index.html#sec-combos" class="dropdown-item"
+                  >Combos & Offers</a
+                >
+              </li>
+              <li>
+                <a href="index.html#addonsSection" class="dropdown-item"
+                  >Sides & Add-ons</a
+                >
+              </li>
+              <li>
+                <a href="index.html#party" class="dropdown-item"
+                  >Party Orders</a
+                >
+              </li>
+            </ul>
+          </li>
 
-        <!-- right -->
-        <div class="col">
-          <h4>Follow Us</h4>
-          <div class="socials row-socials">
+          <li><a href="index.html#why" class="nav-link">Why Us</a></li>
+
+          <li class="dropdown">
+            <div class="dropdown-trigger">
+              <a href="blog.html" class="nav-link">Blog</a>
+              <svg
+                class="dropdown-arrow"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
+            <ul class="dropdown-menu">
+              <li>
+                <a href="blog.html" class="dropdown-item">Latest Articles</a>
+              </li>
+              <li>
+                <a href="blog-affordable-pizza.html" class="dropdown-item"
+                  >Affordable Pizza</a
+                >
+              </li>
+              <li>
+                <a href="blog-cloud-kitchen-future.html" class="dropdown-item"
+                  >Cloud Kitchens</a
+                >
+              </li>
+            </ul>
+          </li>
+
+          <li><a href="contact.html" class="nav-link active">Contact</a></li>
+
+          <li>
             <a
               href="https://wa.me/919692261138"
-              target="_blank"
-              aria-label="WhatsApp"
+              class="btn btn-primary"
+              style="color: white; padding: 0.5rem 1rem; font-size: 0.9rem"
             >
-              <img
-                src="static/images/svg/whatsapp.svg"
-                alt="whatsapp icon"
-                class="social-icon"
-                loading="lazy"
-              />
+              Order Now
             </a>
-            <a
-              href="https://instagram.com/theovenvibe"
-              target="_blank"
-              aria-label="Instagram"
+          </li>
+        </ul>
+
+        <!-- MOBILE MENU TOGGLE -->
+        <div class="mobile-menu-toggle" id="mobileMenuToggle">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- MOBILE MENU OVERLAY -->
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay">
+      <div class="mobile-menu-header">
+        <span class="brand-text">The Oven Vibe</span>
+        <button class="close-menu-btn" id="closeMenuBtn">&times;</button>
+      </div>
+      <ul class="mobile-nav-links">
+        <li><a href="index.html" class="mobile-nav-link">Home</a></li>
+        <li><a href="index.html#menu" class="mobile-nav-link">Menu</a></li>
+        <li><a href="blog.html" class="mobile-nav-link">Blog</a></li>
+        <li>
+          <a href="contact.html" class="mobile-nav-link active">Contact</a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- MAIN CONTACT CONTAINER -->
+    <main class="main">
+      <!-- HERO SECTION (AGENT 0: TEXT-DRIVEN MINI) -->
+      <section class="hero hero-mini">
+        <div class="hero-shapes">
+          <div class="shape shape-1"></div>
+          <div class="shape shape-2"></div>
+          <div class="shape shape-3"></div>
+        </div>
+        <div class="hero-container">
+          <div class="hero-content">
+            <h1 class="hero-display" style="font-size: clamp(2rem, 5vw, 4rem)">
+              <span class="animate-on-scroll">LET'S</span>
+              <span class="text-gradient animate-on-scroll delay-100"
+                >CONNECT.</span
+              >
+            </h1>
+            <p class="hero-text animate-on-scroll delay-200">
+              Questions? Party orders? Just want to say hi?
+              <br />We are just a message away.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div class="section" style="padding-top: 0">
+        <div class="container">
+          <!-- Removed old h1/p since we have a hero now -->
+
+          <!-- Google Form embed -->
+          <div class="container" style="max-width: 800px; margin: 0 auto">
+            <iframe
+              class="contact-form-iframe"
+              src="https://docs.google.com/forms/d/e/1FAIpQLSe904p8LQBV3Dh5w-_sWOJzmFNT_DXoAVMoYfx_UguIuJflTA/viewform?embedded=true"
+              loading="lazy"
+              >Loading…</iframe
             >
-              <img
-                src="static/images/svg/instagram.svg"
-                alt="instagram icon"
-                class="social-icon"
-                loading="lazy"
-                width="28"
-                height="28"
-              />
-            </a>
-            <a
-              href="https://www.google.com/maps?q=22%C2%B007'01.0%22N+84%C2%B002'16.5%22E"
-              target="_blank"
-              aria-label="Google Maps"
-            >
-              <img
-                src="static/images/svg/googlemaps.svg"
-                alt="maps icon"
-                class="social-icon"
-                loading="lazy"
-                width="28"
-                height="28"
-              />
-            </a>
-            <a href="#" target="_blank" aria-label="Facebook">
-              <img
-                src="static/images/svg/facebook.svg"
-                alt="facebook icon"
-                class="social-icon"
-                loading="lazy"
-              />
-            </a>
           </div>
         </div>
       </div>
+    </main>
 
-      <!-- bottom copyright bar -->
-      <div class="copyright-bar">
-        <p>© 2025 The Oven Vibe. All rights reserved.</p>
-      </div>
-    </footer>
+    <!-- GLOBAL FOOTER PLACEHOLDER -->
+    <div id="global-footer-placeholder"></div>
+    <script src="script.js"></script>
   </body>
 </html>

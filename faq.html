@@ -165,243 +165,284 @@
     <!-- FAILOVER SYSTEM - Must be first in body -->
     <script src="failover.js" async></script>
 
-    <header>
-      <a href="index.html">← Back to Home</a>
-    </header>
-
-    <div class="faq-container">
-      <h1>Frequently Asked Questions</h1>
-
-      <details>
-        <summary>How can I order pizza from The Oven Vibe?</summary>
-        <p>
-          You can order directly on
-          <a href="https://wa.me/919692261138" target="_blank">WhatsApp</a>.
-          Just tap the link and send us a message. We’re also available on
-          Zomato and Swiggy for your convenience.
-        </p>
-      </details>
-
-      <details>
-        <summary>Do you offer delivery in Sundargarh?</summary>
-        <p>
-          Currently, we offer
-          <strong>takeaway and curbside pickup only</strong>. Order 30 minutes
-          prior and collect from our Sundargarh outlet.
-        </p>
-      </details>
-
-      <details>
-        <summary>What are your bestsellers?</summary>
-        <p>
-          Our <strong>Paneer Tikka Pizza 🍕</strong> and
-          <strong>Cheesy Garlic Bread 🧄🧀</strong> are crowd favorites, loved
-          by our regulars.
-        </p>
-      </details>
-
-      <details>
-        <summary>Where can I order affordable pizza near Sundargarh?</summary>
-        <p>
-          The Oven Vibe offers
-          <strong>affordable pizzas near Subasini Clinic, Sundargarh</strong>.
-          Perfect for anyone searching “best pizza near me”.
-        </p>
-      </details>
-
-      <details>
-        <summary>Do you take party or bulk orders?</summary>
-        <p>
-          Yes 🎉! We provide
-          <strong>special platters, combos & bulk deals</strong> for parties,
-          family functions, or office events. Tap
-          <a href="https://wa.me/919692261138" target="_blank">WhatsApp</a> to
-          get a customized deal.
-        </p>
-      </details>
-
-      <details>
-        <summary>What are your timings?</summary>
-        <p>
-          We operate <strong>02 PM – 11 PM daily.</strong> Please place your
-          last order by <strong>10:30 PM</strong> for same-day takeaway.
-        </p>
-      </details>
-    </div>
-
-    <!-- FOOTER (energized black) -->
-    <footer class="footer" id="footer">
-      <div class="footer-columns">
-        <!-- left -->
-        <div class="col">
-          <a href="index.html">
+    <!-- STICKY NAVIGATION BAR -->
+    <nav class="main-navbar" role="navigation">
+      <div class="nav-container">
+        <div class="nav-brand">
+          <a href="index.html" class="logo-link">
             <picture>
               <source
                 type="image/avif"
                 srcset="
-                  static/images/brand_images/optimized/The_Oven_vibe_logo_48px.avif   48w,
-                  static/images/brand_images/optimized/The_Oven_vibe_logo_128px.avif 128w
+                  static/images/brand_images/optimized/The_Oven_vibe_logo_128px.avif 128w,
+                  static/images/brand_images/optimized/The_Oven_vibe_logo_48px.avif   48w
                 "
-                sizes="48px"
+                sizes="(min-width: 900px) 48px, 48px"
               />
               <source
                 type="image/webp"
                 srcset="
-                  static/images/brand_images/optimized/The_Oven_vibe_logo_48px.webp   48w,
-                  static/images/brand_images/optimized/The_Oven_vibe_logo_128px.webp 128w
+                  static/images/brand_images/optimized/The_Oven_vibe_logo_128px.webp 128w,
+                  static/images/brand_images/optimized/The_Oven_vibe_logo_48px.webp   48w
                 "
-                sizes="48px"
+                sizes="(min-width: 900px) 48px, 48px"
               />
               <img
-                src="static/images/brand_images/optimized/The_Oven_vibe_logo_48px.webp"
-                alt="logo small"
-                class="logo-sm"
+                src="static/images/brand_images/optimized/The_Oven_vibe_logo_128px.webp"
+                alt="The Oven Vibe logo"
+                class="logo-img"
                 loading="lazy"
                 width="48"
                 height="48"
               />
             </picture>
           </a>
-          <h4>Contact Us</h4>
-          <p class="address">Sundargarh, Odisha</p>
-          <p class="note">
-            <strong>Takeaway only</strong> · Order 30 min prior
-          </p>
-          <div class="contact-details">
-            <span class="contact-line">
-              <img
-                src="static/images/svg/Phone.svg"
-                class="icon-sm"
-                alt="phone"
-                loading="lazy"
-              />
-              <a href="tel:+919692261138">9692261138</a>
-            </span>
-            <span class="contact-line">
-              <img
-                src="static/images/svg/Envelope.svg"
-                class="icon-sm"
-                alt="email"
-                loading="lazy"
-              />
-              <a href="mailto:theovenvibe@gmail.com">theovenvibe@gmail.com</a>
-            </span>
-          </div>
+          <span class="brand-text">The Oven Vibe</span>
         </div>
 
-        <!-- middle -->
-        <div class="col">
-          <h4>Quick Links</h4>
-          <ul class="quick-links row-links">
-            <li><a href="index.html#menu">Menu</a></li>
-            <li><a href="index.html#party">Party Orders</a></li>
-            <li><a href="index.html#why">Why Us</a></li>
-            <li><a href="faq.html">FAQ</a></li>
-            <li><a href="blog.html">Blog</a></li>
-            <li><a href="contact.html">Contact</a></li>
-            <li>
-              <a
-                href="sundargarh-770001.html"
-                title="Sundargarh 770001 — Local page"
-                >Sundargarh 770001</a
+        <ul class="nav-links" id="siteNav">
+          <li class="dropdown">
+            <div class="dropdown-trigger">
+              <a href="index.html#menu" class="nav-link">Menu</a>
+              <svg
+                class="dropdown-arrow"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
               >
-            </li>
-            <li>
-              <a href="https://wa.me/919692261138" target="_blank">WhatsApp</a>
-            </li>
-            <li>
-              <a
-                href="https://link.zomato.com/xqzv/rshare?id=11990877930563aa9&utm_source=site&utm_medium=footer&utm_campaign=delivery"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Order on Zomato — Sundargarh (770001)"
-                >Zomato</a
-              >
-            </li>
-            <li>
-              <a
-                href="https://www.swiggy.com/direct/brand/710285?source=swiggy-direct&subSource=generic&utm_source=site&utm_medium=footer&utm_campaign=delivery"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Order on Swiggy — Sundargarh (770001)"
-                >Swiggy</a
-              >
-            </li>
-            <li>
-              <a href="https://instagram.com/theovenvibe" target="_blank"
-                >Instagram</a
-              >
-            </li>
-            <li>
-              <a
-                href="https://www.google.com/maps?q=22%C2%B007'01.0%22N+84%C2%B002'16.5%22E"
-                target="_blank"
-                >Location (Google Maps)</a
-              >
-            </li>
-          </ul>
-        </div>
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
+            <ul class="dropdown-menu">
+              <li><a href="index.html#menu" class="dropdown-item">All Items</a></li>
+              <li>
+                <a href="index.html#sec-combos" class="dropdown-item">Combos & Offers</a>
+              </li>
+              <li>
+                <a href="index.html#addonsSection" class="dropdown-item"
+                  >Sides & Add-ons</a
+                >
+              </li>
+              <li><a href="index.html#party" class="dropdown-item">Party Orders</a></li>
+            </ul>
+          </li>
 
-        <!-- right -->
-        <div class="col">
-          <h4>Follow Us</h4>
-          <div class="socials row-socials">
+          <li><a href="index.html#why" class="nav-link">Why Us</a></li>
+
+          <li class="dropdown">
+            <div class="dropdown-trigger">
+              <a href="blog.html" class="nav-link">Blog</a>
+              <svg
+                class="dropdown-arrow"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
+            <ul class="dropdown-menu">
+              <li>
+                <a href="blog.html" class="dropdown-item">Latest Articles</a>
+              </li>
+              <li>
+                <a href="blog-affordable-pizza.html" class="dropdown-item"
+                  >Affordable Pizza</a
+                >
+              </li>
+              <li>
+                <a href="blog-cloud-kitchen-future.html" class="dropdown-item"
+                  >Cloud Kitchens</a
+                >
+              </li>
+            </ul>
+          </li>
+
+          <li><a href="contact.html" class="nav-link">Contact</a></li>
+
+          <li>
             <a
               href="https://wa.me/919692261138"
-              target="_blank"
-              aria-label="WhatsApp"
+              class="btn btn-primary"
+              style="color: white; padding: 0.5rem 1rem; font-size: 0.9rem"
             >
-              <img
-                src="static/images/svg/whatsapp.svg"
-                alt="whatsapp icon"
-                class="social-icon"
-                loading="lazy"
-              />
+              Order Now
             </a>
-            <a
-              href="https://instagram.com/theovenvibe"
-              target="_blank"
-              aria-label="Instagram"
-            >
-              <img
-                src="static/images/svg/instagram.svg"
-                alt="instagram icon"
-                class="social-icon"
-                loading="lazy"
-                width="28"
-                height="28"
-              />
-            </a>
-            <a
-              href="https://www.google.com/maps?q=22%C2%B007'01.0%22N+84%C2%B002'16.5%22E"
-              target="_blank"
-              aria-label="Google Maps"
-            >
-              <img
-                src="static/images/svg/googlemaps.svg"
-                alt="maps icon"
-                class="social-icon"
-                loading="lazy"
-                width="28"
-                height="28"
-              />
-            </a>
-            <a href="#" target="_blank" aria-label="Facebook">
-              <img
-                src="static/images/svg/facebook.svg"
-                alt="facebook icon"
-                class="social-icon"
-                loading="lazy"
-              />
-            </a>
+          </li>
+        </ul>
+
+        <!-- MOBILE MENU TOGGLE -->
+        <div class="mobile-menu-toggle" id="mobileMenuToggle">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- MOBILE MENU OVERLAY -->
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay">
+      <div class="mobile-menu-header">
+        <span class="brand-text">The Oven Vibe</span>
+        <button class="close-menu-btn" id="closeMenuBtn">&times;</button>
+      </div>
+      <ul class="mobile-nav-links">
+        <li><a href="index.html" class="mobile-nav-link">Home</a></li>
+        <li><a href="index.html#menu" class="mobile-nav-link">Menu</a></li>
+        <li><a href="blog.html" class="mobile-nav-link">Blog</a></li>
+        <li><a href="contact.html" class="mobile-nav-link">Contact</a></li>
+      </ul>
+    </div>
+
+    <!-- MAIN FAQ CONTAINER -->
+    <main class="main">
+      <!-- HERO SECTION (AGENT 0: TEXT-DRIVEN MINI) -->
+      <section class="hero hero-mini">
+        <div class="hero-shapes">
+          <div class="shape shape-1"></div>
+          <div class="shape shape-2"></div>
+          <div class="shape shape-3"></div>
+        </div>
+        <div class="hero-container">
+          <div class="hero-content">
+            <h1 class="hero-display" style="font-size: clamp(2.5rem, 5vw, 4.5rem);">
+              <span class="animate-on-scroll">YOUR</span>
+              <span class="text-gradient animate-on-scroll delay-100">QUESTIONS.</span>
+              <span class="animate-on-scroll delay-200">ANSWERED.</span>
+            </h1>
+            <p class="hero-text animate-on-scroll delay-300">
+               Everything you need to know about ordering, delivery, and our food.
+            </p>
           </div>
+        </div>
+      </section>
+
+      <div class="section" style="padding-top: 0;">
+        <div class="container" style="max-width: 800px;">
+          
+          <!-- Question 1 -->
+          <div class="accordion-item">
+            <button class="accordion-header" aria-expanded="true">
+              <span>How can I order pizza from The Oven Vibe?</span>
+              <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="accordion-content" style="max-height: 500px;"> <!-- Open by default -->
+              <div class="accordion-content-inner">
+                <p>
+                  You can order directly on <a href="https://wa.me/919692261138" target="_blank" style="color: var(--color-primary); font-weight: 600;">WhatsApp</a>.
+                  Just tap the link and send us a message. We’re also available on Zomato and Swiggy for delivery partners.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Question 2 -->
+          <div class="accordion-item">
+            <button class="accordion-header" aria-expanded="false">
+              <span>Do you offer delivery in Sundargarh?</span>
+              <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="accordion-content">
+              <div class="accordion-content-inner">
+                <p>
+                  We primarily operate as a <strong>Cloud Kitchen & Takeaway</strong>. You can order via Zomato/Swiggy for home delivery (30-45 mins), or place a takeaway order via WhatsApp and collect it from our kitchen in 20 minutes.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Question 3 -->
+          <div class="accordion-item">
+            <button class="accordion-header" aria-expanded="false">
+              <span>Veg vs Non-Veg Options?</span>
+              <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="accordion-content">
+              <div class="accordion-content-inner">
+                <p>
+                  We have a strict separation for Veg and Non-Veg preparations to ensure purity. Our menu includes a wide range of pure vegetarian pizzas, burgers, and sides, as well as chicken options.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Question 4 -->
+          <div class="accordion-item">
+            <button class="accordion-header" aria-expanded="false">
+              <span>What are your timings?</span>
+              <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="accordion-content">
+              <div class="accordion-content-inner">
+                <p>
+                  We are open daily from <strong>02:00 PM to 11:00 PM</strong>. The last order is accepted at 10:30 PM.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Question 5 -->
+          <div class="accordion-item">
+            <button class="accordion-header" aria-expanded="false">
+              <span>Where is The Oven Vibe located?</span>
+              <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="accordion-content">
+              <div class="accordion-content-inner">
+                <p>
+                  We are located near <strong>Subasini Clinic, Sundargarh (770001)</strong>. You can find our exact location on <a href="https://maps.app.goo.gl/t8u7p3cfaYEkj5JP8" target="_blank" style="color: var(--color-primary); font-weight: 600;">Google Maps</a>.
+                </p>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
 
-      <!-- bottom copyright bar -->
-      <div class="copyright-bar">
-        <p>© 2025 The Oven Vibe. All rights reserved.</p>
-      </div>
-    </footer>
+      <script>
+        // Simple Accordion Logic for FAQ Page
+        document.querySelectorAll('.accordion-header').forEach(button => {
+          button.addEventListener('click', () => {
+            const item = button.parentElement;
+            const content = item.querySelector('.accordion-content');
+            const isActive = item.classList.contains('active');
+            
+            // Close all others
+            document.querySelectorAll('.accordion-item').forEach(otherItem => {
+              if (otherItem !== item) {
+                otherItem.classList.remove('active');
+                otherItem.querySelector('.accordion-content').style.maxHeight = null;
+                otherItem.querySelector('.accordion-header').setAttribute('aria-expanded', 'false');
+              }
+            });
+
+            // Toggle current
+            if (!isActive) {
+              item.classList.add('active');
+              content.style.maxHeight = content.scrollHeight + "px";
+              button.setAttribute('aria-expanded', 'true');
+            } else {
+              item.classList.remove('active');
+              content.style.maxHeight = null;
+              button.setAttribute('aria-expanded', 'false');
+            }
+          });
+        });
+      </script>
+    </main>
+
+    <!-- GLOBAL FOOTER PLACEHOLDER -->
+    <div id="global-footer-placeholder"></div>
+    <script src="script.js"></script>
   </body>
 </html>

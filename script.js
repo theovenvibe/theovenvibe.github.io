@@ -2,21 +2,69 @@
 // Navigation interactions (minimal, runs on DOMContentLoaded)
 // ===============================
 document.addEventListener("DOMContentLoaded", function () {
+  // ===============================
+  // Scroll Animations (IntersectionObserver)
+  // ===============================
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: "0px 0px -50px 0px",
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("is-visible");
+        observer.unobserve(entry.target); // Run once
+      }
+    });
+  }, observerOptions);
+
+  document.querySelectorAll(".animate-on-scroll").forEach((el) => {
+    observer.observe(el);
+  });
+
+  // ===============================
+  // Mobile Menu Logic (Overlay)
+  // ===============================
+  const mobileMenuToggle = document.getElementById("mobileMenuToggle");
+  const mobileMenuOverlay = document.getElementById("mobileMenuOverlay");
+  const closeMenuBtn = document.getElementById("closeMenuBtn");
+  const mobileNavLinks = document.querySelectorAll(".mobile-nav-link");
+
+  function openMenu() {
+    if (mobileMenuOverlay) {
+      mobileMenuOverlay.classList.add("active");
+      document.body.style.overflow = "hidden";
+    }
+  }
+
+  function closeMenu() {
+    if (mobileMenuOverlay) {
+      mobileMenuOverlay.classList.remove("active");
+      document.body.style.overflow = "";
+    }
+  }
+
+  if (mobileMenuToggle) {
+    mobileMenuToggle.addEventListener("click", openMenu);
+  }
+
+  if (closeMenuBtn) {
+    closeMenuBtn.addEventListener("click", closeMenu);
+  }
+
+  mobileNavLinks.forEach((link) => {
+    link.addEventListener("click", closeMenu);
+  });
+
+  // Fallback/Legacy support (optional, can be removed if all pages updated)
   const navToggle = document.querySelector(".nav-toggle");
   const navLinks = document.querySelector(".nav-links");
 
-  // Toggle navbar open/close on mobile
   if (navToggle && navLinks) {
+    // ... legacy logic ...
     navToggle.addEventListener("click", function () {
       navLinks.classList.toggle("open");
-      const isOpen = navLinks.classList.contains("open");
-      navToggle.setAttribute("aria-expanded", String(isOpen));
-    });
-    // Close menu on any link click (mobile)
-    navLinks.querySelectorAll("a").forEach((link) => {
-      link.addEventListener("click", () => {
-        navLinks.classList.remove("open");
-      });
     });
   }
 
@@ -38,9 +86,14 @@ document.addEventListener("DOMContentLoaded", function () {
           const comboSection = document.querySelector("#sec-combos");
           if (comboSection) {
             target = comboSection;
-            const comboList = comboSection.querySelector(".combo-list");
-            if (comboList && comboList.classList.contains("hidden"))
-              comboList.classList.remove("hidden");
+            // Open the combos accordion
+            setTimeout(() => {
+              comboSection.classList.add("active");
+              const content = comboSection.querySelector(".accordion-content");
+              if (content) {
+                content.style.maxHeight = content.scrollHeight + "px";
+              }
+            }, 100);
           }
         }
 
@@ -49,9 +102,17 @@ document.addEventListener("DOMContentLoaded", function () {
           const addonsSection = document.querySelector("#addonsSection");
           if (addonsSection) {
             target = addonsSection;
-            const addonsList = addonsSection.querySelector("#addonsList");
-            if (addonsList && addonsList.classList.contains("hidden"))
-              addonsList.classList.remove("hidden");
+            // Find and open the add-ons accordion
+            setTimeout(() => {
+              const accordion = addonsSection.querySelector(".accordion-item");
+              if (accordion) {
+                accordion.classList.add("active");
+                const content = accordion.querySelector(".accordion-content");
+                if (content) {
+                  content.style.maxHeight = content.scrollHeight + "px";
+                }
+              }
+            }, 100);
           }
         }
 
@@ -63,6 +124,61 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   });
+
+  // ===============================
+  // Dynamic Footer Injection
+  // ===============================
+  const footerPlaceholder = document.getElementById(
+    "global-footer-placeholder"
+  );
+  if (footerPlaceholder) {
+    footerPlaceholder.innerHTML = `
+    <footer class="footer animate-on-scroll" id="footer">
+      <div class="footer-container">
+        <!-- Primary Content -->
+        <div class="footer-content">
+          <p class="footer-brand-name">The Oven Vibe</p>
+          <nav class="footer-nav">
+            <a href="index.html#menu">Menu</a>
+            <a href="contact.html">Contact</a>
+            <a href="faq.html">FAQ</a>
+            <a href="blog.html">Blog</a>
+          </nav>
+        </div>
+
+        <!-- Secondary/Right Content -->
+        <div class="footer-right">
+          <div class="footer-order-links">
+            <a href="https://link.zomato.com/xqzv/rshare?id=11990877930563aa9&utm_source=site&utm_medium=footer&utm_campaign=delivery" target="_blank" rel="noopener noreferrer" aria-label="Order on Zomato">Zomato</a>
+            <span style="opacity: 0.3">|</span>
+            <a href="https://www.swiggy.com/direct/brand/710285?source=swiggy-direct&subSource=generic&utm_source=site&utm_medium=footer&utm_campaign=delivery" target="_blank" rel="noopener noreferrer" aria-label="Order on Swiggy">Swiggy</a>
+          </div>
+
+          <div class="footer-social-links">
+            <a href="https://instagram.com/theovenvibe" target="_blank" rel="noopener noreferrer" aria-label="Follow on Instagram">Instagram</a>
+            <span style="opacity: 0.3">|</span>
+            <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Follow on Facebook">Facebook</a>
+            <span style="opacity: 0.3">|</span>
+            <a href="https://maps.app.goo.gl/t8u7p3cfaYEkj5JP8" target="_blank" rel="noopener noreferrer" aria-label="Find us on Maps">Maps</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="footer-meta">
+          <p>20 min takeaway · 30-45 min delivery</p>
+          © 2025 The Oven Vibe · All rights reserved
+        </div>
+      </div>
+    </footer>
+    `;
+
+    // Observe the new footer for animation
+    const footer = footerPlaceholder.querySelector(".footer");
+    if (footer) {
+      observer.observe(footer);
+    }
+  }
 });
 
 // ===============================
@@ -73,448 +189,412 @@ const MENU_JSON = "menu.json"; // Menu data file
 const PLACEHOLDER = "static/images/product_images/placeholder.webp"; // Default placeholder image
 
 // ===============================
-// Fetch menu.json and initialize rendering
+// Function to create picture element (AVIF -> JXL -> WebP)
 // ===============================
-async function init() {
-  try {
-    const res = await fetch(MENU_JSON, { credentials: "omit" });
-    const data = await res.json();
-    window.menuData = data;
-    validateMenuData(data);
+function buildPicture(productCode, folder, altText, className) {
+  const picture = document.createElement("picture");
 
-    renderMenuSections(data); // Main menu categories
-    renderCombos(data); // Combos section
-    renderAddons(data); // Add-ons section
-  } catch (err) {
-    console.error("Failed to load menu.json", err);
-    const mc = document.getElementById("mainContent");
-    if (mc) mc.innerHTML = "<p style='padding:20px'>Menu unavailable</p>";
-  }
-}
+  // Define sources (priority order: AVIF -> JXL -> WebP)
+  // Assuming folder mapping:
+  // - "combo" -> static/images/combo_images/
+  // - "menu"  -> static/images/product_images/
+  // - "addon" -> static/images/add_on_images/
 
-// ===============================
-// Helper functions
-// ===============================
-function unique(arr) {
-  return [...new Set(arr)];
-}
-function safeText(s) {
-  return String(s || "");
-}
+  let basePath = "";
+  if (folder === "combo") basePath = "static/images/combo_images/";
+  else if (folder === "addon") basePath = "static/images/add_on_images/";
+  else basePath = "static/images/product_images/";
 
-function validateMenuData(d) {
-  if (
-    !d ||
-    !Array.isArray(d.Menu_Items) ||
-    !Array.isArray(d.Add_ons) ||
-    !Array.isArray(d.Combos)
-  ) {
-    throw new Error("Invalid menu.json structure");
-  }
-  const req = ["product_code", "category", "item_name", "price"];
-  d.Menu_Items.forEach((it) => {
-    req.forEach((k) => {
-      if (!(k in it)) {
-        throw new Error("Invalid item: " + (it.product_code || it.item_name));
-      }
-    });
+  const formats = ["avif", "jxl", "webp"];
+
+  formats.forEach((ext) => {
+    const source = document.createElement("source");
+    source.srcset = `${basePath}${productCode}.${ext}`;
+    source.type = `image/${ext}`;
+    picture.appendChild(source);
   });
-}
-
-// Directory by asset type
-function imageBaseDir(type) {
-  if (type === "addon") return "static/images/add_on_images/";
-  if (type === "combo") return "static/images/combo_images/";
-  return "static/images/product_images/";
-}
-
-// Create <picture> with AVIF > WebP > JXL, fallback <img> uses WebP
-function buildPicture(code, type, alt, className = "") {
-  const pic = document.createElement("picture");
-  
-  // If no code provided, use placeholder directly
-  if (!code) {
-    const img = document.createElement("img");
-    img.src = PLACEHOLDER;
-    img.alt = safeText(alt) + " (photo unavailable)";
-    img.loading = "lazy";
-    if (className) img.className = className;
-    pic.appendChild(img);
-    return pic;
-  }
-  
-  const dir = imageBaseDir(type);
-  const avif = `${dir}${code}.avif`;
-  const webp = `${dir}${code}.webp`;
-  const jxl = `${dir}${code}.jxl`;
-
-  const s1 = document.createElement("source");
-  s1.type = "image/avif";
-  s1.srcset = avif;
-  const s2 = document.createElement("source");
-  s2.type = "image/webp";
-  s2.srcset = webp;
-  const s3 = document.createElement("source");
-  s3.type = "image/jxl";
-  s3.srcset = jxl;
 
   const img = document.createElement("img");
-  img.src = PLACEHOLDER; // Start with placeholder as fallback
-  img.alt = safeText(alt);
+  img.src = `${basePath}${productCode}.webp`; // Fallback
+  img.alt = altText;
+  img.className = className;
   img.loading = "lazy";
-  if (className) img.className = className;
-  
-  // Try to load the actual image
-  const testImg = new Image();
-  testImg.onload = () => {
-    img.src = webp; // If test passes, use the real image
-  };
-  testImg.onerror = () => {
-    img.src = PLACEHOLDER; // If test fails, keep placeholder
-  };
-  testImg.src = webp; // Test with webp
 
-  pic.appendChild(s1);
-  pic.appendChild(s2);
-  pic.appendChild(s3);
-  pic.appendChild(img);
-  return pic;
-}
-
-// ===============================
-// Render menu sections (Pizza, Burger, etc.)
-// Each category collapsible with count badge
-// ===============================
-function renderMenuSections(data) {
-  const menuRoot = document.getElementById("menu");
-  if (!menuRoot) return;
-  menuRoot.innerHTML = "";
-
-  const categories = unique(data.Menu_Items.map((i) => i.category)).sort();
-  categories.forEach((cat) => {
-    const section = document.createElement("section");
-    section.className = "menu-section";
-    section.id = "sec-" + cat.replace(/\s+/g, "-");
-
-    // Header with title + item count
-    const header = document.createElement("header");
-    const h3 = document.createElement("h3");
-    h3.innerText = cat;
-    const count = data.Menu_Items.filter((it) => it.category === cat).length;
-    const badge = document.createElement("div");
-    badge.innerText = count + " items";
-    badge.style.fontWeight = "700";
-    badge.style.color = "#444";
-    header.appendChild(h3);
-    header.appendChild(badge);
-
-    // Toggle category on click
-    const itemsEl = document.createElement("div");
-    itemsEl.className = "menu-items hidden"; // collapsed by default
-    header.addEventListener("click", () => {
-      itemsEl.classList.toggle("hidden");
-      if (!itemsEl.classList.contains("hidden")) {
-        section.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
-    });
-
-    // Group items by product_code to handle variants (Half/Full, Small/Large)
-    const items = data.Menu_Items.filter((i) => i.category === cat);
-    const groupedByCode = {};
-    items.forEach((item) => {
-      if (!groupedByCode[item.product_code]) {
-        groupedByCode[item.product_code] = [];
-      }
-      groupedByCode[item.product_code].push(item);
-    });
-
-    // Update count badge to show unique products only
-    const uniqueCount = Object.keys(groupedByCode).length;
-    badge.innerText = uniqueCount + " items";
-
-    // Render each unique product (with variants grouped together)
-    // Sort by item_id to maintain menu order
-    const sortedEntries = Object.entries(groupedByCode).sort((a, b) => {
-      const idA = a[1][0].item_id || 0;
-      const idB = b[1][0].item_id || 0;
-      return idA - idB;
-    });
-    
-    sortedEntries.forEach(([productCode, itemsWithCode]) => {
-      const mainItem = itemsWithCode[0]; // Use first item for basic display info
-      const itm = document.createElement("article");
-      itm.className = "item";
-
-      // Apply status classes if item is not available
-      if (mainItem.status === "coming-soon") {
-        itm.classList.add("coming-soon");
-      } else if (mainItem.status === "out-of-stock") {
-        itm.classList.add("out-of-stock");
-      }
-
-      const thumb = document.createElement("div");
-      thumb.className = "thumb";
-      const pic = buildPicture(
-        mainItem.product_code,
-        "product",
-        mainItem.display_name || mainItem.item_name
-      );
-      thumb.appendChild(pic);
-      const imgEl1 = pic.querySelector("img");
-
-      const meta = document.createElement("div");
-      meta.className = "meta";
-      const title = document.createElement("h4");
-      title.innerText = mainItem.display_name || mainItem.item_name;
-      const desc = document.createElement("p");
-      desc.innerText = mainItem.description || "";
-
-      meta.appendChild(title);
-      meta.appendChild(desc);
-
-      // Add variant prices (if multiple variants exist)
-      if (itemsWithCode.length > 1) {
-        const priceContainer = document.createElement("div");
-        priceContainer.className = "variant-prices";
-        priceContainer.style.display = "flex";
-        priceContainer.style.gap = "10px";
-        priceContainer.style.marginTop = "8px";
-        priceContainer.style.flexWrap = "wrap";
-
-        itemsWithCode.forEach((variant) => {
-          const priceBtn = document.createElement("button");
-          priceBtn.className = "price-variant";
-          priceBtn.style.padding = "6px 12px";
-          priceBtn.style.borderRadius = "6px";
-          priceBtn.style.border = "1px solid #ddd";
-          priceBtn.style.background = "#f9f9f9";
-          priceBtn.style.cursor = "pointer";
-          priceBtn.style.fontSize = "0.9rem";
-          priceBtn.style.fontWeight = "600";
-          priceBtn.style.transition = "all 0.2s";
-          
-          // Determine variant label (Half/Full, Small/Large, etc)
-          let variantLabel = "₹" + variant.price;
-          if (variant.item_name.includes("Half")) variantLabel = "Half: ₹" + variant.price;
-          else if (variant.item_name.includes("Full")) variantLabel = "Full: ₹" + variant.price;
-          else if (variant.item_name.includes("Small")) variantLabel = "Small: ₹" + variant.price;
-          else if (variant.item_name.includes("Large")) variantLabel = "Large: ₹" + variant.price;
-          
-          priceBtn.textContent = variantLabel;
-          
-          priceBtn.addEventListener("mouseover", () => {
-            priceBtn.style.background = "#ad210a";
-            priceBtn.style.color = "#fff";
-            priceBtn.style.borderColor = "#ad210a";
-          });
-          priceBtn.addEventListener("mouseout", () => {
-            priceBtn.style.background = "#f9f9f9";
-            priceBtn.style.color = "#000";
-            priceBtn.style.borderColor = "#ddd";
-          });
-          
-          priceContainer.appendChild(priceBtn);
-        });
-        meta.appendChild(priceContainer);
-      } else {
-        // Single price for non-variant items
-        const price = document.createElement("div");
-        price.className = "price";
-        price.innerText = "₹" + mainItem.price;
-        meta.appendChild(price);
-      }
-
-      itm.appendChild(thumb);
-      itm.appendChild(meta);
-      itemsEl.appendChild(itm);
-    });
-
-    section.appendChild(header);
-    section.appendChild(itemsEl);
-    menuRoot.appendChild(section);
-  });
-}
-
-// ===============================
-// Render combos (special section at top)
-// Collapsible, includes count badge
-// ===============================
-function renderCombos(data) {
-  const menuRoot = document.getElementById("menu");
-  if (!menuRoot) return;
-  const combos = data.Combos || [];
-  if (!combos.length) return;
-
-  const comboSection = document.createElement("section");
-  comboSection.className = "menu-section";
-  comboSection.id = "sec-combos";
-
-  // Header with title + count
-  const header = document.createElement("header");
-  const h3 = document.createElement("h3");
-  h3.innerText = "Combos & Offers";
-  const badge = document.createElement("div");
-  badge.innerText = combos.length + " offers";
-  badge.style.fontWeight = "700";
-  badge.style.color = "#444";
-  header.appendChild(h3);
-  header.appendChild(badge);
-  comboSection.appendChild(header);
-
-  // Collapsible list of combos
-  const list = document.createElement("div");
-  list.className = "combo-list hidden"; // collapsed by default
-  header.addEventListener("click", () => {
-    list.classList.toggle("hidden");
-    if (!list.classList.contains("hidden")) {
-      comboSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  // Handle load error -> show placeholder
+  img.onerror = function () {
+    this.onerror = null;
+    this.src = PLACEHOLDER;
+    // Remove sources to prevent broken image icon if browser tries them
+    while (picture.firstChild !== this) {
+      picture.removeChild(picture.firstChild);
     }
-  });
+  };
 
-  // Build code → name lookup
+  picture.appendChild(img);
+  return picture;
+}
+
+// ===============================
+// 1. Fetch & Render Menu
+// ===============================
+document.addEventListener("DOMContentLoaded", () => {
+  const menuContainer = document.getElementById("menu");
+  if (!menuContainer) return; // Only run on pages with #menu
+
+  fetch(MENU_JSON)
+    .then((response) => response.json())
+    .then((data) => {
+      // 1. Combos Accordion (First)
+      const combosAccordion = buildCombosAccordion(data);
+      if (combosAccordion) menuContainer.appendChild(combosAccordion);
+
+      // 2. Render Categories (Accordions)
+      const categories = {};
+
+      // Group items by Category -> Subcategory
+      data.Menu_Items.forEach((item) => {
+        if (!categories[item.category]) {
+          categories[item.category] = {};
+        }
+        if (!categories[item.category][item.subcategory]) {
+          categories[item.category][item.subcategory] = [];
+        }
+        categories[item.category][item.subcategory].push(item);
+      });
+
+      // Order of categories (optional, or just iterate keys)
+      // If you want specific order, define an array here. Otherwise:
+      Object.keys(categories).forEach((catName) => {
+        const catContent = document.createElement("div");
+        catContent.className = "category-group";
+
+        // Create a single grid for all items in this category
+        const grid = document.createElement("div");
+        grid.className = "menu-items";
+
+        // Add all items from all subcategories to the single grid
+        Object.values(categories[catName]).forEach((subcategoryItems) => {
+          subcategoryItems.forEach((item) => {
+            const card = buildMenuCard(item);
+            grid.appendChild(card);
+          });
+        });
+
+        catContent.appendChild(grid);
+
+        // Create Accordion for this Category
+        // Calculate total items
+        let count = 0;
+        Object.values(categories[catName]).forEach(
+          (arr) => (count += arr.length)
+        );
+
+        const accordion = createAccordionItem(
+          catName,
+          count + " items",
+          catContent,
+          false
+        ); // false = closed by default
+        menuContainer.appendChild(accordion);
+      });
+
+      // 3. Render Add-ons (Separate Section)
+      renderAddons(data.Add_ons);
+    })
+    .catch((err) => console.error("Error loading menu:", err));
+});
+
+// ===============================
+// Helper: Build Menu Card
+// ===============================
+function buildMenuCard(item) {
+  const card = document.createElement("article");
+  card.className = "menu-card";
+
+  if (item.status === "coming-soon") card.classList.add("coming-soon");
+  else if (item.status === "out-of-stock") card.classList.add("out-of-stock");
+
+  // Card Inner Wrapper
+  const cardInner = document.createElement("div");
+  cardInner.className = "menu-card-inner";
+  card.appendChild(cardInner);
+
+  // Image
+  // Use product_code for image
+  const pic = buildPicture(
+    item.product_code,
+    "menu",
+    item.display_name,
+    "menu-card-img"
+  );
+  cardInner.appendChild(pic);
+
+  // Body
+  const body = document.createElement("div");
+  body.className = "menu-card-body";
+  cardInner.appendChild(body);
+
+  const title = document.createElement("h4");
+  title.className = "menu-card-title";
+  title.innerText = item.display_name || item.item_name;
+  body.appendChild(title);
+
+  const desc = document.createElement("p");
+  desc.style.fontSize = "0.9rem";
+  desc.style.color = "var(--color-text-muted)";
+  desc.style.marginBottom = "1rem";
+  desc.innerText = item.description;
+  body.appendChild(desc);
+
+  const price = document.createElement("div");
+  price.className = "menu-card-price";
+  price.innerText = "₹" + item.price;
+  body.appendChild(price);
+
+  return card;
+}
+
+// ===============================
+// Helper: Build Combos Accordion
+// ===============================
+function buildCombosAccordion(data) {
+  const combos = data.Combos || [];
+  if (!combos.length) return null;
+
+  const list = document.createElement("div");
+  list.className = "menu-items combo-list";
+
   const codeToName = {};
   (data.Menu_Items || []).forEach((item) => {
     codeToName[item.product_code] = item.display_name || item.item_name;
   });
 
-  // Render each combo
   combos.forEach((c) => {
-    const box = document.createElement("div");
-    box.className = "combo";
+    const card = document.createElement("article");
+    card.className = "menu-card";
 
-    // Apply status classes if combo is not available
-    if (c.status === "coming-soon") {
-      box.classList.add("coming-soon");
-    } else if (c.status === "out-of-stock") {
-      box.classList.add("out-of-stock");
-    }
+    if (c.status === "coming-soon") card.classList.add("coming-soon");
+    else if (c.status === "out-of-stock") card.classList.add("out-of-stock");
 
-    const thumb = document.createElement("div");
-    thumb.className = "thumb";
-    const pic = buildPicture(c.combo_code, "combo", c.combo_name);
-    thumb.appendChild(pic);
-    const imgEl2 = pic.querySelector("img");
+    // Card Inner Wrapper
+    const cardInner = document.createElement("div");
+    cardInner.className = "menu-card-inner";
+    card.appendChild(cardInner);
 
-    const meta = document.createElement("div");
-    meta.className = "meta";
+    // Image
+    const pic = buildPicture(
+      c.combo_code,
+      "combo",
+      c.combo_name,
+      "menu-card-img"
+    );
+    cardInner.appendChild(pic);
+
+    // Body
+    const body = document.createElement("div");
+    body.className = "menu-card-body";
+    cardInner.appendChild(body);
+
     const title = document.createElement("h4");
+    title.className = "menu-card-title";
     title.innerText = c.combo_name;
-    const descr = document.createElement("p");
-    
-    // Extract just the items part from description (everything after "] ")
+    body.appendChild(title);
+
+    const desc = document.createElement("p");
+    desc.style.fontSize = "0.9rem";
+    desc.style.color = "var(--color-text-muted)";
+    desc.style.marginBottom = "1rem";
+
+    // Simplified description logic: Use description if present, else construct from items
     let itemsText = "Includes: ";
     if (c.description) {
-      // Description format: "[Veg preparation] Item1+Item2+Coke..."
-      // Extract everything after the first "] "
-      const parts = c.description.split("] ");
-      if (parts.length > 1) {
-        itemsText = "Includes: " + parts[1];
+      // If description already has "Includes:", use it as is, otherwise prefix it
+      if (c.description.toLowerCase().includes("includes")) {
+        itemsText = c.description;
+      } else {
+        itemsText = "Includes: " + c.description;
       }
     } else {
-      // Fallback to items_included if no description
       const readableItems = (c.items_included || [])
         .map((code) => codeToName[code] || code)
         .join(", ");
       itemsText = "Includes: " + readableItems;
     }
-    descr.innerText = itemsText;
+    desc.innerText = itemsText;
+    body.appendChild(desc);
+
     const price = document.createElement("div");
-    price.className = "price";
+    price.className = "menu-card-price";
     price.innerText = "₹" + c.combo_price;
+    body.appendChild(price);
 
-    meta.appendChild(title);
-    meta.appendChild(descr);
-    meta.appendChild(price);
-
-    box.appendChild(thumb);
-    box.appendChild(meta);
-    list.appendChild(box);
+    card.appendChild(body);
+    list.appendChild(card);
   });
 
-  comboSection.appendChild(list);
-  menuRoot.insertBefore(comboSection, menuRoot.firstChild); // show at top
+  // Create Accordion for Combos
+  // CLOSED by default
+  const accordion = createAccordionItem(
+    "Combos & Offers",
+    combos.length + " offers",
+    list,
+    false
+  );
+  accordion.id = "sec-combos";
+  return accordion;
 }
 
 // ===============================
-// Render add-ons (separate section)
-// Collapsible, includes count badge
+// Helper: Render Add-ons
 // ===============================
-function renderAddons(data) {
-  const target = document.getElementById("addonsList");
-  if (!target) return;
-  target.innerHTML = "";
-  const addons = data.Add_ons || [];
+function renderAddons(addons) {
+  const addonsSection = document.getElementById("addonsSection");
+  const container = document.getElementById("addonsList");
+  if (!addonsSection || !container || !addons || !addons.length) return;
 
-  // Update header with count
-  const header = document.getElementById("addonsHeader");
-  if (header) {
-    header.innerHTML = "";
-    const h3 = document.createElement("h3");
-    h3.innerText = "Add-ons & Suggested";
-    const badge = document.createElement("div");
-    badge.innerText = addons.length + " items";
-    badge.style.fontWeight = "700";
-    badge.style.color = "#444";
-    header.appendChild(h3);
-    header.appendChild(badge);
+  // Create accordion wrapper
+  const accordion = document.createElement("div");
+  accordion.className = "accordion-item";
 
-    // Toggle section
-    header.addEventListener("click", () => {
-      target.classList.toggle("hidden");
-      if (!target.classList.contains("hidden")) {
-        header.parentElement.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
-      }
-    });
+  // Create header
+  const header = document.createElement("div");
+  header.className = "accordion-header";
+  header.innerHTML = `
+    <div class="accordion-title">
+      <h3>Add-ons & Suggested</h3>
+      <span class="accordion-subtitle">${addons.length} items</span>
+    </div>
+    <svg class="accordion-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="6 9 12 15 18 9"></polyline>
+    </svg>
+  `;
+
+  // Create grid wrapper (like other menu sections)
+  const grid = document.createElement("div");
+  grid.className = "menu-items";
+
+  // Build addon cards in grid
+  addons.forEach((addon) => {
+    const card = document.createElement("article");
+    card.className = "menu-card addon-card";
+
+    if (addon.status === "coming-soon") card.classList.add("coming-soon");
+    else if (addon.status === "out-of-stock") card.classList.add("out-of-stock");
+
+    const cardInner = document.createElement("div");
+    cardInner.className = "menu-card-inner";
+    card.appendChild(cardInner);
+
+    // Image
+    const pic = buildPicture(
+      addon.image_code,
+      "addon",
+      addon.addon_name,
+      "menu-card-img"
+    );
+    cardInner.appendChild(pic);
+
+    const body = document.createElement("div");
+    body.className = "menu-card-body";
+    cardInner.appendChild(body);
+
+    const title = document.createElement("h4");
+    title.className = "menu-card-title";
+    title.innerText = addon.addon_name;
+    body.appendChild(title);
+
+    // Add description placeholder to match regular menu cards
+    const desc = document.createElement("p");
+    desc.style.fontSize = "0.9rem";
+    desc.style.color = "var(--color-text-muted)";
+    desc.style.marginBottom = "1rem";
+    desc.innerText = "Perfect complement to your meal";
+    body.appendChild(desc);
+
+    const price = document.createElement("div");
+    price.className = "menu-card-price";
+    price.innerText = "₹" + addon.addon_price;
+    body.appendChild(price);
+
+    grid.appendChild(card);
+  });
+
+  // Create accordion content wrapper
+  const contentWrapper = document.createElement("div");
+  contentWrapper.className = "accordion-content";
+  contentWrapper.appendChild(grid);
+
+  accordion.appendChild(header);
+  accordion.appendChild(contentWrapper);
+
+  // Replace the addonsList with accordion
+  const addonsList = document.getElementById("addonsList");
+  if (addonsList) {
+    addonsSection.replaceChild(accordion, addonsList);
+  } else {
+    addonsSection.appendChild(accordion);
   }
 
-  // Render each add-on
-  addons.forEach((a) => {
-    const itm = document.createElement("article");
-    itm.className = "item";
+  // Add toggle logic
+  header.addEventListener("click", () => {
+    const isActive = accordion.classList.contains("active");
 
-    // Apply status classes if addon is not available
-    if (a.status === "coming-soon") {
-      itm.classList.add("coming-soon");
-    } else if (a.status === "out-of-stock") {
-      itm.classList.add("out-of-stock");
+    if (!isActive) {
+      accordion.classList.add("active");
+      contentWrapper.style.maxHeight = contentWrapper.scrollHeight + "px";
+    } else {
+      accordion.classList.remove("active");
+      contentWrapper.style.maxHeight = null;
     }
-
-    const thumb = document.createElement("div");
-    thumb.className = "thumb";
-    // Use image_code if available, otherwise fallback to addon_code
-    const imageCode = a.image_code || a.addon_code;
-    const pic = buildPicture(imageCode, "addon", a.addon_name);
-    thumb.appendChild(pic);
-    const imgEl3 = pic.querySelector("img");
-
-    const meta = document.createElement("div");
-    meta.className = "meta";
-    const title = document.createElement("h4");
-    title.innerText = a.addon_name;
-    const desc = document.createElement("p");
-    desc.innerText = a.best_for ? `Best for: ${a.best_for}` : "";
-    const price = document.createElement("div");
-    price.className = "price";
-    price.innerText = "₹" + a.addon_price;
-
-    meta.appendChild(title);
-    meta.appendChild(desc);
-    meta.appendChild(price);
-
-    itm.appendChild(thumb);
-    itm.appendChild(meta);
-    target.appendChild(itm);
   });
 }
 
+
 // ===============================
-// Init call — defer non-critical rendering to idle time (INP-friendly)
+// Helper: Create Accordion Item
 // ===============================
-if ("requestIdleCallback" in window) {
-  requestIdleCallback(init);
-} else {
-  setTimeout(init, 0);
+function createAccordionItem(titleText, subtitleText, contentNode, isOpen) {
+  const item = document.createElement("div");
+  item.className = "accordion-item";
+  if (isOpen) item.classList.add("active");
+
+  const header = document.createElement("div");
+  header.className = "accordion-header";
+  header.innerHTML = `
+    <div class="accordion-title">
+      <h3>${titleText}</h3>
+      <span class="accordion-subtitle">${subtitleText}</span>
+    </div>
+    <svg class="accordion-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="6 9 12 15 18 9"></polyline>
+    </svg>
+  `;
+
+  const contentWrapper = document.createElement("div");
+  contentWrapper.className = "accordion-content";
+  contentWrapper.appendChild(contentNode);
+
+  item.appendChild(header);
+  item.appendChild(contentWrapper);
+
+  // Toggle Logic
+  header.addEventListener("click", () => {
+    const isActive = item.classList.contains("active");
+
+    // Close others? (Optional - keeping separate)
+    // document.querySelectorAll(".accordion-item").forEach(i => {
+    //   i.classList.remove("active");
+    //   i.querySelector(".accordion-content").style.maxHeight = null;
+    // });
+
+    if (!isActive) {
+      item.classList.add("active");
+      contentWrapper.style.maxHeight = contentWrapper.scrollHeight + "px";
+    } else {
+      item.classList.remove("active");
+      contentWrapper.style.maxHeight = null;
+    }
+  });
+
+  return item;
 }

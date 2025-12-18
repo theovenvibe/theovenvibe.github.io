@@ -271,53 +271,45 @@
       "combo_code": "752694444",
       "combo_name": "Veg Fried Rice Meal Box Combo",
       "combo_price": 109,
-      "description": "[Veg preparation] Veg Fried Rice+Coke Soft Beverage [250 ml]",
-      "items_included": [
-        "751393909"
-      ],
+      "description": "Fluffy wok-tossed basmati rice with fresh vegetables, served with a refreshing Coke.",
+      "items_included": ["751393909"],
+      "image_code": "752694444",
       "status": "available"
     },
     {
       "combo_code": "752694468",
       "combo_name": "Schezwan Fried Rice Meal Box Combo 🌶️",
       "combo_price": 129,
-      "description": "[Veg preparation] Schezwan Fried Rice+Coke Soft Beverage [250 ml]",
-      "items_included": [
-        "751393911"
-      ],
+      "description": "Smoky, tangy spiced fried rice with bold flavors, paired with a cold Coke to cool down.",
+      "items_included": ["751393911"],
+      "image_code": "752694468",
       "status": "available"
     },
     {
       "combo_code": "745802348",
       "combo_name": "Fiesta Pizza Combo",
       "combo_price": 269,
-      "description": "[Veg preparation] Herb Paneer Delight Pizza [Regular, 7 inches]+Spicy Peri Fries [Small]+Coke Soft Beverage [250 ml]",
-      "items_included": [
-        "745802364",
-        "745802351"
-      ],
+      "description": "Our signature Herb Paneer Delight Pizza with creamy makhni sauce, crispy Peri Fries, and Coke. Complete meal for pizza lovers.",
+      "items_included": ["745802364", "745802351"],
+      "image_code": "745802348",
       "status": "available"
     },
     {
       "combo_code": "745802384",
       "combo_name": "Pasta Treat Combo",
       "combo_price": 239,
-      "description": "[Veg preparation] Creamy Alfredo Pasta (Fusilli)+Classic Fries [Large]+Coke Soft Beverage [250 ml]",
-      "items_included": [
-        "751793935",
-        "745802374"
-      ],
+      "description": "Creamy Alfredo Pasta made with perfectly cooked fusilli, served with golden fries and a refreshing Coke.",
+      "items_included": ["751793935", "745802374"],
+      "image_code": "745802384",
       "status": "available"
     },
     {
       "combo_code": "745802354",
       "combo_name": "Sandwich Meal Box Combo",
       "combo_price": 209,
-      "description": "[Veg preparation] Paneer Tikka Grilled Sandwich+Classic Fries [Small]+Coke Soft Beverage [250 ml]",
-      "items_included": [
-        "752623131",
-        "745802374"
-      ],
+      "description": "Paneer Tikka Grilled Sandwich packed with marinated paneer, served with crispy fries and Coke. Perfect quick meal.",
+      "items_included": ["752623131", "745802374"],
+      "image_code": "745802354",
       "status": "available"
     }
   ],
