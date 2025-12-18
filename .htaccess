@@ -1,0 +1,71 @@
+# Enable GZIP compression
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/plain
+  AddOutputFilterByType DEFLATE text/html
+  AddOutputFilterByType DEFLATE text/xml
+  AddOutputFilterByType DEFLATE text/css
+  AddOutputFilterByType DEFLATE text/javascript
+  AddOutputFilterByType DEFLATE application/xml
+  AddOutputFilterByType DEFLATE application/xhtml+xml
+  AddOutputFilterByType DEFLATE application/rss+xml
+  AddOutputFilterByType DEFLATE application/javascript
+  AddOutputFilterByType DEFLATE application/x-javascript
+  AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>
+
+# Set cache expiration times
+<IfModule mod_expires.c>
+  ExpiresActive On
+  
+  # Default cache expiration: 1 day
+  ExpiresDefault "access plus 1 day"
+  
+  # Cache HTML for 1 hour
+  ExpiresByType text/html "access plus 1 hour"
+  
+  # Cache CSS and JavaScript for 1 year
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType text/javascript "access plus 1 year"
+  
+  # Cache images for 1 year
+  ExpiresByType image/avif "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/jxl "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/gif "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  
+  # Cache JSON for 7 days
+  ExpiresByType application/json "access plus 7 days"
+  ExpiresByType application/ld+json "access plus 7 days"
+</IfModule>
+
+# Add Cache-Control headers
+<IfModule mod_headers.c>
+  # Cache HTML for 1 hour
+  <FilesMatch "\.html$">
+    Header set Cache-Control "public, max-age=3600"
+  </FilesMatch>
+  
+  # Cache CSS and JS for 1 year
+  <FilesMatch "\.(css|js)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  
+  # Cache images for 1 year
+  <FilesMatch "\.(avif|webp|jxl|jpg|jpeg|png|gif|svg)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  
+  # Cache JSON for 7 days
+  <FilesMatch "\.json$">
+    Header set Cache-Control "public, max-age=604800"
+  </FilesMatch>
+  
+  # Cache XML for 24 hours
+  <FilesMatch "\.xml$">
+    Header set Cache-Control "public, max-age=86400"
+  </FilesMatch>
+</IfModule>
