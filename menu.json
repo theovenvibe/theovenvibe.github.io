@@ -8,7 +8,7 @@
       "subcategory": "Classic Veg Fried Rice",
       "item_name": "Veg Fried Rice",
       "display_name": "Veg Fried Rice",
-      "price": 99,
+      "price": 159,
       "description": "[Veg preparation] Fluffy wok tossed basmati rice with crunchy carrots, beans and sweet corn. Light soy seasoning a hint of black pepper finished with a squeeze of lemon. Served hot in a leak proof box a balanced everyday plate for quick lunches or dinners.",
       "status": "available"
     },
@@ -19,7 +19,7 @@
       "subcategory": "Classic Veg Fried Rice",
       "item_name": "Garlic Fried Rice",
       "display_name": "Garlic Fried Rice",
-      "price": 109,
+      "price": 179,
       "description": "[Veg preparation] Aromatic fried rice kissed with roasted garlic and butter notes. Stir fried with julienne capsicum and corn mild, fragrant and comforting. Topped with thin garlic chips on request for extra crunch.",
       "status": "available"
     },
@@ -30,7 +30,7 @@
       "subcategory": "Spicy and Signature Indo Chinese",
       "item_name": "Schezwan Fried Rice",
       "display_name": "Schezwan Fried Rice 🌶️",
-      "price": 119,
+      "price": 199,
       "description": "[Veg preparation] Smoky, tangy and spicy our house made schezwan paste is wok fried with rice, cabbage, capsicum and onions. Bold red colour, slight char and a balanced heat that builds with each bite.",
       "status": "available"
     },
@@ -41,7 +41,7 @@
       "subcategory": "Premium Veg Protein Bowls",
       "item_name": "Paneer Fried Rice",
       "display_name": "Paneer Fried Rice",
-      "price": 149,
+      "price": 239,
       "description": "[Veg preparation] Large, soft cubes of marinated paneer, pan seared and tossed with wok fried rice, crisp vegetables and tangy Indo Chinese sauce. High protein, filling and flavorful.",
       "status": "available"
     },
@@ -52,7 +52,7 @@
       "subcategory": "Premium Veg Protein Bowls",
       "item_name": "Mixed Treasure Fried Rice",
       "display_name": "Mixed Treasure Fried Rice",
-      "price": 169,
+      "price": 269,
       "description": "[Veg preparation] Feast in a box paneer, baby corn, capsicum and roasted cashews in a rich slightly sweet savory wok sauce.",
       "status": "available"
     },
@@ -63,7 +63,7 @@
       "subcategory": "Pizza",
       "item_name": "Zesty Onion Feast Pizza",
       "display_name": "Zesty Onion Feast Pizza [Regular, 7 inches] 👨‍🍳",
-      "price": 99,
+      "price": 109,
       "description": "[veg preparation] Crisp onions with oregano seasoning.",
       "status": "available"
     },
@@ -74,7 +74,7 @@
       "subcategory": "Pizza",
       "item_name": "Ultimate Cheese Delight Pizza",
       "display_name": "Ultimate Cheese Delight Pizza [Regular, 7 inches] 👨‍🍳",
-      "price": 109,
+      "price": 119,
       "description": "[veg preparation] Loaded with melted Mozzarella cheese.",
       "status": "available"
     },
@@ -85,7 +85,7 @@
       "subcategory": "Pizza",
       "item_name": "Golden Corn Classic Pizza",
       "display_name": "Golden Corn Classic Pizza [Regular, 7 inches] 👨‍🍳",
-      "price": 119,
+      "price": 129,
       "description": "[veg preparation] Golden Corn Classic Pizza loaded with sweet corn, melting cheese, sliced black olives, and red paprika.",
       "status": "available"
     },
@@ -96,7 +96,7 @@
       "subcategory": "Pizza",
       "item_name": "Crunchy Capsicum Pizza",
       "display_name": "Crunchy Capsicum Pizza [Regular, 7 inches] 👨‍🍳",
-      "price": 119,
+      "price": 129,
       "description": "[veg preparation] Bell peppers with cheese.",
       "status": "available"
     },
@@ -107,7 +107,7 @@
       "subcategory": "Pizza",
       "item_name": "Herb Paneer Delight Pizza",
       "display_name": "Herb Paneer Delight Pizza [Regular, 7 inches] 👨‍🍳",
-      "price": 149,
+      "price": 159,
       "description": "[veg preparation] Loaded Smoky Paneer Tikka Pizza topped with melting cheese, jalapenos, and red paprika.",
       "status": "available"
     },
@@ -118,7 +118,7 @@
       "subcategory": "Pizza",
       "item_name": "Paneer Makhni Royale Pizza",
       "display_name": "Paneer Makhni Royale Pizza [Regular, 7 inches] 👨‍🍳",
-      "price": 169,
+      "price": 179,
       "description": "[Veg preparation] Soft paneer cubes cooked in creamy makhni sauce with cashew paste.",
       "status": "available"
     },
@@ -129,7 +129,7 @@
       "subcategory": "Pizza",
       "item_name": "Mushroom Supreme Pizza",
       "display_name": "Mushroom Supreme Pizza [Regular, 7 inches] 👨‍🍳",
-      "price": 159,
+      "price": 169,
       "description": "[Veg preparation] A rich, fully loaded mushroom pizza with juicy mushroom, jalapenos, red paprika and melting cheese.",
       "status": "available"
     },
@@ -140,7 +140,7 @@
       "subcategory": "Pizza",
       "item_name": "Vegie Onion Capsicum Pizza",
       "display_name": "Vegie Onion Capsicum Pizza [Regular, 7 inches] 👨‍🍳",
-      "price": 149,
+      "price": 159,
       "description": "[veg preparation] Fresh onion and capsicum on cheesy base.",
       "status": "available"
     },
@@ -151,7 +151,7 @@
       "subcategory": "Pasta",
       "item_name": "Creamy Alfredo Pasta",
       "display_name": "Creamy Alfredo Pasta (Fusilli)",
-      "price": 149,
+      "price": 159,
       "description": "[veg preparation] Rich and velvety white-sauce pasta made with perfectly cooked fusilli tossed in creamy Alfredo sauce.",
       "status": "available"
     },
@@ -162,7 +162,7 @@
       "subcategory": "Pasta",
       "item_name": "Classic Red Sauce Pasta",
       "display_name": "Classic Red Sauce Pasta (Penne) 🌶️",
-      "price": 129,
+      "price": 139,
       "description": "[veg preparation] Authentic Italian-style red sauce pasta made using penne simmered in slow-cooked tangy tomato sauce.",
       "status": "available"
     },
@@ -173,7 +173,7 @@
       "subcategory": "Sandwiches",
       "item_name": "Tangy Green Chutney Sandwich",
       "display_name": "Tangy Green Chutney Sandwich",
-      "price": 59,
+      "price": 69,
       "description": "[Veg preparation] Fresh chutney with veggies.",
       "status": "available"
     },
@@ -184,7 +184,7 @@
       "subcategory": "Sandwiches",
       "item_name": "Fiery Cheese Chilli Sandwich",
       "display_name": "Fiery Cheese Chilli Sandwich 🌶️ 🌶️",
-      "price": 89,
+      "price": 99,
       "description": "[veg preparation] Spicy cheese and chilli filing.",
       "status": "available"
     },
@@ -195,73 +195,161 @@
       "subcategory": "Sandwiches",
       "item_name": "Paneer Tikka Grilled Sandwich",
       "display_name": "Paneer Tikka Grilled Sandwich",
-      "price": 119,
+      "price": 129,
       "description": "[veg preparation] Grilled sandwich stuffed with paneer.",
       "status": "available"
     },
     {
-      "product_code": "745802374",
+      "product_code": "759685338",
       "item_id": 19,
+      "category": "Burgers",
+      "subcategory": "Burgers",
+      "item_name": "Motu Burger",
+      "display_name": "Motu Burger",
+      "price": 179,
+      "description": "[Veg preparation] A big, filling burger loaded with a double-sized crispy aloo patty, rich cheese sauce, cheese slice, tangy mustard, fresh cabbage, onion, tomato, French fries and classic tomato ketchup. Heavy, juicy and super satisfying.",
+      "status": "available"
+    },
+    {
+      "product_code": "760595845",
+      "item_id": 20,
+      "category": "Maggi",
+      "subcategory": "Maggi",
+      "item_name": "Street Style Korean Spicy Veg Maggi",
+      "display_name": "Street Style Korean Spicy Veg Maggi",
+      "price": 119,
+      "description": "[Veg preparation] Street style veg Maggi cooked in a spicy Korean inspired sauce with garlic, vegetables and bold flavours. Hot, saucy and highly addictive.",
+      "status": "available"
+    },
+    {
+      "product_code": "760597710",
+      "item_id": 21,
+      "category": "Maggi",
+      "subcategory": "Maggi",
+      "item_name": "Creamy Cheese Maggi",
+      "display_name": "Creamy Cheese Maggi",
+      "price": 149,
+      "description": "[Veg preparation] Classic veg Maggi loaded with rich, creamy melted cheese.",
+      "status": "available"
+    },
+    {
+      "product_code": "760600654",
+      "item_id": 22,
+      "category": "Grilled Sandwiches",
+      "subcategory": "Sandwiches",
+      "item_name": "Dahi Tadka Veg Grilled Sandwich",
+      "display_name": "Dahi Tadka Veg Grilled Sandwich",
+      "price": 119,
+      "description": "[Veg preparation] Fresh curd blended with desi tadka, spices and crunchy vegetables, grilled until golden. Cool, spicy and satisfying.",
+      "status": "available"
+    },
+    {
+      "product_code": "760794370",
+      "item_id": 23,
+      "category": "Grilled Sandwiches",
+      "subcategory": "Sandwiches",
+      "item_name": "Khatti Meethi Imli Khajoor Veg Grilled Sandwich",
+      "display_name": "Khatti Meethi Imli Khajoor Veg Grilled Sandwich",
+      "price": 119,
+      "description": "[veg preparation] A desi fusion sandwich made with tangy imli and sweet khajoor chutney, layered with fresh vegetables and grilled till golden. Perfect balance of sweet and sour flavours.",
+      "status": "available"
+    },
+    {
+      "product_code": "760794703",
+      "item_id": 24,
+      "category": "Grilled Sandwiches",
+      "subcategory": "Sandwiches",
+      "item_name": "Chilli Peanut Thecha Veg Grilled Sandwich",
+      "display_name": "Chilli Peanut Thecha Veg Grilled Sandwich",
+      "price": 119,
+      "description": "[veg preparation] Spicy Maharashtrian style peanut thecha spread with green chillies and garlic, paired with crunchy vegetables and grilled bread. Bold, spicy and flavour packed.",
+      "status": "available"
+    },
+    {
+      "product_code": "760607587",
+      "item_id": 25,
+      "category": "Sides & Snacks",
+      "subcategory": "Snacks",
+      "item_name": "Chilli Garlic Potato Pops",
+      "display_name": "Chilli Garlic Potato Pops",
+      "price": 79,
+      "description": "[Veg preparation] Crispy potato bites tossed in chilli garlic seasoning, served with creamy cheese dip.",
+      "status": "available"
+    },
+    {
+      "product_code": "760605226",
+      "item_id": 26,
+      "category": "Sides & Snacks",
+      "subcategory": "Snacks",
+      "item_name": "Cheese Onion Crispy Pocket Bombs",
+      "display_name": "Cheese Onion Crispy Pocket Bombs",
+      "price": 139,
+      "description": "[Veg preparation] Golden crispy pockets filled with cheesy onion stuffing, served hot with refreshing green chutney dip.",
+      "status": "available"
+    },
+    {
+      "product_code": "745802374",
+      "item_id": 27,
       "category": "Sides & Snacks",
       "subcategory": "Snacks",
       "item_name": "Classic French Fries",
       "display_name": "Classic French Fries",
-      "price": 69,
+      "price": 79,
       "description": "[veg preparation] Crisp golden fries.",
       "status": "available"
     },
     {
       "product_code": "745802351",
-      "item_id": 20,
+      "item_id": 28,
       "category": "Sides & Snacks",
       "subcategory": "Snacks",
       "item_name": "Spicy Peri French Fries",
       "display_name": "Spicy Peri French Fries",
-      "price": 89,
+      "price": 99,
       "description": "[veg preparation] Tossed in peri peri spice.",
       "status": "available"
     },
     {
       "product_code": "745802387",
-      "item_id": 21,
+      "item_id": 29,
       "category": "Sides & Snacks",
       "subcategory": "Snacks",
       "item_name": "Cheesy Garlic Bread Toast",
       "display_name": "Cheesy Garlic Bread Toast",
-      "price": 79,
+      "price": 89,
       "description": "[veg preparation] Garlic butter with melted cheese.",
       "status": "available"
     },
     {
       "product_code": "745802356",
-      "item_id": 22,
+      "item_id": 30,
       "category": "Sides & Snacks",
       "subcategory": "Snacks",
       "item_name": "Tangy Masala Corn",
       "display_name": "Tangy Masala Corn",
-      "price": 69,
+      "price": 79,
       "description": "[veg preparation] Corn kernels tossed with spice.",
       "status": "available"
     },
     {
       "product_code": "745802367",
-      "item_id": 23,
+      "item_id": 31,
       "category": "Sides & Snacks",
       "subcategory": "Snacks",
       "item_name": "Cheesy Corn Mix",
       "display_name": "Cheesy Corn Mix",
-      "price": 99,
+      "price": 109,
       "description": "[veg preparation] Corn with cheese and herbs.",
       "status": "available"
     },
     {
       "product_code": "745802352",
-      "item_id": 24,
+      "item_id": 32,
       "category": "Sides & Snacks",
       "subcategory": "Snacks",
       "item_name": "Crunchy Peri Makhana",
       "display_name": "Crunchy Peri Makhana [25 g]",
-      "price": 79,
+      "price": 89,
       "description": "[veg preparation] Healthy roasted makhana tossed in spice.",
       "status": "available"
     }
@@ -270,7 +358,7 @@
     {
       "combo_code": "752694444",
       "combo_name": "Veg Fried Rice Meal Box Combo",
-      "combo_price": 109,
+      "combo_price": 169,
       "description": "Fluffy wok-tossed basmati rice with fresh vegetables, served with a refreshing Coke.",
       "items_included": ["751393909"],
       "image_code": "752694444",
@@ -279,7 +367,7 @@
     {
       "combo_code": "752694468",
       "combo_name": "Schezwan Fried Rice Meal Box Combo 🌶️",
-      "combo_price": 129,
+      "combo_price": 209,
       "description": "Smoky, tangy spiced fried rice with bold flavors, paired with a cold Coke to cool down.",
       "items_included": ["751393911"],
       "image_code": "752694468",
@@ -288,7 +376,7 @@
     {
       "combo_code": "745802348",
       "combo_name": "Fiesta Pizza Combo",
-      "combo_price": 269,
+      "combo_price": 279,
       "description": "Our signature Herb Paneer Delight Pizza with creamy makhni sauce, crispy Peri Fries, and Coke. Complete meal for pizza lovers.",
       "items_included": ["745802364", "745802351"],
       "image_code": "745802348",
@@ -297,7 +385,7 @@
     {
       "combo_code": "745802384",
       "combo_name": "Pasta Treat Combo",
-      "combo_price": 239,
+      "combo_price": 249,
       "description": "Creamy Alfredo Pasta made with perfectly cooked fusilli, served with golden fries and a refreshing Coke.",
       "items_included": ["751793935", "745802374"],
       "image_code": "745802384",
@@ -306,7 +394,7 @@
     {
       "combo_code": "745802354",
       "combo_name": "Sandwich Meal Box Combo",
-      "combo_price": 209,
+      "combo_price": 219,
       "description": "Paneer Tikka Grilled Sandwich packed with marinated paneer, served with crispy fries and Coke. Perfect quick meal.",
       "items_included": ["752623131", "745802374"],
       "image_code": "745802354",
@@ -317,28 +405,28 @@
     {
       "addon_code": "747584635",
       "addon_name": "Cheese Dip",
-      "addon_price": 19,
+      "addon_price": 21,
       "image_code": "ADD006",
       "status": "available"
     },
     {
       "addon_code": "747584636",
       "addon_name": "Cheese",
-      "addon_price": 19,
+      "addon_price": 25,
       "image_code": "ADD001",
       "status": "available"
     },
     {
       "addon_code": "747584638",
       "addon_name": "Garlic Butter",
-      "addon_price": 11,
+      "addon_price": 15,
       "image_code": "ADD004",
       "status": "available"
     },
     {
       "addon_code": "747584739",
       "addon_name": "Sweet Corn",
-      "addon_price": 6,
+      "addon_price": 15,
       "image_code": "ADD002",
       "status": "available"
     },
@@ -350,16 +438,9 @@
       "status": "available"
     },
     {
-      "addon_code": "747584741",
-      "addon_name": "Oregano",
-      "addon_price": 3,
-      "image_code": "ADD005",
-      "status": "available"
-    },
-    {
       "addon_code": "747584970",
       "addon_name": "Peri Peri Dip",
-      "addon_price": 19,
+      "addon_price": 21,
       "image_code": "ADD007",
       "status": "available"
     }
