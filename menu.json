@@ -218,7 +218,7 @@
       "item_name": "Street Style Korean Spicy Veg Maggi",
       "display_name": "Street Style Korean Spicy Veg Maggi",
       "price": 119,
-      "description": "[Veg preparation] Street style veg Maggi cooked in a spicy Korean inspired sauce with garlic, vegetables and bold flavours. Hot, saucy and highly addictive.",
+      "description": "[Veg preparation] Street-style veg Maggi prepared in a spicy Korean-inspired garlic sauce with vegetables. To maintain the perfect texture and avoid overcooking, the noodles are cooled during preparation and then tossed in sauce. Bold flavours, saucy and highly addictive.",
       "status": "available"
     },
     {
@@ -303,8 +303,8 @@
       "item_id": 28,
       "category": "Sides & Snacks",
       "subcategory": "Snacks",
-      "item_name": "Spicy Peri French Fries",
-      "display_name": "Spicy Peri French Fries",
+      "item_name": "Spicy Peri Peri French Fries",
+      "display_name": "Spicy Peri Peri French Fries",
       "price": 99,
       "description": "[veg preparation] Tossed in peri peri spice.",
       "status": "available"
@@ -347,8 +347,8 @@
       "item_id": 32,
       "category": "Sides & Snacks",
       "subcategory": "Snacks",
-      "item_name": "Crunchy Peri Makhana",
-      "display_name": "Crunchy Peri Makhana [25 g]",
+      "item_name": "Crunchy Peri Peri Makhana",
+      "display_name": "Crunchy Peri Peri Makhana [25 g]",
       "price": 89,
       "description": "[veg preparation] Healthy roasted makhana tossed in spice.",
       "status": "available"
