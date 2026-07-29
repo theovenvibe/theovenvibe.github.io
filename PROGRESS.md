@@ -14,9 +14,10 @@
   - Fresh-eyes QA gate: **10/10 PASS** (incl. negative test: corrupt config → readable Zod error → restore green)
   - Exit criteria met: build green on develop ✅ (post-merge), CI check ✅, old URLs stubbed ✅
 - [ ] **Phase 2a — Design research** (Sonnet 5 + web search, medium)
-  - Exit: inspiration brief `design/RESEARCH.md` committed; Milan has reacted to it
+  - Exit: inspiration brief `design/RESEARCH.md` committed (site patterns + **logo/brand research** + photo analysis); Milan has reacted to it
 - [ ] **Phase 2b — Design system** (Fable 5, medium-high)
-  - Exit: Milan picks mockup direction A/B (incl. desktop menu grid); tokens locked; contrast AA verified
+  - Exit: Milan picks mockup direction A/B incl. **logo concept + favicon set** (desktop menu grid in mockups); tokens locked; contrast AA verified; favicon crisp at 16–48px
+  - Scope note (owner, 2026-07-29): logo redesign in scope; food/item photos untouchable; all other imagery (blog headers, OG, illustrations) newly created
 - [ ] **Phase 3 — Build-out** (Sonnet 5, standard)
   - Exit: all pages, all widths, no h-scroll; WA cart works JS-on and JS-off; build green
 - [ ] **Phase 4 — Content, copy & SEO** (Opus 5, medium)
