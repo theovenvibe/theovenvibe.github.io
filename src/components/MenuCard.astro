@@ -6,9 +6,11 @@
  * Rendered at build time from menu.json (Phase 3 invisible improvement —
  * v1 built this with client JS after a fetch()).
  *
- * Note: the description is shown RAW (including "[Veg preparation]"-style
- * catalogue markers) because that's what v1's `desc.innerText = item.description`
- * actually rendered — stripping the markers here would be a visible diff.
+ * Phase 4 (owner-approved visible change): names/descriptions arrive already
+ * cleaned by displayName()/displayDescription() in src/lib/data.ts — no emoji,
+ * no "[Regular, 7 inches]" / "[Veg preparation]" catalogue markers. The real
+ * buying information from those markers (size, spice level) comes back as
+ * `meta`, rendered as a muted line under the title.
  */
 import type { MenuImage } from '../lib/data';
 
@@ -17,9 +19,10 @@ interface Props {
   title: string;
   description: string;
   price: number;
+  meta?: string[];
   extraClass?: string;
 }
-const { img, title, description, price, extraClass } = Astro.props;
+const { img, title, description, price, meta = [], extraClass } = Astro.props;
 ---
 
 <article class:list={['menu-card', extraClass]}>
@@ -31,6 +34,13 @@ const { img, title, description, price, extraClass } = Astro.props;
     </picture>
     <div class="menu-card-body">
       <h4 class="menu-card-title">{title}</h4>
+      {
+        meta.length > 0 && (
+          <p class="menu-card-meta" style="font-size: 0.78rem; color: var(--color-text-muted); letter-spacing: 0.04em; text-transform: uppercase; margin: -0.35rem 0 0.6rem;">
+            {meta.join(' · ')}
+          </p>
+        )
+      }
       <p style="font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 1rem;">
         {description}
       </p>
