@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mockup A — Ember Editorial · The Oven Vibe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- CDN fonts for PREVIEW ONLY — production self-hosts (DESIGN.md) -->
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Instrument+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#191411; --surface:#221B16; --surface-2:#2A2119;
+  --text:#F5EDE3; --text-2:#C7B9AB;
+  --brand:#E85C41; --brand-deep:#C2492F; --amber:#F5A83C; --border:#9C583B;
+  --radius:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font:16px/1.6 'Instrument Sans',system-ui,sans-serif;padding-bottom:140px}
+h1,h2,h3,.display{font-family:'Bricolage Grotesque',sans-serif}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:3px solid var(--amber);outline-offset:2px;border-radius:6px}
+.wrap{max-width:1200px;margin:0 auto;padding:0 20px}
+
+/* uniform photo treatment — THE crop fix (DESIGN.md) */
+.ph{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:12px;filter:saturate(1.06) contrast(1.03);background:#000}
+.ph.sq{aspect-ratio:1/1}
+.ph.zoom{transform:scale(1.22)}
+.phbox{overflow:hidden;border-radius:12px;background:#000}
+
+/* nav */
+nav{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
+nav .cta{background:var(--brand-deep);color:#FFF6EC;font-weight:600;padding:10px 22px;border-radius:999px}
+nav .num{color:var(--text-2);font-size:14px;margin-right:14px}
+nav .cta{white-space:nowrap}
+@media(max-width:719px){nav .num{display:none}nav svg{width:150px}}
+
+/* hero */
+.hero{display:grid;gap:32px;align-items:center;padding:28px 0 56px}
+@media(min-width:900px){.hero{grid-template-columns:1.1fr .9fr;padding:56px 0 80px}}
+.hero h1{font-size:clamp(36px,6vw,58px);line-height:1.05;font-weight:800}
+.hero h1 em{color:var(--brand);font-style:normal}
+.hero .sub{margin-top:18px;font-size:18px;color:var(--text-2);max-width:44ch}
+.chip{display:inline-flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:7px 16px;font-size:14px;margin-top:22px}
+.chip b{color:var(--amber)}
+.hero .btns{display:flex;gap:14px;margin-top:28px;flex-wrap:wrap}
+.btn{font-weight:600;padding:14px 30px;border-radius:999px;font-size:17px}
+.btn.call{background:var(--amber);color:#1B130D}
+.btn.wa{border:1.5px solid var(--border);color:var(--text)}
+/* signature oven-arch frame */
+.arch{border-radius:50% 50% 0 0 / 32% 32% 0 0;overflow:hidden;border:1px solid var(--border);border-bottom:4px solid var(--amber);background:#000}
+.arch img{width:100%;aspect-ratio:4/4.6;object-fit:cover;filter:saturate(1.06) contrast(1.03)}
+.hero .price-tag{position:absolute;margin:-56px 0 0 24px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:8px 16px;font-weight:600}
+.hero .price-tag b{color:var(--amber);font-size:20px}
+
+/* trust row */
+.trust{display:grid;gap:12px;grid-template-columns:1fr;border-top:1px solid #33281f;border-bottom:1px solid #33281f;padding:22px 0;color:var(--text-2);font-size:15px}
+@media(min-width:720px){.trust{grid-template-columns:repeat(3,1fr);text-align:center}}
+.trust b{color:var(--text)}
+
+/* sections */
+section{padding:52px 0 8px}
+.kicker{color:var(--brand);font-weight:600;letter-spacing:.12em;font-size:13px;text-transform:uppercase}
+h2{font-size:clamp(26px,4vw,36px);font-weight:800;margin-top:6px}
+
+/* bestseller scroller */
+.scroller{display:grid;grid-auto-flow:column;grid-auto-columns:72%;gap:16px;overflow-x:auto;padding:24px 0 12px;scroll-snap-type:x mandatory;scrollbar-width:none}
+@media(min-width:720px){.scroller{grid-auto-columns:260px}}
+.card{background:var(--surface);border:1px solid #33281f;border-radius:var(--radius);padding:12px;scroll-snap-align:start;transition:transform .2s,border-color .2s}
+.card:hover{transform:translateY(-4px);border-color:var(--border)}
+.card:hover .ph{transform:scale(1.04)}
+.card:hover .ph.zoom{transform:scale(1.26)}
+.ph{transition:transform .2s}
+.card h3{font-size:17px;margin-top:12px;font-weight:600;font-family:'Instrument Sans'}
+.card .row{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.price{color:var(--amber);font-weight:600;font-size:18px}
+.add{background:var(--brand-deep);color:#FFF6EC;border:none;font:600 14px 'Instrument Sans';padding:8px 18px;border-radius:999px;cursor:pointer}
+.veg{width:14px;height:14px;border:1.5px solid #3E9B4F;border-radius:3px;display:inline-block;position:relative;vertical-align:-1px;margin-right:6px}
+.veg::after{content:'';position:absolute;inset:2.5px;background:#3E9B4F;border-radius:50%}
+
+/* bento categories */
+.bento{display:grid;gap:14px;grid-template-columns:repeat(2,1fr);margin-top:24px}
+@media(min-width:900px){.bento{grid-template-columns:repeat(4,1fr)}.bento .big{grid-column:span 2;grid-row:span 2}}
+.tile{position:relative;border-radius:var(--radius);overflow:hidden;border:1px solid #33281f;min-height:130px;background:#000}
+.tile img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;opacity:.78;filter:saturate(1.06)}
+.tile span{position:absolute;left:14px;bottom:12px;font:800 18px 'Bricolage Grotesque';text-shadow:0 1px 8px rgba(0,0,0,.8)}
+.tile.big span{font-size:26px}
+.tile small{position:absolute;left:14px;bottom:38px;color:var(--amber);font-weight:600;font-size:12px;text-shadow:0 1px 6px #000}
+
+/* combo strip */
+.combos{display:grid;gap:16px;margin-top:24px}
+@media(min-width:820px){.combos{grid-template-columns:1fr 1fr}}
+.combo{display:grid;grid-template-columns:130px 1fr;gap:16px;background:linear-gradient(120deg,var(--surface),var(--surface-2));border:1px solid var(--border);border-radius:var(--radius);padding:14px;align-items:center}
+.combo .ph{aspect-ratio:1/1}
+.badge{display:inline-block;background:var(--amber);color:#1B130D;font-weight:600;font-size:12px;border-radius:6px;padding:2px 10px;margin-bottom:6px}
+
+/* sticky bar — the ONE glass surface */
+.bar{position:fixed;left:12px;right:12px;bottom:12px;z-index:9;display:flex;align-items:center;gap:12px;background:rgba(34,27,22,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--border);border-radius:18px;padding:12px 14px;max-width:680px;margin:0 auto}
+.bar .free{flex:1;min-width:0}
+.bar .free small{color:var(--text-2);font-size:12px;display:block}
+.meter{height:6px;background:#3a2d22;border-radius:99px;margin-top:6px;overflow:hidden}
+.meter i{display:block;height:100%;width:65%;background:linear-gradient(90deg,var(--brand),var(--amber));border-radius:99px}
+.bar .btn{padding:12px 20px;font-size:15px;white-space:nowrap}
+
+/* design-notes */
+.notes{margin-top:64px;border-top:1px dashed var(--border);padding-top:40px}
+.swatches{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+.sw{width:84px;height:64px;border-radius:10px;border:1px solid #33281f;font-size:11px;color:var(--text-2);display:flex;align-items:flex-end;padding:6px}
+.favrow{display:flex;align-items:center;gap:22px;margin:18px 0;flex-wrap:wrap}
+.favrow figure{text-align:center;color:var(--text-2);font-size:12px}
+.favrow img{margin:0 auto 6px}
+
+/* reveal motion (mockup approximation of Motion spec) */
+.r{opacity:0;transform:translateY(12px);transition:opacity .28s ease-out,transform .28s ease-out}
+.r.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.r{opacity:1;transform:none;transition:none}.card,.ph{transition:none}}
+footer{margin-top:56px;color:var(--text-2);font-size:14px;text-align:center;padding:24px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<nav>
+  <!-- Ember Arch lockup (inline so the webfont applies) -->
+  <svg viewBox="0 0 380 96" width="190" role="img" aria-label="The Oven Vibe">
+    <text x="58" y="28" font-size="18" font-weight="600" letter-spacing="10" fill="#F5EDE3" font-family="Bricolage Grotesque">THE</text>
+    <path fill="#F5EDE3" fill-rule="evenodd" d="M10 88 L10 58 A24 24 0 0 1 58 58 L58 88 L46 88 L46 59 A12 12 0 0 0 22 59 L22 88 Z"/>
+    <circle cx="34" cy="77" r="11" fill="#F5A83C" opacity=".28"/><circle cx="34" cy="77" r="6" fill="#F5A83C"/>
+    <text x="66" y="88" font-size="46" font-weight="800" fill="#F5EDE3" font-family="Bricolage Grotesque">VEN</text>
+    <text x="182" y="88" font-size="46" font-weight="800" fill="#E85C41" font-family="Bricolage Grotesque">VIBE</text>
+  </svg>
+  <div><span class="num">+91 96922 61138</span><a class="cta" href="tel:+919692261138">Call to Order</a></div>
+</nav>
+
+<header class="hero">
+  <div>
+    <h1>Fresh. Hot.<br><em>Oven-baked.</em><br>Made in Sundargarh.</h1>
+    <p class="sub">Pizzas, burgers, fried rice &amp; more — straight from our oven to your door. Delivery starts at just ₹29.</p>
+    <span class="chip">⭐ <b>4.9</b> · 16 Google reviews</span>
+    <div class="btns">
+      <a class="btn call" href="tel:+919692261138">📞 Call to Order</a>
+      <a class="btn wa" href="#">WhatsApp Us</a>
+    </div>
+  </div>
+  <div>
+    <div class="arch"><img src="../../public/static/images/product_images/752649876.webp" alt="Paneer Makhni Royale Pizza"></div>
+    <div class="price-tag">Paneer Makhni Royale · <b>₹199</b></div>
+  </div>
+</header>
+
+<div class="trust r">
+  <div>🕚 <b>11 AM – 9 PM</b>, all days</div>
+  <div>🛵 ₹29 / ₹59 / ₹99 by distance · <b>FREE above ₹599</b></div>
+  <div>📍 Sundargarh 770001 · within 8 km</div>
+</div>
+
+<section>
+  <span class="kicker">Most loved</span>
+  <h2>Bestsellers</h2>
+  <div class="scroller">
+    <div class="card r"><div class="phbox"><img class="ph sq" src="../../public/static/images/product_images/752649876.webp" alt="Paneer Makhni Royale Pizza"></div>
+      <h3><i class="veg"></i>Paneer Makhni Royale</h3><div class="row"><span class="price">₹199</span><button class="add">Add +</button></div></div>
+    <div class="card r"><div class="phbox"><img class="ph sq zoom" src="../../public/static/images/product_images/759685338.webp" alt="Motu Burger"></div>
+      <h3><i class="veg"></i>Motu Burger</h3><div class="row"><span class="price">₹199</span><button class="add">Add +</button></div></div>
+    <div class="card r"><div class="phbox"><img class="ph sq" src="../../public/static/images/product_images/760595845.webp" alt="Korean Spicy Maggi"></div>
+      <h3><i class="veg"></i>Korean Spicy Maggi</h3><div class="row"><span class="price">₹139</span><button class="add">Add +</button></div></div>
+    <div class="card r"><div class="phbox"><img class="ph sq" src="../../public/static/images/product_images/760607587.webp" alt="Chilli Garlic Potato Pops"></div>
+      <h3><i class="veg"></i>Potato Pops</h3><div class="row"><span class="price">₹99</span><button class="add">Add +</button></div></div>
+  </div>
+</section>
+
+<section>
+  <span class="kicker">Browse</span>
+  <h2>What are you craving?</h2>
+  <div class="bento">
+    <a class="tile big r" href="#"><img src="../../public/static/images/product_images/745802369.webp" alt=""><small>8 items</small><span>Pizza</span></a>
+    <a class="tile r" href="#"><img src="../../public/static/images/product_images/751393909.webp" alt=""><small>5 items</small><span>Fried Rice</span></a>
+    <a class="tile r" href="#"><img src="../../public/static/images/product_images/752623129.webp" alt=""><small>6 items</small><span>Sandwiches</span></a>
+    <a class="tile r" href="#"><img src="../../public/static/images/product_images/760607587.webp" alt=""><small>8 items</small><span>Snacks</span></a>
+    <a class="tile r" href="#"><img src="../../public/static/images/product_images/751793935.webp" alt=""><small>2 items</small><span>Pasta</span></a>
+  </div>
+</section>
+
+<section>
+  <span class="kicker">Menu preview</span>
+  <h2>Desktop menu grid</h2>
+  <div class="scroller" style="grid-auto-flow:row;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));grid-auto-columns:unset;overflow:visible">
+    <div class="card r"><div class="phbox"><img class="ph" src="../../public/static/images/product_images/745802369.webp" alt="Zesty Onion Feast Pizza"></div>
+      <h3><i class="veg"></i>Zesty Onion Feast Pizza</h3><div class="row"><span class="price">₹129</span><button class="add">Add +</button></div></div>
+    <div class="card r"><div class="phbox"><img class="ph" src="../../public/static/images/product_images/751393909.webp" alt="Veg Fried Rice"></div>
+      <h3><i class="veg"></i>Veg Fried Rice</h3><div class="row"><span class="price">₹179</span><button class="add">Add +</button></div></div>
+    <div class="card r"><div class="phbox"><img class="ph" src="../../public/static/images/product_images/751793935.webp" alt="Creamy Alfredo Pasta"></div>
+      <h3><i class="veg"></i>Creamy Alfredo Pasta</h3><div class="row"><span class="price">₹179</span><button class="add">Add +</button></div></div>
+    <div class="card r"><div class="phbox"><img class="ph zoom" src="../../public/static/images/product_images/752623129.webp" alt="Tangy Green Chutney Sandwich"></div>
+      <h3><i class="veg"></i>Green Chutney Sandwich</h3><div class="row"><span class="price">₹89</span><button class="add">Add +</button></div></div>
+  </div>
+</section>
+
+<section>
+  <span class="kicker">Better together</span>
+  <h2>Combos that save</h2>
+  <div class="combos">
+    <div class="combo r"><div class="phbox"><img class="ph" src="../../public/static/images/combo_images/752694444.webp" alt="Veg Fried Rice Meal Box Combo"></div>
+      <div><span class="badge">MEAL BOX</span><h3 style="font-size:18px">Veg Fried Rice Meal Box</h3>
+      <p style="color:var(--text-2);font-size:14px;margin:4px 0 8px">Fried rice + chilled Coke</p>
+      <div class="row" style="justify-content:flex-start;gap:16px"><span class="price">₹209</span><button class="add">Add +</button></div></div></div>
+    <div class="combo r"><div class="phbox"><img class="ph" src="../../public/static/images/combo_images/745802348.webp" alt="Fiesta Pizza Combo"></div>
+      <div><span class="badge">PARTY PICK</span><h3 style="font-size:18px">Fiesta Pizza Combo</h3>
+      <p style="color:var(--text-2);font-size:14px;margin:4px 0 8px">Two pizzas, one celebration</p>
+      <div class="row" style="justify-content:flex-start;gap:16px"><span class="price">₹319</span><button class="add">Add +</button></div></div></div>
+  </div>
+</section>
+
+<!-- sticky cart bar: the ONE glass surface (blur budget) -->
+<div class="bar" role="region" aria-label="Your order">
+  <div class="free">
+    <b>2 items · ₹388</b>
+    <small>Add ₹211 more for FREE delivery 🎉</small>
+    <div class="meter"><i></i></div>
+  </div>
+  <a class="btn call" href="#" style="padding:12px 18px">Order on WhatsApp</a>
+</div>
+
+<section class="notes">
+  <span class="kicker">For Milan — design notes</span>
+  <h2>Brand &amp; system</h2>
+  <div class="favrow">
+    <figure><img src="../logos/ember-arch-mark.svg" width="48" height="48" alt=""><figcaption>48px</figcaption></figure>
+    <figure><img src="../logos/ember-arch-mark.svg" width="32" height="32" alt=""><figcaption>32px</figcaption></figure>
+    <figure><img src="../logos/ember-arch-mark.svg" width="16" height="16" alt=""><figcaption>16px favicon</figcaption></figure>
+    <figure style="margin-left:18px"><img src="../logos/flame-mark.svg" width="48" height="48" alt=""><figcaption>alt: Flame 48px</figcaption></figure>
+    <figure><img src="../logos/flame-mark.svg" width="16" height="16" alt=""><figcaption>Flame 16px</figcaption></figure>
+  </div>
+  <div class="swatches">
+    <div class="sw" style="background:#191411">bg</div>
+    <div class="sw" style="background:#221B16">surface</div>
+    <div class="sw" style="background:#E85C41;color:#1B130D">brand</div>
+    <div class="sw" style="background:#C2492F">CTA</div>
+    <div class="sw" style="background:#F5A83C;color:#1B130D">amber</div>
+    <div class="sw" style="background:#F5EDE3;color:#2A211A">cream</div>
+  </div>
+  <p style="color:var(--text-2);font-size:14px;max-width:70ch">Type: Bricolage Grotesque (display) + Instrument Sans (body). Photos: fixed 4:3 / 1:1 crops, floating shots auto-zoomed — compare the burger card (zoomed to fill) with its original. Blur: sticky bar only. All text passes WCAG AA (see DESIGN.md).</p>
+</section>
+
+<footer>Mockup A — “Ember Editorial” · The Oven Vibe v2 · Phase 2b</footer>
+</div>
+
+<script>
+const io=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&e.target.classList.add('in')),{threshold:.15});
+document.querySelectorAll('.r').forEach((el,i)=>{el.style.transitionDelay=(i%4)*60+'ms';io.observe(el)});
+</script>
+</body>
+</html>
