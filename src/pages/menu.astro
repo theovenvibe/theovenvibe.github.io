@@ -1,97 +1,45 @@
 ---
-// Menu — Phase 1 stub that already renders REAL validated data end-to-end
-// (menu.json → Zod → page). Phase 3 replaces the markup with the designed
-// cards + WhatsApp order builder per PRD §4/§7.
+// /menu/ — not a v1 page (v1 only ever had an in-page #menu anchor on the
+// home page); this route pre-dates Phase 3 (PRD §4 full site-map vision).
+// Out of the Phase 3 pixel-parity scope (no v1 source to port), but the
+// global stylesheet swap (Tailwind → v1's style.css) means it can no longer
+// use Tailwind utility classes, so it's restyled here with the same v1
+// design system / components used everywhere else, instead of shipping
+// unstyled.
 import Layout from '../layouts/Layout.astro';
-import {
-  site,
-  categories,
-  availableCombos,
-  availableAddons,
-  isVeg,
-  displayDescription,
-  imageFor,
-} from '../lib/data';
+import MenuAccordions from '../components/MenuAccordions.astro';
+import AddonsAccordion from '../components/AddonsAccordion.astro';
+import { site } from '../lib/data';
 ---
 
 <Layout
   title={`Menu — ${site.business.name} Sundargarh`}
   description={`Full menu: pizza, burgers, fried rice, pasta & more. ${site.delivery.hook}.`}
 >
-  <main class="mx-auto max-w-4xl px-4 py-12">
-    <h1 class="text-3xl font-bold">Menu</h1>
-    <p class="mt-1 text-sm text-neutral-400">{site.delivery.free_above_note}</p>
-
-    {
-      categories.map(({ name, items }) => (
-        <section class="mt-10">
-          <h2 class="text-xl font-semibold text-amber-400">{name}</h2>
-          <ul class="mt-4 grid gap-4 sm:grid-cols-2">
-            {items.map((item) => {
-              const img = imageFor(item);
-              return (
-                <li class="flex gap-3 rounded-xl border border-neutral-800 p-3">
-                  <picture>
-                    {img.avif && <source srcset={img.avif} type="image/avif" />}
-                    <img
-                      src={img.webp}
-                      alt={item.item_name}
-                      width="80"
-                      height="80"
-                      class="h-20 w-20 rounded-lg object-cover"
-                      loading="lazy"
-                    />
-                  </picture>
-                  <div class="min-w-0">
-                    <h3 class="font-medium">
-                      <span aria-label={isVeg(item) ? 'Vegetarian' : 'Non-vegetarian'}>
-                        {isVeg(item) ? '🟢' : '🔴'}
-                      </span>
-                      {item.item_name} — ₹{item.price}
-                    </h3>
-                    <p class="mt-1 line-clamp-2 text-sm text-neutral-400">
-                      {displayDescription(item)}
-                    </p>
-                    <a
-                      class="mt-1 inline-block text-sm text-amber-400 underline"
-                      href={`https://wa.me/${site.business.whatsapp}?text=${encodeURIComponent(`Hi! I'd like to order: ${item.item_name} (₹${item.price})`)}`}
-                      aria-label={`Order ${item.item_name} on WhatsApp`}
-                    >
-                      Order on WhatsApp
-                    </a>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        </section>
-      ))
-    }
-
-    <section class="mt-10">
-      <h2 class="text-xl font-semibold text-amber-400">Combos</h2>
-      <ul class="mt-4 space-y-2">
-        {
-          availableCombos.map((c) => (
-            <li>
-              {c.combo_name} — ₹{c.combo_price}
-            </li>
-          ))
-        }
-      </ul>
+  <main class="main">
+    <section class="hero hero-mini">
+      <div class="hero-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+      </div>
+      <div class="hero-container">
+        <div class="hero-content">
+          <h1 class="hero-display" style="font-size: clamp(2rem, 5vw, 4rem);">
+            <span class="animate-on-scroll">FULL</span>
+            <span class="text-gradient animate-on-scroll delay-100">MENU.</span>
+          </h1>
+          <p class="hero-text animate-on-scroll delay-200">{site.delivery.free_above_note}</p>
+        </div>
+      </div>
     </section>
 
-    <section class="mt-10">
-      <h2 class="text-xl font-semibold text-amber-400">Add-ons</h2>
-      <ul class="mt-4 space-y-2">
-        {
-          availableAddons.map((a) => (
-            <li>
-              {a.addon_name} — ₹{a.addon_price}
-            </li>
-          ))
-        }
-      </ul>
+    <section id="menu" class="menu animate-on-scroll">
+      <MenuAccordions />
+    </section>
+
+    <section class="menu-section" id="addonsSection">
+      <AddonsAccordion />
     </section>
   </main>
 </Layout>

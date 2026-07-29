@@ -1,24 +1,35 @@
 ---
-// 404 — recovery page per PRD §4.
+// 404 — no v1 equivalent existed (out of Phase 3 pixel-parity scope), but
+// restyled with v1's design system so it doesn't ship unstyled now that
+// Tailwind is no longer imported (see PRD §4 recovery-page requirement).
 import Layout from '../layouts/Layout.astro';
 import { site } from '../lib/data';
 ---
 
-<Layout
-  title={`Page not found — ${site.business.name}`}
-  description="That page doesn't exist — but the menu does."
->
-  <main class="mx-auto max-w-3xl px-4 py-24 text-center">
-    <h1 class="text-4xl font-bold">404 — that page got eaten 🍕</h1>
-    <div class="mt-8 flex justify-center gap-4">
-      <a href="/menu/" class="rounded-full bg-amber-500 px-6 py-3 font-semibold text-neutral-950"
-        >See the Menu</a
-      >
-      <a
-        href={`tel:${site.business.phone}`}
-        class="rounded-full border border-neutral-600 px-6 py-3 font-semibold"
-        aria-label={`Call ${site.business.name} at ${site.business.phone_display}`}>Call Us</a
-      >
-    </div>
+<Layout title={`Page not found — ${site.business.name}`} description="That page doesn't exist — but the menu does.">
+  <main class="main">
+    <section class="hero hero-mini">
+      <div class="hero-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+      </div>
+      <div class="hero-container" style="text-align: center;">
+        <div class="hero-content" style="margin: 0 auto;">
+          <h1 class="hero-display" style="font-size: clamp(2rem, 5vw, 4rem);">
+            <span class="animate-on-scroll">404 — THAT PAGE</span>
+            <span class="text-gradient animate-on-scroll delay-100">GOT EATEN 🍕</span>
+          </h1>
+          <div class="hero-actions animate-on-scroll delay-200" style="justify-content: center;">
+            <a href="/#menu" class="btn btn-primary btn-lg">See the Menu</a>
+            <a
+              href={`tel:${site.business.phone}`}
+              class="btn btn-secondary btn-lg"
+              aria-label={`Call ${site.business.name} at ${site.business.phone_display}`}>Call Us</a
+            >
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 </Layout>
