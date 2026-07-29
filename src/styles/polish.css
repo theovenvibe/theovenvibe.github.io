@@ -1,0 +1,151 @@
+/* ============================================================
+   Phase 3.5 — Visual polish layer (owner-approved 2026-07-30)
+   Groups: G1 "Living cards" + G2 "Brand micro-motion" ONLY.
+   Additive on top of the v1 design system (global.css) — removing
+   this file must return the site to exact v1 parity.
+   Rules: transform/opacity/filter only, no blur, no layout shift;
+   everything off under prefers-reduced-motion (see bottom).
+   ============================================================ */
+
+/* ---------- G1 · Living cards ---------- */
+/* Cursor-tracking glow: --mx/--my set by /scripts/polish.js
+   (pointer:fine devices only). Soft red→gold light inside the card. */
+.menu-card,
+.feature-card,
+.blog-card {
+  position: relative;
+}
+.menu-card::after,
+.feature-card::after,
+.blog-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  background: radial-gradient(
+    340px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(230, 57, 70, 0.16) 0%,
+    rgba(244, 162, 97, 0.12) 35%,
+    transparent 70%
+  );
+  z-index: 3; /* above content — reads as light washing over the card */
+}
+.menu-card:hover::after,
+.feature-card:hover::after,
+.blog-card:hover::after {
+  opacity: 1;
+}
+
+/* Depth: warmer border + richer layered shadow on hover (v1's lift kept) */
+.menu-card:hover,
+.feature-card:hover,
+.blog-card:hover {
+  border-color: rgba(230, 57, 70, 0.28);
+  box-shadow:
+    0 2px 6px rgba(17, 24, 39, 0.06),
+    0 14px 32px -10px rgba(230, 57, 70, 0.16),
+    var(--shadow-lg);
+}
+/* slightly livelier photo zoom than v1's 1.02 */
+.menu-card:hover .menu-card-img {
+  transform: scale(1.045);
+}
+.menu-card-img {
+  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* ---------- G2 · Brand micro-motion ---------- */
+/* HAPPINESS. gradient shimmer — slow drift, same two brand colors */
+.line-3.text-gradient {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary) 0%,
+    var(--color-accent) 45%,
+    var(--color-primary) 90%
+  );
+  background-size: 250% 250%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: tov-shimmer 8s ease-in-out infinite;
+}
+@keyframes tov-shimmer {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Buttons: satisfying press + gentle glow-on-hover (colors unchanged) */
+.btn-primary,
+.btn-secondary,
+.order-now-btn {
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.25s ease,
+    filter 0.25s ease,
+    background-color var(--transition-base);
+}
+.btn-primary:hover,
+.order-now-btn:hover {
+  filter: brightness(1.05) saturate(1.05);
+}
+.btn-primary:active,
+.btn-secondary:active,
+.order-now-btn:active {
+  transform: translateY(0) scale(0.965);
+}
+
+/* WhatsApp FAB: brief attention pulse every ~9s (2 rings, then rest) */
+.sticky-wa-btn {
+  animation: tov-wa-pulse 9s ease-out infinite;
+}
+@keyframes tov-wa-pulse {
+  0%,
+  86%,
+  100% {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  90% {
+    box-shadow:
+      0 4px 12px rgba(0, 0, 0, 0.15),
+      0 0 0 10px rgba(37, 211, 102, 0.22);
+  }
+  96% {
+    box-shadow:
+      0 4px 12px rgba(0, 0, 0, 0.15),
+      0 0 0 18px rgba(37, 211, 102, 0);
+  }
+}
+
+/* ---------- accessibility kill-switch (binding) ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .line-3.text-gradient,
+  .sticky-wa-btn {
+    animation: none;
+  }
+  .menu-card::after,
+  .feature-card::after,
+  .blog-card::after {
+    display: none;
+  }
+  .menu-card:hover .menu-card-img {
+    transform: none;
+  }
+  .btn-primary:active,
+  .btn-secondary:active,
+  .order-now-btn:active {
+    transform: none;
+  }
+  /* also calm v1's own reveals, which predate this layer */
+  .animate-on-scroll {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

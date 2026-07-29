@@ -23,6 +23,7 @@
  * also dropped — its own source says "Failover disabled - not in use".
  */
 import '../styles/global.css';
+import '../styles/polish.css'; // Phase 3.5 additive layer (G1+G2) — delete this import to restore exact v1 parity
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import WhatsAppFab from '../components/WhatsAppFab.astro';
@@ -68,5 +69,6 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <Footer />
 
     <script src="/scripts/site.js" is:inline></script>
+    <script src="/scripts/polish.js" is:inline></script>
   </body>
 </html>

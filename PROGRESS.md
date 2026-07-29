@@ -55,6 +55,11 @@
 
 ## Session log
 
+### 2026-07-30 (Phase 3.5 — visual polish, G1+G2)
+- Owner scoped Phase 3.5 to G1 "Living cards" (cursor-tracking red-gold glow + depth/border/zoom on menu/feature/blog cards) + G2 "Brand micro-motion" (HAPPINESS. shimmer 8s, button press/hover feel, WA FAB pulse ~9s). G3 glass + G4 orbit cursor REJECTED.
+- Implemented as an additive layer: src/styles/polish.css + public/scripts/polish.js (pointer:fine only, rAF-throttled); deleting the polish.css import restores exact v1 parity. All effects killed under prefers-reduced-motion (including v1's own reveals, which had no reduced-motion guard).
+- Verified by screenshot: hover glow visible and classy on expanded Pizza accordion cards; build green. Awaiting owner live approval on preview before phase close.
+
 ### 2026-07-30 (owner decisions post-Phase 3)
 - Analytics: Umami confirmed; v1 trackers (GTM/gtag/Yandex) stay dropped. Owner may audit later.
 - Business is 100% PURE VEG → recorded in PRD §3, binding for Phase 4 SEO/copy.
