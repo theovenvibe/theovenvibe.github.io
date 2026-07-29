@@ -9,8 +9,10 @@
   - Hero dish: **Paneer Makhni Royale Pizza** (752649876, ₹199, image verified)
   - GBP: claimed & verified, **4.9★ / 16 reviews**, entity `/g/11zj4x092l` (link resolves ✓)
   - Delivery slabs: ₹29 (0–2 km) / ₹59 (2–4 km) / ₹99 (4–8 km), FREE > ₹599 — recorded in PRD §3, to be seeded into site.config.json in Phase 1
-- [ ] **Phase 1 — Architecture** (Fable 5, high effort)
-  - Exit: build green; stub live on theovenvibe.github.io; old URLs stubbed; legacy branch archived
+- [x] **Phase 1 — Architecture** (Fable 5, high effort) — DONE 2026-07-29
+  - Astro 7.1.6 + Tailwind 4 + TS strict + sitemap; Zod schemas for menu.json + site.config.json (seeded with real §3 values); data layer src/lib/data.ts; 7 route stubs (menu renders real data end-to-end); 9 v1-URL stubs (blog slugs binding, see AGENTS.md); 91 JXL purged; static/→public/static/ (URLs preserved); CI build-all-branches / deploy-main-only; AGENTS.md + 12 skill skeletons + Portfolio design skills copied
+  - Fresh-eyes QA gate: **10/10 PASS** (incl. negative test: corrupt config → readable Zod error → restore green)
+  - Exit criteria met: build green on develop ✅ (post-merge), CI check ✅, old URLs stubbed ✅
 - [ ] **Phase 2a — Design research** (Sonnet 5 + web search, medium)
   - Exit: inspiration brief `design/RESEARCH.md` committed; Milan has reacted to it
 - [ ] **Phase 2b — Design system** (Fable 5, medium-high)

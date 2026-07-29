@@ -68,7 +68,7 @@ The Oven Vibe is a cloud kitchen in Sundargarh, Odisha (pin 770001). The website
 
 Same toolchain and conventions as the proven Portfolio setup, but on **current majors** — the Portfolio froze at Astro 5; this build does not inherit that freeze.
 
-- **Astro — latest stable major at Phase 1 scaffold time** (7.1.x as of 2026-07-29; verify with `npm view astro version` and fetch the current Astro docs before scaffolding — model training data lags behind Astro releases, so Phase 1 must work from live docs, not memory). Static output, zero client JS by default. **Tailwind CSS v4 latest** (`@tailwindcss/vite`), **TypeScript strict**, Node ≥ 20.
+- **Astro — latest stable major at Phase 1 scaffold time** (7.1.x as of 2026-07-29; verify with `npm view astro version` and fetch the current Astro docs before scaffolding — model training data lags behind Astro releases, so Phase 1 must work from live docs, not memory). Static output, zero client JS by default. **Tailwind CSS v4 latest** (`@tailwindcss/vite`), **TypeScript strict**, Node ≥ 22.12 (Astro 7 floor; CI runs Node 24).
 - **Motion** (`motion`) for scroll reveals/micro-interactions + **Lenis** for smooth scroll — both loaded lazily, both disabled under `prefers-reduced-motion`.
 - **Content:** `menu.json` stays the single source of truth (it mirrors the Zomato catalogue — do not restructure it away). Astro loads it through a **Zod schema** (`src/schemas/menu.ts`) so a bad edit fails the build with a readable error, not a broken page. Blog/FAQ use content collections.
 - **Cart/order builder:** one small vanilla-TS island (`<script>` or Astro island), state in `localStorage`. No framework runtime.
