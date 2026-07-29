@@ -1,18 +1,93 @@
 ---
-// Local SEO landing page — Phase 1 stub. Real intent copy in Phase 4 (PRD §9).
+// Local SEO landing page — ported verbatim from v1's sundargarh-770001.html
+// (PRD §8 superseded block). v1 has no sticky WhatsApp FAB on this page —
+// preserved as-is (showWaFab=false). v1 also duplicated the mobile-menu
+// open/close script inline on this page; not re-ported since scripts/site.js
+// already binds the same listeners on every page (duplicating them would
+// just double-bind, not change behaviour).
 import Layout from '../layouts/Layout.astro';
 import { site } from '../lib/data';
+
+const title = `Pizza & Takeaway in Sundargarh ${site.business.address.postal_code} | ${site.business.name}`;
+const description = `Best pizza, burgers, fries and snacks near Sundargarh ${site.business.address.postal_code}. Order via WhatsApp, Zomato or Swiggy.`;
+const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
+const waLink = `https://wa.me/${site.business.whatsapp}?utm_source=site&utm_medium=location&utm_campaign=whatsapp`;
+const zomatoLink =
+  'https://link.zomato.com/xqzv/rshare?id=11990877930563aa9&utm_source=site&utm_medium=location&utm_campaign=delivery';
+const swiggyLink =
+  'https://www.swiggy.com/direct/brand/710285?source=swiggy-direct&subSource=generic&utm_source=site&utm_medium=location&utm_campaign=delivery';
+
+const localBusinessJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  name: site.business.name,
+  image: new URL('/static/images/brand_images/The%20Oven%20Vibe_Hero_lable.webp', Astro.site).toString(),
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Bijaya Talkies Road, In front of Subasini Clinic',
+    addressLocality: site.business.address.locality,
+    addressRegion: site.business.address.region,
+    postalCode: site.business.address.postal_code,
+    addressCountry: site.business.address.country,
+  },
+  telephone: site.business.phone.replace('+91', '+91-'),
+  servesCuisine: ['Pizza', 'Burger', 'Fries', 'Snacks', 'Pasta'],
+  url: pageUrl,
+  sameAs: [
+    site.business.instagram,
+    `https://wa.me/${site.business.whatsapp}`,
+    'https://link.zomato.com/xqzv/rshare?id=11990877930563aa9',
+    'https://www.swiggy.com/direct/brand/710285?source=swiggy-direct&subSource=generic',
+  ],
+};
 ---
 
-<Layout
-  title={`Food Delivery in Sundargarh ${site.business.address.postal_code} — ${site.business.name}`}
-  description={`Oven-baked pizza, burgers & more delivered in Sundargarh ${site.business.address.postal_code}. ${site.delivery.hook}.`}
->
-  <main class="mx-auto max-w-3xl px-4 py-16">
-    <h1 class="text-3xl font-bold">
-      Food Delivery in Sundargarh {site.business.address.postal_code}
-    </h1>
-    <p class="mt-4 text-neutral-400">{site.delivery.radius_note}</p>
-    <a class="mt-6 inline-block text-amber-400 underline" href="/menu/">See the full menu →</a>
+<Layout title={title} description={description} showWaFab={false}>
+  <Fragment slot="head">
+    <meta
+      name="keywords"
+      content="Sundargarh 770001 pizza, best pizza near me, takeaway Sundargarh, cloud kitchen Sundargarh, The Oven Vibe"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={`Order fresh oven-baked food in Sundargarh ${site.business.address.postal_code} via WhatsApp, Zomato or Swiggy.`} />
+    <meta property="og:url" content={pageUrl} />
+    <meta property="og:locale" content="en_IN" />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(localBusinessJsonLd)} />
+  </Fragment>
+
+  <main class="main">
+    <!-- HERO SECTION -->
+    <section class="hero hero-mini">
+      <div class="hero-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+      </div>
+      <div class="hero-container">
+        <div class="hero-content">
+          <div class="hero-badge animate-on-scroll">
+            <span>●</span> SERVING {site.business.address.postal_code}
+          </div>
+          <h1 class="hero-display" style="font-size: clamp(2.5rem, 5vw, 4.5rem);">
+            <span class="animate-on-scroll">SUNDARGARH</span>
+            <span class="text-gradient animate-on-scroll delay-100">TAKEAWAY.</span>
+          </h1>
+          <p class="hero-text animate-on-scroll delay-200">
+            Fresh, hot, oven-baked food for Sundargarh {site.business.address.postal_code}.
+            Order via WhatsApp, Zomato, or Swiggy.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <div class="section" style="padding-top: 0;">
+      <div class="container">
+        <div class="row-links">
+          <a class="cta" href={waLink} target="_blank" rel="noopener noreferrer" title="Order on WhatsApp">WhatsApp</a> <a class="cta" href={zomatoLink} target="_blank" rel="noopener noreferrer" title="Order on Zomato">Zomato</a> <a class="cta" href={swiggyLink} target="_blank" rel="noopener noreferrer" title="Order on Swiggy">Swiggy</a>
+        </div>
+        <p class="note">20 min takeaway · 30-45 min delivery</p>
+      </div>
+    </div>
   </main>
 </Layout>

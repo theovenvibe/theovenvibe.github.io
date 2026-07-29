@@ -1,18 +1,281 @@
 ---
-// FAQ — Phase 1 stub. Real FAQs + FAQPage JSON-LD in Phases 3–4.
+// FAQ — ported verbatim from v1's faq.html (PRD §8 superseded block).
+// v1 has no sticky WhatsApp FAB on this page — preserved as-is (showWaFab=false).
+// The FAQPage JSON-LD is real Q&A content (not the banned fabricated
+// aggregateRating/reviews) so it's ported as-is.
 import Layout from '../layouts/Layout.astro';
 import { site } from '../lib/data';
+
+const title = `FAQ - ${site.business.name} | Sundargarh Takeaway`;
+const description = `FAQ - Ordering, delivery, timings and party orders at ${site.business.name}, Sundargarh.`;
+const ogImage = new URL(
+  '/static/images/brand_images/The%20Oven%20vibe_logo.webp',
+  Astro.site,
+).toString();
+const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
+const waLink = `https://wa.me/${site.business.whatsapp}`;
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntityOfPage: { '@type': 'WebPage', '@id': pageUrl },
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'How can I order pizza from The Oven Vibe?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: `You can order directly on WhatsApp at ${waLink} or find us on Zomato and Swiggy.`,
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Do you offer delivery in Sundargarh?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Currently, we offer takeaway and curbside pickup in Sundargarh, Odisha. Please order 30 minutes in advance and collect from our kitchen.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What are your bestsellers?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Our Paneer Tikka Pizza and Cheesy Garlic Bread are customer favorites, perfect for quick takeaway meals.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Where can I order affordable pizza near Sundargarh?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The Oven Vibe offers affordable pizzas near Subasini Clinic, Sundargarh. Visit us for takeaway or connect on WhatsApp to order.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Do you take party or bulk orders?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes, we provide special platters, combos, and bulk deals for parties. Contact us on WhatsApp to customize your order.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What are your timings?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'We operate daily from 2:00 PM to 11:00 PM. Last orders must be placed by 10:30 PM.',
+      },
+    },
+  ],
+};
 ---
 
-<Layout
-  title={`FAQ — ${site.business.name} Sundargarh`}
-  description={`Delivery area, timings, ordering — answers from ${site.business.name}.`}
->
-  <main class="mx-auto max-w-3xl px-4 py-16">
-    <h1 class="text-3xl font-bold">Frequently Asked Questions</h1>
-    <p class="mt-4 text-neutral-400">
-      Full FAQ arrives in Phase 4. Meanwhile: {site.business.hours.display}.
-      {site.delivery.free_above_note}
-    </p>
+<Layout title={title} description={description} showWaFab={false}>
+  <Fragment slot="head">
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={pageUrl} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary" />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(faqJsonLd)} />
+  </Fragment>
+
+  <main class="main">
+    <!-- HERO SECTION -->
+    <section class="hero hero-mini">
+      <div class="hero-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+      </div>
+      <div class="hero-container">
+        <div class="hero-content">
+          <h1 class="hero-display" style="font-size: clamp(2.5rem, 5vw, 4.5rem)">
+            <span class="animate-on-scroll">YOUR</span>
+            <span class="text-gradient animate-on-scroll delay-100">QUESTIONS.</span>
+            <span class="animate-on-scroll delay-200">ANSWERED.</span>
+          </h1>
+          <p class="hero-text animate-on-scroll delay-300">
+            Everything you need to know about ordering, delivery, and our food.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <div class="section" style="padding-top: 0">
+      <div class="container" style="max-width: 800px">
+        <!-- Question 1 (open by default) -->
+        <div class="accordion-item">
+          <button class="accordion-header" aria-expanded="true">
+            <span>How can I order pizza from The Oven Vibe?</span>
+            <svg
+              class="accordion-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          <div class="accordion-content" style="max-height: 500px">
+            <div class="accordion-content-inner">
+              <p>
+                You can order directly on <a href={waLink} target="_blank" style="color: var(--color-primary); font-weight: 600">WhatsApp</a
+                >. Just tap the link and send us a message. We're also available on Zomato and
+                Swiggy for delivery partners.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Question 2 -->
+        <div class="accordion-item">
+          <button class="accordion-header" aria-expanded="false">
+            <span>Do you offer delivery in Sundargarh?</span>
+            <svg
+              class="accordion-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          <div class="accordion-content">
+            <div class="accordion-content-inner">
+              <p>
+                We primarily operate as a <strong>Cloud Kitchen & Takeaway</strong>. You can order
+                via Zomato/Swiggy for home delivery (30-45 mins), or place a takeaway order via
+                WhatsApp and collect it from our kitchen in 20 minutes.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Question 3 -->
+        <div class="accordion-item">
+          <button class="accordion-header" aria-expanded="false">
+            <span>Veg vs Non-Veg Options?</span>
+            <svg
+              class="accordion-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          <div class="accordion-content">
+            <div class="accordion-content-inner">
+              <p>
+                We serve only pure vegetarian food. Our menu features a wide variety of delicious
+                veg pizzas, burgers, and sides, all prepared with strict vegetarian standards to
+                ensure purity and quality.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Question 4 -->
+        <div class="accordion-item">
+          <button class="accordion-header" aria-expanded="false">
+            <span>What are your timings?</span>
+            <svg
+              class="accordion-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          <div class="accordion-content">
+            <div class="accordion-content-inner">
+              <p>
+                We are open daily from <strong>11:30 AM to 12:30 PM</strong>. The last order is
+                accepted at 11:30 PM.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Question 5 -->
+        <div class="accordion-item">
+          <button class="accordion-header" aria-expanded="false">
+            <span>Where is The Oven Vibe located?</span>
+            <svg
+              class="accordion-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          <div class="accordion-content">
+            <div class="accordion-content-inner">
+              <p>
+                We are located near <strong>Subasini Clinic, Sundargarh (770001)</strong>. You can
+                find our exact location on
+                <a
+                  href="https://maps.app.goo.gl/t8u7p3cfaYEkj5JP8"
+                  target="_blank"
+                  style="color: var(--color-primary); font-weight: 600">Google Maps</a
+                >.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Simple Accordion Logic for FAQ Page — ported from v1's inline script
+      // (page-local: closes all others when one opens, unlike the menu
+      // accordions' independent-toggle behaviour in scripts/site.js).
+      document.querySelectorAll('.accordion-header').forEach((button) => {
+        button.addEventListener('click', () => {
+          const item = button.parentElement as HTMLElement;
+          const content = item.querySelector('.accordion-content') as HTMLElement;
+          const isActive = item.classList.contains('active');
+
+          document.querySelectorAll('.accordion-item').forEach((otherItem) => {
+            if (otherItem !== item) {
+              otherItem.classList.remove('active');
+              (otherItem.querySelector('.accordion-content') as HTMLElement).style.maxHeight = '';
+              otherItem.querySelector('.accordion-header')?.setAttribute('aria-expanded', 'false');
+            }
+          });
+
+          if (!isActive) {
+            item.classList.add('active');
+            content.style.maxHeight = content.scrollHeight + 'px';
+            button.setAttribute('aria-expanded', 'true');
+          } else {
+            item.classList.remove('active');
+            content.style.maxHeight = '';
+            button.setAttribute('aria-expanded', 'false');
+          }
+        });
+      });
+    </script>
   </main>
 </Layout>
