@@ -79,7 +79,12 @@ normal and correct. Check: `gh run list --branch develop --limit 1`.
 
 Preconditions — ALL must hold:
 - [ ] PROGRESS.md shows Phases 1–6 complete; Phase 6 QA gates green
-- [ ] Milan has explicitly said "ship it" on the final preview
+- [x] Milan has explicitly said "ship it" for the v3.0.0 launch —
+      **already given, 2026-07-30 (Phase 5).** Phase 6 does NOT need to
+      re-ask for this. ⚠️ This sign-off was **one-time, for this specific
+      one-shot launch only** — it is not a standing waiver of owner
+      approval. §8 below defines the standing policy that replaces
+      "ask Milan every time" for everything that ships after the launch.
 - [ ] Tag the outgoing v1 first: `git tag v1-legacy origin/main && git push origin v1-legacy`
 
 > **Launch tag is `v3.0.0`** (owner decision, Phase 5) — a major version,
@@ -125,9 +130,32 @@ develop   = integration, same as before — permanent, never deleted.
 feature/* = cut fresh from origin/develop, same as before.
 ```
 
+### 8.1 Standing policy: test-then-merge (replaces "ask Milan every time")
+
+The v3.0.0 launch got a one-time verbal "ship it" (§7). That does not
+repeat for every future change — instead, from launch onward, **every
+merge is gated by an objective, repeatable test**, not a conversation.
+This is binding and applies with no exceptions, on any machine, run by
+any agent (including a small local model with nobody to ask):
+
+1. **Before `feature/<slug>` merges into `develop`:** run
+   `npm run build` AND `skills/qa-check.md` (build green + JSON-LD parse
+   loop + emoji grep + honesty checks) on the feature branch. Only merge
+   `--no-ff` into `develop` after BOTH pass.
+2. **Before `develop` merges into `main`** (a release PR, per the template
+   below): run `npm run build` AND `skills/qa-check.md` again, on
+   `develop` itself, after the feature merge. Only open/merge the release
+   PR after both pass on `develop`.
+3. A UI/copy-visible change still gets Milan's look at a preview
+   (§3's owner-approval gate is unchanged) — the test-then-merge policy
+   ADDS an objective gate, it does not remove the existing subjective one
+   for visible changes. For anything else (content edits already covered
+   by a `skills/update-*.md` file), passing `skills/qa-check.md` is
+   sufficient to merge without waiting on a conversation.
+
 The only thing that changes post-launch is step §5 → §7 no longer happens
 in one shot at the end of a whole rebuild — it happens **whenever a batch
-of merged `develop` work is ready to go live**:
+of merged `develop` work is ready to go live**, gated the same way:
 
 ```bash
 git fetch origin main develop

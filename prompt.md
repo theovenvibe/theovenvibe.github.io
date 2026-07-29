@@ -29,9 +29,12 @@ Rules for this session:
    the launch itself: the develop -> main release PR in skills/release-manager.md
    §7 — do not touch main any other way.
 5. If a deliverable needs an owner decision, finish everything that doesn't depend
-   on it, then stop and ask Milan — do not guess. The launch itself requires Milan
-   explicitly saying "ship it" on the final preview (skills/release-manager.md §7
-   precondition) before the release PR is opened.
+   on it, then stop and ask Milan — do not guess. The "ship it" precondition for
+   THIS v3.0.0 launch is already satisfied (Milan said it 2026-07-30, recorded in
+   skills/release-manager.md §7) — do NOT re-ask for it. Still verify every
+   OBJECTIVE gate first (build green, skills/qa-check.md passed, PRD §10.2 QA
+   gates 0-4 green) before opening the release PR — the owner sign-off covers the
+   decision to launch, not a waiver of the technical checks.
 6. Anything version- or API-sensitive (Astro config, integrations, Tailwind, GitHub
    Pages settings): verify against live docs, never from training memory.
 7. Before marking Phase 6 done, run the QA gates that apply to it (PRD §10.2),
