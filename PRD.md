@@ -46,7 +46,7 @@ The Oven Vibe is a cloud kitchen in Sundargarh, Odisha (pin 770001). The website
 | Google Business Profile | **Claimed & verified: 4.9★, 16 reviews** (as of 2026-07-29). Link: https://share.google/wlwoG9JmeY3KV3dWU (entity `/g/11zj4x092l`). Count updated via `update-rating.md` skill |
 | Hero dish | **Paneer Makhni Royale Pizza** (`752649876`, ₹199) — face of the brand on home hero + OG image |
 | Price range | ₹69–₹349 |
-| Cuisine | Pizza, Burger, Fried Rice, Fries, Snacks, Pasta, Sandwich |
+| Cuisine | Pizza, Burger, Fried Rice, Fries, Snacks, Pasta, Sandwich — **100% PURE VEG** (owner, 2026-07-30; a key SEO/trust differentiator: JSON-LD `servesCuisine`/diet markup, copy, and badges must say vegetarian; remove any non-veg keywords v1 carried) |
 
 ⚠️ **Binding content rule:** the old site's JSON-LD carried a fabricated `aggregateRating` and fake "Local Customer" reviews — those never come back. The **real** GBP rating (confirmed in Phase 0) MAY appear in copy and structured data, with the count kept honest and updated via a skill (`update-rating.md`).
 
@@ -73,7 +73,7 @@ Same toolchain and conventions as the proven Portfolio setup, but on **current m
 - **Content:** `menu.json` stays the single source of truth (it mirrors the Zomato catalogue — do not restructure it away). Astro loads it through a **Zod schema** (`src/schemas/menu.ts`) so a bad edit fails the build with a readable error, not a broken page. Blog/FAQ use content collections.
 - **Cart/order builder:** one small vanilla-TS island (`<script>` or Astro island), state in `localStorage`. No framework runtime.
 - **CI & branching:** GitHub Actions builds every push; the deploy job is **gated to `main`**, which stays frozen serving the v1 site until the one-shot launch merge (full model: `skills/release-manager.md` — binding). `astro check && astro build` must pass before any commit. Note for Phase 1: the repo currently uses branch-based Pages deploy from `main`; the Actions workflow must be designed so v1 keeps serving until launch, with the Pages source switch (if required) documented as a Phase 6 launch step.
-- **Analytics:** Umami Cloud (free tier) with custom events `call_click`, `wa_click`, `wa_order_sent` — this is how "leads generated" is actually measured. Cookie-less, no banner needed.
+- **Analytics:** **Umami Cloud — CONFIRMED by owner 2026-07-30** (v1's GTM/Google-Ads gtag/Yandex Metrika are dropped for good, pending owner's own audit) with custom events `call_click`, `wa_click`, `wa_order_sent` — this is how "leads generated" is actually measured. Cookie-less, no banner needed.
 - **Explicitly out:** React/Vue, CMS, databases, payment, service workers (revisit later), JXL images (no browser support — AVIF/WebP only; JXL files deleted in Phase 1 to slim the 217 MB repo).
 
 ## 6. Menu Data Model
