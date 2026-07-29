@@ -14,5 +14,11 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
   },
-  integrations: [sitemap()],
+  integrations: [
+    sitemap({
+      // lastmod = build time: pages are regenerated wholesale each deploy,
+      // so the build date is the honest per-URL modification signal here.
+      serialize: (item) => ({ ...item, lastmod: new Date().toISOString() }),
+    }),
+  ],
 });
