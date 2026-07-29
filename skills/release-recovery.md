@@ -29,9 +29,9 @@ origin/develop per E2, then redo release-manager §5.
 ### E4. Build fails on develop after a merge
 The merged state is broken even though the branch built. Fix FORWARD on
 develop with a small `fix:` commit (or a fresh feature branch if it's
-big). Never reset --hard a pushed develop. Build errors themselves →
-Zod message says exactly which menu.json/site.config.json field is bad;
-Astro/TS errors: read the first error, not the last.
+big). Never reset --hard a pushed develop. For reading the actual error
+(Zod field errors, Astro/TS errors, JSON syntax errors) → the full guide
+is `skills/troubleshoot-build.md`.
 
 ### E5. Accidental commit directly on develop (should've been a branch)
 Not pushed yet: `git checkout -b feature/<slug>` (commit comes along) →

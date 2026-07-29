@@ -35,7 +35,10 @@ git checkout -b feature/<short-kebab-slug> origin/develop
 
 1. `npm run build` (= `astro check && astro build`) must pass before ANY
    commit — no exceptions. A Zod error from menu.json / site.config.json
-   is a real defect: fix the data or the schema, never bypass.
+   is a real defect: fix the data or the schema, never bypass. If it
+   fails and the fix isn't obvious → `skills/troubleshoot-build.md`. Also
+   run `skills/qa-check.md` before merging (§5 below; binding post-launch
+   per §8.1).
 2. **Owner approval gate:** user-visible design/copy changes need Milan's
    OK on a local preview (`npm run preview`) or screenshot BEFORE merging
    to develop. Pushing the feature branch is fine; merging is not.

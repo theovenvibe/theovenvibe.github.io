@@ -17,9 +17,10 @@ Open `.github/workflows/deploy.yml`. It has exactly two jobs:
 - **`build`** — runs on `push` to `main`, `develop`, any `feature/**`, any
   `hotfix/**`, and on pull requests into `main`/`develop`. Steps:
   checkout → Node 24 → `npm ci` → `npm run build` (this is the exact same
-  `astro check && astro build` you run locally). If this fails on GitHub,
-  it will have failed locally too first — see
-  `skills/troubleshoot-build.md`.
+  `astro check && astro build` you run locally) → **Lighthouse CI budgets**
+  (see §8 — runs on every branch, not just `main`) → upload the Pages
+  artifact (main only). If `npm run build` fails on GitHub, it will have
+  failed locally too first — see `skills/troubleshoot-build.md`.
 - **`deploy`** — only runs `if: github.ref == 'refs/heads/main'`. It takes
   the `build` job's output and publishes it to GitHub Pages.
 
@@ -90,3 +91,46 @@ feature branch off `develop`, verify locally with `npm ci && npm run
 build`, commit, merge per `skills/release-manager.md`. A workflow change
 cannot be "verified" by GitHub alone — always reproduce the underlying
 build command locally first.
+
+## 8. Lighthouse CI budgets (PRD §10.2 Gate 3)
+
+A step in the `build` job (`treosh/lighthouse-ci-action`) runs Lighthouse
+against the built `dist/` output — on EVERY branch, not just `main` — and
+checks it against the budgets in `.lighthouserc.json` (repo root). This is
+a no-npm-dependency addition (it's a GitHub Action, not a `package.json`
+entry) — nothing to `npm install`.
+
+**What it checks, and why the thresholds aren't PRD §1's "≥95":**
+
+| Category | Level | Threshold | Why |
+|---|---|---|---|
+| Performance | error (fails the build) | ≥ 0.70 | Real scores measured at Phase 5 were 1.0 on every page tested — 0.70 has wide margin for CI-runner variance while still catching a real regression |
+| Accessibility | error | ≥ 0.85 | Measured 0.94–0.96 across pages — margin kept for the same reason |
+| SEO | error | ≥ 0.90 | Measured 1.0 everywhere |
+| Best Practices | **warn** (does not fail the build) | ≥ 0.70 | `/contact/` measures 0.77 because of the third-party Google Form iframe (a known, accepted issue, not a regression) — kept as `warn` so that page doesn't block every future merge; the other pages measure 1.0 |
+
+These are **regression budgets, not the launch target.** PRD §1's actual
+acceptance number (Lighthouse mobile, all 4 categories, ≥ 95, on every
+page) is verified for real in Phase 6's device pass, on throttled mobile
+conditions with the full perf-tuning pass. Phase 5's job was to put the
+CI gate in place so nothing silently gets WORSE between now and then —
+not to hit the final number early. Phase 6 should tighten these
+thresholds upward once the real device pass gives real budget numbers.
+
+### Reproducing a Lighthouse CI failure locally
+
+```bash
+npm run build
+npx --yes @lhci/cli@0.14.x autorun --config=./.lighthouserc.json \
+  --collect.settings.chromeFlags="--headless --no-sandbox"
+```
+This uses `npx` (no project dependency added) and needs a local Chrome
+install (macOS: already present via `/Applications/Google Chrome.app`;
+Linux CI: the action installs it). Read the printed report URL for the
+specific audit that failed, fix it, rebuild, re-run.
+
+A Lighthouse CI failure is NOT the same kind of red as `npm run build`
+failing (§4) — the site built fine; the perf/a11y/SEO score dropped below
+budget. Common causes: a new unoptimized image (missing width/height →
+CLS; not WebP/AVIF → LCP), a missing `alt`, or new render-blocking
+third-party script.

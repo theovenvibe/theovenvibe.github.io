@@ -29,6 +29,12 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build # astro check && astro build (Zod validates menu.json + site.config.json)
+      - name: Lighthouse CI budgets (PRD §10.2 Gate 3, skills/deploy-cicd.md §8)
+        uses: treosh/lighthouse-ci-action@v11
+        with:
+          configPath: './.lighthouserc.json'
+          uploadArtifacts: true
+          temporaryPublicStorage: true
       - uses: actions/upload-pages-artifact@v3
         if: github.ref == 'refs/heads/main'
         with:

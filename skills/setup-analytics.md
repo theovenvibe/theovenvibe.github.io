@@ -62,6 +62,12 @@ git add site.config.json PROGRESS.md
 git commit -m "feat(analytics): enable Umami Cloud"
 git push -u origin feature/enable-analytics
 ```
+Expect `npm run build` to print `Result (N files): 0 errors`. If it fails
+instead, the only thing that can be wrong here is the ID's shape (letters,
+numbers, hyphens only — an error will say
+`site.config.json → analytics.umami_website_id: ...`); fix the paste and
+re-run. Still stuck → `skills/troubleshoot-build.md`.
+
 Then merge per `skills/release-manager.md` §5.
 
 **From a phone (GitHub web editor):** same as any other `site.config.json`

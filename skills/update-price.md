@@ -67,12 +67,25 @@ it appears (menu page, home page, JSON-LD structured data) — there is
 nothing else to edit.
 
 If it fails → read the error message, then open `skills/troubleshoot-build.md`.
-A price typo (e.g. `"price": "179"` with quotes, or `"price": 17.9`) produces
-an error naming `menu.json` and the exact field, like:
-```
-Invalid data — fix these fields and rebuild:
-  • menu.json → Menu_Items.0.price: price must be a whole number of rupees
-```
+A price typo names `menu.json` and the exact field — the exact wording
+depends on what's wrong:
+
+- Quotes left around the number (`"price": "179"`) or a `₹` symbol typed
+  in:
+  ```
+  Invalid data — fix these fields and rebuild:
+    • menu.json → Menu_Items.0.price: price must be a number (no quotes, no ₹ symbol)
+  ```
+- A decimal instead of a whole number (`"price": 17.9`):
+  ```
+  Invalid data — fix these fields and rebuild:
+    • menu.json → Menu_Items.0.price: price must be a whole number of rupees
+  ```
+- Zero or a negative number:
+  ```
+  Invalid data — fix these fields and rebuild:
+    • menu.json → Menu_Items.0.price: price must be greater than 0
+  ```
 
 ## 5. Commit and ship
 
