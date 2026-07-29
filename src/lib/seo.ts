@@ -41,9 +41,11 @@ export const abs = (path: string) => new URL(path, SITE_URL).toString();
 
 /** The face of the brand (PRD §3) — default OG image for every page. */
 export const HERO_IMAGE = {
-  url: abs(imageFor(heroDish).webp),
-  width: 600,
-  height: 400,
+  // 1200x630 JPEG, not the catalogue WebP: WhatsApp/Twitter link previews
+  // are unreliable with WebP, and WhatsApp is this brand's #1 share channel.
+  url: abs('/static/images/og/og-default.jpg'),
+  width: 1200,
+  height: 630,
   alt: `${displayName(heroDish.display_name)} — ${site.business.name}, Sundargarh`,
 };
 
