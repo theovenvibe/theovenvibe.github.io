@@ -18,10 +18,11 @@
       "longitude": 84.0382
     },
     "hours": {
-      "open": "11:00",
-      "close": "21:00",
+      "open": "11:30",
+      "close": "23:30",
       "days": "Mo-Su",
-      "display": "11 AM – 9 PM, all days"
+      "display": "11:30 AM – 11:30 PM, all days",
+      "_late_night_comment": "Late-night (after 11:30 PM): big orders only, higher charges, limited menu (mostly pizza, sandwiches, fries) — call to arrange."
     },
     "instagram": "https://instagram.com/theovenvibe",
     "google_business_url": "https://share.google/wlwoG9JmeY3KV3dWU"
