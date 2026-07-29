@@ -6,7 +6,10 @@ import Layout from '../layouts/Layout.astro';
 import { site } from '../lib/data';
 ---
 
-<Layout title={`Page not found — ${site.business.name}`} description="That page doesn't exist — but the menu does.">
+<Layout
+  title="Page Not Found | The Oven Vibe Sundargarh"
+  description="That page doesn't exist, but the menu does. Pure veg pizza, burgers and more in Sundargarh — see the menu or call the kitchen."
+>
   <main class="main">
     <section class="hero hero-mini">
       <div class="hero-shapes">
@@ -18,10 +21,13 @@ import { site } from '../lib/data';
         <div class="hero-content" style="margin: 0 auto;">
           <h1 class="hero-display" style="font-size: clamp(2rem, 5vw, 4rem);">
             <span class="animate-on-scroll">404 — THAT PAGE</span>
-            <span class="text-gradient animate-on-scroll delay-100">GOT EATEN 🍕</span>
+            <span class="text-gradient animate-on-scroll delay-100">GOT EATEN.</span>
           </h1>
+          <p class="hero-text animate-on-scroll delay-100">
+            The link is broken, but the kitchen is not. Try the menu, or just call us.
+          </p>
           <div class="hero-actions animate-on-scroll delay-200" style="justify-content: center;">
-            <a href="/#menu" class="btn btn-primary btn-lg">See the Menu</a>
+            <a href="/menu/" class="btn btn-primary btn-lg">See the Menu</a>
             <a
               href={`tel:${site.business.phone}`}
               class="btn btn-secondary btn-lg"
