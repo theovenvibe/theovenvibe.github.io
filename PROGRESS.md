@@ -1,6 +1,6 @@
 # PROGRESS
 
-## Status: Phase 5 (ops & docs) DONE 2026-07-30 — merged to develop. Next: Phase 6 (QA & launch, tag v3.0.0).
+## Status: 🚀 **v3.0.0 LIVE** (2026-07-30). All phases complete. theovenvibe.github.io serves the v2 rebuild. Day-to-day ops: bootstrap-session.md + skills/. Remaining items are owner actions (see final session log).
 ##
 ## Design lock history: owner rejected all 3 mockup directions (2026-07-30) → v2 = v1 pixel-for-pixel (Phase 3, verified). The lock has since been **amended twice, both times by the owner**: Phase 3.5 (approved visual polish, now live) and Phase 4 (approved copy/CTA/pure-veg/local-page changes). Parity is the floor, not the ceiling; any *further* visible change still needs the owner's sign-off first.
 
@@ -99,6 +99,19 @@
   - Exit: PRD §1 metrics met per page; redirects verified in prod; GBP checklist handed to owner
 
 ## Session log
+
+### 2026-07-30 — PHASE 6 COMPLETE / LAUNCH
+- Pre-launch QA gate (Sonnet subagent): 10 gates run; verdict NO-GO on 3 a11y blockers (heading order, 2 contrast pairs, aria-label mismatch) — all present since the parity port, below the §1 ≥95 bar.
+- Blockers fixed on feature/a11y-launch-blockers with pixel-parity pinning; Lighthouse re-run: **a11y/perf/SEO 100 on all 6 audited pages**; best-practices 100 except /contact/ 79 (Google Forms iframe — documented accepted exception to PRD §1).
+- Launch: v1 archived as tag v1-legacy (3a97764); release PR #2 develop→main; merge conflict (v1 Umami hotfix vs v2 deletions) resolved keeping deletions; owner merged PR #2; **tag v3.0.0** (683b276); deploy.yml build+deploy green on main; live URL verified (v2 title, Umami, real hours, 9 stubs + all routes 200).
+- Note: repo also has a Netlify integration building deploy previews on PRs (discovered during launch — harmless, useful for previews).
+- Pages settings still report "legacy" mode but workflow deployments are serving; the failing legacy build on each main push is harmless noise — owner should still switch Settings→Pages→Source to "GitHub Actions" to silence it.
+- OWNER CHECKLIST (the traffic levers, in priority order):
+  1. GBP: verify claim ("Own this business?" test), fix address (remove coordinate fragments; match site.config.json street), hours → 11:30 AM–11:30 PM, add UPI/delivery/takeaway service options
+  2. Google Search Console: add property, submit sitemap-index.xml, request re-crawl of / (fabricated-rating markup removal + new content)
+  3. Umami dashboard: confirm Realtime shows visits; watch call_click/wa_click events
+  4. Weekly rhythm per docs/SEO_PLAYBOOK.md: GBP posts/photos, review requests with every order, Instagram geotags
+
 
 ### 2026-07-30 (Phase 3.5 — visual polish, G1+G2)
 - Owner scoped Phase 3.5 to G1 "Living cards" (cursor-tracking red-gold glow + depth/border/zoom on menu/feature/blog cards) + G2 "Brand micro-motion" (HAPPINESS. shimmer 8s, button press/hover feel, WA FAB pulse ~9s). G3 glass + G4 orbit cursor REJECTED.
