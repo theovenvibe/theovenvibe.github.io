@@ -1,61 +1,52 @@
 ---
-// Ported verbatim from v1's blog-late-night-food.html (PRD §8 superseded
-// block). Route is the AGENTS.md-bound slug /blog/late-night-food/.
+// /blog/late-night-food/ — AGENTS.md-bound slug (v1 URL stub points here).
+//
+// Phase 4 honesty fix: v1's version of this post promised "late-night
+// availability" and "fresh food, even at night", while site.config.json says
+// the kitchen closes at 21:00. Search engines and customers both punish that
+// kind of contradiction, so the post now targets the same query truthfully —
+// the craving is real, the closing time is 9 PM, here is how to plan around it.
 import Layout from '../../layouts/Layout.astro';
 import BlogPostLayout from '../../components/BlogPostLayout.astro';
 import { site } from '../../lib/data';
+import { LINKS, abs, blogPostingJsonLd, breadcrumbJsonLd } from '../../lib/seo';
 
-const title = `Best Late-Night Food in Sundargarh | Order After 9 PM – ${site.business.name}`;
+const headline = 'Late-Night Food in Sundargarh: Order Before 9 PM';
 const description =
-  'Looking for late-night food in Sundargarh? Discover the best pizzas and quick bites to order after 9 PM. Fresh, affordable, and perfect for night cravings by The Oven Vibe.';
-const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
-const ogImage = new URL('/static/images/blog_images/blog_3.webp', Astro.site).toString();
-const waLink = `https://wa.me/${site.business.whatsapp}`;
-
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'BlogPosting',
-  headline: 'Best Late-Night Food in Sundargarh | Order After 9 PM',
-  image: ogImage,
-  author: { '@type': 'Organization', name: site.business.name },
-  publisher: {
-    '@type': 'Organization',
-    name: site.business.name,
-    logo: {
-      '@type': 'ImageObject',
-      url: new URL('/static/images/brand_images/The%20Oven%20vibe_logo.webp', Astro.site).toString(),
-    },
-  },
-  datePublished: '2024-05-25',
-  description:
-    'Looking for late-night food in Sundargarh? Discover the best pizzas and quick bites to order after 9 PM.',
+  'Options thin out fast after 9 PM in Sundargarh. How to plan a late dinner, what to order so it still tastes good an hour later, and when we close.';
+const image = {
+  url: abs('/static/images/blog_images/blog_3.webp'),
+  width: 1024,
+  height: 1024,
+  alt: 'Late-night pure veg food in Sundargarh',
 };
+const path = '/blog/late-night-food/';
 ---
 
-<Layout title={title} description={description}>
-  <Fragment slot="head">
-    <meta
-      name="keywords"
-      content="late night food in Sundargarh, late night pizza Sundargarh, food open at night Sundargarh, best pizza after 9 PM Sundargarh, The Oven Vibe late night, affordable late night food Sundargarh"
-    />
-    <meta property="og:type" content="article" />
-    <meta property="og:title" content={title} />
-    <meta
-      property="og:description"
-      content="Looking for late-night food in Sundargarh? Discover the best pizzas and quick bites to order after 9 PM."
-    />
-    <meta property="og:url" content={pageUrl} />
-    <meta property="og:image" content={ogImage} />
-    <meta name="twitter:card" content="summary_large_image" />
-    <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
-  </Fragment>
-
+<Layout
+  title={headline}
+  description={description}
+  ogType="article"
+  image={image}
+  jsonLd={[
+    blogPostingJsonLd({
+      headline,
+      description,
+      path,
+      image: image.url,
+      datePublished: '2024-05-25',
+    }),
+    breadcrumbJsonLd([
+      { name: 'Blog', path: '/blog/' },
+      { name: 'Late-Night Food', path },
+    ]),
+  ]}
+>
   <BlogPostLayout
     line1="LATE-NIGHT"
     lineGradient="FOOD."
-    subtitle="Best late-night food options in Sundargarh for cravings after 9 PM."
+    subtitle="How to eat well late in Sundargarh — and when to place the order."
   >
-    <h2>Best Late-Night Food in Sundargarh 🌙</h2>
     <p class="subtitle" style="font-weight: 600; color: #555; margin-top: -10px">
       Raat ke time kya order karein?
     </p>
@@ -65,79 +56,91 @@ const jsonLd = {
       <source type="image/webp" srcset="/static/images/blog_images/blog_3.webp" />
       <img
         src="/static/images/blog_images/blog_3.webp"
-        alt="Best Late-Night Food in Sundargarh"
+        alt="Late-night pure veg food in Sundargarh"
         class="blog-img"
         loading="lazy"
-        width="1200"
-        height="675"
+        width="1024"
+        height="1024"
         style="background: #eee"
       />
     </picture>
 
     <p>
-      Sundargarh mein jaise hi clock 9 bajta hai, bhook aur zyada dangerous ho jaati hai 😄 Options
-      kam ho jaate hain, lekin craving full power mein hoti hai. Aise time pe chahiye fresh, tasty
-      aur fast food 🍕
+      Anyone who has been hungry in Sundargarh at half past nine knows the problem: the hunger is at
+      full strength and the options are not. Shutters are down, kitchens are cleaned, and whatever is
+      still open is not what you actually wanted.
     </p>
 
-    <h3>Why Late-Night Food Matters 🌃</h3>
-    <p>Late-night food sirf hunger nahi, mood bhi fix karta hai 😌</p>
-    <p><strong>Late-night orders ka scene:</strong></p>
-    <ul>
-      <li>Hostel students & bachelors</li>
-      <li>Night shift workers</li>
-      <li>Movie nights & gaming sessions 🎮</li>
-      <li>Sudden midnight hunger 😄</li>
-    </ul>
-
-    <h3>Most Ordered Late-Night Foods in Sundargarh 🍴</h3>
-    <p>Raat ke time log heavy nahi, comfort food prefer karte hain.</p>
-    <p><strong>Top Late-Night Choices:</strong></p>
-    <ul>
-      <li>Fresh pizzas 🍕</li>
-      <li>Garlic breads & sides</li>
-      <li>Light but filling meals</li>
-    </ul>
-
-    <h3>The Oven Vibe – Late-Night Favorite 🍕🔥</h3>
+    <h3>First, the honest part about our timings</h3>
     <p>
-      Cloud kitchen hone ki wajah se yahan freshly prepared food milta hai—no reheating, no
-      compromise 💯
+      The Oven Vibe is open {site.business.hours.display}. We are not a 2 AM kitchen, and we would
+      rather say so than take an order we cannot cook well. If you want a proper late dinner from us,
+      the trick is to order before the craving peaks — place it by about 8:30 PM and you are
+      comfortably inside the window.
     </p>
 
-    <p><strong>Must-Try Late-Night Pizzas:</strong></p>
+    <h3>Who orders late, and why planning helps</h3>
     <ul>
-      <li><strong>Paneer Makhni Royale Pizza</strong> – creamy & comforting</li>
-      <li><strong>Herb Paneer Delight Pizza</strong> – light and flavorful</li>
-      <li><strong>Mushroom Supreme Pizza</strong> – perfect for night cravings</li>
-      <li><strong>Vegie Onion Capsicum Pizza</strong> – simple & satisfying</li>
+      <li>Hostel students and bachelors, after study or a shift</li>
+      <li>Night-shift workers eating before or after work</li>
+      <li>Movie nights and gaming sessions that run long</li>
+      <li>Anyone who skipped a proper dinner and regretted it at 9 PM</li>
+    </ul>
+
+    <h3>What to order for later, not just for now</h3>
+    <p>
+      Not everything survives an hour on a table. These hold up best if you will be eating a while
+      after it arrives:
+    </p>
+    <ul>
+      <li>
+        <strong>Pizzas</strong> — reheat well in a pan, and the paneer ones stay soft instead of going
+        rubbery.
+      </li>
+      <li>
+        <strong>Fried rice bowls</strong> — the most forgiving thing on the menu, and filling enough to
+        be an actual dinner.
+      </li>
+      <li>
+        <strong>Fries and potato pops</strong> — best eaten immediately, so order these only if you are
+        eating straight away.
+      </li>
+      <li>
+        <strong>Meal box combos</strong> — one box, nothing to assemble, ideal when you cannot be
+        bothered to think about it.
+      </li>
     </ul>
 
     <div class="highlight-box">
-      <h3>Why People Love Ordering Late Night from Us:</h3>
-      <ul style="list-style: none; padding-left: 0;">
-        <li>✔ Fresh food, even at night</li>
-        <li>✔ Pocket-friendly pricing</li>
-        <li>✔ Perfect for sharing</li>
+      <h3>Ordering late, done right</h3>
+      <ul>
+        <li>Call or message by 8:30 PM for a comfortable evening delivery.</li>
+        <li>
+          A group order past ₹{site.delivery.free_above} pays no delivery charge, which is usually the
+          cheapest way to feed four people.
+        </li>
+        <li>Collecting yourself? Takeaway is ready in about 20 minutes.</li>
       </ul>
-      <p style="margin-top: 10px; font-weight: 700; color: #ad210a">Price for Two: Under ₹350</p>
+      <p style="margin-top: 10px; font-weight: 700; color: #ad210a">
+        Everything is 100% pure veg — no exceptions, at any hour.
+      </p>
     </div>
 
-    <h3>Late-Night Ordering Tips 💡</h3>
-    <ul>
-      <li>9–10 PM ke beech order karo for faster prep</li>
-      <li>WhatsApp ordering quick hota hai 📲</li>
-      <li>Light toppings = better night comfort 😄</li>
-    </ul>
-
-    <h3>Final Bite 🌙😋</h3>
+    <h3>The last bite</h3>
     <p>
-      Raat ho ya din, bhook ka solution simple hai—fresh, tasty aur affordable food 🍕 Aur jab
-      late-night craving hit kare, The Oven Vibe is always ready to serve the vibe 🔥
+      Late hunger is easier to solve with five minutes of planning than with a search at 10 PM. Keep
+      the <a href="/menu/">menu</a> handy,
+      know <a href="/sundargarh/">the delivery charge for your area</a>, and put the order in before the
+      kitchen closes.
     </p>
 
-    <a href={waLink} target="_blank" class="cta">
-      👉 Order now on WhatsApp & enjoy fresh late-night food in Sundargarh
+    <a href={`tel:${site.business.phone}`} class="cta">
+      Call the Kitchen: {site.business.phone_display}
     </a>
+    <p>
+      Prefer to type? <a href={LINKS.whatsapp} target="_blank" rel="noopener noreferrer"
+        >Order on WhatsApp</a
+      >.
+    </p>
   </BlogPostLayout>
 </Layout>
