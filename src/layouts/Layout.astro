@@ -1,0 +1,50 @@
+---
+/**
+ * Base layout — Phase 1 stub. Phase 2 locks design tokens in
+ * src/styles/global.css; Phase 3 builds the real shell (nav, sticky
+ * action bar, footer). Keep this minimal until then.
+ */
+import '../styles/global.css';
+import { site } from '../lib/data';
+
+interface Props {
+  title: string;
+  description: string;
+}
+const { title, description } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/static/images/brand_images/The%20Oven%20vibe_logo.webp" />
+    <meta name="generator" content={Astro.generator} />
+  </head>
+  <body class="min-h-screen bg-neutral-950 text-neutral-100 antialiased">
+    {
+      site.announcement.text && (
+        <p class="bg-amber-500 px-4 py-2 text-center text-sm font-medium text-neutral-950">
+          {site.announcement.text}
+        </p>
+      )
+    }
+    <slot />
+    <footer class="mt-16 border-t border-neutral-800 px-4 py-8 text-center text-sm text-neutral-400">
+      <p>
+        {site.business.name} · {site.business.address.locality}, {site.business.address.region}
+        {site.business.address.postal_code} · {site.business.hours.display}
+      </p>
+      <p class="mt-2">
+        <a class="underline" href={`tel:${site.business.phone}`}>Call {site.business.phone_display}</a>
+        ·
+        <a class="underline" href={`https://wa.me/${site.business.whatsapp}`}>WhatsApp</a>
+      </p>
+    </footer>
+  </body>
+</html>

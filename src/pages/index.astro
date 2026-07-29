@@ -1,0 +1,51 @@
+---
+// Home — Phase 1 stub. Real hero/sections come in Phase 3 per PRD §4.
+import Layout from '../layouts/Layout.astro';
+import { site, heroDish, displayDescription, imageFor } from '../lib/data';
+const img = imageFor(heroDish);
+---
+
+<Layout
+  title={`${site.business.name} — Oven-Baked Pizza, Burgers & More in Sundargarh`}
+  description={`${site.business.tagline}. ${site.delivery.hook}. Order by call or WhatsApp.`}
+>
+  <main class="mx-auto max-w-3xl px-4 py-16 text-center">
+    <h1 class="text-4xl font-bold">{site.business.name}</h1>
+    <p class="mt-3 text-lg text-neutral-300">{site.business.tagline}</p>
+    <p class="mt-1 text-amber-400">{site.delivery.hook}</p>
+
+    <figure class="mx-auto mt-10 max-w-sm">
+      <picture>
+        {img.avif && <source srcset={img.avif} type="image/avif" />}
+        <img
+          src={img.webp}
+          alt={heroDish.item_name}
+          width="400"
+          height="400"
+          class="rounded-2xl"
+          loading="eager"
+          fetchpriority="high"
+        />
+      </picture>
+      <figcaption class="mt-3 text-sm text-neutral-400">
+        {heroDish.item_name} — ₹{heroDish.price}. {displayDescription(heroDish)}
+      </figcaption>
+    </figure>
+
+    <div class="mt-10 flex justify-center gap-4">
+      <a
+        href={`tel:${site.business.phone}`}
+        class="rounded-full bg-amber-500 px-6 py-3 font-semibold text-neutral-950"
+        aria-label={`Call ${site.business.name} at ${site.business.phone_display}`}
+        >Call to Order</a
+      >
+      <a href="/menu/" class="rounded-full border border-neutral-600 px-6 py-3 font-semibold"
+        >See Menu</a
+      >
+    </div>
+
+    <p class="mt-12 text-sm text-neutral-500">
+      v2 rebuild in progress — this is a Phase 1 architecture stub (see PRD.md).
+    </p>
+  </main>
+</Layout>

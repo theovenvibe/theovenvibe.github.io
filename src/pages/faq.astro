@@ -1,0 +1,18 @@
+---
+// FAQ — Phase 1 stub. Real FAQs + FAQPage JSON-LD in Phases 3–4.
+import Layout from '../layouts/Layout.astro';
+import { site } from '../lib/data';
+---
+
+<Layout
+  title={`FAQ — ${site.business.name} Sundargarh`}
+  description={`Delivery area, timings, ordering — answers from ${site.business.name}.`}
+>
+  <main class="mx-auto max-w-3xl px-4 py-16">
+    <h1 class="text-3xl font-bold">Frequently Asked Questions</h1>
+    <p class="mt-4 text-neutral-400">
+      Full FAQ arrives in Phase 4. Meanwhile: {site.business.hours.display}.
+      {site.delivery.free_above_note}
+    </p>
+  </main>
+</Layout>
