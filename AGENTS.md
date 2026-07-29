@@ -58,7 +58,7 @@ docs/SEO_PLAYBOOK.md    ← what the site does vs. what the OWNER must do (GBP,
 src/styles/global.css   ← Tailwind entry; design tokens land here in Phase 2
 public/static/images/   ← food photos, AVIF+WebP, filename = image_code
 public/*.html           ← v1 URL stubs (meta-refresh redirects) — do not delete
-.github/workflows/ci.yml← build every branch; deploy ONLY from main
+.github/workflows/deploy.yml← build every branch; deploy ONLY from main
 skills/                 ← step-by-step task guides (start with the one you need)
 PRD.md / PROGRESS.md    ← requirements / current state — read at session start
 ```

@@ -1,4 +1,4 @@
-# CI: build check on every push/PR; deploy ONLY from main (PRD §5).
+# deploy: build check on every push/PR; deploy ONLY from main (PRD §5).
 # main stays frozen serving v1 until the one-shot launch merge
 # (skills/release-manager.md §7). The deploy job below only ever runs on
 # main — "deploy: skipping" on develop/feature branches is normal.
@@ -7,7 +7,7 @@
 # At launch, switch Settings → Pages → Source to "GitHub Actions" so this
 # workflow's deploy job takes over. Until then it will fail/queue if run —
 # which cannot happen, because main receives no pushes before launch.
-name: ci
+name: deploy
 
 on:
   push:
