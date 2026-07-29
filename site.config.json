@@ -47,5 +47,9 @@
   "announcement": {
     "_comment": "Set 'text' to show a banner on every page (e.g. 'Closed today for Holi 🎨'). Set it back to empty \"\" to hide.",
     "text": ""
+  },
+  "analytics": {
+    "_comment": "Paste your Umami website ID from cloud.umami.is → Settings → Websites. Leave \"\" to disable analytics.",
+    "umami_website_id": ""
   }
 }

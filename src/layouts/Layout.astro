@@ -65,6 +65,16 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="theme-color" content="#e63946" />
     <meta name="generator" content={Astro.generator} />
+    {
+      site.analytics.umami_website_id && (
+        <script
+          is:inline
+          defer
+          src="https://cloud.umami.is/script.js"
+          data-website-id={site.analytics.umami_website_id}
+        />
+      )
+    }
     <Seo
       title={title}
       description={description}

@@ -72,6 +72,13 @@ export const siteConfigSchema = z.object({
     _comment: comment,
     text: z.string(),
   }),
+  analytics: z.object({
+    _comment: comment,
+    /** Umami website ID (cloud.umami.is → Settings → Websites). Empty = analytics off. */
+    umami_website_id: z
+      .string()
+      .regex(/^$|^[a-zA-Z0-9-]+$/, "umami_website_id must be empty \"\" or the ID copied from cloud.umami.is (letters, numbers, hyphens only)"),
+  }),
 });
 
 export type SiteConfig = z.infer<typeof siteConfigSchema>;
