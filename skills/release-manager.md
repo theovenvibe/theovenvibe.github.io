@@ -35,7 +35,10 @@ git checkout -b feature/<short-kebab-slug> origin/develop
 
 1. `npm run build` (= `astro check && astro build`) must pass before ANY
    commit — no exceptions. A Zod error from menu.json / site.config.json
-   is a real defect: fix the data or the schema, never bypass.
+   is a real defect: fix the data or the schema, never bypass. If it
+   fails and the fix isn't obvious → `skills/troubleshoot-build.md`. Also
+   run `skills/qa-check.md` before merging (§5 below; binding post-launch
+   per §8.1).
 2. **Owner approval gate:** user-visible design/copy changes need Milan's
    OK on a local preview (`npm run preview`) or screenshot BEFORE merging
    to develop. Pushing the feature branch is fine; merging is not.
@@ -79,8 +82,19 @@ normal and correct. Check: `gh run list --branch develop --limit 1`.
 
 Preconditions — ALL must hold:
 - [ ] PROGRESS.md shows Phases 1–6 complete; Phase 6 QA gates green
-- [ ] Milan has explicitly said "ship it" on the final preview
+- [x] Milan has explicitly said "ship it" for the v3.0.0 launch —
+      **already given, 2026-07-30 (Phase 5).** Phase 6 does NOT need to
+      re-ask for this. ⚠️ This sign-off was **one-time, for this specific
+      one-shot launch only** — it is not a standing waiver of owner
+      approval. §8 below defines the standing policy that replaces
+      "ask Milan every time" for everything that ships after the launch.
 - [ ] Tag the outgoing v1 first: `git tag v1-legacy origin/main && git push origin v1-legacy`
+
+> **Launch tag is `v3.0.0`** (owner decision, Phase 5) — a major version,
+> even though the project is called "v2" throughout PRD.md/PROGRESS.md.
+> The project NAME (v2 rebuild) and the git TAG NUMBER (v3.0.0) are simply
+> different things here; don't "fix" this to `v2.0.0` later, it's
+> intentional.
 
 ```bash
 gh pr create --base main --head develop \
@@ -91,7 +105,7 @@ gh pr create --base main --head develop \
 - Owner approved final preview"
 gh pr merge <N> --merge            # merge commit; NEVER delete develop
 git checkout main && git pull --ff-only origin main
-git tag -a v2.0.0 -m "v2 launch" && git push origin v2.0.0
+git tag -a v3.0.0 -m "v2 site rebuild launch" && git push origin v3.0.0
 ```
 
 Post-merge (owner + agent together):
@@ -102,9 +116,78 @@ Post-merge (owner + agent together):
    live URL, tap through call + WA order flow on a phone.
 3. Old-URL stubs (blog-*.html, faq.html) return 200 → spot-check 3.
 
-## 8. Emergency v1 hotfix (only path that touches main early)
+## 8. Post-launch: the branch model unfreezes (Portfolio-style flow)
 
-Live site broken during the rebuild window:
+Everything above (§1–7) describes the **v2 rebuild window**, where `main`
+is frozen and receives `develop` exactly once. That window ends the
+moment §7's launch merge lands and `main` serves v3.0.0 live.
+
+**From then on, `main` is a normal production branch again** — the same
+model the Portfolio repo uses day to day:
+
+```
+main      = production. Deploys automatically on every merge (the
+            `deploy` job in .github/workflows/deploy.yml runs on every
+            push to main, not just the launch merge).
+develop   = integration, same as before — permanent, never deleted.
+feature/* = cut fresh from origin/develop, same as before.
+```
+
+### 8.1 Standing policy: test-then-merge (replaces "ask Milan every time")
+
+The v3.0.0 launch got a one-time verbal "ship it" (§7). That does not
+repeat for every future change — instead, from launch onward, **every
+merge is gated by an objective, repeatable test**, not a conversation.
+This is binding and applies with no exceptions, on any machine, run by
+any agent (including a small local model with nobody to ask):
+
+1. **Before `feature/<slug>` merges into `develop`:** run
+   `npm run build` AND `skills/qa-check.md` (build green + JSON-LD parse
+   loop + emoji grep + honesty checks) on the feature branch. Only merge
+   `--no-ff` into `develop` after BOTH pass.
+2. **Before `develop` merges into `main`** (a release PR, per the template
+   below): run `npm run build` AND `skills/qa-check.md` again, on
+   `develop` itself, after the feature merge. Only open/merge the release
+   PR after both pass on `develop`.
+3. A UI/copy-visible change still gets Milan's look at a preview
+   (§3's owner-approval gate is unchanged) — the test-then-merge policy
+   ADDS an objective gate, it does not remove the existing subjective one
+   for visible changes. For anything else (content edits already covered
+   by a `skills/update-*.md` file), passing `skills/qa-check.md` is
+   sufficient to merge without waiting on a conversation.
+
+The only thing that changes post-launch is step §5 → §7 no longer happens
+in one shot at the end of a whole rebuild — it happens **whenever a batch
+of merged `develop` work is ready to go live**, gated the same way:
+
+```bash
+git fetch origin main develop
+gh pr create --base main --head develop \
+  --title "release: <short summary of what's shipping>" \
+  --body "Promotes develop to main. Verification: npm run build green;
+skills/qa-check.md passed."
+gh pr merge <N> --merge
+git checkout main && git pull --ff-only origin main
+# optional: tag notable releases, e.g. git tag v3.1.0 && git push origin v3.1.0
+```
+
+Any single content edit (a price change, a new blog post) does NOT need
+its own `develop → main` release PR immediately — batch small edits on
+`develop` and cut a release PR when there's a meaningful batch ready, or
+whenever Milan wants the live site updated. `feature/* → develop` stays
+the everyday flow either way; `develop → main` is the only thing that
+changed cadence.
+
+## 9. Emergency v1 hotfix (only path that touches main early — PRE-LAUNCH ONLY)
+
+This section is now **historical** — it only applied during the pre-v3.0.0
+rebuild window, while `main` was still serving frozen v1 HTML/CSS/JS with
+no build step. Once v3.0.0 has shipped, `main` runs the same Astro build
+as everything else, so an "emergency hotfix" is just a normal
+`hotfix/<slug>` branch off `origin/main`, verified with `npm run build`
+like any other change, then released per §8.
+
+Live site broken during the pre-launch rebuild window (kept for reference):
 ```bash
 git checkout -b hotfix/<slug> origin/main    # v1 code, plain HTML — no npm
 # minimal fix only; open the file, verify by opening locally in a browser
@@ -112,10 +195,11 @@ git push -u origin hotfix/<slug>
 gh pr create --base main --head hotfix/<slug> --title "fix: <what>"
 # merge → Pages redeploys v1; then IGNORE for develop (v2 replaces it all)
 ```
-Unlike the Portfolio flow there is NO back-merge to develop — v2 shares no
-code with v1, so a v1 hotfix is dead code the moment v2 ships.
+Unlike the Portfolio flow there was NO back-merge to develop during this
+window — v2 shared no code with v1, so a v1 hotfix was dead code the
+moment v2 shipped.
 
-## 9. Checklist (copy per task)
+## 10. Checklist (copy per task)
 
 ```
 [ ] status clean; branch cut fresh from origin/develop

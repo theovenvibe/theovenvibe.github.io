@@ -1,0 +1,133 @@
+---
+// /blog/pizza-under-300/ — AGENTS.md-bound slug (v1 URL stub points here).
+// Phase 4 copy pass. `doubleWrapHeroContainer` still reproduces v1's doubled
+// <div class="hero-container"> so this post's hero keeps its live layout.
+// Prices in the body are read from menu.json — they can never go stale.
+import Layout from '../../layouts/Layout.astro';
+import BlogPostLayout from '../../components/BlogPostLayout.astro';
+import { availableItems, availableCombos, displayName, site } from '../../lib/data';
+import { LINKS, abs, blogPostingJsonLd, breadcrumbJsonLd } from '../../lib/seo';
+
+const headline = 'Pizza Under ₹300 in Sundargarh | Student Specials';
+const description =
+  'Every pure veg pizza on our Sundargarh menu costs under ₹300. Real prices, what to order on a student budget, and how to stretch it with combos.';
+const image = {
+  url: abs('/static/images/og/blog_4.jpg'),
+  width: 1200,
+  height: 630,
+  alt: 'Pure veg pizza under 300 rupees in Sundargarh',
+};
+const path = '/blog/pizza-under-300/';
+
+/** Real pizzas under ₹300, cheapest first — straight from menu.json. */
+const pizzas = availableItems
+  .filter((i) => i.category === 'Pizza' && i.price < 300)
+  .sort((a, b) => a.price - b.price);
+const combos = availableCombos.filter((c) => c.combo_price < 350).sort((a, b) => a.combo_price - b.combo_price);
+---
+
+<Layout
+  title={headline}
+  description={description}
+  ogType="article"
+  image={image}
+  jsonLd={[
+    blogPostingJsonLd({
+      headline,
+      description,
+      path,
+      image: image.url,
+      datePublished: '2024-05-30',
+    }),
+    breadcrumbJsonLd([
+      { name: 'Blog', path: '/blog/' },
+      { name: 'Pizza Under ₹300', path },
+    ]),
+  ]}
+>
+  <BlogPostLayout
+    line1="PIZZA UNDER"
+    lineGradient="₹300."
+    subtitle="Student-friendly pizzas in Sundargarh. Big taste, small price."
+    doubleWrapHeroContainer={true}
+  >
+    <picture>
+      <source type="image/avif" srcset="/static/images/blog_images/blog_4.avif" />
+      <source type="image/webp" srcset="/static/images/blog_images/blog_4.webp" />
+      <img
+        src="/static/images/blog_images/blog_4.webp"
+        alt="Pure veg pizza under 300 rupees in Sundargarh"
+        class="blog-img"
+        loading="lazy"
+        width="1024"
+        height="1024"
+      />
+    </picture>
+
+    <p class="subtitle" style="font-weight: 600; color: #555; margin-top: -10px">
+      Students ke liye best budget pizza options
+    </p>
+
+    <p>
+      If you are in a hostel, coming out of coaching, or splitting a bill three ways, ₹300 is the line
+      that matters. The good news in Sundargarh is that you do not have to go near it — every pizza we
+      bake is a 7-inch regular and every one of them costs under ₹300.
+    </p>
+
+    <h2>Every pizza we make, and what it costs</h2>
+    <p>
+      These are live prices from our menu, cheapest first. All of them are 100% pure veg.
+    </p>
+    <ul>
+      {
+        pizzas.map((p) => (
+          <li>
+            <strong>{displayName(p.display_name || p.item_name)}</strong> — ₹{p.price}
+          </li>
+        ))
+      }
+    </ul>
+
+    <h2>How to make ₹300 go further</h2>
+    <ul>
+      <li>
+        Order a meal box combo instead of items separately — a pizza, a side and a drink together
+        works out cheaper than the same three on their own.
+      </li>
+      <li>Split a pizza and a large side between two people rather than buying two pizzas.</li>
+      <li>
+        Push the bill past ₹{site.delivery.free_above} in a group order and the delivery charge
+        disappears completely.
+      </li>
+      <li>Call ahead and collect — takeaway is ready in about 20 minutes and costs nothing extra.</li>
+    </ul>
+
+    <div class="highlight-box">
+      <h2>Combos worth knowing about</h2>
+      <ul>
+        {
+          combos.map((c) => (
+            <li>
+              <strong>{displayName(c.combo_name)}</strong> — ₹{c.combo_price}
+            </li>
+          ))
+        }
+      </ul>
+      <p style="margin-top: 10px; font-weight: 700; color: #ad210a">
+        Delivery: {site.delivery.hook.toLowerCase()}, free above ₹{site.delivery.free_above}
+      </p>
+    </div>
+
+    <h2>The last slice</h2>
+    <p>
+      Cheap and good are not opposites — they are just a question of what a kitchen spends its money
+      on. We spend ours on cheese and paneer instead of a dining hall.
+      Browse the <a href="/menu/">full menu with prices</a>,
+      or check the <a href="/sundargarh/">delivery charges for your part of Sundargarh</a>.
+    </p>
+
+    <a href={LINKS.whatsapp} target="_blank" rel="noopener noreferrer" class="cta">
+      Order on WhatsApp
+    </a>
+  </BlogPostLayout>
+</Layout>

@@ -1,122 +1,125 @@
-# 🍕 The Oven Vibe — Sundargarh, Odisha
+# The Oven Vibe — Sundargarh, Odisha
 
-![The Oven Vibe Logo](https://theovenvibe.github.io/static/images/brand_images/The_Oven_Vibe_logo.webp)
+Digital menu + lead-generation website for **The Oven Vibe**, a 100% pure
+vegetarian cloud kitchen in Sundargarh, Odisha (pin 770001). Live at
+[theovenvibe.github.io](https://theovenvibe.github.io).
 
-Welcome to **The Oven Vibe** — your go-to **fresh, hot, oven-baked takeaway** cloud kitchen in Sundargarh, Odisha! We serve mouth-watering **pizzas, burgers, fries, snacks, and pasta**, all made to order and delivered fresh to you.
+The site is not an ordering platform — there is no backend, no payments,
+no accounts. It's a fast, honest, mobile-first menu whose entire job is to
+turn a visitor into a phone call or a WhatsApp order.
 
-Check out our live website: [https://theovenvibe.github.io](https://theovenvibe.github.io)
+## What this repo is (v2 rebuild)
 
----
+This is a from-scratch rebuild of the original static HTML/CSS/JS site,
+on Astro + Tailwind, currently **in progress on the `develop` branch**.
+`main` still serves the live v1 site and stays untouched until the
+one-shot v2 launch — see **Branch model** below before pushing anything.
 
-## 🌟 About the Project
+The full requirements and every binding decision live in `PRD.md`. Current
+phase status and the session-by-session history live in `PROGRESS.md`.
+Read both before making a non-trivial change.
 
-This is a **modern, responsive cloud kitchen website** built to showcase:
+## Quickstart
 
-- Delicious menu items with combos & add-ons
-- Easy ordering via **WhatsApp**
-- Party & bulk order options
-- SEO-friendly structured data
-- Fast-loading modern images (AVIF, WebP, JXL)
-- Hosted on **GitHub Pages**
-
----
-
-## 📦 Features
-
-| Feature              | Description                             |
-| -------------------- | --------------------------------------- |
-| ✅ Responsive Design | Works perfectly on mobile & desktop     |
-| ✅ WhatsApp Orders   | Customers can order in one click        |
-| ✅ Menu Management   | Update combos & add-ons via `menu.json` |
-| ✅ SEO Optimized     | Schema.org, Open Graph & Twitter cards  |
-| ✅ Modern Images     | AVIF, WebP & JXL formats                |
-| ✅ Free Hosting      | GitHub Pages hosting, free forever      |
-
----
-
-## 📂 Project Structure
-
-```text
-/
-├── index.html            # Home page
-├── menu.json             # Menu, combos & add-ons
-├── blog.html             # Blog posts
-├── faq.html              # Frequently Asked Questions
-├── contact.html          # Contact page
-├── robots.txt            # Search engine instructions
-├── sitemap.xml           # Sitemap for SEO
-├── style.css             # Main styles
-├── script.js             # JavaScript functionality
-├── static/
-│   ├── images/           # Logos, hero, add-ons, blog images
-│   └── svg/              # Icons (WhatsApp, phone, email)
-└── README.md             # Project documentation
-
+```bash
+npm install
+npm run dev       # http://localhost:4321, hot-reload
+npm run build     # astro check && astro build — must be green before any commit
+npm run preview   # serves the built dist/ output, closest thing to production locally
 ```
 
----
+Requires Node ≥ 22.12 (CI runs Node 24).
 
-## 🚀 Deployment
+## Tech stack
 
-Hosted for free on **GitHub Pages**: [https://theovenvibe.github.io](https://theovenvibe.github.io)
+Astro 7 (static output, zero client JS by default) + Tailwind CSS v4 +
+TypeScript strict. Two JSON files, each guarded by a Zod schema, are the
+entire content model — there is no CMS and no database.
 
-**Continuous Deployment Setup:**
+## How content editing works
 
-1. Push updates to `main` branch → GitHub Pages automatically deploys.
-2. Site is always available at `https://theovenvibe.github.io`
+Nobody edits page components to change a price, an hour, or a photo.
+Everything a non-technical person needs to change lives in one of two
+files, both plain JSON, both validated at build time:
 
----
+- **`menu.json`** — the menu itself: items, combos, add-ons. Mirrors the
+  Zomato catalogue export; field names are never renamed.
+- **`site.config.json`** — every business fact that isn't a menu item:
+  delivery charges, hours, phone/WhatsApp, address, Google rating,
+  the announcement banner, and (Phase 5+) the Umami analytics ID.
 
-## 💌 Contact & Orders
+Both are validated by Zod (`src/schemas/`) on every `npm run build` — a
+malformed edit fails the build with a plain-English error naming the
+exact file and field, and the **live site is never affected** by a bad
+edit; GitHub Pages keeps serving the last good deploy until a valid build
+replaces it.
 
-## 🖼️ Temporary Image Placeholder Process
+**`skills/` is the instruction manual.** Every common task — change a
+price, add a menu item, swap a photo, add a blog post, update hours, roll
+back a bad release — has its own step-by-step file in `skills/`, written
+so a small local model (or a person on a phone) can do it unassisted:
+exact file paths, a before/after example, the exact verify command, and
+the GitHub-web-editor-on-a-phone flow. Start with `AGENTS.md`, then open
+the one `skills/*.md` file that matches your task.
 
-To standardize UX when product images are missing, a temporary placeholder is used automatically:
+## Project structure
 
-- Placeholder asset: `static/images/product_images/placeholder.svg`
-- Auto-fallback behavior: If an image fails to load or a product has no `product_code`, the UI shows the placeholder with a dashed border and a TEMP badge.
-- Where implemented: Rendering logic in `script.js` uses `PLACEHOLDER` and applies classes `temp-img` and `temp-image`.
+```
+menu.json                ← THE menu (items, combos, add-ons) — Zomato mirror
+site.config.json         ← business settings (delivery, hours, phone, rating, analytics)
+src/
+  schemas/                ← Zod schemas guarding both JSON files
+  lib/data.ts             ← the ONLY place the JSON files are loaded/read from
+  lib/seo.ts              ← all structured data (JSON-LD) + off-site links
+  components/             ← Nav, Footer, MenuCard, Seo, WhatsAppFab, etc.
+  layouts/Layout.astro     ← base page shell (head, nav, footer, JSON-LD)
+  pages/                  ← routes: /, /menu/, /contact/, /faq/, /blog/, /sundargarh/, /404
+  styles/                 ← global.css (design system) + polish.css (motion layer)
+public/
+  static/images/          ← food photos (AVIF+WebP), blog images, OG share images
+  *.html                  ← old v1 URL stubs (meta-refresh redirects) — do not delete
+  scripts/                ← site.js (interactions) + polish.js (motion)
+skills/                   ← step-by-step task guides — start here for any content edit
+docs/
+  SEO_PLAYBOOK.md          ← what the site does for SEO vs. what only the owner can do
+  archive/                 ← historical design research/decisions (superseded, kept for context)
+.github/workflows/deploy.yml ← build every branch; deploy only from main
+PRD.md                    ← requirements (binding)
+PROGRESS.md                ← phase checklist + session log (read this first each session)
+AGENTS.md                  ← cold-start primer for any agent/model working in this repo
+```
 
-How to replace with real images later:
+## Branch model (binding during the v2 rebuild)
 
-1. Prepare images for each product/add-on/combo using this naming:
-   - Products: `static/images/product_images/<PRODUCT_CODE>.avif|webp|jxl`
-   - Add-ons: `static/images/add_on_images/<ADDON_CODE>.avif|webp|jxl`
-   - Combos: `static/images/combo_images/<COMBO_CODE>.avif|webp|jxl`
-2. Keep aspect ratio square; recommended max 640×640, optimized AVIF/WebP/JXL.
-3. After placing files, ensure the related codes exist in `menu.json` (e.g., `product_code`).
-4. No code changes required; the site will pick up images automatically and the TEMP indicator will disappear.
+```
+main      = PRODUCTION, the live v1 site. FROZEN until the one-shot v2
+            launch merge. Nobody commits here directly.
+develop   = integration branch. All v2 work lands here via feature branches.
+feature/* = cut fresh from origin/develop, one purpose each, deleted after merge.
+```
 
-Notes:
+Full workflow (branch → verify → commit → merge, plus what to do when it
+goes wrong): `skills/release-manager.md` + `skills/release-recovery.md`.
+Post-launch, the branch model unfreezes to a normal
+feature → develop → release-PR-to-main flow — see
+`skills/release-manager.md` §8.
 
-- Prices are displayed from `menu.json` and must not be changed by assets.
-- For accessibility and SEO, `alt` text includes the product name; placeholders add “(temporary image)”.
+## Deploy model
 
-- 📱 WhatsApp: [+91-9692261138](https://wa.me/9192261138)
-- ✉️ Email: theovenvibe@gmail.com
-- 📸 Instagram: [@theovenvibe](https://instagram.com/theovenvibe)
+GitHub Actions (`.github/workflows/deploy.yml`) builds every push on
+every branch (`main`, `develop`, `feature/**`, `hotfix/**`) but only
+**deploys** when the push lands on `main` — "deploy: skipping" on any
+other branch is expected, not a failure. Full explanation, how to read
+`gh run list`, and the launch-day Pages-source switch:
+`skills/deploy-cicd.md`.
 
----
+## Further reading
 
-## 🏷️ Badges
-
-![Website Status](https://img.shields.io/badge/Website-Live-brightgreen)
-![Netlify Deploy](https://img.shields.io/badge/Netlify-Deployed-blue)
-![GitHub Repo](https://img.shields.io/badge/GitHub-Private-orange)
-
----
-
-## 🔒 Privacy & Source Code
-
-- The GitHub repository is **private** — your customers only see the live site.
-- Only the **Netlify deployed site** is public.
-
----
-
-## 🎉 License
-
-Open for **personal use**. Redistribution or commercial use requires permission from **The Oven Vibe**.
-
----
-
-Made with ❤️ by **The Oven Vibe Team**
+- [`PRD.md`](./PRD.md) — product requirements, binding decisions, the
+  build-phase plan.
+- [`PROGRESS.md`](./PROGRESS.md) — current phase, what's done, what's next.
+- [`AGENTS.md`](./AGENTS.md) — repo primer for any agent/model: golden
+  rules, repo map, common tasks → skills.
+- [`docs/SEO_PLAYBOOK.md`](./docs/SEO_PLAYBOOK.md) — what the site does
+  for local SEO on its own vs. what only the owner can do (Google
+  Business Profile, reviews, citations).

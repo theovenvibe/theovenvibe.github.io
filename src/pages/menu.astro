@@ -1,0 +1,73 @@
+---
+// /menu/ — not a v1 page (v1 only ever had an in-page #menu anchor on the
+// home page); this route pre-dates Phase 3 (PRD §4 full site-map vision).
+// Out of the Phase 3 pixel-parity scope (no v1 source to port), but the
+// global stylesheet swap (Tailwind → v1's style.css) means it can no longer
+// use Tailwind utility classes, so it's restyled here with the same v1
+// design system / components used everywhere else, instead of shipping
+// unstyled.
+import Layout from '../layouts/Layout.astro';
+import MenuAccordions from '../components/MenuAccordions.astro';
+import AddonsAccordion from '../components/AddonsAccordion.astro';
+import { site, categories } from '../lib/data';
+import { breadcrumbJsonLd, restaurantJsonLd, LOW_PRICE, LINKS } from '../lib/seo';
+
+const title = 'Full Menu & Prices | The Oven Vibe Sundargarh';
+const description = `Every pure veg item we cook in Sundargarh, with prices — pizza from ₹${LOW_PRICE}, burgers, fried rice, pasta, grilled sandwiches, Maggi, fries and combos.`;
+const categoryLine = categories.map((c) => c.name).join(' · ');
+---
+
+<Layout
+  title={title}
+  description={description}
+  ogTitle="The Oven Vibe — Full Pure Veg Menu, Sundargarh"
+  jsonLd={[
+    restaurantJsonLd(),
+    breadcrumbJsonLd([{ name: 'Menu', path: '/menu/' }]),
+  ]}
+>
+  <main class="main">
+    <section class="hero hero-mini">
+      <div class="hero-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+      </div>
+      <div class="hero-container">
+        <div class="hero-content">
+          <h1 class="hero-display" style="font-size: clamp(2rem, 5vw, 4rem);">
+            <span class="animate-on-scroll">FULL</span>
+            <span class="text-gradient animate-on-scroll delay-100">MENU.</span>
+          </h1>
+          <p class="animate-on-scroll delay-100" style="margin-bottom: 1.5rem;">
+            <span class="veg-badge">100% Pure Veg</span>
+          </p>
+          <p class="hero-text animate-on-scroll delay-200">
+            {categoryLine}. {site.delivery.free_above_note}
+          </p>
+          <div class="hero-actions animate-on-scroll delay-300">
+            <a
+              href={`tel:${site.business.phone}`}
+              class="btn btn-primary btn-lg"
+              >Call the Kitchen</a
+            >
+            <a
+              href={LINKS.whatsapp}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn-secondary btn-lg">Order on WhatsApp</a
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="menu" class="menu animate-on-scroll">
+      <MenuAccordions />
+    </section>
+
+    <section class="menu-section" id="addonsSection">
+      <AddonsAccordion />
+    </section>
+  </main>
+</Layout>

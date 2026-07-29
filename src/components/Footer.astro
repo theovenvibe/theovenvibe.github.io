@@ -1,0 +1,63 @@
+---
+/**
+ * Footer — v1 injected this via script.js at runtime (innerHTML into
+ * #global-footer-placeholder after DOMContentLoaded). Rendering it at
+ * build time is the Phase 3 invisible improvement: same final markup,
+ * no pop-in. Copy/links match v1's template literal verbatim; business
+ * values (phone/whatsapp/instagram/name) are sourced from site.config.json
+ * per the maintainability contract (PRD §6) instead of being re-hard-coded.
+ */
+import { site } from '../lib/data';
+import { LINKS } from '../lib/seo';
+const utm = 'utm_source=site&utm_medium=footer&utm_campaign=delivery';
+const zomato = `${LINKS.zomato}&${utm}`;
+const swiggy = `${LINKS.swiggy}&${utm}`;
+// Phase 4: the © year came from a hard-coded "2025" that was already stale.
+const year = new Date().getFullYear();
+---
+
+<footer class="footer animate-on-scroll" id="footer">
+  <div class="footer-container">
+    <!-- Primary Content -->
+    <div class="footer-content">
+      <p class="footer-brand-name">{site.business.name}</p>
+      <nav class="footer-nav">
+        <a href="/menu/">Full Menu</a>
+        <a href="/sundargarh/">Delivery Areas</a>
+        <a href="/contact/">Contact</a>
+        <a href="/faq/">FAQ</a>
+        <a href="/blog/">Blog</a>
+      </nav>
+    </div>
+
+    <!-- Secondary/Right Content -->
+    <div class="footer-right">
+      <div class="footer-order-links">
+        <a href={zomato} target="_blank" rel="noopener noreferrer" aria-label="Order on Zomato">Zomato</a>
+        <span style="opacity: 0.3">|</span>
+        <a href={swiggy} target="_blank" rel="noopener noreferrer" aria-label="Order on Swiggy">Swiggy</a>
+      </div>
+
+      <div class="footer-social-links">
+        <a href={site.business.instagram} target="_blank" rel="noopener noreferrer" aria-label="Follow on Instagram">Instagram</a>
+        <span style="opacity: 0.3">|</span>
+        <a href={LINKS.gbp} target="_blank" rel="noopener noreferrer" aria-label="The Oven Vibe on Google">Google</a>
+        <span style="opacity: 0.3">|</span>
+        <a href={LINKS.maps} target="_blank" rel="noopener noreferrer" aria-label="Find us on Maps">Maps</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="footer-meta">
+      <p style="margin-bottom: 0.75rem;">
+        <span class="veg-badge veg-badge--on-dark">100% Pure Veg</span>
+      </p>
+      <p style="color: #a1a1aa; font-size: 0.8rem; margin-bottom: 0.35rem;">
+        {site.business.address.locality}, {site.business.address.region} {site.business.address.postal_code} · <a href={`tel:${site.business.phone}`} style="color: inherit;">{site.business.phone_display}</a> · {site.business.hours.display}
+      </p>
+      <p>20 min takeaway · 30-45 min delivery</p>
+      © {year} {site.business.name} · All rights reserved
+    </div>
+  </div>
+</footer>

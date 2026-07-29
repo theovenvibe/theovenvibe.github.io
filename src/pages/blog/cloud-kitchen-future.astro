@@ -1,0 +1,142 @@
+---
+// /blog/cloud-kitchen-future/ — AGENTS.md-bound slug (v1 URL stub points here).
+// Phase 4 copy pass: emoji removed, English-first per PRD §2, `meta keywords`
+// dropped (ignored by every major engine for well over a decade), internal
+// links added to /menu/ and /sundargarh/.
+import Layout from '../../layouts/Layout.astro';
+import BlogPostLayout from '../../components/BlogPostLayout.astro';
+import { site } from '../../lib/data';
+import { LINKS, abs, blogPostingJsonLd, breadcrumbJsonLd } from '../../lib/seo';
+
+const headline = 'Why Cloud Kitchens Are the Future of Food in Sundargarh';
+const description =
+  'How a cloud kitchen keeps food cheaper and fresher in a town like Sundargarh: lower overheads, cook-to-order batches and no dine-in waiting.';
+const image = {
+  url: abs('/static/images/og/blog_5.jpg'),
+  width: 1200,
+  height: 630,
+  alt: 'The Oven Vibe cloud kitchen in Sundargarh',
+};
+const path = '/blog/cloud-kitchen-future/';
+const slabLine = site.delivery.slabs.map((s) => `₹${s.charge} for ${s.label}`).join(', ');
+---
+
+<Layout
+  title={headline}
+  description={description}
+  ogType="article"
+  image={image}
+  jsonLd={[
+    blogPostingJsonLd({
+      headline,
+      description,
+      path,
+      image: image.url,
+      datePublished: '2024-06-05',
+    }),
+    breadcrumbJsonLd([
+      { name: 'Blog', path: '/blog/' },
+      { name: 'Cloud Kitchens', path },
+    ]),
+  ]}
+>
+  <BlogPostLayout
+    line1="CLOUD"
+    lineGradient="KITCHENS."
+    subtitle="Why cloud kitchens are the future of food in Sundargarh."
+  >
+    <p class="subtitle" style="font-weight: 600; color: #555; margin-top: -10px">
+      Restaurant ka naya style — smart aur simple
+    </p>
+
+    <picture>
+      <source type="image/avif" srcset="/static/images/blog_images/blog_5.avif" />
+      <source type="image/webp" srcset="/static/images/blog_images/blog_5.webp" />
+      <img
+        src="/static/images/blog_images/blog_5.webp"
+        alt="The Oven Vibe cloud kitchen in Sundargarh"
+        class="blog-img"
+        loading="lazy"
+        width="1024"
+        height="1024"
+        style="background: #eee"
+      />
+    </picture>
+
+    <p>
+      Food in Sundargarh has changed faster in the last two years than in the ten before it. People
+      still want the taste, but they also want it in thirty minutes, at a price that makes sense on a
+      weekday, and tasting the same every single time. That combination is hard for a dine-in
+      restaurant and natural for a cloud kitchen.
+    </p>
+
+    <h2>What a cloud kitchen actually is</h2>
+    <p>
+      A cloud kitchen is a kitchen without a dining hall. There are no tables to turn, no waiters, no
+      air-conditioned floor to pay for. Everything behind the counter — the oven, the wok, the
+      griddle, the people — is the entire business.
+    </p>
+    <ul>
+      <li>No dine-in seating</li>
+      <li>Orders arrive by phone, WhatsApp, Zomato and Swiggy</li>
+      <li>Every rupee saved on overheads goes into food and speed instead</li>
+    </ul>
+
+    <h2>Why the model fits a town like Sundargarh</h2>
+    <p>
+      A restaurant this size has to fill its seats to survive, which means high prices on a slow
+      Tuesday. A kitchen does not have that problem — it only has to cook what is ordered.
+    </p>
+    <ul>
+      <li>Lower fixed cost, so menu prices can stay honest</li>
+      <li>One small kitchen is far easier to keep consistent than a full service floor</li>
+      <li>Food goes out the moment it is made, not when a table frees up</li>
+      <li>Delivery is planned around the town — we cover 8 km from the kitchen</li>
+    </ul>
+
+    <h2>What that means for you</h2>
+    <ul>
+      <li>Pizzas that go into the oven after you order, not before</li>
+      <li>The same recipe every time, because one kitchen makes all of it</li>
+      <li>Ordering that takes one phone call or one WhatsApp message</li>
+      <li>Clear delivery pricing: {slabLine}, and {site.delivery.free_above_note.toLowerCase()}</li>
+    </ul>
+
+    <h2>The Oven Vibe, Sundargarh's pure veg cloud kitchen</h2>
+    <p>
+      We run exactly this model in {site.business.address.locality} {site.business.address.postal_code}, and we run it 100% pure veg — no meat, fish or egg is
+      cooked, stored or handled in the kitchen. Open {site.business.hours.display}.
+    </p>
+    <p><strong>Where most people start:</strong></p>
+    <ul>
+      <li>Paneer Makhni Royale Pizza</li>
+      <li>Herb Paneer Delight Pizza</li>
+      <li>Mushroom Supreme Pizza</li>
+      <li>Paneer Fried Rice</li>
+    </ul>
+
+    <div class="highlight-box">
+      <h2>Cloud kitchen vs traditional restaurant</h2>
+      <p>
+        <strong>Traditional restaurant:</strong> rent and staff for a dining floor, priced into every
+        plate, and food that waits for a table.
+      </p>
+      <p>
+        <strong>Cloud kitchen:</strong> the cost sits in the food and the delivery, and the food leaves
+        as soon as it is ready.
+      </p>
+    </div>
+
+    <h2>The last slice</h2>
+    <p>
+      Cloud kitchens are not a trend that will pass. They are simply a cheaper way to get good food
+      to more people, which is why they reach growing towns first.
+      See what we cook on the <a href="/menu/">full menu</a>,
+      or read how <a href="/sundargarh/">delivery works across Sundargarh {site.business.address.postal_code}</a>.
+    </p>
+
+    <a href={LINKS.whatsapp} target="_blank" rel="noopener noreferrer" class="cta">
+      Order on WhatsApp
+    </a>
+  </BlogPostLayout>
+</Layout>

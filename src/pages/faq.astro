@@ -1,0 +1,179 @@
+---
+// FAQ — Phase 4 rebuild of v1's faq.html.
+//
+// Why this page changed the most: v1's FAQPage JSON-LD and its visible
+// accordions were two different sets of questions, and neither matched
+// site.config.json. The page said "open daily 11:30 AM to 12:30 PM", the
+// schema said "2:00 PM to 11:00 PM", the config says 11 AM - 9 PM; the schema
+// also claimed "we offer takeaway and curbside pickup" while the home page
+// advertised paid delivery slabs. Google requires FAQPage markup to match the
+// visible answers, and contradicting your own opening hours is exactly the
+// kind of signal that keeps a local business out of the map pack.
+//
+// Fix: ONE array below is the source for both the rendered accordions and the
+// JSON-LD, and every fact in it comes from site.config.json / menu.json. They
+// can no longer drift apart.
+import Layout from '../layouts/Layout.astro';
+import { site } from '../lib/data';
+import {
+  LINKS,
+  PRICE_RANGE,
+  breadcrumbJsonLd,
+  faqPageJsonLd,
+  restaurantJsonLd,
+  type Qa,
+} from '../lib/seo';
+
+const title = 'FAQ — Delivery, Timings & Orders | The Oven Vibe';
+const description = `Answers on delivery charges and areas in Sundargarh, opening hours, pure veg food, party orders and prices at ${site.business.name}.`;
+const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
+
+const slabLine = site.delivery.slabs.map((s) => `₹${s.charge} for ${s.label}`).join(', ');
+
+const faqs: Qa[] = [
+  {
+    q: 'How do I order from The Oven Vibe in Sundargarh?',
+    a: `Call or message ${site.business.phone_display} on WhatsApp between ${site.business.hours.display.replace(', all days', '')} and tell us what you would like. You can also order through Zomato or Swiggy if you prefer to pay online.`,
+  },
+  {
+    q: 'Do you deliver in Sundargarh, and what does delivery cost?',
+    a: `Yes. We deliver within 8 km of Sundargarh town: ${slabLine}. ${site.delivery.free_above_note}. Zomato and Swiggy also deliver our food at their own charges.`,
+  },
+  {
+    q: 'What are your timings?',
+    a: `We are open ${site.business.hours.display}. The kitchen stops taking orders at closing time, so call a little earlier for large orders.`,
+  },
+  {
+    q: 'Is the food 100% vegetarian?',
+    a: 'Yes. The Oven Vibe is a 100% pure veg kitchen. We do not cook, store or handle any non-vegetarian food, so nothing on the menu shares equipment with meat, fish or egg dishes.',
+  },
+  {
+    q: 'How long does an order take?',
+    a: 'Takeaway is ready in about 20 minutes if you call ahead. Delivery usually reaches you in 30 to 45 minutes, depending on how far you are from the kitchen.',
+  },
+  {
+    q: 'How much does a meal cost?',
+    a: `Prices run ${PRICE_RANGE} across the menu, meal box combos included. Add-ons like extra cheese or paneer tikka are charged separately and are listed on the menu.`,
+  },
+  {
+    q: 'Do you take party or bulk orders?',
+    a: 'Yes. We make pure veg platters, combos and bulk boxes for birthdays, office lunches and small functions. Call us with the date, the number of people and what you would like, and we will quote a price.',
+  },
+  {
+    q: 'Where is The Oven Vibe located?',
+    a: `We are a cloud kitchen in ${site.business.address.locality}, ${site.business.address.region} ${site.business.address.postal_code}. There is no dine-in seating — everything is takeaway or delivery. Our exact spot is on Google Maps.`,
+  },
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  ogTitle="The Oven Vibe FAQ — Sundargarh Delivery, Timings & Prices"
+  jsonLd={[
+    restaurantJsonLd({ withMenu: false }),
+    faqPageJsonLd(pageUrl, faqs),
+    breadcrumbJsonLd([{ name: 'FAQ', path: '/faq/' }]),
+  ]}
+>
+  <main class="main">
+    <!-- HERO SECTION -->
+    <section class="hero hero-mini">
+      <div class="hero-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+      </div>
+      <div class="hero-container">
+        <div class="hero-content">
+          <h1 class="hero-display" style="font-size: clamp(2.5rem, 5vw, 4.5rem)">
+            <span class="animate-on-scroll">YOUR</span>
+            <span class="text-gradient animate-on-scroll delay-100">QUESTIONS.</span>
+            <span class="animate-on-scroll delay-200">ANSWERED.</span>
+          </h1>
+          <p class="hero-text animate-on-scroll delay-300">
+            Ordering, delivery charges, timings and party orders in Sundargarh.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <div class="section" style="padding-top: 0">
+      <div class="container" style="max-width: 800px">
+        {
+          faqs.map((faq, i) => (
+            <div class="accordion-item">
+              <button class="accordion-header" aria-expanded={i === 0 ? 'true' : 'false'}>
+                <span>{faq.q}</span>
+                <svg
+                  class="accordion-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </button>
+              <div class="accordion-content" style={i === 0 ? 'max-height: 500px' : undefined}>
+                <div class="accordion-content-inner">
+                  <p>{faq.a}</p>
+                </div>
+              </div>
+            </div>
+          ))
+        }
+
+        <div style="text-align: center; margin-top: 3rem;">
+          <p class="lead" style="margin-bottom: 1.5rem;">Still not sure? Ask us directly.</p>
+          <div class="hero-actions" style="justify-content: center;">
+            <a
+              href={`tel:${site.business.phone}`}
+              class="btn btn-primary btn-lg"
+              >Call the Kitchen</a
+            >
+            <a
+              href={LINKS.whatsapp}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn-secondary btn-lg">Ask on WhatsApp</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Accordion logic for the FAQ page — ported from v1's inline script
+      // (page-local: closes all others when one opens, unlike the menu
+      // accordions' independent-toggle behaviour in scripts/site.js).
+      document.querySelectorAll('.accordion-header').forEach((button) => {
+        button.addEventListener('click', () => {
+          const item = button.parentElement as HTMLElement;
+          const content = item.querySelector('.accordion-content') as HTMLElement;
+          const isActive = item.classList.contains('active');
+
+          document.querySelectorAll('.accordion-item').forEach((otherItem) => {
+            if (otherItem !== item) {
+              otherItem.classList.remove('active');
+              (otherItem.querySelector('.accordion-content') as HTMLElement).style.maxHeight = '';
+              otherItem.querySelector('.accordion-header')?.setAttribute('aria-expanded', 'false');
+            }
+          });
+
+          if (!isActive) {
+            item.classList.add('active');
+            content.style.maxHeight = content.scrollHeight + 'px';
+            button.setAttribute('aria-expanded', 'true');
+          } else {
+            item.classList.remove('active');
+            content.style.maxHeight = '';
+            button.setAttribute('aria-expanded', 'false');
+          }
+        });
+      });
+    </script>
+  </main>
+</Layout>

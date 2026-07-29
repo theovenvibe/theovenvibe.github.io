@@ -1,0 +1,284 @@
+---
+// Home — v1's layout (PRD §8 superseded block) with the Phase 4 copy pass
+// applied: no emoji anywhere, premium/direct CTA voice, and the pure-veg
+// trust marker (owner-approved visible changes, 2026-07-30).
+// Menu/combos/add-ons render at build time from menu.json (Phase 3).
+import Layout from '../layouts/Layout.astro';
+import MenuAccordions from '../components/MenuAccordions.astro';
+import AddonsAccordion from '../components/AddonsAccordion.astro';
+import { site } from '../lib/data';
+import { LINKS, restaurantJsonLd } from '../lib/seo';
+
+const title = 'Pure Veg Pizza & Burgers in Sundargarh | The Oven Vibe';
+const description =
+  '100% pure veg kitchen in Sundargarh 770001. Oven-baked pizza, burgers, fried rice and snacks. Delivery from ₹29, free above ₹599. Call to order.';
+
+const localPhone = site.business.phone.replace('+91', '');
+const deliverySlabsLine = site.delivery.slabs
+  .map((s) => `₹${s.charge} for ${s.label}`)
+  .join(', ');
+---
+
+<Layout
+  title={title}
+  description={description}
+  home={true}
+  ogTitle="The Oven Vibe — 100% Pure Veg Kitchen in Sundargarh"
+  jsonLd={[restaurantJsonLd()]}
+>
+
+  <!-- HERO SECTION -->
+  <section class="hero">
+    <div class="hero-shapes">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
+    </div>
+    <div class="hero-container">
+      <div class="hero-content">
+        <div class="hero-badge animate-on-scroll">
+          <span class="pulse-dot"></span> Serving {site.business.address.locality} {site.business.address.postal_code}
+        </div>
+        <p class="animate-on-scroll delay-100" style="margin: -1.75rem 0 2rem;">
+          <span class="veg-badge">100% Pure Veg</span>
+        </p>
+
+        <h1 class="hero-display">
+          <span class="line-1 animate-on-scroll delay-100">HANDCRAFTED</span>
+          <span class="line-2 animate-on-scroll delay-200">OVEN BAKED</span>
+          <span class="line-3 text-gradient animate-on-scroll delay-300">HAPPINESS.</span>
+        </h1>
+
+        <!-- CALL NUMBER (BIG & PROMINENT) -->
+        <div class="hero-call animate-on-scroll delay-300" style="margin-bottom: 2rem;">
+          <a
+            href={`tel:${site.business.phone}`}
+            style="font-size: clamp(2.5rem, 6vw, 3.5rem); font-weight: 800; color: var(--color-text-main); line-height: 1.1; text-decoration: none; transition: color 0.2s;"
+          >
+            Call: <span style="color: var(--color-primary);">{localPhone}</span>
+          </a>
+        </div>
+
+        <!-- DELIVERY INFO -->
+        <div
+          class="hero-delivery-info animate-on-scroll delay-400"
+          style="background: white; padding: 1.5rem; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); border: 1px solid var(--color-border); margin-bottom: 2.5rem; display: inline-block; text-align: left;"
+        >
+          <p style="margin-bottom: 0.5rem; font-size: 1.25rem; font-weight: 700; color: var(--color-text-main);">
+            {site.delivery.hook}
+          </p>
+          <p style="margin-bottom: 0.5rem; font-size: 1rem; color: var(--color-text-muted);">
+            {deliverySlabsLine}
+          </p>
+          <p style="margin-bottom: 0; font-size: 1rem; color: var(--color-primary); font-weight: 700;">
+            {site.delivery.free_above_note}
+          </p>
+        </div>
+
+        <p class="hero-text animate-on-scroll delay-400">
+          Oven-baked pizzas, fried rice bowls, grilled sandwiches and sides — cooked to order
+          in a 100% pure vegetarian kitchen and sent out hot across Sundargarh.
+        </p>
+
+        <div class="hero-actions animate-on-scroll delay-500">
+          <a href={LINKS.zomato} target="_blank" class="btn btn-zomato btn-lg">Order on Zomato</a>
+          <a href={LINKS.swiggy} target="_blank" class="btn btn-swiggy btn-lg">Order on Swiggy</a>
+          <a href="#menu" class="btn btn-secondary btn-lg">See the Menu</a>
+        </div>
+
+        <div class="hero-trust animate-on-scroll delay-500">
+          <div class="trust-item">
+            <span class="label">20 min takeaway</span>
+          </div>
+          <div class="trust-divider"></div>
+          <div class="trust-item">
+            <span class="label">30-45 min delivery</span>
+          </div>
+          <div class="trust-divider"></div>
+          <div class="trust-item">
+            <span class="label">{site.rating.value}/5 on Google</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MENU (sectioned) -->
+  <main class="main" id="mainContent">
+    <section id="menu" class="menu animate-on-scroll">
+      <MenuAccordions />
+    </section>
+
+    <!-- ADD-ONS & SUGGESTED -->
+    <section class="menu-section" id="addonsSection">
+      <AddonsAccordion />
+    </section>
+
+    <!-- WHY US -->
+    <section class="section" id="why" style="background-color: white;">
+      <div class="container">
+        <div style="text-align: center; margin-bottom: 3rem;">
+          <h2>Why The Oven Vibe?</h2>
+          <p class="lead">A pure veg kitchen in Sundargarh that cooks every order fresh.</p>
+        </div>
+
+        <div class="grid-3">
+          <article class="feature-card animate-on-scroll">
+            <h3>Baked to order</h3>
+            <p>
+              Nothing sits waiting. Your pizza goes into the oven after you order, so it reaches
+              you hot with the cheese still stretching.
+            </p>
+          </article>
+          <article class="feature-card animate-on-scroll delay-100">
+            <h3>100% pure veg</h3>
+            <p>
+              One kitchen, one standard. No meat, no shared equipment, no exceptions — safe for
+              families, festivals and anyone who eats strictly vegetarian.
+            </p>
+          </article>
+          <article class="feature-card animate-on-scroll delay-200">
+            <h3>Made in Sundargarh</h3>
+            <p>
+              We are a local kitchen serving Sundargarh {site.business.address.postal_code} and 8 km
+              around it. Call us and a person here picks up.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- PARTY MARKETING BANNER -->
+    <section class="cta-section animate-on-scroll" id="party">
+      <h2>Party & Bulk Orders</h2>
+      <p>
+        Birthdays, office lunches, small functions — we build pure veg platters and combos to
+        your headcount and budget. Tell us the date, the number of people and what you want, and
+        we will send back a price.
+      </p>
+      <a
+        class="btn btn-primary"
+        style="background: white; color: var(--color-secondary);"
+        href={`tel:${site.business.phone}`}
+        >Call the Kitchen: {site.business.phone_display}</a
+      >
+      <p style="margin-top: 1.25rem; margin-bottom: 0; font-size: 1rem;">
+        Prefer to type? <a
+          href={`${LINKS.whatsapp}?text=${encodeURIComponent('Hi! I would like a quote for a party order.')}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          style="color: white; font-weight: 700; text-decoration: underline;"
+          >Get a party quote on WhatsApp</a
+        >
+      </p>
+    </section>
+
+    <!-- LATEST BLOGS -->
+    <section class="section" id="latest-blogs">
+      <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: end; margin-bottom: 2rem;">
+          <h2>Latest Stories</h2>
+          <a href="/blog/" class="read-more">View All Posts →</a>
+        </div>
+
+        <div class="blog-grid">
+          <!-- Blog Card 5 (Newest) -->
+          <article class="blog-card animate-on-scroll">
+            <div class="blog-card-img-wrapper">
+              <picture>
+                <source type="image/avif" srcset="/static/images/blog_images/blog_5.avif" />
+                <source type="image/webp" srcset="/static/images/blog_images/blog_5.webp" />
+                <img
+                  src="/static/images/blog_images/blog_5.webp"
+                  alt="Why cloud kitchens are the future of food in Sundargarh"
+                  class="blog-card-img"
+                  loading="lazy"
+                  width="400"
+                  height="225"
+                />
+              </picture>
+            </div>
+            <div class="blog-card-content">
+              <h3>Why Cloud Kitchens Are the Future of Food</h3>
+              <p style="color: var(--color-text-muted); font-size: 0.95rem; margin-bottom: 1rem;">
+                Discover why cloud kitchens are changing the food scene in Sundargarh. Faster
+                delivery, affordable pricing, and fresh food.
+              </p>
+              <a
+                href="/blog/cloud-kitchen-future/"
+                class="read-more"
+                aria-label="Read full article: Why Cloud Kitchens Are the Future of Food"
+                >Read Story →</a
+              >
+            </div>
+          </article>
+
+          <!-- Blog Card 4 -->
+          <article class="blog-card animate-on-scroll delay-100">
+            <div class="blog-card-img-wrapper">
+              <picture>
+                <source type="image/avif" srcset="/static/images/blog_images/blog_4.avif" />
+                <source type="image/webp" srcset="/static/images/blog_images/blog_4.webp" />
+                <img
+                  src="/static/images/blog_images/blog_4.webp"
+                  alt="Pure veg pizza under 300 rupees in Sundargarh"
+                  class="blog-card-img"
+                  loading="lazy"
+                  width="400"
+                  height="225"
+                />
+              </picture>
+            </div>
+            <div class="blog-card-content">
+              <h3>Pizza Under ₹300 in Sundargarh</h3>
+              <p style="color: var(--color-text-muted); font-size: 0.95rem; margin-bottom: 1rem;">
+                Looking for pizza under ₹300? Discover budget-friendly student pizza options that
+                are tasty and filling.
+              </p>
+              <a
+                href="/blog/pizza-under-300/"
+                class="read-more"
+                aria-label="Read full article: Pizza Under ₹300 in Sundargarh"
+                >Read Story →</a
+              >
+            </div>
+          </article>
+
+          <!-- Blog Card 3 -->
+          <article class="blog-card animate-on-scroll delay-200">
+            <div class="blog-card-img-wrapper">
+              <picture>
+                <source type="image/avif" srcset="/static/images/blog_images/blog_3.avif" />
+                <source type="image/webp" srcset="/static/images/blog_images/blog_3.webp" />
+                <img
+                  src="/static/images/blog_images/blog_3.webp"
+                  alt="Late-night food in Sundargarh — ordering till 11:30 PM"
+                  class="blog-card-img"
+                  loading="lazy"
+                  width="400"
+                  height="225"
+                />
+              </picture>
+            </div>
+            <div class="blog-card-content">
+              <h3>Best Late-Night Food in Sundargarh</h3>
+              <p>
+                Late-night cravings? We cook till 11:30 PM — and take big orders by phone even later, in
+                Sundargarh.
+              </p>
+              <a
+                href="/blog/late-night-food/"
+                class="read-more"
+                aria-label="Read full article: Best Late-Night Food in Sundargarh"
+                >Read Story →</a
+              >
+            </div>
+          </article>
+        </div>
+        <div style="text-align: center; margin-top: 20px">
+          <a href="/blog/" class="btn btn-primary btn-lg">View All Stories</a>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>

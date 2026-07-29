@@ -1,0 +1,41 @@
+---
+// 404 — no v1 equivalent existed (out of Phase 3 pixel-parity scope), but
+// restyled with v1's design system so it doesn't ship unstyled now that
+// Tailwind is no longer imported (see PRD §4 recovery-page requirement).
+import Layout from '../layouts/Layout.astro';
+import { site } from '../lib/data';
+---
+
+<Layout
+  title="Page Not Found | The Oven Vibe Sundargarh"
+  description="That page doesn't exist, but the menu does. Pure veg pizza, burgers and more in Sundargarh — see the menu or call the kitchen."
+  noindex
+>
+  <main class="main">
+    <section class="hero hero-mini">
+      <div class="hero-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+      </div>
+      <div class="hero-container" style="text-align: center;">
+        <div class="hero-content" style="margin: 0 auto;">
+          <h1 class="hero-display" style="font-size: clamp(2rem, 5vw, 4rem);">
+            <span class="animate-on-scroll">404 — THAT PAGE</span>
+            <span class="text-gradient animate-on-scroll delay-100">GOT EATEN.</span>
+          </h1>
+          <p class="hero-text animate-on-scroll delay-100">
+            The link is broken, but the kitchen is not. Try the menu, or just call us.
+          </p>
+          <div class="hero-actions animate-on-scroll delay-200" style="justify-content: center;">
+            <a href="/menu/" class="btn btn-primary btn-lg">See the Menu</a>
+            <a
+              href={`tel:${site.business.phone}`}
+              class="btn btn-secondary btn-lg">Call Us</a
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>

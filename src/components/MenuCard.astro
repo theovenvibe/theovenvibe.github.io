@@ -1,0 +1,50 @@
+---
+/**
+ * One menu/combo/add-on card — matches `buildMenuCard()` /
+ * `buildCombosAccordion()` / `renderAddons()` in v1's script.js exactly:
+ * <article class="menu-card"><div class="menu-card-inner"><picture>...
+ * Rendered at build time from menu.json (Phase 3 invisible improvement —
+ * v1 built this with client JS after a fetch()).
+ *
+ * Phase 4 (owner-approved visible change): names/descriptions arrive already
+ * cleaned by displayName()/displayDescription() in src/lib/data.ts — no emoji,
+ * no "[Regular, 7 inches]" / "[Veg preparation]" catalogue markers. The real
+ * buying information from those markers (size, spice level) comes back as
+ * `meta`, rendered as a muted line under the title.
+ */
+import type { MenuImage } from '../lib/data';
+
+interface Props {
+  img: MenuImage;
+  title: string;
+  description: string;
+  price: number;
+  meta?: string[];
+  extraClass?: string;
+}
+const { img, title, description, price, meta = [], extraClass } = Astro.props;
+---
+
+<article class:list={['menu-card', extraClass]}>
+  <div class="menu-card-inner">
+    <picture>
+      {img.avif && <source type="image/avif" srcset={img.avif} />}
+      <source type="image/webp" srcset={img.webp} />
+      <img src={img.webp} alt={title} class="menu-card-img" loading="lazy" />
+    </picture>
+    <div class="menu-card-body">
+      <h3 class="menu-card-title">{title}</h3>
+      {
+        meta.length > 0 && (
+          <p class="menu-card-meta" style="font-size: 0.78rem; color: var(--color-text-muted); letter-spacing: 0.04em; text-transform: uppercase; margin: -0.35rem 0 0.6rem;">
+            {meta.join(' · ')}
+          </p>
+        )
+      }
+      <p style="font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 1rem;">
+        {description}
+      </p>
+      <div class="menu-card-price">₹{price}</div>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,111 @@
+---
+/**
+ * Base layout — Phase 3 rebuild. Emits v1's page chrome (sticky nav, mobile
+ * overlay, sticky WhatsApp FAB, footer) at build time from site.config.json,
+ * ported verbatim from main's index.html/contact.html/faq.html/blog.html/
+ * sundargarh-770001.html/blog-*.html (PRD §8 superseded block — pixel parity
+ * is binding).
+ *
+ * Phase 4: per-page SEO markup IS now generalized — `<Seo>` (one component,
+ * PRD §9) renders canonical + OG + Twitter + a single JSON-LD `@graph` from
+ * the props below, so a new page cannot silently ship without them. The
+ * `head` slot remains for genuinely page-specific extras.
+ * No fabricated aggregateRating/review markup anywhere, ever (PRD §3 binding
+ * ban) — the only rating in the build is site.config.json's real GBP value.
+ *
+ * Dropped from v1 on purpose (not a visual change, flagged in the Phase 3
+ * report as an owner question): GTM, Google Ads gtag, and Yandex Metrika
+ * (with webvisor session recording). PRD §5 names Umami as the analytics
+ * solution; carrying the old trackers forward wasn't asked for and Yandex's
+ * webvisor in particular records full sessions, which sits oddly next to
+ * PRD §5's "cookie-less, no banner needed" framing for Umami. failover.js is
+ * also dropped — its own source says "Failover disabled - not in use".
+ */
+import '../styles/global.css';
+import '../styles/polish.css'; // Phase 3.5 additive layer (G1+G2) — delete this import to restore exact v1 parity
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import WhatsAppFab from '../components/WhatsAppFab.astro';
+import Seo, { type OgImage } from '../components/Seo.astro';
+import { site } from '../lib/data';
+
+interface Props {
+  title: string;
+  description: string;
+  home?: boolean;
+  activeContact?: boolean;
+  showWaFab?: boolean;
+  ogTitle?: string;
+  ogType?: 'website' | 'article';
+  noindex?: boolean;
+  image?: OgImage;
+  jsonLd?: unknown[];
+}
+const {
+  title,
+  description,
+  home = false,
+  activeContact = false,
+  showWaFab = true,
+  ogTitle,
+  ogType,
+  noindex,
+  image,
+  jsonLd,
+} = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site).toString();
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" href="/favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#e63946" />
+    <meta name="generator" content={Astro.generator} />
+    {
+      site.analytics.umami_website_id && (
+        <script
+          is:inline
+          defer
+          src="https://cloud.umami.is/script.js"
+          data-website-id={site.analytics.umami_website_id}
+        />
+      )
+    }
+    <Seo
+      title={title}
+      description={description}
+      canonical={canonical}
+      ogTitle={ogTitle}
+      ogType={ogType}
+      noindex={noindex}
+      image={image}
+      jsonLd={jsonLd}
+    />
+    <slot name="head" />
+  </head>
+  <body>
+    {
+      site.announcement.text && (
+        <p style="background:var(--color-primary,#e63946);color:#fff;text-align:center;padding:0.5rem 1rem;font-weight:600;">
+          {site.announcement.text}
+        </p>
+      )
+    }
+    <Nav home={home} activeContact={activeContact} />
+
+    <slot />
+
+    {showWaFab && <WhatsAppFab />}
+
+    <Footer />
+
+    <script src="/scripts/site.js" is:inline></script>
+    <script src="/scripts/polish.js" is:inline></script>
+  </body>
+</html>

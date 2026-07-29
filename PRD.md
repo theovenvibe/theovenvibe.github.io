@@ -46,7 +46,7 @@ The Oven Vibe is a cloud kitchen in Sundargarh, Odisha (pin 770001). The website
 | Google Business Profile | **Claimed & verified: 4.9★, 16 reviews** (as of 2026-07-29). Link: https://share.google/wlwoG9JmeY3KV3dWU (entity `/g/11zj4x092l`). Count updated via `update-rating.md` skill |
 | Hero dish | **Paneer Makhni Royale Pizza** (`752649876`, ₹199) — face of the brand on home hero + OG image |
 | Price range | ₹69–₹349 |
-| Cuisine | Pizza, Burger, Fried Rice, Fries, Snacks, Pasta, Sandwich |
+| Cuisine | Pizza, Burger, Fried Rice, Fries, Snacks, Pasta, Sandwich — **100% PURE VEG** (owner, 2026-07-30; a key SEO/trust differentiator: JSON-LD `servesCuisine`/diet markup, copy, and badges must say vegetarian; remove any non-veg keywords v1 carried) |
 
 ⚠️ **Binding content rule:** the old site's JSON-LD carried a fabricated `aggregateRating` and fake "Local Customer" reviews — those never come back. The **real** GBP rating (confirmed in Phase 0) MAY appear in copy and structured data, with the count kept honest and updated via a skill (`update-rating.md`).
 
@@ -68,12 +68,12 @@ The Oven Vibe is a cloud kitchen in Sundargarh, Odisha (pin 770001). The website
 
 Same toolchain and conventions as the proven Portfolio setup, but on **current majors** — the Portfolio froze at Astro 5; this build does not inherit that freeze.
 
-- **Astro — latest stable major at Phase 1 scaffold time** (7.1.x as of 2026-07-29; verify with `npm view astro version` and fetch the current Astro docs before scaffolding — model training data lags behind Astro releases, so Phase 1 must work from live docs, not memory). Static output, zero client JS by default. **Tailwind CSS v4 latest** (`@tailwindcss/vite`), **TypeScript strict**, Node ≥ 20.
+- **Astro — latest stable major at Phase 1 scaffold time** (7.1.x as of 2026-07-29; verify with `npm view astro version` and fetch the current Astro docs before scaffolding — model training data lags behind Astro releases, so Phase 1 must work from live docs, not memory). Static output, zero client JS by default. **Tailwind CSS v4 latest** (`@tailwindcss/vite`), **TypeScript strict**, Node ≥ 22.12 (Astro 7 floor; CI runs Node 24).
 - **Motion** (`motion`) for scroll reveals/micro-interactions + **Lenis** for smooth scroll — both loaded lazily, both disabled under `prefers-reduced-motion`.
 - **Content:** `menu.json` stays the single source of truth (it mirrors the Zomato catalogue — do not restructure it away). Astro loads it through a **Zod schema** (`src/schemas/menu.ts`) so a bad edit fails the build with a readable error, not a broken page. Blog/FAQ use content collections.
 - **Cart/order builder:** one small vanilla-TS island (`<script>` or Astro island), state in `localStorage`. No framework runtime.
 - **CI & branching:** GitHub Actions builds every push; the deploy job is **gated to `main`**, which stays frozen serving the v1 site until the one-shot launch merge (full model: `skills/release-manager.md` — binding). `astro check && astro build` must pass before any commit. Note for Phase 1: the repo currently uses branch-based Pages deploy from `main`; the Actions workflow must be designed so v1 keeps serving until launch, with the Pages source switch (if required) documented as a Phase 6 launch step.
-- **Analytics:** Umami Cloud (free tier) with custom events `call_click`, `wa_click`, `wa_order_sent` — this is how "leads generated" is actually measured. Cookie-less, no banner needed.
+- **Analytics:** **Umami Cloud — CONFIRMED by owner 2026-07-30** (v1's GTM/Google-Ads gtag/Yandex Metrika are dropped for good, pending owner's own audit) with custom events `call_click`, `wa_click`, `wa_order_sent` — this is how "leads generated" is actually measured. Cookie-less, no banner needed.
 - **Explicitly out:** React/Vue, CMS, databases, payment, service workers (revisit later), JXL images (no browser support — AVIF/WebP only; JXL files deleted in Phase 1 to slim the 217 MB repo).
 
 ## 6. Menu Data Model
@@ -98,8 +98,24 @@ Same toolchain and conventions as the proven Portfolio setup, but on **current m
 
 ## 8. Design Direction
 
+> **⚠️ SUPERSEDED 2026-07-30 (owner decision, binding — do not re-litigate):**
+> After reviewing three mockup directions (Ember Editorial, Fresh Counter, v1-Faithful — all in `design/mockups/`, all **rejected**), the owner's final call is:
+> **“Copy what's on `main` and rebuild the exact same code on the latest tech stack. That's all.”**
+>
+> Therefore the design for v2 **IS the v1 design, pixel-for-pixel**:
+> - `main`'s `style.css` is the design system. Port it verbatim (trivial cleanups allowed only if output is visually identical).
+> - The existing logo stays **exactly as-is**. The brand-refresh scope (added 2026-07-29) is **cancelled**.
+> - v1's HTML structure, classes, copy, layout, gradients, headline treatment, WhatsApp FAB — all preserved.
+> - **Acceptance for Phase 3:** side-by-side screenshots of v1 (live) vs v2 (preview) at 390/768/1440px are visually identical (allowing only sub-pixel font-rendering noise), page by page.
+> - The ONLY changes allowed are invisible: build-time menu rendering from menu.json (v1 renders via client JS — the empty-sections-then-pop-in goes away), performance, SEO markup, maintainability (§6/§10). Any visible change, however small, requires the owner's explicit approval first.
+> - The WhatsApp **cart/order-builder (§7.2 enhanced tier) is PARKED**: it's a visible addition, so it ships only if the owner approves it after seeing parity achieved. v1's existing per-item/wa.me ordering behaviour is preserved exactly. The sticky Call bar likewise: v1's existing contact affordances stay; nothing new is added without sign-off.
+>
+> The subsections below describe the rejected exploration and are kept for history only.
+
 - **Appetite-first:** food photography is the design. Warm palette (charred orange/ember red family on deep neutrals), generous whitespace, big type. Dark, warm-neutral base tends to make food photos pop — but this is decided by mockups, not by this document.
-- **Photo constraint (binding input to 2a/2b):** the existing catalogue-style photos are the only photos — no reshoot. Phase 2a must analyze what they actually look like (lighting, backgrounds, crop consistency) and choose a direction that **flatters them**. If heavy glassmorphism fights the photos, say so and recommend what wins instead; uniform card treatments, tight consistent crops, and color-grading via CSS are the levers available.
+- **Photo constraint (binding input to 2a/2b):** the existing catalogue-style **food/item photos are untouchable** — no reshoot, no replacement, no AI substitution; they are the real product. Phase 2a must analyze what they actually look like (lighting, backgrounds, crop consistency) and choose a direction that **flatters them**. If heavy glassmorphism fights the photos, say so and recommend what wins instead; uniform card treatments, tight consistent crops, and color-grading via CSS are the levers available.
+- **Brand identity refresh (in scope, owner-requested 2026-07-29):** the current logo is dated and uncreative. Phase 2a researches logo directions for modern food brands (wordmark vs mark, oven/flame motifs, what works at favicon size); Phase 2b delivers **2 logo concepts as clean SVG** (full lockup + compact mark) matched to each mockup direction, plus the derived favicon set (SVG favicon, apple-touch-icon, OG default). Owner picks alongside the mockup direction.
+- **Created imagery (allowed everywhere except food):** blog headers, OG images, section illustrations, background textures/patterns may be **newly designed** (SVG/CSS-first; generated or illustrated where needed) so every non-food visual is unique to the brand. Food/item photos are the only frozen pixels.
 - **Phase 2 delivers 2 mockup directions** as static HTML (Portfolio playbook): e.g. (A) *Ember* — dark warm glassmorphism, blurred glass cards over food imagery; (B) *Fresh Counter* — light, editorial, sharp cards, bold type. Milan picks; tokens get locked in `src/styles/global.css`. Glass/liquid effects are welcome **only where they pass contrast (WCAG AA) and don't tank scroll performance on budget Androids** — every blur is budgeted.
 - **Motion spec:** scroll-reveal on cards (once, 200–350 ms, ease-out), hero parallax ≤ subtle, cart-bar spring on add, `prefers-reduced-motion` kills all of it. No motion may delay LCP.
 - **Device matrix (acceptance):** 360, 390, 414, 768, 1024, 1440, **1920** px × light/dark ambient — no horizontal scroll, tap targets ≥ 44 px, sticky bar never overlaps content ends.
@@ -153,12 +169,12 @@ Each phase = one fresh session, seeded with this PRD + `PROGRESS.md` + only the 
 |---|---|---|---|
 | 0 | **Asset & data prep** (owner + chat) | Menu data audited (categories/veg flags/photos complete), best food photos identified, GBP claim started | `menu.json` passes the draft schema; hero-worthy photos chosen |
 | 1 | **Architecture** | On `develop`: old site files removed (main keeps serving v1 — see branch model); Astro (latest major, per §5) + Tailwind 4 + TS strict scaffold; Zod schemas for `menu.json` + `site.config.json` (seeded with §3 values); image pipeline (JXL purged, AVIF/WebP kept); CI workflow (build check on develop, deploy job gated to main); route stubs; `AGENTS.md` + `skills/` skeletons; Portfolio design skills copied to `.claude/skills/` | `npm run build` green on develop; CI build check green; old URLs have stub replacements in the new routing |
-| 2a | **Design research** | An **inspiration brief** (`design/RESEARCH.md`): web research across 21st.dev patterns, awwwards/godly-grade food & restaurant sites, top cloud-kitchen brands; what glass vs. liquid vs. editorial actually looks like on 2026 food sites; 5–8 referenced patterns with *why they convert*, screenshots/links; a recommendation | Milan reads the brief and reacts; brief committed |
-| 2b | **Design system** | Tokens, font pair (self-hosted), motion spec, **2 full mockup directions** (informed by 2a) for home hero + menu card + cart bar + **desktop menu grid** | Milan picks a direction; tokens locked; contrast AA verified |
-| 3 | **Build-out** | All pages per §4, WA order builder per §7 incl. every edge case, responsive per §8 matrix, motion | Every page renders real menu data at all widths, no h-scroll; cart flow works JS-on and JS-off; build green |
+| 2a | **Design research** | An **inspiration brief** (`design/RESEARCH.md`): web research across 21st.dev patterns, awwwards/godly-grade food & restaurant sites, top cloud-kitchen brands; what glass vs. liquid vs. editorial actually looks like on 2026 food sites; **logo/brand research** (wordmark styles, oven/flame motifs, favicon-size legibility) with a critique of the current logo; photo analysis per §8; 5–8 referenced patterns with *why they convert*; a recommendation | Milan reads the brief and reacts; brief committed |
+| 2b | **Design system** | Tokens, font pair (self-hosted), motion spec, **2 full mockup directions** (informed by 2a) for home hero + menu card + cart bar + **desktop menu grid**, each with a matched **logo concept (SVG lockup + mark) and favicon set**; blog/OG imagery style defined | Milan picks a direction (incl. logo); tokens locked; contrast AA verified; favicon renders crisp at 16–48px |
+| 3 | **Build-out (pixel-parity migration — rescoped 2026-07-30)** | Port v1 (`main`) into Astro page-by-page: layout/nav/footer components with v1's exact markup+CSS; menu/combos/add-ons rendered at build time from menu.json producing v1's visual result; blog/FAQ/contact/location pages ported; v1's WhatsApp/call affordances preserved exactly | Screenshot parity v1-vs-v2 at 390/768/1440 per page (§8 acceptance); build green; no visible change without owner sign-off |
 | 4 | **Content, copy & SEO** | All copy final, §9 fully implemented, blog migrated, fabricated-review markup verifiably gone, redirect stubs | Rich Results Test passes Restaurant/Menu/FAQ; zero placeholder text; Lighthouse SEO 100 |
 | 5 | **Ops & docs** | Finished `AGENTS.md` + all 10 skill files, Umami events wired, Lighthouse CI budgets | Local-LLM acceptance test (§10) passes, run via fresh subagent |
-| 6 | **QA & launch** | Device pass, a11y audit (axe + manual), link check, perf tuning; then the **one-shot launch**: tag `v1-legacy`, release PR `develop → main`, Pages source switch if needed, tag `v2.0.0` (skills/release-manager.md §7) | §1 metrics met per page (verified on preview build); Milan says "ship it"; post-merge: live URL serves v2, call + WA flow tapped through on a real phone, old-URL stubs return 200 |
+| 6 | **QA & launch** | Device pass, a11y audit (axe + manual), link check, perf tuning; then the **one-shot launch**: tag `v1-legacy`, release PR `develop → main`, Pages source switch if needed, tag `v3.0.0` ⚠️ **owner decision, Phase 5, 2026-07-30 — supersedes the `v2.0.0` this row originally named; the project is still called "v2" throughout this PRD, only the git tag number changed** (skills/release-manager.md §7) | §1 metrics met per page (verified on preview build); Milan says "ship it"; post-merge: live URL serves v2, call + WA flow tapped through on a real phone, old-URL stubs return 200 |
 
 ## 12. Model & Effort Allocation (token-efficiency plan)
 
@@ -190,6 +206,6 @@ Principle (proven on Portfolio): spend expensive tokens where decisions compound
 ## 14. Open Items (decide before their phase)
 
 - [x] Phase 0: hero dish → Paneer Makhni Royale Pizza (2026-07-29).
-- [ ] Phase 2: mockup direction A vs B.
+- [ ] Phase 2: mockup direction A vs B (now includes the matching logo concept + favicon).
 - [ ] Phase 5: Umami account creation (owner, free).
 - [ ] Post-launch: custom domain purchase (revisit); GBP verification status.

@@ -1,0 +1,85 @@
+---
+/**
+ * The single place per-page SEO markup is emitted (PRD §9): canonical, OG,
+ * Twitter, and one `application/ld+json` `@graph` block. Rendered from
+ * <Layout>'s props so every route gets the same treatment and none of it can
+ * be forgotten on a new page.
+ */
+import { graph, organization, HERO_IMAGE, abs } from '../lib/seo';
+import { site } from '../lib/data';
+
+export interface OgImage {
+  url: string;
+  width: number;
+  height: number;
+  alt: string;
+}
+
+interface Props {
+  title: string;
+  description: string;
+  canonical: string;
+  /** OG/Twitter title — defaults to the page <title>. */
+  ogTitle?: string;
+  ogType?: 'website' | 'article';
+  image?: OgImage;
+  /** schema.org nodes for this page; emitted as one @graph. */
+  jsonLd?: unknown[];
+  /** Set on utility pages (404) that must never be indexed. */
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description,
+  canonical,
+  ogTitle = title,
+  ogType = 'website',
+  image = HERO_IMAGE,
+  jsonLd = [],
+  noindex = false,
+} = Astro.props;
+
+const websiteNode = {
+  '@type': 'WebSite',
+  '@id': `${abs('/')}#website`,
+  url: abs('/'),
+  name: site.business.name,
+  inLanguage: 'en-IN',
+  publisher: { '@id': `${abs('/')}#organization` },
+};
+---
+
+{noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
+
+<meta property="og:site_name" content={site.business.name} />
+<meta property="og:locale" content="en_IN" />
+<meta property="og:type" content={ogType} />
+<meta property="og:url" content={canonical} />
+<meta property="og:title" content={ogTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={image.url} />
+<meta property="og:image:width" content={String(image.width)} />
+<meta property="og:image:height" content={String(image.height)} />
+<meta property="og:image:alt" content={image.alt} />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={ogTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={image.url} />
+<meta name="twitter:image:alt" content={image.alt} />
+
+<meta name="geo.region" content="IN-OR" />
+<meta name="geo.placename" content={`${site.business.address.locality}, ${site.business.address.region}`} />
+<meta
+  name="geo.position"
+  content={`${site.business.address.latitude};${site.business.address.longitude}`}
+/>
+
+{/* organization is included on every page so the WebSite.publisher @id
+    reference always resolves within the same @graph (audit fix). */}
+<script
+  type="application/ld+json"
+  is:inline
+  set:html={JSON.stringify(graph([websiteNode, organization, ...jsonLd]))}
+/>

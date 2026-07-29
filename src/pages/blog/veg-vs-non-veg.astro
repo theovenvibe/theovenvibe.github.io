@@ -1,0 +1,140 @@
+---
+// /blog/veg-vs-non-veg/ — AGENTS.md-bound slug (v1 URL stub points here).
+//
+// Phase 4 rewrite, and the most necessary one on the site. v1's version of
+// this post ran a "Non-Veg Pizza Craze" section recommending meat toppings and
+// closed with "whether you are team Veg or team Non-Veg, The Oven Vibe has
+// something special for everyone" — published by a kitchen that is 100% pure
+// veg (PRD §3). That is a misleading claim on the exact query where the
+// pure-veg positioning is the strongest thing we have to say. The post now
+// answers the same search intent honestly and owns the differentiator.
+//
+// (v1 bug NOT reproduced, per the Phase 3 report: this page was missing its
+// `<script src="script.js">` tag on the live site, so its footer and reveals
+// never activated. It uses the shared Layout like its four siblings.)
+import Layout from '../../layouts/Layout.astro';
+import BlogPostLayout from '../../components/BlogPostLayout.astro';
+import { site } from '../../lib/data';
+import { LINKS, abs, blogPostingJsonLd, breadcrumbJsonLd } from '../../lib/seo';
+
+const headline = 'Veg vs Non-Veg Pizza in Sundargarh: Our Honest Take';
+const description =
+  'The pizza debate every order in Sundargarh runs into, and a straight answer from a kitchen that picked a side: The Oven Vibe is 100% pure veg. Here is why.';
+const image = {
+  url: abs('/static/images/og/blog_2.jpg'),
+  width: 1200,
+  height: 630,
+  alt: 'Pure veg paneer pizza from The Oven Vibe, Sundargarh',
+};
+const path = '/blog/veg-vs-non-veg/';
+---
+
+<Layout
+  title={headline}
+  description={description}
+  ogType="article"
+  image={image}
+  jsonLd={[
+    blogPostingJsonLd({
+      headline,
+      description,
+      path,
+      image: image.url,
+      datePublished: '2024-05-20',
+    }),
+    breadcrumbJsonLd([
+      { name: 'Blog', path: '/blog/' },
+      { name: 'Veg vs Non-Veg Pizza', path },
+    ]),
+  ]}
+>
+  <BlogPostLayout
+    line1="VEG VS"
+    lineGradient="NON-VEG."
+    subtitle="The pizza debate in Sundargarh, and where we stand on it."
+  >
+    <picture>
+      <source type="image/avif" srcset="/static/images/blog_images/blog_2.avif" />
+      <source type="image/webp" srcset="/static/images/blog_images/blog_2.webp" />
+      <img
+        src="/static/images/blog_images/blog_2.webp"
+        alt="Pure veg paneer pizza from The Oven Vibe, Sundargarh"
+        class="blog-img"
+        loading="lazy"
+        width="1024"
+        height="1024"
+      />
+    </picture>
+
+    <p class="subtitle" style="font-weight: 600; color: #555; margin-top: -10px">
+      Local log kya zyada pasand karte hain?
+    </p>
+
+    <p>
+      Almost every group order in Sundargarh runs into the same two-minute argument before anyone
+      dials a number: veg or non-veg? It is worth answering properly, and worth being straight about
+      our own side of it — <strong>The Oven Vibe is a 100% pure veg kitchen</strong>. Not
+      veg-friendly, not mostly veg. Pure veg, by choice.
+    </p>
+
+    <h2>Why we picked one side</h2>
+    <p>
+      A kitchen that cooks both has to keep them apart perfectly, every shift, forever — separate
+      boards, separate pans, separate hands, separate storage. In a small kitchen running at speed,
+      that is a promise most places cannot honestly keep. Rather than ask you to trust a process you
+      cannot see, we removed the problem: there is no meat, fish or egg in the building at all.
+    </p>
+    <ul>
+      <li>Nothing shares equipment with non-vegetarian food, because there is none</li>
+      <li>Safe to order for families, festivals and anyone who eats strictly vegetarian</li>
+      <li>One set of recipes to perfect instead of two, which is why the taste stays consistent</li>
+    </ul>
+
+    <h2>What people actually order in Sundargarh</h2>
+    <p>
+      From our own order history, the pattern is clear and not particularly surprising:
+    </p>
+    <ul>
+      <li><strong>Families and group orders</strong> lean veg, because everyone at the table can share it.</li>
+      <li><strong>Paneer wins</strong> — it is the single most ordered topping we put on a pizza.</li>
+      <li>
+        <strong>Weekday dinners</strong> skew lighter: fried rice bowls, grilled sandwiches, a regular
+        pizza to share.
+      </li>
+      <li><strong>Weekends</strong> go bigger — combos, platters, more sides per order.</li>
+    </ul>
+
+    <h2>Is a veg pizza actually as good?</h2>
+    <p>
+      The honest answer is that a pizza lives or dies on its base, its sauce and its cheese, not on
+      what sits on top. Get those three right and paneer, mushroom, corn and capsicum have nothing to
+      apologise for. That is where our attention goes: dough that crisps properly, a makhni sauce made
+      with cashew paste, and mozzarella that actually stretches.
+    </p>
+
+    <div class="highlight-box">
+      <h2>Where to start</h2>
+      <ul>
+        <li><strong>Paneer Makhni Royale Pizza</strong> — creamy makhni sauce, soft paneer cubes</li>
+        <li><strong>Herb Paneer Delight Pizza</strong> — smoky paneer tikka, jalapenos, red paprika</li>
+        <li><strong>Mushroom Supreme Pizza</strong> — loaded, for anyone who likes mushroom properly</li>
+        <li><strong>Fiesta Pizza Combo</strong> — pizza, peri peri fries and a drink in one box</li>
+      </ul>
+      <p style="margin-top: 10px; font-weight: 700; color: #ad210a">
+        Every pizza is a 7-inch regular, all under ₹300.
+      </p>
+    </div>
+
+    <h2>The last slice</h2>
+    <p>
+      If you eat non-veg, we are not going to pretend we can serve you — plenty of places in
+      Sundargarh can. What we can promise is that when you order from us, pure veg means exactly what
+      it says. See the <a href="/menu/">full menu with prices</a>,
+      or check <a href="/sundargarh/">how delivery works across Sundargarh {site.business.address.postal_code}</a>.
+    </p>
+
+    <a href={LINKS.whatsapp} target="_blank" rel="noopener noreferrer" class="cta">
+      Order on WhatsApp
+    </a>
+  </BlogPostLayout>
+</Layout>

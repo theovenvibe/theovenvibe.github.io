@@ -1,0 +1,145 @@
+---
+// /blog/affordable-pizza/ — AGENTS.md-bound slug (v1 URL stub points here).
+//
+// Phase 4 changes: emoji removed, `meta keywords` dropped (it listed rival
+// business names, which does nothing for ranking), and the one listing whose
+// recommendations were entirely non-vegetarian was removed — a 100% pure veg
+// kitchen (PRD §3) telling its readers to go and eat meat elsewhere undercuts
+// the only positioning that differentiates it. The remaining listings keep the
+// locations and price bands exactly as the owner published them in v1; nothing
+// here is invented.
+import Layout from '../../layouts/Layout.astro';
+import BlogPostLayout from '../../components/BlogPostLayout.astro';
+import { site } from '../../lib/data';
+import { LINKS, abs, blogPostingJsonLd, breadcrumbJsonLd } from '../../lib/seo';
+
+const headline = 'Affordable Pizza in Sundargarh: Where to Eat on a Budget';
+const description =
+  'Where to get pizza in Sundargarh without overspending — the places locals actually use, the price band to expect at each, and how to keep the bill down.';
+const image = {
+  url: abs('/static/images/og/blog_1.jpg'),
+  width: 1200,
+  height: 630,
+  alt: 'Affordable pizza spots in Sundargarh',
+};
+const path = '/blog/affordable-pizza/';
+---
+
+<Layout
+  title={headline}
+  description={description}
+  ogType="article"
+  image={image}
+  jsonLd={[
+    blogPostingJsonLd({
+      headline,
+      description,
+      path,
+      image: image.url,
+      datePublished: '2024-05-15',
+    }),
+    breadcrumbJsonLd([
+      { name: 'Blog', path: '/blog/' },
+      { name: 'Affordable Pizza', path },
+    ]),
+  ]}
+>
+  <BlogPostLayout
+    line1="AFFORDABLE"
+    lineGradient="PIZZA."
+    subtitle="Where to eat pizza in Sundargarh without overspending."
+  >
+    <picture>
+      <source type="image/avif" srcset="/static/images/blog_images/blog_1.avif" />
+      <source type="image/webp" srcset="/static/images/blog_images/blog_1.webp" />
+      <img
+        src="/static/images/blog_images/blog_1.webp"
+        alt="Affordable pizza spots in Sundargarh"
+        class="blog-img"
+        loading="lazy"
+        width="1024"
+        height="1024"
+      />
+    </picture>
+
+    <p>
+      Sundargarh has more decent pizza than it gets credit for, and most of it is cheaper than people
+      assume. Below are the places locals actually order from, with the price band you can expect for
+      two people, so you can pick by budget rather than by guesswork.
+    </p>
+
+    <h2>Where to order from</h2>
+
+    <div class="blog-list">
+      <h3 class="venue-name">The Oven Vibe</h3>
+      <p>
+        Our own kitchen, so treat this as a declared interest. We are a 100% pure veg cloud kitchen —
+        no dine-in, everything baked to order and sent out for takeaway or delivery.
+        <br /><strong>Location:</strong> {`${site.business.address.street}, ${site.business.address.locality}, ${site.business.address.region} ${site.business.address.postal_code}`}
+        <br /><strong>Why it is affordable:</strong> no dining hall to pay for, so the money goes into
+        cheese and paneer
+        <br /><strong>Worth trying:</strong> Herb Paneer Delight Pizza with Cheesy Garlic Bread Toast
+        <br /><strong>Price for two:</strong> Under ₹350
+      </p>
+
+      <h3 class="venue-name">Flavours</h3>
+      <p>
+        A good option if you are bored of the same three toppings — their range is wider than most
+        places in town.
+        <br /><strong>Location:</strong> Hariom Colony, Sundargarh, Odisha 770001
+        <br /><strong>Why it is affordable:</strong> generous portions for the price
+        <br /><strong>Worth trying:</strong> Paneer Italian Pizza, Veg Italian Pizza
+        <br /><strong>Price for two:</strong> Under ₹450
+      </p>
+
+      <h3 class="venue-name">Jay Vijay</h3>
+      <p>
+        A quick, pocket-friendly all-rounder that students and families both use.
+        <br /><strong>Location:</strong> Rourkela Rd, near SBI Bank, Sundargarh, Odisha 770001
+        <br /><strong>Why it is affordable:</strong> low prices across the whole menu, not just on
+        pizza
+        <br /><strong>Worth trying:</strong> Paneer Tandoori Pizza, Veg Mexican Pizza
+        <br /><strong>Price for two:</strong> Under ₹450
+      </p>
+
+      <h3 class="venue-name">Chaat Puchka</h3>
+      <p>
+        Better known for street food, but the pizzas are worth a look if you like bold, tangy
+        flavours.
+        <br /><strong>Location:</strong> Raigarh - Sundargarh Rd, Sundargarh, Odisha 770001
+        <br /><strong>Why it is affordable:</strong> street-food pricing applied to pizza
+        <br /><strong>Worth trying:</strong> Paneer Capsicum Pizza
+        <br /><strong>Price for two:</strong> Under ₹650
+      </p>
+    </div>
+
+    <h2>How to keep the bill down anywhere</h2>
+    <ul>
+      <li>Order a combo rather than the same items separately — it is almost always cheaper.</li>
+      <li>Share one pizza and one large side between two people instead of buying two pizzas.</li>
+      <li>
+        In a group order, push past ₹{site.delivery.free_above} with us and the delivery charge goes
+        to zero.
+      </li>
+      <li>Collect it yourself if you are nearby — takeaway costs nothing extra.</li>
+    </ul>
+
+    <div class="highlight-box">
+      <p>
+        <strong>Pro tip:</strong> check <em>Swiggy</em> and <em>Zomato</em> before you order — several
+        of these places run app-only discounts that beat their counter price.
+      </p>
+    </div>
+
+    <h2>The last slice</h2>
+    <p>
+      Cheap pizza and good pizza are not opposites in this town.
+      See our <a href="/menu/">full menu with prices</a>,
+      or check <a href="/sundargarh/">what delivery costs in your part of Sundargarh</a>.
+    </p>
+
+    <a href={LINKS.whatsapp} target="_blank" rel="noopener noreferrer" class="cta">
+      Order on WhatsApp
+    </a>
+  </BlogPostLayout>
+</Layout>

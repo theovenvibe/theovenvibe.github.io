@@ -1,0 +1,15 @@
+# build output
+dist/
+# Lighthouse CI local run artifacts (skills/deploy-cicd.md §8)
+.lighthouseci/
+# generated types
+.astro/
+# dependencies
+node_modules/
+# logs
+npm-debug.log*
+# environment variables
+.env
+.env.production
+# macOS
+.DS_Store

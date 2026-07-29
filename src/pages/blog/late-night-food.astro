@@ -1,0 +1,151 @@
+---
+// /blog/late-night-food/ — AGENTS.md-bound slug (v1 URL stub points here).
+//
+// Hours corrected by owner 2026-07-30: the kitchen is open till 11:30 PM
+// (config is the source of truth), and AFTER close it still takes BIG orders
+// by phone — higher charges, limited late menu (mostly pizza, sandwiches,
+// fries). That makes this post a genuine "latest kitchen in town" claim
+// instead of the earlier plan-around-9-PM framing.
+import Layout from '../../layouts/Layout.astro';
+import BlogPostLayout from '../../components/BlogPostLayout.astro';
+import { site } from '../../lib/data';
+import { LINKS, abs, blogPostingJsonLd, breadcrumbJsonLd } from '../../lib/seo';
+
+const headline = 'Late-Night Food in Sundargarh: We Cook Till 11:30 PM';
+const description =
+  'Most Sundargarh kitchens shut by 9. The Oven Vibe takes orders till 11:30 PM every day — and arranges big late-night orders by phone even after that.';
+const image = {
+  url: abs('/static/images/og/blog_3.jpg'),
+  width: 1200,
+  height: 630,
+  alt: 'Late-night pure veg food in Sundargarh',
+};
+const path = '/blog/late-night-food/';
+---
+
+<Layout
+  title={headline}
+  description={description}
+  ogType="article"
+  image={image}
+  jsonLd={[
+    blogPostingJsonLd({
+      headline,
+      description,
+      path,
+      image: image.url,
+      datePublished: '2024-05-25',
+    }),
+    breadcrumbJsonLd([
+      { name: 'Blog', path: '/blog/' },
+      { name: 'Late-Night Food', path },
+    ]),
+  ]}
+>
+  <BlogPostLayout
+    line1="LATE-NIGHT"
+    lineGradient="FOOD."
+    subtitle="How to eat well late in Sundargarh — and when to place the order."
+  >
+    <p class="subtitle" style="font-weight: 600; color: #555; margin-top: -10px">
+      Raat ke time kya order karein?
+    </p>
+
+    <picture>
+      <source type="image/avif" srcset="/static/images/blog_images/blog_3.avif" />
+      <source type="image/webp" srcset="/static/images/blog_images/blog_3.webp" />
+      <img
+        src="/static/images/blog_images/blog_3.webp"
+        alt="Late-night pure veg food in Sundargarh"
+        class="blog-img"
+        loading="lazy"
+        width="1024"
+        height="1024"
+        style="background: #eee"
+      />
+    </picture>
+
+    <p>
+      Anyone who has been hungry in Sundargarh at half past nine knows the problem: the hunger is at
+      full strength and the options are not. Shutters are down, kitchens are cleaned — and this is
+      exactly the hour our ovens are still on.
+    </p>
+
+    <h2>First, the honest part about our timings</h2>
+    <p>
+      The Oven Vibe is open {site.business.hours.display} — one of the latest-running kitchens in
+      town. Place your order by about 11 PM and you are comfortably inside the window for a hot
+      delivery. And if the party runs past closing: we take <strong>big orders even after 11:30
+      PM</strong> — call to arrange it. Late-night charges are higher and the late menu is limited
+      (mostly pizzas, grilled sandwiches and fries), but the oven is genuinely still on.
+    </p>
+
+    <h2>Who orders late, and why planning helps</h2>
+    <ul>
+      <li>Hostel students and bachelors, after study or a shift</li>
+      <li>Night-shift workers eating before or after work</li>
+      <li>Movie nights and gaming sessions that run long</li>
+      <li>Anyone who skipped a proper dinner and regretted it near midnight</li>
+    </ul>
+
+    <h2>What to order for later, not just for now</h2>
+    <p>
+      Not everything survives an hour on a table. These hold up best if you will be eating a while
+      after it arrives:
+    </p>
+    <ul>
+      <li>
+        <strong>Pizzas</strong> — reheat well in a pan, and the paneer ones stay soft instead of going
+        rubbery.
+      </li>
+      <li>
+        <strong>Fried rice bowls</strong> — the most forgiving thing on the menu, and filling enough to
+        be an actual dinner.
+      </li>
+      <li>
+        <strong>Fries and potato pops</strong> — best eaten immediately, so order these only if you are
+        eating straight away.
+      </li>
+      <li>
+        <strong>Meal box combos</strong> — one box, nothing to assemble, ideal when you cannot be
+        bothered to think about it.
+      </li>
+    </ul>
+
+    <div class="highlight-box">
+      <h2>Ordering late, done right</h2>
+      <ul>
+        <li>Call or message by 11 PM for a comfortable same-night delivery.</li>
+        <li>
+          After 11:30 PM: big orders only, arranged by phone — higher charges, limited menu (pizzas,
+          sandwiches, fries).
+        </li>
+        <li>
+          A group order past ₹{site.delivery.free_above} pays no delivery charge, which is usually the
+          cheapest way to feed four people.
+        </li>
+        <li>Collecting yourself? Takeaway is ready in about 20 minutes.</li>
+      </ul>
+      <p style="margin-top: 10px; font-weight: 700; color: #ad210a">
+        Everything is 100% pure veg — no exceptions, at any hour.
+      </p>
+    </div>
+
+    <h2>The last bite</h2>
+    <p>
+      Late hunger in Sundargarh finally has an answer that isn't biscuits. Keep the
+      <a href="/menu/">menu</a> handy, know
+      <a href="/sundargarh/">the delivery charge for your area</a>, and remember the two numbers that
+      matter: regular orders till 11:30 PM, big orders by phone after.
+    </p>
+
+    <a href={`tel:${site.business.phone}`} class="cta">
+      Call the Kitchen: {site.business.phone_display}
+    </a>
+    <p>
+      Prefer to type? <a href={LINKS.whatsapp} target="_blank" rel="noopener noreferrer"
+        >Order on WhatsApp</a
+      >.
+    </p>
+  </BlogPostLayout>
+</Layout>

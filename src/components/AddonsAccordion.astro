@@ -1,0 +1,29 @@
+---
+/**
+ * Add-ons & Suggested accordion — matches v1's `renderAddons()`. Rendered
+ * inside `<section class="menu-section" id="addonsSection">` by the caller
+ * (index.astro), same as v1's static wrapper + JS-built accordion.
+ */
+import AccordionItem from './AccordionItem.astro';
+import MenuCard from './MenuCard.astro';
+import { availableAddons, imageFor, displayName, displayMeta } from '../lib/data';
+---
+
+{
+  availableAddons.length > 0 && (
+    <AccordionItem title="Add-ons & Suggested" subtitle={`${availableAddons.length} ${availableAddons.length === 1 ? 'item' : 'items'}`}>
+      <div class="menu-items">
+        {availableAddons.map((addon) => (
+          <MenuCard
+            img={imageFor(addon)}
+            title={displayName(addon.addon_name)}
+            meta={displayMeta(addon.addon_name)}
+            description="Add it to any order"
+            price={addon.addon_price}
+            extraClass="addon-card"
+          />
+        ))}
+      </div>
+    </AccordionItem>
+  )
+}

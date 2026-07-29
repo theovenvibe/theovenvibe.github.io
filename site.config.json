@@ -1,0 +1,65 @@
+{
+  "_comment": "Business settings — safe to edit from the GitHub web editor. Change a value, commit, done. If you make a typo the build fails and the LIVE SITE IS UNAFFECTED. See skills/ for step-by-step guides.",
+  "business": {
+    "name": "The Oven Vibe",
+    "tagline": "Fresh, hot, oven-baked — made in Sundargarh",
+    "phone": "+919692261138",
+    "phone_display": "+91 96922 61138",
+    "whatsapp": "919692261138",
+    "email": "theovenvibe@gmail.com",
+    "address": {
+      "_comment": "'street' must match the Google Business Profile address word-for-word. Carried over from the v1 site; verify it against GBP and fix it HERE (one place) if it differs.",
+      "street": "Bijaya Talkies Road, In front of Subasini Clinic",
+      "locality": "Sundargarh",
+      "region": "Odisha",
+      "postal_code": "770001",
+      "country": "IN",
+      "latitude": 22.117,
+      "longitude": 84.0382
+    },
+    "hours": {
+      "open": "11:30",
+      "close": "23:30",
+      "days": "Mo-Su",
+      "display": "11:30 AM – 11:30 PM, all days",
+      "_late_night_comment": "Late-night (after 11:30 PM): big orders only, higher charges, limited menu (mostly pizza, sandwiches, fries) — call to arrange."
+    },
+    "instagram": "https://instagram.com/theovenvibe",
+    "google_business_url": "https://share.google/wlwoG9JmeY3KV3dWU"
+  },
+  "rating": {
+    "_comment": "Keep these HONEST — copy the exact numbers from Google Business Profile. Never invent.",
+    "value": 4.9,
+    "count": 16,
+    "as_of": "2026-07-29"
+  },
+  "delivery": {
+    "hook": "Delivery starts at just ₹29",
+    "slabs": [
+      {
+        "label": "0–2 km",
+        "charge": 29
+      },
+      {
+        "label": "2–4 km",
+        "charge": 59
+      },
+      {
+        "label": "4–8 km",
+        "charge": 99
+      }
+    ],
+    "free_above": 599,
+    "free_above_note": "FREE delivery on orders above ₹599 (within 0–8 km)",
+    "radius_note": "We deliver within 8 km of Sundargarh town. Also on Zomato & Swiggy."
+  },
+  "hero_dish_code": "752649876",
+  "announcement": {
+    "_comment": "Set 'text' to show a banner on every page (e.g. 'Closed today for Holi 🎨'). Set it back to empty \"\" to hide.",
+    "text": ""
+  },
+  "analytics": {
+    "_comment": "Paste your Umami website ID from cloud.umami.is → Settings → Websites. Leave \"\" to disable analytics.",
+    "umami_website_id": "a302193f-8dba-4bea-a880-2de3e09cf8d4"
+  }
+}
