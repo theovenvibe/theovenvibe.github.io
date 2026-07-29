@@ -2,22 +2,31 @@
 
 Cold-start primer for ANY agent or model working in this repo — including
 small local LLMs. Read this fully before changing anything.
-(Phase 1 skeleton; finalized in Phase 5. Requirements: PRD.md. State: PROGRESS.md.)
+(Finalized Phase 5, PRD §10. Requirements: PRD.md. State: PROGRESS.md.)
+
+**If you are a small/local model (e.g. qwen-coder 3B/4B):** do not try to
+plan a task from scratch. Start every task by opening the matching
+`skills/*.md` file — each one is a complete, self-contained recipe with
+exact paths, a before/after example, and a verify step. This file tells
+you WHICH skill file to open; the skill file tells you exactly what to
+do.
 
 ## What this is
 
-Digital menu + lead-gen site for The Oven Vibe, a cloud kitchen in
-Sundargarh, Odisha. Leads = phone calls and WhatsApp orders. No backend,
-no payments. Astro (v7+) static site on GitHub Pages.
+Digital menu + lead-gen site for The Oven Vibe, a 100% pure vegetarian
+cloud kitchen in Sundargarh, Odisha. Leads = phone calls and WhatsApp
+orders. No backend, no payments. Astro (v7+) static site on GitHub Pages.
 
 ## Golden rules
 
 1. **`menu.json` IS the menu.** Prices, names, descriptions, availability —
    all edits happen there. Never rename its fields (they mirror Zomato).
 2. **`site.config.json` IS the business.** Delivery charges, hours, phone,
-   rating, announcement banner. Pages never hard-code these values.
+   rating, announcement banner, Umami analytics ID. Pages never hard-code
+   these values.
 3. **`main` is FROZEN during the v2 rebuild** — live v1 site. All work goes
-   feature branch → develop (skills/release-manager.md).
+   feature branch → develop (skills/release-manager.md). Post-launch this
+   unfreezes to a normal flow — see skills/release-manager.md §8.
 4. **Verify before commit:** `npm run build` (= `astro check && astro build`).
    A Zod error tells you the exact file + field to fix. Never bypass it.
 5. **Never invent ratings/reviews.** rating values in site.config.json must
@@ -34,43 +43,76 @@ no payments. Astro (v7+) static site on GitHub Pages.
    different opening times on three pages; do not reintroduce that.
 9. Node ≥ 22.12 required. Astro version is v7+ — training data lags; check
    live docs (docs.astro.build) for config/API questions, not memory.
+10. **Analytics is opt-in and silent by default.** `site.config.json` →
+    `analytics.umami_website_id` empty = no tracking script is emitted at
+    all (verified byte-for-byte in Phase 5). Never add a tracking script
+    anywhere else in the codebase — Umami Cloud is the only analytics
+    (PRD §5); v1's GTM/gtag/Yandex Metrika are dropped for good.
 
 ## Repo map
 
 ```
-menu.json               ← THE menu (items, combos, add-ons)
-site.config.json        ← business settings (delivery, hours, phone, rating)
-src/schemas/            ← Zod schemas guarding both JSON files
-src/lib/data.ts         ← the ONLY place JSON is loaded; helpers (isVeg, imageFor,
-                          displayName/displayMeta/displayDescription = render-time
-                          cleaning of menu.json copy — menu.json stays untouched)
-src/lib/seo.ts          ← ALL structured data + shared SEO facts (Restaurant,
-                          Menu from menu.json, FAQ, BlogPosting, Breadcrumb);
-                          off-site links (Zomato/Swiggy/Maps/GBP) live in LINKS
-src/components/Seo.astro← canonical + OG + Twitter + the JSON-LD @graph
-src/pages/              ← routes: index, menu, contact, faq, sundargarh, blog/, 404
-src/layouts/Layout.astro← base shell; takes title/description/ogTitle/ogType/
-                          image/jsonLd props and renders <Seo> — a new page gets
-                          full SEO markup for free, so use these props
-docs/SEO_PLAYBOOK.md    ← what the site does vs. what the OWNER must do (GBP,
-                          reviews, citations, Search Console) — read before
-                          answering any "why is there no traffic" question
-src/styles/global.css   ← Tailwind entry; design tokens land here in Phase 2
-public/static/images/   ← food photos, AVIF+WebP, filename = image_code
-public/*.html           ← v1 URL stubs (meta-refresh redirects) — do not delete
-.github/workflows/deploy.yml← build every branch; deploy ONLY from main
-skills/                 ← step-by-step task guides (start with the one you need)
-PRD.md / PROGRESS.md    ← requirements / current state — read at session start
+menu.json                ← THE menu (items, combos, add-ons) — Zomato mirror
+site.config.json         ← business settings (delivery, hours, phone, rating,
+                           announcement banner, analytics.umami_website_id)
+src/schemas/             ← Zod schemas guarding both JSON files
+src/lib/data.ts          ← the ONLY place JSON is loaded; helpers (isVeg, imageFor,
+                           displayName/displayMeta/displayDescription = render-time
+                           cleaning of menu.json copy — menu.json stays untouched)
+src/lib/seo.ts           ← ALL structured data + shared SEO facts (Restaurant,
+                           Menu from menu.json, FAQ, BlogPosting, Breadcrumb);
+                           off-site links (Zomato/Swiggy/Maps/GBP) live in LINKS
+src/components/Seo.astro ← canonical + OG + Twitter + the JSON-LD @graph
+src/components/          ← Nav, Footer, WhatsAppFab, MenuCard, MenuAccordions,
+                           AddonsAccordion, BlogPostLayout (shared blog wrapper)
+src/pages/               ← routes: index, menu, contact, faq, sundargarh, blog/, 404
+src/pages/blog/*.astro   ← each blog post is its OWN .astro file using
+                           BlogPostLayout — NOT a markdown content collection.
+                           New post → skills/add-blog-post.md (template inline).
+src/layouts/Layout.astro ← base shell; takes title/description/ogTitle/ogType/
+                           image/jsonLd props (+ emits the Umami script tag when
+                           analytics.umami_website_id is non-empty) and renders
+                           <Seo> — a new page gets full SEO markup for free
+src/styles/global.css    ← the design system (ported verbatim from v1's style.css)
+src/styles/polish.css    ← Phase 3.5 additive motion/hover layer (owner-approved)
+public/scripts/site.js   ← shared interactions (scroll-reveal, mobile menu,
+                           accordions, + Phase 5 Umami call_click/wa_click events)
+public/static/images/    ← food photos, AVIF+WebP, filename = the item's code
+public/static/images/og/ ← 1200×630 JPEG share images (hero + each blog post) —
+                           regenerated by hand when the source photo changes,
+                           see skills/update-item-photo.md §6
+public/*.html            ← v1 URL stubs (meta-refresh redirects) — do not delete
+.github/workflows/deploy.yml ← build every branch; deploy ONLY from main
+                           (renamed from ci.yml in Phase 5 — owner requirement)
+skills/                  ← step-by-step task guides — open the matching one first
+docs/SEO_PLAYBOOK.md     ← what the site does vs. what the OWNER must do (GBP,
+                           reviews, citations, Search Console) — read before
+                           answering any "why is there no traffic" question
+docs/archive/            ← superseded design research (RESEARCH.md, DESIGN.md) —
+                           kept for the photo-audit/pattern facts, not current design
+.claude/skills/          ← Claude-side design skills (frontend-design, theme-factory,
+                           ui-ux-pro-max, webapp-testing) — kept for future design work
+PRD.md / PROGRESS.md     ← requirements / current state — read at session start
 ```
 
 ## Common tasks → skills
 
 | Task | Skill file |
 |---|---|
-| Change a price / name / description | skills/update-price.md, skills/update-description.md |
-| Add / remove / hide a menu item | skills/add-menu-item.md, skills/remove-or-disable-item.md |
-| Change a photo | skills/update-item-photo.md |
-| Delivery charges / hours / phone / rating | skills/update-delivery-charges.md, skills/update-hours-or-contact.md, skills/update-rating.md |
+| Change a price | skills/update-price.md |
+| Change a name / description | skills/update-description.md |
+| Hide, disable, or bring back an item | skills/remove-or-disable-item.md |
+| Add a brand-new menu item | skills/add-menu-item.md |
+| Add/edit a combo | skills/update-combo.md |
+| Change a photo (item, combo, add-on, blog) | skills/update-item-photo.md |
+| Delivery charges / free-delivery threshold | skills/update-delivery-charges.md |
+| Hours / phone / WhatsApp / address / Instagram | skills/update-hours-or-contact.md |
+| Update the star rating / review count | skills/update-rating.md |
+| Add a new blog post | skills/add-blog-post.md |
+| Turn on Umami analytics | skills/setup-analytics.md |
+| Pre-merge QA (JSON-LD, emoji, honesty checks) | skills/qa-check.md |
+| Check the site actually works (routes, phone flow) | skills/verify-site.md |
+| How CI/deploy works, reading `gh run list` | skills/deploy-cicd.md |
 | Branch, merge, release, rollback | skills/release-manager.md, skills/release-recovery.md |
 | Build broken? | skills/troubleshoot-build.md |
 
@@ -83,9 +125,13 @@ PRD.md / PROGRESS.md    ← requirements / current state — read at session sta
   blog-affordable-pizza→/blog/affordable-pizza/ ·
   blog-late-night-food→/blog/late-night-food/ ·
   contact→/contact/ · faq→/faq/ · sundargarh-770001→/sundargarh/
-  **Phase 4 must create the blog posts at exactly these slugs.**
 - Image URLs stay `/static/images/...` (on disk: `public/static/images/...`).
 - Canonical origin lives in ONE place: `SITE_URL` in astro.config.mjs.
-- Astro 7 notes: `src/fetch.ts` is a reserved filename (never create it);
-  markdown uses Astro's new default processor — if blog posts need
-  remark/rehype plugins, install `@astrojs/markdown-remark` explicitly.
+- Astro 7 notes: `src/fetch.ts` is a reserved filename (never create it).
+  Blog posts are individual `.astro` files (see `src/pages/blog/*.astro`
+  and `skills/add-blog-post.md`) — this repo does NOT use an Astro
+  content collection for the blog; don't add a `.md`/`.mdx` file expecting
+  it to become a page on its own.
+- The CI/deploy workflow file is `.github/workflows/deploy.yml` (renamed
+  from `ci.yml` in Phase 5, owner requirement) — build runs on every
+  branch, deploy is gated to `main` only.
