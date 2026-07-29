@@ -66,7 +66,6 @@ const highlights = categories.map(({ name, items }) => ({
             <a
               href={`tel:${site.business.phone}`}
               class="btn btn-primary btn-lg"
-              aria-label={`Call ${site.business.name} at ${site.business.phone_display} to order`}
               >Call {site.business.phone_display}</a
             >
             <a
@@ -104,7 +103,7 @@ const highlights = categories.map(({ name, items }) => ({
           }
         </div>
 
-        <p style="margin-top: 2rem; font-weight: 700; color: var(--color-primary); font-size: 1.125rem;">
+        <p style="margin-top: 2rem; font-weight: 700; color: #d63031; font-size: 1.125rem;">
           {site.delivery.free_above_note}
         </p>
         <p>
@@ -195,7 +194,6 @@ const highlights = categories.map(({ name, items }) => ({
         class="btn btn-primary"
         style="background: white; color: var(--color-secondary);"
         href={`tel:${site.business.phone}`}
-        aria-label={`Call ${site.business.name} at ${site.business.phone_display} to order`}
         >Call the Kitchen: {site.business.phone_display}</a
       >
     </section>

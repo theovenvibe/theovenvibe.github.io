@@ -220,7 +220,9 @@ p {
 }
 
 .btn-primary {
-  background-color: var(--color-primary);
+  /* a11y launch fix: #d63031 gives white text 4.86:1 (was #e63946 at 4.27:1) —
+     same red family, imperceptibly deeper. Hover still --color-primary-dark. */
+  background-color: #d63031;
   color: white;
   box-shadow: var(--shadow-md);
 }
@@ -954,7 +956,33 @@ p {
     height: 180px;
   }
   
-  .menu-card-title {
+   /* a11y launch fix: accordion titles are now <h2> for correct document
+   outline — these rules pin them to the exact size the old <h3> rendered,
+   so the change is visually invisible (pixel parity). */
+.accordion-title h2 {
+  font-size: 1.75rem;
+  margin-bottom: 1rem;
+}
+@media (max-width: 768px) {
+  .accordion-title h2 {
+    font-size: 1.5rem;
+  }
+}
+
+/* screen-reader-only utility (invisible, zero layout impact) */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.menu-card-title {
     font-size: 1.025rem;
   }
 }
@@ -1665,15 +1693,30 @@ article {
   max-width: 800px;
 }
 
+/* a11y launch fix: post subheads are now <h2> for correct outline; these
+   rules keep them rendering exactly as the old <h3> did (pixel parity).
+   The h3 rules stay for any nested sub-subheads. */
+article h2,
 article h3 {
   font-size: 1.75rem;
   margin-top: 2.5rem;
   margin-bottom: 1rem;
   line-height: 1.3;
+  letter-spacing: 0;
 }
 
+article h2:first-child,
 article h3:first-child {
   margin-top: 0;
+}
+
+/* a11y launch fix: venue names in listings were <h4>; as <h3> they keep
+   the exact old h4 rendering. */
+article h3.venue-name {
+  font-size: 1.25rem;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  line-height: 1.2;
 }
 
 article p {
@@ -1707,7 +1750,7 @@ article em {
   border: 1px solid #16a34a;
   border-radius: var(--radius-full);
   background-color: rgba(22, 163, 74, 0.08);
-  color: #15803d;
+  color: #14532d; /* a11y: 4.5:1+ on the hero blush wash (was #15803d) */
   font-size: 0.75rem;
   font-weight: 700;
   line-height: 1;
