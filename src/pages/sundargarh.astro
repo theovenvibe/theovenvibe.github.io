@@ -1,0 +1,18 @@
+---
+// Local SEO landing page — Phase 1 stub. Real intent copy in Phase 4 (PRD §9).
+import Layout from '../layouts/Layout.astro';
+import { site } from '../lib/data';
+---
+
+<Layout
+  title={`Food Delivery in Sundargarh ${site.business.address.postal_code} — ${site.business.name}`}
+  description={`Oven-baked pizza, burgers & more delivered in Sundargarh ${site.business.address.postal_code}. ${site.delivery.hook}.`}
+>
+  <main class="mx-auto max-w-3xl px-4 py-16">
+    <h1 class="text-3xl font-bold">
+      Food Delivery in Sundargarh {site.business.address.postal_code}
+    </h1>
+    <p class="mt-4 text-neutral-400">{site.delivery.radius_note}</p>
+    <a class="mt-6 inline-block text-amber-400 underline" href="/menu/">See the full menu →</a>
+  </main>
+</Layout>

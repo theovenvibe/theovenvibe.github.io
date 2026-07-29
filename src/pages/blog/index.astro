@@ -1,0 +1,18 @@
+---
+// Blog index — Phase 1 stub. Content collections + migrated posts in Phase 4.
+import Layout from '../../layouts/Layout.astro';
+import { site } from '../../lib/data';
+---
+
+<Layout
+  title={`Blog — ${site.business.name}`}
+  description={`Food stories and local guides from ${site.business.name}, Sundargarh.`}
+>
+  <main class="mx-auto max-w-3xl px-4 py-16">
+    <h1 class="text-3xl font-bold">Blog</h1>
+    <p class="mt-4 text-neutral-400">
+      Posts are being migrated to the new site (Phase 4). Hungry meanwhile?
+      <a class="text-amber-400 underline" href="/menu/">See the menu</a>.
+    </p>
+  </main>
+</Layout>
