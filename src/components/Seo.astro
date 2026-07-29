@@ -5,7 +5,7 @@
  * <Layout>'s props so every route gets the same treatment and none of it can
  * be forgotten on a new page.
  */
-import { graph, HERO_IMAGE, abs } from '../lib/seo';
+import { graph, organization, HERO_IMAGE, abs } from '../lib/seo';
 import { site } from '../lib/data';
 
 export interface OgImage {
@@ -25,6 +25,8 @@ interface Props {
   image?: OgImage;
   /** schema.org nodes for this page; emitted as one @graph. */
   jsonLd?: unknown[];
+  /** Set on utility pages (404) that must never be indexed. */
+  noindex?: boolean;
 }
 
 const {
@@ -35,6 +37,7 @@ const {
   ogType = 'website',
   image = HERO_IMAGE,
   jsonLd = [],
+  noindex = false,
 } = Astro.props;
 
 const websiteNode = {
@@ -47,7 +50,7 @@ const websiteNode = {
 };
 ---
 
-<link rel="canonical" href={canonical} />
+{noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
 
 <meta property="og:site_name" content={site.business.name} />
 <meta property="og:locale" content="en_IN" />
@@ -73,8 +76,10 @@ const websiteNode = {
   content={`${site.business.address.latitude};${site.business.address.longitude}`}
 />
 
+{/* organization is included on every page so the WebSite.publisher @id
+    reference always resolves within the same @graph (audit fix). */}
 <script
   type="application/ld+json"
   is:inline
-  set:html={JSON.stringify(graph([websiteNode, ...jsonLd]))}
+  set:html={JSON.stringify(graph([websiteNode, organization, ...jsonLd]))}
 />

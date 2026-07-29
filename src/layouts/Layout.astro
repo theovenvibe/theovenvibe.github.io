@@ -37,6 +37,7 @@ interface Props {
   showWaFab?: boolean;
   ogTitle?: string;
   ogType?: 'website' | 'article';
+  noindex?: boolean;
   image?: OgImage;
   jsonLd?: unknown[];
 }
@@ -48,6 +49,7 @@ const {
   showWaFab = true,
   ogTitle,
   ogType,
+  noindex,
   image,
   jsonLd,
 } = Astro.props;
@@ -81,6 +83,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
       canonical={canonical}
       ogTitle={ogTitle}
       ogType={ogType}
+      noindex={noindex}
       image={image}
       jsonLd={jsonLd}
     />
