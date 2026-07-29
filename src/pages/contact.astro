@@ -1,27 +1,27 @@
 ---
-// Contact — ported verbatim from v1's contact.html (PRD §8 superseded block).
-// v1 has no sticky WhatsApp FAB on this page — preserved as-is (showWaFab=false).
+// Contact — v1's structure (PRD §8 superseded block) plus the Phase 4
+// lead-capture block: v1's contact page carried a Google Form and nothing
+// else — no phone number, no WhatsApp link, no hours — on the one page people
+// land on when they want to reach us. The NAP block below is also what keeps
+// the site's address/phone/hours identical to the Google Business Profile.
 import Layout from '../layouts/Layout.astro';
 import { site } from '../lib/data';
+import { LINKS, breadcrumbJsonLd, restaurantJsonLd } from '../lib/seo';
 
-const title = `Contact Us - ${site.business.name} | Sundargarh Takeaway`;
-const description = `Contact ${site.business.name}, Sundargarh. WhatsApp, Instagram and contact form available.`;
-const ogImage = new URL(
-  '/static/images/brand_images/The%20Oven%20vibe_logo.webp',
-  Astro.site,
-).toString();
-const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
+const title = 'Contact & Order | The Oven Vibe Sundargarh';
+const description = `Call or WhatsApp ${site.business.name}, Sundargarh ${site.business.address.postal_code}. Open ${site.business.hours.display}. Takeaway in 20 minutes, delivery from ₹${site.delivery.slabs[0].charge}.`;
 ---
 
-<Layout title={title} description={description} activeContact={true} showWaFab={false}>
-  <Fragment slot="head">
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:url" content={pageUrl} />
-    <meta property="og:image" content={ogImage} />
-    <meta name="twitter:card" content="summary" />
-  </Fragment>
+<Layout
+  title={title}
+  description={description}
+  activeContact={true}
+  showWaFab={false}
+  jsonLd={[
+    restaurantJsonLd({ withMenu: false }),
+    breadcrumbJsonLd([{ name: 'Contact', path: '/contact/' }]),
+  ]}
+>
 
   <main class="main">
     <!-- HERO SECTION -->
@@ -38,19 +38,72 @@ const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
             <span class="text-gradient animate-on-scroll delay-100">CONNECT.</span>
           </h1>
           <p class="hero-text animate-on-scroll delay-200">
-            Questions? Party orders? Just want to say hi?
-            <br />We are just a message away.
+            Orders, party quotes, feedback — the fastest answer is a phone call.
           </p>
+          <div class="hero-actions animate-on-scroll delay-300">
+            <a
+              href={`tel:${site.business.phone}`}
+              class="btn btn-primary btn-lg"
+              aria-label={`Call ${site.business.name} at ${site.business.phone_display}`}
+              >Call {site.business.phone_display}</a
+            >
+            <a
+              href={LINKS.whatsapp}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn-secondary btn-lg">Order on WhatsApp</a
+            >
+          </div>
         </div>
       </div>
     </section>
 
     <div class="section" style="padding-top: 0">
       <div class="container">
-        <!-- Google Form embed -->
+        <div class="grid-3" style="margin-bottom: 3rem;">
+            <article class="feature-card animate-on-scroll">
+              <h3>Where we are</h3>
+              <p>
+                {site.business.address.locality}, {site.business.address.region} {site.business.address.postal_code}<br />
+                <a
+                  href={LINKS.maps}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="read-more"
+                  aria-label="Open The Oven Vibe on Google Maps">Open in Google Maps</a
+                >
+              </p>
+            </article>
+            <article class="feature-card animate-on-scroll delay-100">
+              <h3>When we are open</h3>
+              <p>
+                {site.business.hours.display}<br />
+                Takeaway ready in about 20 minutes. Delivery 30-45 minutes.
+              </p>
+            </article>
+            <article class="feature-card animate-on-scroll delay-200">
+              <h3>Delivery</h3>
+              <p>
+                {site.delivery.slabs.map((s) => `₹${s.charge} for ${s.label}`).join(' · ')}<br />
+                {site.delivery.free_above_note}
+              </p>
+            </article>
+        </div>
+
         <div class="container" style="max-width: 800px; margin: 0 auto">
+          <p style="text-align: center; margin-bottom: 2.5rem;">
+            <span class="veg-badge">100% Pure Veg</span>
+          </p>
+
+          <h2 style="text-align: center; margin-bottom: 0.75rem;">Send us a message</h2>
+          <p class="lead" style="text-align: center; margin-bottom: 2rem;">
+            Not urgent? Leave your details and we will get back to you.
+          </p>
+
+          <!-- Google Form embed -->
           <iframe
             class="contact-form-iframe"
+            title="Contact form"
             src="https://docs.google.com/forms/d/e/1FAIpQLSe904p8LQBV3Dh5w-_sWOJzmFNT_DXoAVMoYfx_UguIuJflTA/viewform?embedded=true"
             loading="lazy">Loading…</iframe
           >

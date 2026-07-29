@@ -21,6 +21,13 @@ export const siteConfigSchema = z.object({
       .regex(/^91\d{10}$/, "whatsapp must look like '919692261138' (91 then 10 digits — no '+', no spaces)"),
     email: z.string().email(),
     address: z.object({
+      _comment: comment,
+      /**
+       * Street line as published on the Google Business Profile. Optional, but
+       * when present it MUST match GBP word-for-word — Google cross-checks the
+       * site's address against the profile (NAP consistency, PRD §9).
+       */
+      street: z.string().optional(),
       locality: z.string(),
       region: z.string(),
       postal_code: z.string().regex(/^\d{6}$/, 'postal_code must be a 6-digit PIN'),

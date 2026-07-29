@@ -41,9 +41,52 @@ export function isVeg(item: MenuItem): boolean {
   return !NON_VEG.test(`${item.item_name} ${item.description}`);
 }
 
+/* ---------- display copy (Phase 4) ----------
+ * menu.json is the Zomato mirror and stays byte-for-byte untouched (PRD §6).
+ * Everything the visitor reads is cleaned here, at render time:
+ *   - emoji / pictographs are stripped (premium copy pass, owner 2026-07-30)
+ *   - catalogue markers ("[Regular, 7 inches]", "[Veg preparation]") leave the
+ *     name/description, but the ones that carry real buying information (size,
+ *     spice level) come back as a muted meta line via `displayMeta()`
+ * The site is 100% pure veg (PRD §3), so "[Veg preparation]" is dropped from
+ * every item — it's stated once, prominently, instead of 32 times.
+ */
+
+const EMOJI = /[\p{Extended_Pictographic}\u{200D}\u{FE0F}\u{20E3}]/gu;
+const CHILLI = /\u{1F336}/gu;
+const VEG_MARKER = /veg\s*preparation/i;
+
+const tidy = (s: string) => s.replace(/\s{2,}/g, ' ').replace(/\s+([,.])/g, '$1').trim();
+
+/** Name as shown on a card: no emoji, no `[bracket]` catalogue markers. */
+export function displayName(raw: string): string {
+  return tidy(raw.replace(/\[[^\]]*\]/g, '').replace(EMOJI, ''));
+}
+
+/**
+ * The buying information that was hiding inside the markers, as short muted
+ * chips: size ("Regular · 7 inches", "25 g") and spice level.
+ */
+export function displayMeta(raw: string): string[] {
+  const meta: string[] = [];
+  for (const [, inner] of raw.matchAll(/\[([^\]]*)\]/g)) {
+    if (VEG_MARKER.test(inner)) continue;
+    const size = inner
+      .split(',')
+      .map((p) => p.trim())
+      .filter(Boolean)
+      .join(' · ');
+    if (size) meta.push(size);
+  }
+  const chillies = (raw.match(CHILLI) ?? []).length;
+  if (chillies === 1) meta.push('Spicy');
+  else if (chillies > 1) meta.push('Extra spicy');
+  return meta;
+}
+
 /** Strip catalogue markers like "[Veg preparation]" for display copy. */
 export function displayDescription(item: { description: string }): string {
-  return item.description.replace(/\[[^\]]*\]\s*/g, '').trim();
+  return tidy(item.description.replace(/\[[^\]]*\]/g, '').replace(EMOJI, ''));
 }
 
 export const availableItems = menu.Menu_Items.filter((i) => i.status === 'available');

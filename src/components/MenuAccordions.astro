@@ -8,18 +8,25 @@
  */
 import AccordionItem from './AccordionItem.astro';
 import MenuCard from './MenuCard.astro';
-import { menu, categories, availableCombos, imageFor } from '../lib/data';
+import {
+  menu,
+  categories,
+  availableCombos,
+  imageFor,
+  displayName,
+  displayMeta,
+  displayDescription,
+} from '../lib/data';
 
 const codeToName = new Map<string, string>();
 for (const item of menu.Menu_Items) {
-  codeToName.set(item.product_code, item.display_name || item.item_name);
+  codeToName.set(item.product_code, displayName(item.display_name || item.item_name));
 }
 
 function comboDescription(combo: (typeof availableCombos)[number]): string {
   if (combo.description) {
-    return combo.description.toLowerCase().includes('includes')
-      ? combo.description
-      : `Includes: ${combo.description}`;
+    const text = displayDescription(combo);
+    return text.toLowerCase().includes('includes') ? text : `Includes: ${text}`;
   }
   const readable = combo.items_included.map((code) => codeToName.get(code) ?? code).join(', ');
   return `Includes: ${readable}`;
@@ -28,12 +35,13 @@ function comboDescription(combo: (typeof availableCombos)[number]): string {
 
 {
   availableCombos.length > 0 && (
-    <AccordionItem title="Combos & Offers" subtitle={`${availableCombos.length} offers`} id="sec-combos">
+    <AccordionItem title="Combos & Offers" subtitle={`${availableCombos.length} ${availableCombos.length === 1 ? 'offer' : 'offers'}`} id="sec-combos">
       <div class="menu-items combo-list">
         {availableCombos.map((c) => (
           <MenuCard
             img={imageFor(c)}
-            title={c.combo_name}
+            title={displayName(c.combo_name)}
+            meta={displayMeta(c.combo_name)}
             description={comboDescription(c)}
             price={c.combo_price}
           />
@@ -45,14 +53,15 @@ function comboDescription(combo: (typeof availableCombos)[number]): string {
 
 {
   categories.map(({ name, items }) => (
-    <AccordionItem title={name} subtitle={`${items.length} items`}>
+    <AccordionItem title={name} subtitle={`${items.length} ${items.length === 1 ? 'item' : 'items'}`}>
       <div class="category-group">
         <div class="menu-items">
           {items.map((item) => (
             <MenuCard
               img={imageFor(item)}
-              title={item.display_name || item.item_name}
-              description={item.description}
+              title={displayName(item.display_name || item.item_name)}
+              meta={displayMeta(item.display_name || item.item_name)}
+              description={displayDescription(item)}
               price={item.price}
             />
           ))}

@@ -8,10 +8,12 @@
  * per the maintainability contract (PRD §6) instead of being re-hard-coded.
  */
 import { site } from '../lib/data';
-const zomato =
-  'https://link.zomato.com/xqzv/rshare?id=11990877930563aa9&utm_source=site&utm_medium=footer&utm_campaign=delivery';
-const swiggy =
-  'https://www.swiggy.com/direct/brand/710285?source=swiggy-direct&subSource=generic&utm_source=site&utm_medium=footer&utm_campaign=delivery';
+import { LINKS } from '../lib/seo';
+const utm = 'utm_source=site&utm_medium=footer&utm_campaign=delivery';
+const zomato = `${LINKS.zomato}&${utm}`;
+const swiggy = `${LINKS.swiggy}&${utm}`;
+// Phase 4: the © year came from a hard-coded "2025" that was already stale.
+const year = new Date().getFullYear();
 ---
 
 <footer class="footer animate-on-scroll" id="footer">
@@ -38,17 +40,23 @@ const swiggy =
       <div class="footer-social-links">
         <a href={site.business.instagram} target="_blank" rel="noopener noreferrer" aria-label="Follow on Instagram">Instagram</a>
         <span style="opacity: 0.3">|</span>
-        <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Follow on Facebook">Facebook</a>
+        <a href={LINKS.gbp} target="_blank" rel="noopener noreferrer" aria-label="The Oven Vibe on Google">Google</a>
         <span style="opacity: 0.3">|</span>
-        <a href="https://maps.app.goo.gl/t8u7p3cfaYEkj5JP8" target="_blank" rel="noopener noreferrer" aria-label="Find us on Maps">Maps</a>
+        <a href={LINKS.maps} target="_blank" rel="noopener noreferrer" aria-label="Find us on Maps">Maps</a>
       </div>
     </div>
   </div>
 
   <div class="footer-bottom">
     <div class="footer-meta">
+      <p style="margin-bottom: 0.75rem;">
+        <span class="veg-badge veg-badge--on-dark">100% Pure Veg</span>
+      </p>
+      <p style="color: #a1a1aa; font-size: 0.8rem; margin-bottom: 0.35rem;">
+        {site.business.address.locality}, {site.business.address.region} {site.business.address.postal_code} · <a href={`tel:${site.business.phone}`} style="color: inherit;">{site.business.phone_display}</a> · {site.business.hours.display}
+      </p>
       <p>20 min takeaway · 30-45 min delivery</p>
-      © 2025 {site.business.name} · All rights reserved
+      © {year} {site.business.name} · All rights reserved
     </div>
   </div>
 </footer>

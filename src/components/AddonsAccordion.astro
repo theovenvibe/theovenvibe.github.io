@@ -6,18 +6,19 @@
  */
 import AccordionItem from './AccordionItem.astro';
 import MenuCard from './MenuCard.astro';
-import { availableAddons, imageFor } from '../lib/data';
+import { availableAddons, imageFor, displayName, displayMeta } from '../lib/data';
 ---
 
 {
   availableAddons.length > 0 && (
-    <AccordionItem title="Add-ons & Suggested" subtitle={`${availableAddons.length} items`}>
+    <AccordionItem title="Add-ons & Suggested" subtitle={`${availableAddons.length} ${availableAddons.length === 1 ? 'item' : 'items'}`}>
       <div class="menu-items">
         {availableAddons.map((addon) => (
           <MenuCard
             img={imageFor(addon)}
-            title={addon.addon_name}
-            description="Perfect complement to your meal"
+            title={displayName(addon.addon_name)}
+            meta={displayMeta(addon.addon_name)}
+            description="Add it to any order"
             price={addon.addon_price}
             extraClass="addon-card"
           />

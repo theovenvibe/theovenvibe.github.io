@@ -1,27 +1,29 @@
 ---
-// Blog index — ported verbatim from v1's blog.html (PRD §8 superseded block).
+// Blog index — v1's blog.html layout with Phase 4 copy/SEO.
 import Layout from '../../layouts/Layout.astro';
 import { site } from '../../lib/data';
+import { abs, breadcrumbJsonLd, organization } from '../../lib/seo';
 
-const title = `Blog - ${site.business.name} | Sundargarh Food Stories`;
+const title = 'Sundargarh Food Stories & Guides | The Oven Vibe';
 const description =
-  'Food stories, tips and local culture from Sundargarh by The Oven Vibe. Read our latest blogs on pizza, food trends, and late-night cravings.';
-const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
-const ogImage = new URL('/static/images/blog_images/blog_1.webp', Astro.site).toString();
+  'Local food guides from Sundargarh: budget pizza picks, late-night options, how cloud kitchens work, and why The Oven Vibe cooks 100% pure veg.';
+
+const blogJsonLd = {
+  '@type': 'Blog',
+  '@id': `${abs('/blog/')}#blog`,
+  name: `${site.business.name} Blog`,
+  description,
+  url: abs('/blog/'),
+  inLanguage: 'en-IN',
+  publisher: organization,
+};
 ---
 
-<Layout title={title} description={description}>
-  <Fragment slot="head">
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content={title} />
-    <meta
-      property="og:description"
-      content="Food stories, tips and local culture from Sundargarh by The Oven Vibe."
-    />
-    <meta property="og:url" content={pageUrl} />
-    <meta property="og:image" content={ogImage} />
-    <meta name="twitter:card" content="summary_large_image" />
-  </Fragment>
+<Layout
+  title={title}
+  description={description}
+  jsonLd={[blogJsonLd, breadcrumbJsonLd([{ name: 'Blog', path: '/blog/' }])]}
+>
 
   <!-- MAIN BLOG CONTAINER -->
   <div class="main">
@@ -56,7 +58,7 @@ const ogImage = new URL('/static/images/blog_images/blog_1.webp', Astro.site).to
                 <source type="image/webp" srcset="/static/images/blog_images/blog_5.webp" />
                 <img
                   src="/static/images/blog_images/blog_5.webp"
-                  alt="Cloud Kitchen Future"
+                  alt="Why cloud kitchens are the future of food in Sundargarh"
                   class="blog-card-img"
                   loading="lazy"
                   width="400"
@@ -87,7 +89,7 @@ const ogImage = new URL('/static/images/blog_images/blog_1.webp', Astro.site).to
                 <source type="image/webp" srcset="/static/images/blog_images/blog_4.webp" />
                 <img
                   src="/static/images/blog_images/blog_4.webp"
-                  alt="Pizza Under 300"
+                  alt="Pure veg pizza under 300 rupees in Sundargarh"
                   class="blog-card-img"
                   loading="lazy"
                   width="400"
@@ -118,7 +120,7 @@ const ogImage = new URL('/static/images/blog_images/blog_1.webp', Astro.site).to
                 <source type="image/webp" srcset="/static/images/blog_images/blog_3.webp" />
                 <img
                   src="/static/images/blog_images/blog_3.webp"
-                  alt="Best Late-Night Food"
+                  alt="Late-night food options in Sundargarh after 9 PM"
                   class="blog-card-img"
                   loading="lazy"
                   width="400"
@@ -149,7 +151,7 @@ const ogImage = new URL('/static/images/blog_images/blog_1.webp', Astro.site).to
                 <source type="image/webp" srcset="/static/images/blog_images/blog_2.webp" />
                 <img
                   src="/static/images/blog_images/blog_2.webp"
-                  alt="Veg vs Non-Veg Pizza"
+                  alt="Veg versus non-veg pizza in Sundargarh"
                   class="blog-card-img"
                   loading="lazy"
                   width="400"
@@ -160,8 +162,8 @@ const ogImage = new URL('/static/images/blog_images/blog_1.webp', Astro.site).to
             <div class="blog-card-content">
               <h3>Veg vs Non-Veg Pizza in Sundargarh</h3>
               <p>
-                Confused between veg and non-veg pizza? Discover what locals love more and our top
-                recommendations.
+                The debate every pizza order in Sundargarh runs into — and the honest reason our
+                kitchen is 100% pure veg.
               </p>
               <a
                 href="/blog/veg-vs-non-veg/"
@@ -180,7 +182,7 @@ const ogImage = new URL('/static/images/blog_images/blog_1.webp', Astro.site).to
                 <source type="image/webp" srcset="/static/images/blog_images/blog_1.webp" />
                 <img
                   src="/static/images/blog_images/blog_1.webp"
-                  alt="Affordable pizza spots"
+                  alt="Affordable pizza spots in Sundargarh"
                   class="blog-card-img"
                   loading="lazy"
                   width="400"
@@ -189,15 +191,15 @@ const ogImage = new URL('/static/images/blog_images/blog_1.webp', Astro.site).to
               </picture>
             </div>
             <div class="blog-card-content">
-              <h3>Top 5 Affordable Pizza Spots in Sundargarh</h3>
+              <h3>Affordable Pizza Spots in Sundargarh</h3>
               <p>
-                Sundargarh is buzzing with pizza spots that bring big flavors at small prices.
-                Discover the best budget-friendly places.
+                Where to eat pizza in Sundargarh without overspending, with the price band you can
+                expect at each place.
               </p>
               <a
                 href="/blog/affordable-pizza/"
                 class="read-more"
-                aria-label="Read full article: Top 5 Affordable Pizza Spots in Sundargarh"
+                aria-label="Read full article: Affordable Pizza Spots in Sundargarh"
                 >Read Story →</a
               >
             </div>

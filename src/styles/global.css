@@ -1692,3 +1692,48 @@ article em {
   color: var(--color-text-main);
   font-style: italic;
 }
+
+/* --------------------------------------------------------------------------
+   PHASE 4 ADDITION (owner-approved 2026-07-30): "100% Pure Veg" trust marker.
+   The kitchen is 100% pure veg (PRD §3) and that is the brand's single
+   biggest trust/SEO differentiator, so it gets one honest, emoji-free badge
+   drawn entirely in CSS — the familiar green square-in-a-box veg mark.
+   -------------------------------------------------------------------------- */
+.veg-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid #16a34a;
+  border-radius: var(--radius-full);
+  background-color: rgba(22, 163, 74, 0.08);
+  color: #15803d;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.veg-badge::before {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  flex: none;
+  border-radius: 1px;
+  background-color: #16a34a;
+  box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.12), 0 0 0 3px #16a34a;
+}
+
+/* Footer / dark-surface variant */
+.veg-badge--on-dark {
+  border-color: rgba(74, 222, 128, 0.5);
+  background-color: rgba(74, 222, 128, 0.12);
+  color: #86efac;
+}
+
+.veg-badge--on-dark::before {
+  background-color: #4ade80;
+  box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.15), 0 0 0 3px #4ade80;
+}

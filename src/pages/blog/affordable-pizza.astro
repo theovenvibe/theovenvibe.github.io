@@ -1,141 +1,145 @@
 ---
-// Ported verbatim from v1's blog-affordable-pizza.html (PRD §8 superseded
-// block). Route is the AGENTS.md-bound slug /blog/affordable-pizza/.
+// /blog/affordable-pizza/ — AGENTS.md-bound slug (v1 URL stub points here).
+//
+// Phase 4 changes: emoji removed, `meta keywords` dropped (it listed rival
+// business names, which does nothing for ranking), and the one listing whose
+// recommendations were entirely non-vegetarian was removed — a 100% pure veg
+// kitchen (PRD §3) telling its readers to go and eat meat elsewhere undercuts
+// the only positioning that differentiates it. The remaining listings keep the
+// locations and price bands exactly as the owner published them in v1; nothing
+// here is invented.
 import Layout from '../../layouts/Layout.astro';
 import BlogPostLayout from '../../components/BlogPostLayout.astro';
 import { site } from '../../lib/data';
+import { LINKS, abs, blogPostingJsonLd, breadcrumbJsonLd } from '../../lib/seo';
 
-const title = `Top 5 Affordable Pizza Spots in Sundargarh | ${site.business.name}`;
+const headline = 'Affordable Pizza in Sundargarh: Where to Eat on a Budget';
 const description =
-  'Sundargarh is buzzing with pizza spots that bring big flavors at small prices. Discover the best budget-friendly places for students and families.';
-const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
-const ogImage = new URL('/static/images/blog_images/blog_1.webp', Astro.site).toString();
-const waLink = `https://wa.me/${site.business.whatsapp}`;
-
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'BlogPosting',
-  headline: 'Top 5 Affordable Pizza Spots in Sundargarh',
-  image: ogImage,
-  author: { '@type': 'Organization', name: site.business.name },
-  publisher: {
-    '@type': 'Organization',
-    name: site.business.name,
-    logo: {
-      '@type': 'ImageObject',
-      url: new URL('/static/images/brand_images/The%20Oven%20vibe_logo.webp', Astro.site).toString(),
-    },
-  },
-  datePublished: '2024-05-15',
-  description: 'Sundargarh is buzzing with pizza spots that bring big flavors at small prices.',
+  'Where to get pizza in Sundargarh without overspending — the places locals actually use, the price band to expect at each, and how to keep the bill down.';
+const image = {
+  url: abs('/static/images/blog_images/blog_1.webp'),
+  width: 1024,
+  height: 1024,
+  alt: 'Affordable pizza spots in Sundargarh',
 };
+const path = '/blog/affordable-pizza/';
 ---
 
-<Layout title={title} description={description}>
-  <Fragment slot="head">
-    <meta
-      name="keywords"
-      content="affordable pizza Sundargarh, best pizza in Sundargarh, cheap pizza places, The Oven Vibe, Chicken King, Flavours, Jay Vijay, Chaat Puchka"
-    />
-    <meta property="og:type" content="article" />
-    <meta property="og:title" content={title} />
-    <meta
-      property="og:description"
-      content="Discover the top 5 affordable pizza spots in Sundargarh. Budget-friendly and delicious options."
-    />
-    <meta property="og:url" content={pageUrl} />
-    <meta property="og:image" content={ogImage} />
-    <meta name="twitter:card" content="summary_large_image" />
-    <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
-  </Fragment>
-
+<Layout
+  title={headline}
+  description={description}
+  ogType="article"
+  image={image}
+  jsonLd={[
+    blogPostingJsonLd({
+      headline,
+      description,
+      path,
+      image: image.url,
+      datePublished: '2024-05-15',
+    }),
+    breadcrumbJsonLd([
+      { name: 'Blog', path: '/blog/' },
+      { name: 'Affordable Pizza', path },
+    ]),
+  ]}
+>
   <BlogPostLayout
     line1="AFFORDABLE"
     lineGradient="PIZZA."
-    subtitle="Top 5 affordable pizza spots in Sundargarh. Big flavors at small prices."
+    subtitle="Where to eat pizza in Sundargarh without overspending."
   >
     <picture>
       <source type="image/avif" srcset="/static/images/blog_images/blog_1.avif" />
       <source type="image/webp" srcset="/static/images/blog_images/blog_1.webp" />
       <img
         src="/static/images/blog_images/blog_1.webp"
-        alt="Affordable pizza spots in Sundargarh featuring cheesy pizzas and garlic bread"
+        alt="Affordable pizza spots in Sundargarh"
         class="blog-img"
         loading="lazy"
-        width="1200"
-        height="675"
+        width="1024"
+        height="1024"
       />
     </picture>
 
     <p>
-      Sundargarh is buzzing with pizza spots that bring big flavors at small prices. From crispy
-      crusts to cheesy toppings, these places are favorites for students, families, and anyone
-      craving quality food without spending too much.
+      Sundargarh has more decent pizza than it gets credit for, and most of it is cheaper than people
+      assume. Below are the places locals actually order from, with the price band you can expect for
+      two people, so you can pick by budget rather than by guesswork.
     </p>
 
-    <h3>The Top 5 Affordable Pizza Joints 🍴</h3>
+    <h3>Where to order from</h3>
 
     <div class="blog-list">
-      <h4>1. The Oven Vibe (Must-Try!)</h4>
+      <h4>The Oven Vibe</h4>
       <p>
-        Say hello to <strong>The Oven Vibe</strong> – the place where cravings meet creativity, and
-        every bite comes with a whole lot of vibe! It is Sundargarh's very own cloud kitchen,
-        cooking up happiness and delivering it straight to the customer's door.
-        <br /><strong>Location:</strong> Bijaya Talkies Road, In front of Subasini Clinic,
-        Sundargarh, Odisha 770001 <br /><strong>Why It's Affordable:</strong> Food starting at less
-        than a movie ticket <br /><strong>Must-Try:</strong> Herb Paneer Delight + Cheesy Garlic
-        Toast <br /><strong>Price for Two:</strong> Under ₹350
+        Our own kitchen, so treat this as a declared interest. We are a 100% pure veg cloud kitchen —
+        no dine-in, everything baked to order and sent out for takeaway or delivery.
+        <br /><strong>Location:</strong> {`${site.business.address.street}, ${site.business.address.locality}, ${site.business.address.region} ${site.business.address.postal_code}`}
+        <br /><strong>Why it is affordable:</strong> no dining hall to pay for, so the money goes into
+        cheese and paneer
+        <br /><strong>Worth trying:</strong> Herb Paneer Delight Pizza with Cheesy Garlic Bread Toast
+        <br /><strong>Price for two:</strong> Under ₹350
       </p>
 
-      <h4>2. Chicken King</h4>
+      <h4>Flavours</h4>
       <p>
-        Craving something crispy, juicy, and full of flavor? <strong>Chicken King</strong> is
-        Sundargarh's favorite spot for chicken that hits all the right vibes. Whether it's a quick
-        bite, chilling with friends, or a late-night snack, they've got it covered.
-        <br /><strong>Location:</strong> Mission Rd, Sundargarh, Odisha 770001
-        <br /><strong>Why It's Affordable:</strong> Cheesy slices, less wallet crisis
-        <br /><strong>Must-Try:</strong> Chicken Sausage Pizza + Chicken Popcorn
-        <br /><strong>Price for Two:</strong> Under ₹600
+        A good option if you are bored of the same three toppings — their range is wider than most
+        places in town.
+        <br /><strong>Location:</strong> Hariom Colony, Sundargarh, Odisha 770001
+        <br /><strong>Why it is affordable:</strong> generous portions for the price
+        <br /><strong>Worth trying:</strong> Paneer Italian Pizza, Veg Italian Pizza
+        <br /><strong>Price for two:</strong> Under ₹450
       </p>
 
-      <h4>3. Flavours</h4>
+      <h4>Jay Vijay</h4>
       <p>
-        For pizza lovers tired of the same old toppings, <strong>Flavours</strong> delivers
-        adventure in every slice. Their flavor-packed pizzas keep Sundargarh foodies coming back
-        for more. <br /><strong>Location:</strong> Hariom Colony, Sundargarh, Odisha 770001
-        <br /><strong>Why It's Affordable:</strong> Every slice is a new story of taste
-        <br /><strong>Must-Try:</strong> Paneer Italian Pizza + Veg Italian Pizza
-        <br /><strong>Price for Two:</strong> Under ₹450
+        A quick, pocket-friendly all-rounder that students and families both use.
+        <br /><strong>Location:</strong> Rourkela Rd, near SBI Bank, Sundargarh, Odisha 770001
+        <br /><strong>Why it is affordable:</strong> low prices across the whole menu, not just on
+        pizza
+        <br /><strong>Worth trying:</strong> Paneer Tandoori Pizza, Veg Mexican Pizza
+        <br /><strong>Price for two:</strong> Under ₹450
       </p>
 
-      <h4>4. Jay Vijay</h4>
+      <h4>Chaat Puchka</h4>
       <p>
-        <strong>Jay Vijay</strong> is Sundargarh's go-to for quick, tasty, and pocket-friendly
-        meals. Known for its vibrant flavors, it's a hit with students and families alike.
-        <br /><strong>Location:</strong> Rourkela Rd, Near SBI Bank, Sundargarh, Odisha 770001
-        <br /><strong>Why It's Affordable:</strong> Big Taste – Small Spend
-        <br /><strong>Must-Try:</strong> Paneer Tandoori Pizza + Veg Mexican Pizza
-        <br /><strong>Price for Two:</strong> Under ₹450
-      </p>
-
-      <h4>5. Chaat Puchka</h4>
-      <p>
-        <strong>Chaat Puchka</strong> is all about tangy, spicy, and addictive flavors. Beyond
-        street food, their pizzas are loved for bold taste and budget-friendly pricing.
+        Better known for street food, but the pizzas are worth a look if you like bold, tangy
+        flavours.
         <br /><strong>Location:</strong> Raigarh - Sundargarh Rd, Sundargarh, Odisha 770001
-        <br /><strong>Why It's Affordable:</strong> Hunger satisfaction without hurting the pocket
-        <br /><strong>Must-Try:</strong> Chicken Pizza + Paneer Capsicum Pizza
-        <br /><strong>Price for Two:</strong> Under ₹650
+        <br /><strong>Why it is affordable:</strong> street-food pricing applied to pizza
+        <br /><strong>Worth trying:</strong> Paneer Capsicum Pizza
+        <br /><strong>Price for two:</strong> Under ₹650
       </p>
     </div>
+
+    <h3>How to keep the bill down anywhere</h3>
+    <ul>
+      <li>Order a combo rather than the same items separately — it is almost always cheaper.</li>
+      <li>Share one pizza and one large side between two people instead of buying two pizzas.</li>
+      <li>
+        In a group order, push past ₹{site.delivery.free_above} with us and the delivery charge goes
+        to zero.
+      </li>
+      <li>Collect it yourself if you are nearby — takeaway costs nothing extra.</li>
+    </ul>
 
     <div class="highlight-box">
       <p>
-        <strong>💡 Pro Tip:</strong> Check <em>Swiggy</em> & <em>Zomato</em> for local discounts—many
-        of these joints run exclusive deals online!
+        <strong>Pro tip:</strong> check <em>Swiggy</em> and <em>Zomato</em> before you order — several
+        of these places run app-only discounts that beat their counter price.
       </p>
     </div>
 
-    <a href={waLink} target="_blank" class="cta"> 👉 Order now on WhatsApp & enjoy your pizza </a>
+    <h3>The last slice</h3>
+    <p>
+      Cheap pizza and good pizza are not opposites in this town.
+      See our <a href="/menu/">full menu with prices</a>,
+      or check <a href="/sundargarh/">what delivery costs in your part of Sundargarh</a>.
+    </p>
+
+    <a href={LINKS.whatsapp} target="_blank" rel="noopener noreferrer" class="cta">
+      Order on WhatsApp
+    </a>
   </BlogPostLayout>
 </Layout>

@@ -8,6 +8,8 @@
     "whatsapp": "919692261138",
     "email": "theovenvibe@gmail.com",
     "address": {
+      "_comment": "'street' must match the Google Business Profile address word-for-word. Carried over from the v1 site; verify it against GBP and fix it HERE (one place) if it differs.",
+      "street": "Bijaya Talkies Road, In front of Subasini Clinic",
       "locality": "Sundargarh",
       "region": "Odisha",
       "postal_code": "770001",

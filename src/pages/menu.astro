@@ -9,12 +9,22 @@
 import Layout from '../layouts/Layout.astro';
 import MenuAccordions from '../components/MenuAccordions.astro';
 import AddonsAccordion from '../components/AddonsAccordion.astro';
-import { site } from '../lib/data';
+import { site, categories } from '../lib/data';
+import { breadcrumbJsonLd, restaurantJsonLd, LOW_PRICE, LINKS } from '../lib/seo';
+
+const title = 'Full Menu & Prices | The Oven Vibe Sundargarh';
+const description = `Every pure veg item we cook in Sundargarh, with prices — pizza from ₹${LOW_PRICE}, burgers, fried rice, pasta, grilled sandwiches, Maggi, fries and combos.`;
+const categoryLine = categories.map((c) => c.name).join(' · ');
 ---
 
 <Layout
-  title={`Menu — ${site.business.name} Sundargarh`}
-  description={`Full menu: pizza, burgers, fried rice, pasta & more. ${site.delivery.hook}.`}
+  title={title}
+  description={description}
+  ogTitle="The Oven Vibe — Full Pure Veg Menu, Sundargarh"
+  jsonLd={[
+    restaurantJsonLd(),
+    breadcrumbJsonLd([{ name: 'Menu', path: '/menu/' }]),
+  ]}
 >
   <main class="main">
     <section class="hero hero-mini">
@@ -29,7 +39,26 @@ import { site } from '../lib/data';
             <span class="animate-on-scroll">FULL</span>
             <span class="text-gradient animate-on-scroll delay-100">MENU.</span>
           </h1>
-          <p class="hero-text animate-on-scroll delay-200">{site.delivery.free_above_note}</p>
+          <p class="animate-on-scroll delay-100" style="margin-bottom: 1.5rem;">
+            <span class="veg-badge">100% Pure Veg</span>
+          </p>
+          <p class="hero-text animate-on-scroll delay-200">
+            {categoryLine}. {site.delivery.free_above_note}
+          </p>
+          <div class="hero-actions animate-on-scroll delay-300">
+            <a
+              href={`tel:${site.business.phone}`}
+              class="btn btn-primary btn-lg"
+              aria-label={`Call ${site.business.name} at ${site.business.phone_display} to order`}
+              >Call the Kitchen</a
+            >
+            <a
+              href={LINKS.whatsapp}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn-secondary btn-lg">Order on WhatsApp</a
+            >
+          </div>
         </div>
       </div>
     </section>

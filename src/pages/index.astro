@@ -1,104 +1,31 @@
 ---
-// Home — ported verbatim from v1's index.html (PRD §8 superseded block).
-// Menu/combos/add-ons now render at build time from menu.json instead of
-// client-side after fetch() — the one allowed structural change (Phase 3).
+// Home — v1's layout (PRD §8 superseded block) with the Phase 4 copy pass
+// applied: no emoji anywhere, premium/direct CTA voice, and the pure-veg
+// trust marker (owner-approved visible changes, 2026-07-30).
+// Menu/combos/add-ons render at build time from menu.json (Phase 3).
 import Layout from '../layouts/Layout.astro';
 import MenuAccordions from '../components/MenuAccordions.astro';
 import AddonsAccordion from '../components/AddonsAccordion.astro';
 import { site } from '../lib/data';
+import { LINKS, restaurantJsonLd } from '../lib/seo';
 
-const title = `${site.business.name} — Sundargarh, Odisha`;
+const title = 'Pure Veg Pizza & Burgers in Sundargarh | The Oven Vibe';
 const description =
-  'The Oven Vibe — Oven-baked takeaway from Sundargarh. Order via WhatsApp.';
-const ogImage = new URL(
-  '/static/images/brand_images/The%20Oven%20vibe_logo.webp',
-  Astro.site,
-).toString();
-const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
+  '100% pure veg kitchen in Sundargarh 770001. Oven-baked pizza, burgers, fried rice and snacks. Delivery from ₹29, free above ₹599. Call to order.';
 
 const localPhone = site.business.phone.replace('+91', '');
 const deliverySlabsLine = site.delivery.slabs
   .map((s) => `₹${s.charge} for ${s.label}`)
   .join(', ');
-
-const restaurantJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': ['Restaurant', 'LocalBusiness', 'FoodDelivery'],
-  name: site.business.name,
-  image: ogImage,
-  description:
-    'Oven-baked pizzas, burgers, and takeaway food in Sundargarh, Odisha. Order via WhatsApp, Zomato, or Swiggy.',
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: site.business.address.locality,
-    addressLocality: site.business.address.locality,
-    addressRegion: site.business.address.region,
-    postalCode: site.business.address.postal_code,
-    addressCountry: site.business.address.country,
-  },
-  geo: {
-    '@type': 'GeoCoordinates',
-    latitude: String(site.business.address.latitude),
-    longitude: String(site.business.address.longitude),
-  },
-  telephone: site.business.phone.replace('+91', '+91-'),
-  email: site.business.email,
-  servesCuisine: ['Pizza', 'Burger', 'Fried Rice', 'Fries', 'Snacks', 'Pasta', 'Sandwich'],
-  url: `${Astro.site}`,
-  // PRD §9: a human-readable menu page, not a duplicated raw JSON file —
-  // menu.json stays the single source of truth (PRD §6), so the structured
-  // data points at the page that's always in sync with it.
-  menu: new URL('/menu/', Astro.site).toString(),
-  priceRange: '₹69-₹349',
-  openingHours: `${site.business.hours.days} ${site.business.hours.open}-${site.business.hours.close}`,
-  // PRD §3 binding: v1's aggregateRating (4.9/120) and fake "Local Customer"
-  // reviews were fabricated and never come back. This is the real GBP rating.
-  aggregateRating: {
-    '@type': 'AggregateRating',
-    ratingValue: String(site.rating.value),
-    reviewCount: String(site.rating.count),
-  },
-  offers: {
-    '@type': 'AggregateOffer',
-    priceCurrency: 'INR',
-    lowPrice: '69',
-    highPrice: '349',
-    availability: 'https://schema.org/InStock',
-    url: `${Astro.site}`,
-    offerCount: '50',
-  },
-  sameAs: [
-    site.business.instagram,
-    `https://wa.me/${site.business.whatsapp}`,
-    'https://www.google.com/maps?q=22%C2%B007\'01.0%22N+84%C2%B002\'16.5%22E',
-    'https://link.zomato.com/xqzv/rshare?id=11990877930563aa9',
-    'https://www.swiggy.com/direct/brand/710285?source=swiggy-direct&subSource=generic',
-  ],
-};
 ---
 
-<Layout title={title} description={description} home={true}>
-  <Fragment slot="head">
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content={pageUrl} />
-    <meta property="og:title" content={`${site.business.name} — Sundargarh's Best Pizza & Burgers`} />
-    <meta
-      property="og:description"
-      content="Oven-baked perfection delivered to your door. Order via WhatsApp in Sundargarh, Odisha."
-    />
-    <meta property="og:image" content={ogImage} />
-
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content={pageUrl} />
-    <meta property="twitter:title" content={`${site.business.name} — Sundargarh's Best Pizza & Burgers`} />
-    <meta
-      property="twitter:description"
-      content="Oven-baked perfection delivered to your door. Order via WhatsApp in Sundargarh, Odisha."
-    />
-    <meta property="twitter:image" content={ogImage} />
-
-    <script type="application/ld+json" is:inline set:html={JSON.stringify(restaurantJsonLd)} />
-  </Fragment>
+<Layout
+  title={title}
+  description={description}
+  home={true}
+  ogTitle="The Oven Vibe — 100% Pure Veg Kitchen in Sundargarh"
+  jsonLd={[restaurantJsonLd()]}
+>
 
   <!-- HERO SECTION -->
   <section class="hero">
@@ -112,6 +39,9 @@ const restaurantJsonLd = {
         <div class="hero-badge animate-on-scroll">
           <span class="pulse-dot"></span> Serving {site.business.address.locality} {site.business.address.postal_code}
         </div>
+        <p class="animate-on-scroll delay-100" style="margin: -1.75rem 0 2rem;">
+          <span class="veg-badge">100% Pure Veg</span>
+        </p>
 
         <h1 class="hero-display">
           <span class="line-1 animate-on-scroll delay-100">HANDCRAFTED</span>
@@ -146,38 +76,27 @@ const restaurantJsonLd = {
         </div>
 
         <p class="hero-text animate-on-scroll delay-400">
-          Experience the premium taste of artisan pizzas, gourmet fried rice, and sides.
-          Delivered hot to your doorstep in Sundargarh.
+          Oven-baked pizzas, fried rice bowls, grilled sandwiches and sides — cooked to order
+          in a 100% pure vegetarian kitchen and sent out hot across Sundargarh.
         </p>
 
         <div class="hero-actions animate-on-scroll delay-500">
-          <a
-            href="https://link.zomato.com/xqzv/rshare?id=11990877930563aa9"
-            target="_blank"
-            class="btn btn-zomato btn-lg">Order on Zomato</a
-          >
-          <a
-            href="https://www.swiggy.com/direct/brand/710285?source=swiggy-direct&subSource=generic"
-            target="_blank"
-            class="btn btn-swiggy btn-lg">Order on Swiggy</a
-          >
-          <a href="#menu" class="btn btn-secondary btn-lg">View Menu</a>
+          <a href={LINKS.zomato} target="_blank" class="btn btn-zomato btn-lg">Order on Zomato</a>
+          <a href={LINKS.swiggy} target="_blank" class="btn btn-swiggy btn-lg">Order on Swiggy</a>
+          <a href="#menu" class="btn btn-secondary btn-lg">See the Menu</a>
         </div>
 
         <div class="hero-trust animate-on-scroll delay-500">
           <div class="trust-item">
-            <span class="icon">⚡</span>
             <span class="label">20 min takeaway</span>
           </div>
           <div class="trust-divider"></div>
           <div class="trust-item">
-            <span class="icon">🛵</span>
             <span class="label">30-45 min delivery</span>
           </div>
           <div class="trust-divider"></div>
           <div class="trust-item">
-            <span class="icon">⭐</span>
-            <span class="label">{site.rating.value}/5 Rating</span>
+            <span class="label">{site.rating.value}/5 on Google ({site.rating.count} reviews)</span>
           </div>
         </div>
       </div>
@@ -200,29 +119,29 @@ const restaurantJsonLd = {
       <div class="container">
         <div style="text-align: center; margin-bottom: 3rem;">
           <h2>Why The Oven Vibe?</h2>
-          <p class="lead">We don't just make food, we craft experiences.</p>
+          <p class="lead">A pure veg kitchen in Sundargarh that cooks every order fresh.</p>
         </div>
 
         <div class="grid-3">
           <article class="feature-card animate-on-scroll">
-            <h3>🔥 Oven-Crafted Freshness</h3>
+            <h3>Baked to order</h3>
             <p>
-              Every bite is hot, fresh and baked to perfection — balanced flavours that keep
-              customers coming back.
+              Nothing sits waiting. Your pizza goes into the oven after you order, so it reaches
+              you hot with the cheese still stretching.
             </p>
           </article>
           <article class="feature-card animate-on-scroll delay-100">
-            <h3>⚡ Quick Takeaway</h3>
+            <h3>100% pure veg</h3>
             <p>
-              Order 20 minutes prior & collect hot — strictly takeaway service designed for speed
-              and convenience.
+              One kitchen, one standard. No meat, no shared equipment, no exceptions — safe for
+              families, festivals and anyone who eats strictly vegetarian.
             </p>
           </article>
           <article class="feature-card animate-on-scroll delay-200">
-            <h3>❤️ Loved in Sundargarh</h3>
+            <h3>Made in Sundargarh</h3>
             <p>
-              Made with care for our community in Sundargarh, Odisha. We are a local startup with
-              global standards.
+              We are a local kitchen serving Sundargarh {site.business.address.postal_code} and 8 km
+              around it. Call us and a person here picks up.
             </p>
           </article>
         </div>
@@ -231,17 +150,28 @@ const restaurantJsonLd = {
 
     <!-- PARTY MARKETING BANNER -->
     <section class="cta-section animate-on-scroll" id="party">
-      <h2>Party Orders 🎉</h2>
+      <h2>Party & Bulk Orders</h2>
       <p>
-        Hosting a party? Get platters, combos & bulk deals from us. Hot, ready-to-serve takeaway —
-        perfect for friends, family or office events.
+        Birthdays, office lunches, small functions — we build pure veg platters and combos to
+        your headcount and budget. Tell us the date, the number of people and what you want, and
+        we will send back a price.
       </p>
       <a
         class="btn btn-primary"
         style="background: white; color: var(--color-secondary);"
-        href={`https://wa.me/${site.business.whatsapp}`}
-        target="_blank">Get Party Quote on WhatsApp</a
+        href={`tel:${site.business.phone}`}
+        aria-label={`Call ${site.business.name} at ${site.business.phone_display} for a party quote`}
+        >Call the Kitchen: {site.business.phone_display}</a
       >
+      <p style="margin-top: 1.25rem; margin-bottom: 0; font-size: 1rem;">
+        Prefer to type? <a
+          href={`${LINKS.whatsapp}?text=${encodeURIComponent('Hi! I would like a quote for a party order.')}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          style="color: white; font-weight: 700; text-decoration: underline;"
+          >Get a party quote on WhatsApp</a
+        >
+      </p>
     </section>
 
     <!-- LATEST BLOGS -->
@@ -261,7 +191,7 @@ const restaurantJsonLd = {
                 <source type="image/webp" srcset="/static/images/blog_images/blog_5.webp" />
                 <img
                   src="/static/images/blog_images/blog_5.webp"
-                  alt="Cloud Kitchen Future"
+                  alt="Why cloud kitchens are the future of food in Sundargarh"
                   class="blog-card-img"
                   loading="lazy"
                   width="400"
@@ -292,7 +222,7 @@ const restaurantJsonLd = {
                 <source type="image/webp" srcset="/static/images/blog_images/blog_4.webp" />
                 <img
                   src="/static/images/blog_images/blog_4.webp"
-                  alt="Pizza Under 300"
+                  alt="Pure veg pizza under 300 rupees in Sundargarh"
                   class="blog-card-img"
                   loading="lazy"
                   width="400"
@@ -323,7 +253,7 @@ const restaurantJsonLd = {
                 <source type="image/webp" srcset="/static/images/blog_images/blog_3.webp" />
                 <img
                   src="/static/images/blog_images/blog_3.webp"
-                  alt="Best Late-Night Food"
+                  alt="Late-night food options in Sundargarh after 9 PM"
                   class="blog-card-img"
                   loading="lazy"
                   width="400"
