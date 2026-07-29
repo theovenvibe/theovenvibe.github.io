@@ -1,19 +1,19 @@
 ---
 // /blog/late-night-food/ — AGENTS.md-bound slug (v1 URL stub points here).
 //
-// Phase 4 honesty fix: v1's version of this post promised "late-night
-// availability" and "fresh food, even at night", while site.config.json says
-// the kitchen closes at 21:00. Search engines and customers both punish that
-// kind of contradiction, so the post now targets the same query truthfully —
-// the craving is real, the closing time is 9 PM, here is how to plan around it.
+// Hours corrected by owner 2026-07-30: the kitchen is open till 11:30 PM
+// (config is the source of truth), and AFTER close it still takes BIG orders
+// by phone — higher charges, limited late menu (mostly pizza, sandwiches,
+// fries). That makes this post a genuine "latest kitchen in town" claim
+// instead of the earlier plan-around-9-PM framing.
 import Layout from '../../layouts/Layout.astro';
 import BlogPostLayout from '../../components/BlogPostLayout.astro';
 import { site } from '../../lib/data';
 import { LINKS, abs, blogPostingJsonLd, breadcrumbJsonLd } from '../../lib/seo';
 
-const headline = 'Late-Night Food in Sundargarh: Order Before 9 PM';
+const headline = 'Late-Night Food in Sundargarh: We Cook Till 11:30 PM';
 const description =
-  'Options thin out fast after 9 PM in Sundargarh. How to plan a late dinner, what to order so it still tastes good an hour later, and when we close.';
+  'Most Sundargarh kitchens shut by 9. The Oven Vibe takes orders till 11:30 PM every day — and arranges big late-night orders by phone even after that.';
 const image = {
   url: abs('/static/images/og/blog_3.jpg'),
   width: 1200,
@@ -67,16 +67,17 @@ const path = '/blog/late-night-food/';
 
     <p>
       Anyone who has been hungry in Sundargarh at half past nine knows the problem: the hunger is at
-      full strength and the options are not. Shutters are down, kitchens are cleaned, and whatever is
-      still open is not what you actually wanted.
+      full strength and the options are not. Shutters are down, kitchens are cleaned — and this is
+      exactly the hour our ovens are still on.
     </p>
 
     <h3>First, the honest part about our timings</h3>
     <p>
-      The Oven Vibe is open {site.business.hours.display}. We are not a 2 AM kitchen, and we would
-      rather say so than take an order we cannot cook well. If you want a proper late dinner from us,
-      the trick is to order before the craving peaks — place it by about 8:30 PM and you are
-      comfortably inside the window.
+      The Oven Vibe is open {site.business.hours.display} — one of the latest-running kitchens in
+      town. Place your order by about 11 PM and you are comfortably inside the window for a hot
+      delivery. And if the party runs past closing: we take <strong>big orders even after 11:30
+      PM</strong> — call to arrange it. Late-night charges are higher and the late menu is limited
+      (mostly pizzas, grilled sandwiches and fries), but the oven is genuinely still on.
     </p>
 
     <h3>Who orders late, and why planning helps</h3>
@@ -84,7 +85,7 @@ const path = '/blog/late-night-food/';
       <li>Hostel students and bachelors, after study or a shift</li>
       <li>Night-shift workers eating before or after work</li>
       <li>Movie nights and gaming sessions that run long</li>
-      <li>Anyone who skipped a proper dinner and regretted it at 9 PM</li>
+      <li>Anyone who skipped a proper dinner and regretted it near midnight</li>
     </ul>
 
     <h3>What to order for later, not just for now</h3>
@@ -114,7 +115,11 @@ const path = '/blog/late-night-food/';
     <div class="highlight-box">
       <h3>Ordering late, done right</h3>
       <ul>
-        <li>Call or message by 8:30 PM for a comfortable evening delivery.</li>
+        <li>Call or message by 11 PM for a comfortable same-night delivery.</li>
+        <li>
+          After 11:30 PM: big orders only, arranged by phone — higher charges, limited menu (pizzas,
+          sandwiches, fries).
+        </li>
         <li>
           A group order past ₹{site.delivery.free_above} pays no delivery charge, which is usually the
           cheapest way to feed four people.
@@ -128,10 +133,10 @@ const path = '/blog/late-night-food/';
 
     <h3>The last bite</h3>
     <p>
-      Late hunger is easier to solve with five minutes of planning than with a search at 10 PM. Keep
-      the <a href="/menu/">menu</a> handy,
-      know <a href="/sundargarh/">the delivery charge for your area</a>, and put the order in before the
-      kitchen closes.
+      Late hunger in Sundargarh finally has an answer that isn't biscuits. Keep the
+      <a href="/menu/">menu</a> handy, know
+      <a href="/sundargarh/">the delivery charge for your area</a>, and remember the two numbers that
+      matter: regular orders till 11:30 PM, big orders by phone after.
     </p>
 
     <a href={`tel:${site.business.phone}`} class="cta">
