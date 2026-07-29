@@ -1,0 +1,40 @@
+---
+/**
+ * Generic accordion shell — matches the DOM `createAccordionItem()` built
+ * client-side in v1's script.js (header with title+subtitle+chevron icon,
+ * collapsible content). Used for the Combos accordion, each menu category,
+ * and the Add-ons accordion. Toggle behaviour is wired by src/scripts/site.ts
+ * (independent open/close per item — NOT the FAQ page's close-others variant).
+ */
+interface Props {
+  title: string;
+  subtitle: string;
+  id?: string;
+}
+const { title, subtitle, id } = Astro.props;
+---
+
+<div class="accordion-item" id={id}>
+  <div class="accordion-header">
+    <div class="accordion-title">
+      <h3>{title}</h3>
+      <span class="accordion-subtitle">{subtitle}</span>
+    </div>
+    <svg
+      class="accordion-icon"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <polyline points="6 9 12 15 18 9"></polyline>
+    </svg>
+  </div>
+  <div class="accordion-content">
+    <slot />
+  </div>
+</div>

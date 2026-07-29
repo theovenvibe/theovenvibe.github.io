@@ -1,0 +1,10 @@
+---
+// Sticky WhatsApp button — ported verbatim from v1 (every page except FAQ,
+// which never had it in v1 — see faq.astro).
+import { site } from '../lib/data';
+const waLink = `https://wa.me/${site.business.whatsapp}`;
+---
+
+<a href={waLink} class="sticky-wa-btn" target="_blank" aria-label="Chat on WhatsApp">
+  <img src="/static/images/svg/whatsapp.svg" alt="WhatsApp" loading="lazy" />
+</a>

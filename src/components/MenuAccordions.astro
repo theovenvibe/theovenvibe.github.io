@@ -1,0 +1,63 @@
+---
+/**
+ * The #menu section's contents on the home page: Combos & Offers accordion
+ * first, then one accordion per category — the exact order and structure
+ * `script.js` built client-side after `fetch('menu.json')`. Now build-time
+ * from src/lib/data.ts (Phase 3 invisible improvement — no more empty
+ * section popping in after load).
+ */
+import AccordionItem from './AccordionItem.astro';
+import MenuCard from './MenuCard.astro';
+import { menu, categories, availableCombos, imageFor } from '../lib/data';
+
+const codeToName = new Map<string, string>();
+for (const item of menu.Menu_Items) {
+  codeToName.set(item.product_code, item.display_name || item.item_name);
+}
+
+function comboDescription(combo: (typeof availableCombos)[number]): string {
+  if (combo.description) {
+    return combo.description.toLowerCase().includes('includes')
+      ? combo.description
+      : `Includes: ${combo.description}`;
+  }
+  const readable = combo.items_included.map((code) => codeToName.get(code) ?? code).join(', ');
+  return `Includes: ${readable}`;
+}
+---
+
+{
+  availableCombos.length > 0 && (
+    <AccordionItem title="Combos & Offers" subtitle={`${availableCombos.length} offers`} id="sec-combos">
+      <div class="menu-items combo-list">
+        {availableCombos.map((c) => (
+          <MenuCard
+            img={imageFor(c)}
+            title={c.combo_name}
+            description={comboDescription(c)}
+            price={c.combo_price}
+          />
+        ))}
+      </div>
+    </AccordionItem>
+  )
+}
+
+{
+  categories.map(({ name, items }) => (
+    <AccordionItem title={name} subtitle={`${items.length} items`}>
+      <div class="category-group">
+        <div class="menu-items">
+          {items.map((item) => (
+            <MenuCard
+              img={imageFor(item)}
+              title={item.display_name || item.item_name}
+              description={item.description}
+              price={item.price}
+            />
+          ))}
+        </div>
+      </div>
+    </AccordionItem>
+  ))
+}
