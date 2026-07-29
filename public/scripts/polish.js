@@ -5,7 +5,7 @@
   if (!window.matchMedia('(pointer: fine)').matches) return;
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-  var SELECTOR = '.menu-card, .feature-card, .blog-card';
+  var SELECTOR = '.menu-card, .feature-card, .blog-card, .accordion-item, .highlight-box, .hero-delivery-info';
   var pending = false;
   var lastEvent = null;
 

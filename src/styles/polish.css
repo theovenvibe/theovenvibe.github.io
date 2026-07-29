@@ -12,12 +12,18 @@
    (pointer:fine devices only). Soft red→gold light inside the card. */
 .menu-card,
 .feature-card,
-.blog-card {
+.blog-card,
+.accordion-item,
+.highlight-box,
+.hero-delivery-info {
   position: relative;
 }
 .menu-card::after,
 .feature-card::after,
-.blog-card::after {
+.blog-card::after,
+.accordion-item::after,
+.highlight-box::after,
+.hero-delivery-info::after {
   content: '';
   position: absolute;
   inset: 0;
@@ -35,14 +41,19 @@
 }
 .menu-card:hover::after,
 .feature-card:hover::after,
-.blog-card:hover::after {
+.blog-card:hover::after,
+.accordion-item:hover::after,
+.highlight-box:hover::after,
+.hero-delivery-info:hover::after {
   opacity: 1;
 }
 
 /* Depth: warmer border + richer layered shadow on hover (v1's lift kept) */
 .menu-card:hover,
 .feature-card:hover,
-.blog-card:hover {
+.blog-card:hover,
+.highlight-box:hover,
+.hero-delivery-info:hover {
   border-color: rgba(230, 57, 70, 0.28);
   box-shadow:
     0 2px 6px rgba(17, 24, 39, 0.06),
@@ -82,8 +93,7 @@
 }
 
 /* Buttons: satisfying press + gentle glow-on-hover (colors unchanged) */
-.btn-primary,
-.btn-secondary,
+.btn,
 .order-now-btn {
   transition:
     transform 0.18s ease,
@@ -91,14 +101,19 @@
     filter 0.25s ease,
     background-color var(--transition-base);
 }
-.btn-primary:hover,
+.btn:hover,
 .order-now-btn:hover {
-  filter: brightness(1.05) saturate(1.05);
+  filter: brightness(1.05) saturate(1.04);
 }
-.btn-primary:active,
-.btn-secondary:active,
+.btn:active,
 .order-now-btn:active {
   transform: translateY(0) scale(0.965);
+}
+
+/* Party/CTA banner: slow gradient drift (reuses tov-shimmer) */
+.cta-section {
+  background-size: 180% 180%;
+  animation: tov-shimmer 14s ease-in-out infinite;
 }
 
 /* WhatsApp FAB: brief attention pulse every ~9s (2 rings, then rest) */
@@ -126,19 +141,22 @@
 /* ---------- accessibility kill-switch (binding) ---------- */
 @media (prefers-reduced-motion: reduce) {
   .line-3.text-gradient,
-  .sticky-wa-btn {
+  .sticky-wa-btn,
+  .cta-section {
     animation: none;
   }
   .menu-card::after,
   .feature-card::after,
-  .blog-card::after {
+  .blog-card::after,
+  .accordion-item::after,
+  .highlight-box::after,
+  .hero-delivery-info::after {
     display: none;
   }
   .menu-card:hover .menu-card-img {
     transform: none;
   }
-  .btn-primary:active,
-  .btn-secondary:active,
+  .btn:active,
   .order-now-btn:active {
     transform: none;
   }
