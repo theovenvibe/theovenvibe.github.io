@@ -1,0 +1,64 @@
+---
+/**
+ * Shared hero-mini + article wrapper for the 5 blog posts — the markup is
+ * identical across all 5 in v1 (only the two heading spans + subtitle +
+ * body differ). See src/pages/blog/*.astro for the SEO head tags, which do
+ * vary per post and are handled at the page level, not here.
+ *
+ * `doubleWrapHeroContainer`: v1's blog-pizza-under-300.html has a genuine
+ * authoring bug — `<div class="hero-container">` is opened twice in a row
+ * (copy-paste artifact) — which doubles that element's horizontal padding
+ * and reflows the hero text slightly narrower on that one post only. It's
+ * faithfully reproduced here (screenshot-verified against the live page)
+ * rather than "fixed", per the Phase 3 pixel-parity mandate; every other
+ * post passes `false` (the default).
+ */
+interface Props {
+  line1: string;
+  lineGradient: string;
+  subtitle: string;
+  doubleWrapHeroContainer?: boolean;
+}
+const { line1, lineGradient, subtitle, doubleWrapHeroContainer = false } = Astro.props;
+---
+
+<!-- HERO SECTION -->
+<section class="hero hero-mini">
+  <div class="hero-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+  </div>
+  <div class="hero-container">
+    <Fragment set:html={doubleWrapHeroContainer ? '<div class="hero-container">' : ''} />
+    <a
+      href="/blog/"
+      class="read-more"
+      style="display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.9rem; margin-bottom: 1rem; margin-left: 0;"
+    >
+      ← Back to Blog
+    </a>
+    <div class="hero-content">
+      <div class="hero-badge animate-on-scroll">
+        <span>●</span> BLOG POST
+      </div>
+      <h1 class="hero-display" style="font-size: clamp(2rem, 5vw, 4rem);">
+        <span class="animate-on-scroll">{line1}</span>
+        <span class="text-gradient animate-on-scroll delay-100">{lineGradient}</span>
+      </h1>
+      <p class="hero-text animate-on-scroll delay-200">{subtitle}</p>
+    </div>
+    <Fragment set:html={doubleWrapHeroContainer ? '</div>' : ''} />
+  </div>
+</section>
+
+<!-- MAIN BLOG CONTAINER -->
+<main class="main">
+  <section class="section">
+    <div class="container" style="max-width: 800px;">
+      <article>
+        <slot />
+      </article>
+    </div>
+  </section>
+</main>

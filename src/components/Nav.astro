@@ -1,0 +1,157 @@
+---
+/**
+ * Sticky top nav + mobile overlay — ported verbatim from v1's nav markup
+ * (index.html / contact.html / faq.html / blog.html / sundargarh-770001.html
+ * / blog-*.html all share this exact block). PRD §8 superseded block: v1's
+ * markup, classes and copy are preserved as-is.
+ *
+ * v1 quirks preserved on purpose (do not "fix" — see PRD §8 pixel-parity rule):
+ * - the "active" class on the Contact nav-link appears ONLY on the Contact
+ *   page itself; no other page marks any nav item active (including Home).
+ * - the mobile overlay has 6 links on the home page (adds "Combos & Offers"
+ *   and "Sides & Add-ons") vs 4 links everywhere else.
+ * - on the home page, in-page links are bare hashes (#menu); everywhere else
+ *   they point back at the home route (/#menu) — same as v1's
+ *   "index.html#menu" pattern, translated to the new route path.
+ */
+import { site } from '../lib/data';
+
+interface Props {
+  home?: boolean;
+  activeContact?: boolean;
+}
+const { home = false, activeContact = false } = Astro.props;
+const menuHref = home ? '#menu' : '/#menu';
+const combosHref = home ? '#sec-combos' : '/#sec-combos';
+const addonsHref = home ? '#addonsSection' : '/#addonsSection';
+const partyHref = home ? '#party' : '/#party';
+const whyHref = home ? '#why' : '/#why';
+const waLink = `https://wa.me/${site.business.whatsapp}`;
+---
+
+<!-- STICKY NAVIGATION BAR -->
+<nav class="main-navbar" role="navigation">
+  <div class="nav-container">
+    <div class="nav-brand">
+      <a href="/" class="logo-link">
+        <picture>
+          <source
+            type="image/avif"
+            srcset="/static/images/brand_images/optimized/The_Oven_vibe_logo_128px.avif 128w,
+                  /static/images/brand_images/optimized/The_Oven_vibe_logo_48px.avif   48w"
+            sizes="(min-width: 900px) 48px, 48px"
+          />
+          <source
+            type="image/webp"
+            srcset="/static/images/brand_images/optimized/The_Oven_vibe_logo_128px.webp 128w,
+                  /static/images/brand_images/optimized/The_Oven_vibe_logo_48px.webp   48w"
+            sizes="(min-width: 900px) 48px, 48px"
+          />
+          <img
+            src="/static/images/brand_images/optimized/The_Oven_vibe_logo_128px.webp"
+            alt="The Oven Vibe logo"
+            class="logo-img"
+            loading="lazy"
+            width="48"
+            height="48"
+          />
+        </picture>
+      </a>
+      <span class="brand-text">{site.business.name}</span>
+    </div>
+
+    <ul class="nav-links" id="siteNav">
+      <li class="dropdown">
+        <div class="dropdown-trigger">
+          <a href={menuHref} class="nav-link">Menu</a>
+          <svg
+            class="dropdown-arrow"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+        <ul class="dropdown-menu">
+          <li><a href={menuHref} class="dropdown-item">All Items</a></li>
+          <li><a href={combosHref} class="dropdown-item">Combos & Offers</a></li>
+          <li><a href={addonsHref} class="dropdown-item">Sides & Add-ons</a></li>
+          <li><a href={partyHref} class="dropdown-item">Party Orders</a></li>
+        </ul>
+      </li>
+
+      <li><a href={whyHref} class="nav-link">Why Us</a></li>
+
+      <li class="dropdown">
+        <div class="dropdown-trigger">
+          <a href="/blog/" class="nav-link">Blog</a>
+          <svg
+            class="dropdown-arrow"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+        <ul class="dropdown-menu">
+          <li><a href="/blog/" class="dropdown-item">Latest Articles</a></li>
+          <li><a href="/blog/affordable-pizza/" class="dropdown-item">Affordable Pizza</a></li>
+          <li><a href="/blog/cloud-kitchen-future/" class="dropdown-item">Cloud Kitchens</a></li>
+        </ul>
+      </li>
+
+      <li><a href="/contact/" class:list={['nav-link', { active: activeContact }]}>Contact</a></li>
+
+      <li>
+        <a
+          href={waLink}
+          class="btn btn-primary"
+          style="color: white; padding: 0.5rem 1rem; font-size: 0.9rem"
+        >
+          Order Now
+        </a>
+      </li>
+    </ul>
+
+    <!-- MOBILE MENU TOGGLE -->
+    <div class="mobile-menu-toggle" id="mobileMenuToggle">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- MOBILE MENU OVERLAY -->
+<div class="mobile-menu-overlay" id="mobileMenuOverlay">
+  <div class="mobile-menu-header">
+    <span class="brand-text">{site.business.name}</span>
+    <button class="close-menu-btn" id="closeMenuBtn">&times;</button>
+  </div>
+  <ul class="mobile-nav-links">
+    <li><a href="/" class="mobile-nav-link">Home</a></li>
+    <li><a href={menuHref} class="mobile-nav-link">Menu</a></li>
+    {
+      home && (
+        <>
+          <li><a href={combosHref} class="mobile-nav-link">Combos & Offers</a></li>
+          <li><a href={addonsHref} class="mobile-nav-link">Sides & Add-ons</a></li>
+        </>
+      )
+    }
+    <li><a href="/blog/" class="mobile-nav-link">Blog</a></li>
+    <li><a href="/contact/" class:list={['mobile-nav-link', { active: activeContact }]}>Contact</a></li>
+  </ul>
+</div>

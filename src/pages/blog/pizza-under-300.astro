@@ -1,0 +1,140 @@
+---
+// Ported verbatim from v1's blog-pizza-under-300.html (PRD §8 superseded
+// block). Route is the AGENTS.md-bound slug /blog/pizza-under-300/.
+import Layout from '../../layouts/Layout.astro';
+import BlogPostLayout from '../../components/BlogPostLayout.astro';
+import { site } from '../../lib/data';
+
+const title = `Pizza Under ₹300 in Sundargarh | Student Specials – ${site.business.name}`;
+const description =
+  'Looking for pizza under ₹300 in Sundargarh? Discover budget-friendly student pizza options that are tasty, filling, and perfect for daily cravings at The Oven Vibe.';
+const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
+const ogImage = new URL('/static/images/blog_images/blog_4.webp', Astro.site).toString();
+const waLink = `https://wa.me/${site.business.whatsapp}`;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: 'Pizza Under ₹300 in Sundargarh | Student Specials',
+  image: ogImage,
+  author: { '@type': 'Organization', name: site.business.name },
+  publisher: {
+    '@type': 'Organization',
+    name: site.business.name,
+    logo: {
+      '@type': 'ImageObject',
+      url: new URL('/static/images/brand_images/The%20Oven%20vibe_logo.webp', Astro.site).toString(),
+    },
+  },
+  datePublished: '2024-05-30',
+  description:
+    'Looking for pizza under ₹300 in Sundargarh? Discover budget-friendly student pizza options.',
+};
+---
+
+<Layout title={title} description={description}>
+  <Fragment slot="head">
+    <meta
+      name="keywords"
+      content="pizza under 300 Sundargarh, affordable pizza Sundargarh, student pizza Sundargarh, budget pizza Sundargarh, cheap pizza in Sundargarh, The Oven Vibe pizza, best pizza for students Sundargarh"
+    />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content={title} />
+    <meta
+      property="og:description"
+      content="Looking for pizza under ₹300 in Sundargarh? Discover budget-friendly student pizza options."
+    />
+    <meta property="og:url" content={pageUrl} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
+  </Fragment>
+
+  <BlogPostLayout
+    line1="PIZZA UNDER"
+    lineGradient="₹300."
+    subtitle="Student-friendly pizzas in Sundargarh. Big taste, small price."
+    doubleWrapHeroContainer={true}
+  >
+    <picture>
+      <source type="image/avif" srcset="/static/images/blog_images/blog_4.avif" />
+      <source type="image/webp" srcset="/static/images/blog_images/blog_4.webp" />
+      <img
+        src="/static/images/blog_images/blog_4.webp"
+        alt="Student specials pizza under 300 in Sundargarh"
+        class="blog-img"
+        loading="lazy"
+        width="1200"
+        height="675"
+      />
+    </picture>
+
+    <p class="subtitle" style="font-weight: 600; color: #555; margin-top: -10px">
+      Students ke liye best budget pizza options
+    </p>
+
+    <p>
+      Sundargarh mein students ke liye pizza sirf luxury nahi hai 😄 Aaj ke time pe chahiye
+      affordable, filling aur tasty food—jo pocket pe heavy na pade. Agar aap hostel mein ho,
+      coaching ke baad bhook lagi ho, ya doston ke saath chill plan ho—₹300 ke andar pizza is a win
+      🏆
+    </p>
+
+    <h3>Why Budget Pizza Matters for Students 🎒</h3>
+    <p>Students smart spenders hote hain 😎</p>
+    <p><strong>Budget pizza kyun important hai?</strong></p>
+    <ul>
+      <li>Pocket-friendly pricing</li>
+      <li>Daily cravings ke liye perfect</li>
+      <li>Group orders mein easy sharing</li>
+      <li>Taste compromise nahi</li>
+    </ul>
+
+    <h3>Best Budget Pizzas in Sundargarh 🍴</h3>
+    <p>Low price ka matlab low quality nahi hota 😉</p>
+    <p><strong>Most Loved Student Picks (The Oven Vibe 🍕):</strong></p>
+    <ul>
+      <li><strong>Vegie Onion Capsicum Pizza</strong> – simple, classic & affordable</li>
+      <li><strong>Herb Paneer Delight Pizza</strong> – light paneer taste, full satisfaction</li>
+      <li><strong>Mushroom Supreme Pizza</strong> – mushroom lovers ke liye best</li>
+      <li>
+        <strong>Paneer Makhni Royale Pizza (Small/Regular)</strong> – premium taste, student price
+      </li>
+    </ul>
+
+    <h3>How Students Order Smart 💡</h3>
+    <p>Sundargarh students know how to enjoy more by spending less 😄</p>
+    <p><strong>Smart ordering tips:</strong></p>
+    <ul>
+      <li>Combo mein order karo</li>
+      <li>Friends ke saath share karo</li>
+      <li>Weekday orders are faster</li>
+      <li>WhatsApp pe direct order karo 📲</li>
+    </ul>
+
+    <div class="highlight-box">
+      <h3>The Oven Vibe – Student Favorite 🍕🔥</h3>
+      <p>Cloud kitchen hone ki wajah se hum focus karte hain taste + value pe 💯</p>
+      <p><strong>Why students love The Oven Vibe:</strong></p>
+      <ul style="list-style: none; padding-left: 0">
+        <li>✔ Affordable pricing</li>
+        <li>✔ Freshly prepared food</li>
+        <li>✔ No fancy charges</li>
+        <li>✔ Value for money</li>
+      </ul>
+      <p style="margin-top: 10px; font-weight: 700; color: #ad210a">
+        Price for Two: Under ₹300–₹350
+      </p>
+    </div>
+
+    <h3>Final Slice 🎓😋</h3>
+    <p>
+      Student life mein bhook kabhi schedule dekh ke nahi aati 😄 Isliye jab craving aaye, solution
+      simple rakho—budget mein best pizza 🍕
+    </p>
+
+    <a href={waLink} target="_blank" class="cta">
+      👉 Order now on WhatsApp & enjoy student-friendly pizzas from The Oven Vibe
+    </a>
+  </BlogPostLayout>
+</Layout>

@@ -1,0 +1,54 @@
+---
+/**
+ * Footer — v1 injected this via script.js at runtime (innerHTML into
+ * #global-footer-placeholder after DOMContentLoaded). Rendering it at
+ * build time is the Phase 3 invisible improvement: same final markup,
+ * no pop-in. Copy/links match v1's template literal verbatim; business
+ * values (phone/whatsapp/instagram/name) are sourced from site.config.json
+ * per the maintainability contract (PRD §6) instead of being re-hard-coded.
+ */
+import { site } from '../lib/data';
+const zomato =
+  'https://link.zomato.com/xqzv/rshare?id=11990877930563aa9&utm_source=site&utm_medium=footer&utm_campaign=delivery';
+const swiggy =
+  'https://www.swiggy.com/direct/brand/710285?source=swiggy-direct&subSource=generic&utm_source=site&utm_medium=footer&utm_campaign=delivery';
+---
+
+<footer class="footer animate-on-scroll" id="footer">
+  <div class="footer-container">
+    <!-- Primary Content -->
+    <div class="footer-content">
+      <p class="footer-brand-name">{site.business.name}</p>
+      <nav class="footer-nav">
+        <a href="/#menu">Menu</a>
+        <a href="/contact/">Contact</a>
+        <a href="/faq/">FAQ</a>
+        <a href="/blog/">Blog</a>
+      </nav>
+    </div>
+
+    <!-- Secondary/Right Content -->
+    <div class="footer-right">
+      <div class="footer-order-links">
+        <a href={zomato} target="_blank" rel="noopener noreferrer" aria-label="Order on Zomato">Zomato</a>
+        <span style="opacity: 0.3">|</span>
+        <a href={swiggy} target="_blank" rel="noopener noreferrer" aria-label="Order on Swiggy">Swiggy</a>
+      </div>
+
+      <div class="footer-social-links">
+        <a href={site.business.instagram} target="_blank" rel="noopener noreferrer" aria-label="Follow on Instagram">Instagram</a>
+        <span style="opacity: 0.3">|</span>
+        <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Follow on Facebook">Facebook</a>
+        <span style="opacity: 0.3">|</span>
+        <a href="https://maps.app.goo.gl/t8u7p3cfaYEkj5JP8" target="_blank" rel="noopener noreferrer" aria-label="Find us on Maps">Maps</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="footer-meta">
+      <p>20 min takeaway · 30-45 min delivery</p>
+      © 2025 {site.business.name} · All rights reserved
+    </div>
+  </div>
+</footer>

@@ -1,51 +1,355 @@
 ---
-// Home — Phase 1 stub. Real hero/sections come in Phase 3 per PRD §4.
+// Home — ported verbatim from v1's index.html (PRD §8 superseded block).
+// Menu/combos/add-ons now render at build time from menu.json instead of
+// client-side after fetch() — the one allowed structural change (Phase 3).
 import Layout from '../layouts/Layout.astro';
-import { site, heroDish, displayDescription, imageFor } from '../lib/data';
-const img = imageFor(heroDish);
+import MenuAccordions from '../components/MenuAccordions.astro';
+import AddonsAccordion from '../components/AddonsAccordion.astro';
+import { site } from '../lib/data';
+
+const title = `${site.business.name} — Sundargarh, Odisha`;
+const description =
+  'The Oven Vibe — Oven-baked takeaway from Sundargarh. Order via WhatsApp.';
+const ogImage = new URL(
+  '/static/images/brand_images/The%20Oven%20vibe_logo.webp',
+  Astro.site,
+).toString();
+const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
+
+const localPhone = site.business.phone.replace('+91', '');
+const deliverySlabsLine = site.delivery.slabs
+  .map((s) => `₹${s.charge} for ${s.label}`)
+  .join(', ');
+
+const restaurantJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': ['Restaurant', 'LocalBusiness', 'FoodDelivery'],
+  name: site.business.name,
+  image: ogImage,
+  description:
+    'Oven-baked pizzas, burgers, and takeaway food in Sundargarh, Odisha. Order via WhatsApp, Zomato, or Swiggy.',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: site.business.address.locality,
+    addressLocality: site.business.address.locality,
+    addressRegion: site.business.address.region,
+    postalCode: site.business.address.postal_code,
+    addressCountry: site.business.address.country,
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: String(site.business.address.latitude),
+    longitude: String(site.business.address.longitude),
+  },
+  telephone: site.business.phone.replace('+91', '+91-'),
+  email: site.business.email,
+  servesCuisine: ['Pizza', 'Burger', 'Fried Rice', 'Fries', 'Snacks', 'Pasta', 'Sandwich'],
+  url: `${Astro.site}`,
+  // PRD §9: a human-readable menu page, not a duplicated raw JSON file —
+  // menu.json stays the single source of truth (PRD §6), so the structured
+  // data points at the page that's always in sync with it.
+  menu: new URL('/menu/', Astro.site).toString(),
+  priceRange: '₹69-₹349',
+  openingHours: `${site.business.hours.days} ${site.business.hours.open}-${site.business.hours.close}`,
+  // PRD §3 binding: v1's aggregateRating (4.9/120) and fake "Local Customer"
+  // reviews were fabricated and never come back. This is the real GBP rating.
+  aggregateRating: {
+    '@type': 'AggregateRating',
+    ratingValue: String(site.rating.value),
+    reviewCount: String(site.rating.count),
+  },
+  offers: {
+    '@type': 'AggregateOffer',
+    priceCurrency: 'INR',
+    lowPrice: '69',
+    highPrice: '349',
+    availability: 'https://schema.org/InStock',
+    url: `${Astro.site}`,
+    offerCount: '50',
+  },
+  sameAs: [
+    site.business.instagram,
+    `https://wa.me/${site.business.whatsapp}`,
+    'https://www.google.com/maps?q=22%C2%B007\'01.0%22N+84%C2%B002\'16.5%22E',
+    'https://link.zomato.com/xqzv/rshare?id=11990877930563aa9',
+    'https://www.swiggy.com/direct/brand/710285?source=swiggy-direct&subSource=generic',
+  ],
+};
 ---
 
-<Layout
-  title={`${site.business.name} — Oven-Baked Pizza, Burgers & More in Sundargarh`}
-  description={`${site.business.tagline}. ${site.delivery.hook}. Order by call or WhatsApp.`}
->
-  <main class="mx-auto max-w-3xl px-4 py-16 text-center">
-    <h1 class="text-4xl font-bold">{site.business.name}</h1>
-    <p class="mt-3 text-lg text-neutral-300">{site.business.tagline}</p>
-    <p class="mt-1 text-amber-400">{site.delivery.hook}</p>
+<Layout title={title} description={description} home={true}>
+  <Fragment slot="head">
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={pageUrl} />
+    <meta property="og:title" content={`${site.business.name} — Sundargarh's Best Pizza & Burgers`} />
+    <meta
+      property="og:description"
+      content="Oven-baked perfection delivered to your door. Order via WhatsApp in Sundargarh, Odisha."
+    />
+    <meta property="og:image" content={ogImage} />
 
-    <figure class="mx-auto mt-10 max-w-sm">
-      <picture>
-        {img.avif && <source srcset={img.avif} type="image/avif" />}
-        <img
-          src={img.webp}
-          alt={heroDish.item_name}
-          width="400"
-          height="400"
-          class="rounded-2xl"
-          loading="eager"
-          fetchpriority="high"
-        />
-      </picture>
-      <figcaption class="mt-3 text-sm text-neutral-400">
-        {heroDish.item_name} — ₹{heroDish.price}. {displayDescription(heroDish)}
-      </figcaption>
-    </figure>
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={pageUrl} />
+    <meta property="twitter:title" content={`${site.business.name} — Sundargarh's Best Pizza & Burgers`} />
+    <meta
+      property="twitter:description"
+      content="Oven-baked perfection delivered to your door. Order via WhatsApp in Sundargarh, Odisha."
+    />
+    <meta property="twitter:image" content={ogImage} />
 
-    <div class="mt-10 flex justify-center gap-4">
-      <a
-        href={`tel:${site.business.phone}`}
-        class="rounded-full bg-amber-500 px-6 py-3 font-semibold text-neutral-950"
-        aria-label={`Call ${site.business.name} at ${site.business.phone_display}`}
-        >Call to Order</a
-      >
-      <a href="/menu/" class="rounded-full border border-neutral-600 px-6 py-3 font-semibold"
-        >See Menu</a
-      >
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(restaurantJsonLd)} />
+  </Fragment>
+
+  <!-- HERO SECTION -->
+  <section class="hero">
+    <div class="hero-shapes">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
     </div>
+    <div class="hero-container">
+      <div class="hero-content">
+        <div class="hero-badge animate-on-scroll">
+          <span class="pulse-dot"></span> Serving {site.business.address.locality} {site.business.address.postal_code}
+        </div>
 
-    <p class="mt-12 text-sm text-neutral-500">
-      v2 rebuild in progress — this is a Phase 1 architecture stub (see PRD.md).
-    </p>
+        <h1 class="hero-display">
+          <span class="line-1 animate-on-scroll delay-100">HANDCRAFTED</span>
+          <span class="line-2 animate-on-scroll delay-200">OVEN BAKED</span>
+          <span class="line-3 text-gradient animate-on-scroll delay-300">HAPPINESS.</span>
+        </h1>
+
+        <!-- CALL NUMBER (BIG & PROMINENT) -->
+        <div class="hero-call animate-on-scroll delay-300" style="margin-bottom: 2rem;">
+          <a
+            href={`tel:${site.business.phone}`}
+            style="font-size: clamp(2.5rem, 6vw, 3.5rem); font-weight: 800; color: var(--color-text-main); line-height: 1.1; text-decoration: none; transition: color 0.2s;"
+          >
+            Call: <span style="color: var(--color-primary);">{localPhone}</span>
+          </a>
+        </div>
+
+        <!-- DELIVERY INFO -->
+        <div
+          class="hero-delivery-info animate-on-scroll delay-400"
+          style="background: white; padding: 1.5rem; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); border: 1px solid var(--color-border); margin-bottom: 2.5rem; display: inline-block; text-align: left;"
+        >
+          <p style="margin-bottom: 0.5rem; font-size: 1.25rem; font-weight: 700; color: var(--color-text-main);">
+            {site.delivery.hook}
+          </p>
+          <p style="margin-bottom: 0.5rem; font-size: 1rem; color: var(--color-text-muted);">
+            {deliverySlabsLine}
+          </p>
+          <p style="margin-bottom: 0; font-size: 1rem; color: var(--color-primary); font-weight: 700;">
+            {site.delivery.free_above_note}
+          </p>
+        </div>
+
+        <p class="hero-text animate-on-scroll delay-400">
+          Experience the premium taste of artisan pizzas, gourmet fried rice, and sides.
+          Delivered hot to your doorstep in Sundargarh.
+        </p>
+
+        <div class="hero-actions animate-on-scroll delay-500">
+          <a
+            href="https://link.zomato.com/xqzv/rshare?id=11990877930563aa9"
+            target="_blank"
+            class="btn btn-zomato btn-lg">Order on Zomato</a
+          >
+          <a
+            href="https://www.swiggy.com/direct/brand/710285?source=swiggy-direct&subSource=generic"
+            target="_blank"
+            class="btn btn-swiggy btn-lg">Order on Swiggy</a
+          >
+          <a href="#menu" class="btn btn-secondary btn-lg">View Menu</a>
+        </div>
+
+        <div class="hero-trust animate-on-scroll delay-500">
+          <div class="trust-item">
+            <span class="icon">⚡</span>
+            <span class="label">20 min takeaway</span>
+          </div>
+          <div class="trust-divider"></div>
+          <div class="trust-item">
+            <span class="icon">🛵</span>
+            <span class="label">30-45 min delivery</span>
+          </div>
+          <div class="trust-divider"></div>
+          <div class="trust-item">
+            <span class="icon">⭐</span>
+            <span class="label">{site.rating.value}/5 Rating</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MENU (sectioned) -->
+  <main class="main" id="mainContent">
+    <section id="menu" class="menu animate-on-scroll">
+      <MenuAccordions />
+    </section>
+
+    <!-- ADD-ONS & SUGGESTED -->
+    <section class="menu-section" id="addonsSection">
+      <AddonsAccordion />
+    </section>
+
+    <!-- WHY US -->
+    <section class="section" id="why" style="background-color: white;">
+      <div class="container">
+        <div style="text-align: center; margin-bottom: 3rem;">
+          <h2>Why The Oven Vibe?</h2>
+          <p class="lead">We don't just make food, we craft experiences.</p>
+        </div>
+
+        <div class="grid-3">
+          <article class="feature-card animate-on-scroll">
+            <h3>🔥 Oven-Crafted Freshness</h3>
+            <p>
+              Every bite is hot, fresh and baked to perfection — balanced flavours that keep
+              customers coming back.
+            </p>
+          </article>
+          <article class="feature-card animate-on-scroll delay-100">
+            <h3>⚡ Quick Takeaway</h3>
+            <p>
+              Order 20 minutes prior & collect hot — strictly takeaway service designed for speed
+              and convenience.
+            </p>
+          </article>
+          <article class="feature-card animate-on-scroll delay-200">
+            <h3>❤️ Loved in Sundargarh</h3>
+            <p>
+              Made with care for our community in Sundargarh, Odisha. We are a local startup with
+              global standards.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- PARTY MARKETING BANNER -->
+    <section class="cta-section animate-on-scroll" id="party">
+      <h2>Party Orders 🎉</h2>
+      <p>
+        Hosting a party? Get platters, combos & bulk deals from us. Hot, ready-to-serve takeaway —
+        perfect for friends, family or office events.
+      </p>
+      <a
+        class="btn btn-primary"
+        style="background: white; color: var(--color-secondary);"
+        href={`https://wa.me/${site.business.whatsapp}`}
+        target="_blank">Get Party Quote on WhatsApp</a
+      >
+    </section>
+
+    <!-- LATEST BLOGS -->
+    <section class="section" id="latest-blogs">
+      <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: end; margin-bottom: 2rem;">
+          <h2>Latest Stories</h2>
+          <a href="/blog/" class="read-more">View All Posts →</a>
+        </div>
+
+        <div class="blog-grid">
+          <!-- Blog Card 5 (Newest) -->
+          <article class="blog-card animate-on-scroll">
+            <div class="blog-card-img-wrapper">
+              <picture>
+                <source type="image/avif" srcset="/static/images/blog_images/blog_5.avif" />
+                <source type="image/webp" srcset="/static/images/blog_images/blog_5.webp" />
+                <img
+                  src="/static/images/blog_images/blog_5.webp"
+                  alt="Cloud Kitchen Future"
+                  class="blog-card-img"
+                  loading="lazy"
+                  width="400"
+                  height="225"
+                />
+              </picture>
+            </div>
+            <div class="blog-card-content">
+              <h3>Why Cloud Kitchens Are the Future of Food</h3>
+              <p style="color: var(--color-text-muted); font-size: 0.95rem; margin-bottom: 1rem;">
+                Discover why cloud kitchens are changing the food scene in Sundargarh. Faster
+                delivery, affordable pricing, and fresh food.
+              </p>
+              <a
+                href="/blog/cloud-kitchen-future/"
+                class="read-more"
+                aria-label="Read full article: Why Cloud Kitchens Are the Future of Food"
+                >Read Story →</a
+              >
+            </div>
+          </article>
+
+          <!-- Blog Card 4 -->
+          <article class="blog-card animate-on-scroll delay-100">
+            <div class="blog-card-img-wrapper">
+              <picture>
+                <source type="image/avif" srcset="/static/images/blog_images/blog_4.avif" />
+                <source type="image/webp" srcset="/static/images/blog_images/blog_4.webp" />
+                <img
+                  src="/static/images/blog_images/blog_4.webp"
+                  alt="Pizza Under 300"
+                  class="blog-card-img"
+                  loading="lazy"
+                  width="400"
+                  height="225"
+                />
+              </picture>
+            </div>
+            <div class="blog-card-content">
+              <h3>Pizza Under ₹300 in Sundargarh</h3>
+              <p style="color: var(--color-text-muted); font-size: 0.95rem; margin-bottom: 1rem;">
+                Looking for pizza under ₹300? Discover budget-friendly student pizza options that
+                are tasty and filling.
+              </p>
+              <a
+                href="/blog/pizza-under-300/"
+                class="read-more"
+                aria-label="Read full article: Pizza Under ₹300 in Sundargarh"
+                >Read Story →</a
+              >
+            </div>
+          </article>
+
+          <!-- Blog Card 3 -->
+          <article class="blog-card animate-on-scroll delay-200">
+            <div class="blog-card-img-wrapper">
+              <picture>
+                <source type="image/avif" srcset="/static/images/blog_images/blog_3.avif" />
+                <source type="image/webp" srcset="/static/images/blog_images/blog_3.webp" />
+                <img
+                  src="/static/images/blog_images/blog_3.webp"
+                  alt="Best Late-Night Food"
+                  class="blog-card-img"
+                  loading="lazy"
+                  width="400"
+                  height="225"
+                />
+              </picture>
+            </div>
+            <div class="blog-card-content">
+              <h3>Best Late-Night Food in Sundargarh</h3>
+              <p>
+                Late-night cravings? Discover the best food options to order after 9 PM in
+                Sundargarh.
+              </p>
+              <a
+                href="/blog/late-night-food/"
+                class="read-more"
+                aria-label="Read full article: Best Late-Night Food in Sundargarh"
+                >Read Story →</a
+              >
+            </div>
+          </article>
+        </div>
+        <div style="text-align: center; margin-top: 20px">
+          <a href="/blog/" class="btn btn-primary btn-lg">View All Stories</a>
+        </div>
+      </div>
+    </section>
   </main>
 </Layout>

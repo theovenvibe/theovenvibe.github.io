@@ -1,0 +1,138 @@
+/**
+ * The Oven Vibe — shared interactive behaviour, ported from v1's script.js.
+ * Loaded on every page from Layout.astro.
+ *
+ * What's deliberately DIFFERENT from v1 (Phase 3, invisible-only per PRD §8):
+ * - Menu/combo/add-on cards and their accordions are already in the DOM at
+ *   parse time (rendered build-time from menu.json) instead of being
+ *   fetch()'d and injected after DOMContentLoaded. That removes the empty
+ *   "#menu"/"#addonsSection" flash v1 had while the fetch was in flight, and
+ *   removes the need for the setTimeout()-based "pending accordion open"
+ *   workaround v1 used to cope with that race — the target elements now
+ *   always exist by the time a click handler runs.
+ * - The generic accordion open/close toggle (independent per item) is wired
+ *   directly here instead of being attached ad hoc inside each of v1's
+ *   `createAccordionItem()` / `renderAddons()` builder functions.
+ * Everything else (scroll-reveal, mobile menu overlay, in-page nav-link
+ * scrolling + accordion-opening behaviour) matches v1 exactly, including the
+ * quirk where only `.nav-links a` (the desktop nav) gets the special
+ * hash-anchor handling — footer links and mobile-nav-links just do a plain
+ * browser scroll-to-anchor, same as in v1.
+ */
+document.addEventListener('DOMContentLoaded', function () {
+  // ===============================
+  // Scroll Animations (IntersectionObserver)
+  // ===============================
+  var observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
+  var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, observerOptions);
+  document.querySelectorAll('.animate-on-scroll').forEach(function (el) {
+    observer.observe(el);
+  });
+
+  // ===============================
+  // Mobile Menu Logic (Overlay)
+  // ===============================
+  var mobileMenuToggle = document.getElementById('mobileMenuToggle');
+  var mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
+  var closeMenuBtn = document.getElementById('closeMenuBtn');
+  var mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+
+  function openMenu() {
+    if (mobileMenuOverlay) {
+      mobileMenuOverlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+  function closeMenu() {
+    if (mobileMenuOverlay) {
+      mobileMenuOverlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  }
+  if (mobileMenuToggle) mobileMenuToggle.addEventListener('click', openMenu);
+  if (closeMenuBtn) closeMenuBtn.addEventListener('click', closeMenu);
+  mobileNavLinks.forEach(function (link) {
+    link.addEventListener('click', closeMenu);
+  });
+
+  // ===============================
+  // Desktop nav-link in-page anchor handling (+ accordion pre-open)
+  // ===============================
+  var pendingAccordionOpens = { combos: false, addons: false };
+
+  document.querySelectorAll('.nav-links a').forEach(function (link) {
+    link.addEventListener('click', function (e) {
+      var href = link.getAttribute('href');
+      if (href && href.startsWith('#')) {
+        var target = document.querySelector(href);
+
+        if (href === '#menu') {
+          var waBanner = document.querySelector('.hero-cta');
+          target = waBanner || document.querySelector('#menu');
+        }
+
+        if (href === '#sec-combos') {
+          var comboSection = document.querySelector('#sec-combos');
+          if (comboSection) {
+            target = comboSection;
+            pendingAccordionOpens.combos = true;
+            var comboHeader = comboSection.querySelector('.accordion-header');
+            if (comboHeader && !comboSection.classList.contains('active')) comboHeader.click();
+          } else {
+            pendingAccordionOpens.combos = true;
+          }
+        }
+
+        if (href === '#addonsSection') {
+          var addonsSection = document.querySelector('#addonsSection');
+          if (addonsSection) {
+            target = addonsSection;
+            pendingAccordionOpens.addons = true;
+            var addonAccordion = addonsSection.querySelector('.accordion-item');
+            if (addonAccordion) {
+              var addonHeader = addonAccordion.querySelector('.accordion-header');
+              if (addonHeader && !addonAccordion.classList.contains('active')) addonHeader.click();
+            }
+          } else {
+            pendingAccordionOpens.addons = true;
+          }
+        }
+
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          setTimeout(function () {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 100);
+        }
+      }
+    });
+  });
+
+  // ===============================
+  // Accordion toggle (menu categories, combos, add-ons) — independent
+  // open/close per item, same as v1's createAccordionItem()/renderAddons().
+  // ===============================
+  document.querySelectorAll('#menu .accordion-item, #addonsSection .accordion-item').forEach(function (item) {
+    var header = item.querySelector('.accordion-header');
+    var content = item.querySelector('.accordion-content');
+    if (!header || !content) return;
+    header.addEventListener('click', function () {
+      var isActive = item.classList.contains('active');
+      if (!isActive) {
+        item.classList.add('active');
+        content.style.maxHeight = content.scrollHeight + 'px';
+      } else {
+        item.classList.remove('active');
+        content.style.maxHeight = null;
+      }
+    });
+  });
+});
