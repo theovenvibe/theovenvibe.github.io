@@ -1,0 +1,145 @@
+---
+// Ported verbatim from v1's blog-cloud-kitchen-future.html (PRD §8 superseded
+// block). Route is the AGENTS.md-bound slug /blog/cloud-kitchen-future/.
+import Layout from '../../layouts/Layout.astro';
+import BlogPostLayout from '../../components/BlogPostLayout.astro';
+import { site } from '../../lib/data';
+
+const title = `Why Cloud Kitchens Are the Future of Food in Sundargarh | ${site.business.name}`;
+const description =
+  'Discover why cloud kitchens are changing the food scene in Sundargarh. Faster delivery, affordable pricing, and fresh food—powered by The Oven Vibe.';
+const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
+const ogImage = new URL('/static/images/blog_images/blog_5.webp', Astro.site).toString();
+const waLink = `https://wa.me/${site.business.whatsapp}`;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: 'Why Cloud Kitchens Are the Future of Food in Sundargarh',
+  image: ogImage,
+  author: { '@type': 'Organization', name: site.business.name },
+  publisher: {
+    '@type': 'Organization',
+    name: site.business.name,
+    logo: {
+      '@type': 'ImageObject',
+      url: new URL('/static/images/brand_images/The%20Oven%20vibe_logo.webp', Astro.site).toString(),
+    },
+  },
+  datePublished: '2024-06-05',
+  description: 'Discover why cloud kitchens are changing the food scene in Sundargarh.',
+};
+---
+
+<Layout title={title} description={description}>
+  <Fragment slot="head">
+    <meta
+      name="keywords"
+      content="cloud kitchen in Sundargarh, online food delivery Sundargarh, cloud kitchen benefits, The Oven Vibe cloud kitchen, affordable food Sundargarh, future of food Sundargarh"
+    />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content={title} />
+    <meta
+      property="og:description"
+      content="Discover why cloud kitchens are changing the food scene in Sundargarh. Faster delivery, affordable pricing, and fresh food."
+    />
+    <meta property="og:url" content={pageUrl} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
+  </Fragment>
+
+  <BlogPostLayout line1="CLOUD" lineGradient="KITCHENS." subtitle="Why cloud kitchens are the future of food in Sundargarh.">
+    <p class="subtitle" style="font-weight: 600; color: #555; margin-top: -10px">
+      Restaurant ka naya style, smart aur simple
+    </p>
+
+    <picture>
+      <source type="image/avif" srcset="/static/images/blog_images/blog_5.avif" />
+      <source type="image/webp" srcset="/static/images/blog_images/blog_5.webp" />
+      <img
+        src="/static/images/blog_images/blog_5.webp"
+        alt="Cloud Kitchens Future in Sundargarh"
+        class="blog-img"
+        loading="lazy"
+        width="1200"
+        height="675"
+        style="background: #eee"
+      />
+    </picture>
+
+    <p>
+      Sundargarh ka food scene fast change ho raha hai 🚀 Log ab sirf tasty food nahi, fast
+      delivery, affordable price aur consistency chahte hain. Yahin se cloud kitchens ka role
+      start hota hai ☁️
+    </p>
+
+    <h3>What Is a Cloud Kitchen? 🤔</h3>
+    <p>Cloud kitchen ek aisa food setup hota hai jahan:</p>
+    <ul>
+      <li>No dine-in</li>
+      <li>Sirf online & takeaway orders</li>
+      <li>Focus on food quality & speed</li>
+    </ul>
+    <p>Simple words mein—kam cost, zyada focus on taste 😋</p>
+
+    <h3>Why Cloud Kitchens Work Best in Sundargarh 🌆</h3>
+    <p>Sundargarh jaise towns ke liye cloud kitchens perfect fit hain.</p>
+    <p><strong>Key reasons:</strong></p>
+    <ul>
+      <li>Lower operating cost → lower food prices</li>
+      <li>Fast preparation & delivery</li>
+      <li>Fresh food, no long waiting</li>
+      <li>Online ordering convenience 📲</li>
+    </ul>
+
+    <h3>How Cloud Kitchens Help Customers 💡</h3>
+    <p>Customers ko milta hai better value for money 💯</p>
+    <p><strong>Customer benefits:</strong></p>
+    <ul>
+      <li>Affordable pricing</li>
+      <li>Consistent taste every time</li>
+      <li>Easy ordering via WhatsApp / apps</li>
+      <li>Late-night availability 🌙</li>
+    </ul>
+
+    <h3>The Oven Vibe – Sundargarh's Cloud Kitchen 🍕🔥</h3>
+    <p>
+      The Oven Vibe is proud to be Sundargarh's trusted cloud kitchen—focused on fresh, affordable,
+      and flavorful food.
+    </p>
+    <p><strong>Why People Love The Oven Vibe:</strong></p>
+    <ul style="list-style: none; padding-left: 0">
+      <li>✔ Freshly prepared food</li>
+      <li>✔ Budget-friendly menu</li>
+      <li>✔ No compromise on quality</li>
+      <li>✔ Perfect for students & families</li>
+    </ul>
+
+    <p><strong>Popular Menu Picks:</strong></p>
+    <ul>
+      <li>Paneer Makhni Royale Pizza</li>
+      <li>Herb Paneer Delight Pizza</li>
+      <li>Mushroom Supreme Pizza</li>
+      <li>Vegie Onion Capsicum Pizza</li>
+    </ul>
+
+    <div class="highlight-box">
+      <h3>Cloud Kitchen vs Traditional Restaurant ⚖️</h3>
+      <p><strong>Traditional Restaurant:</strong> Higher prices, Dine-in costs, Slower service</p>
+      <p><strong>Cloud Kitchen:</strong> Affordable food, Faster delivery, Better focus on taste</p>
+      <p><strong>Clear winner? 😄 Cloud Kitchen!</strong></p>
+    </div>
+
+    <h3>Final Slice ☁️😋</h3>
+    <p>
+      Cloud kitchens sirf trend nahi hain—future hain 🍕 Aur Sundargarh jaise growing towns ke liye,
+      yeh model perfect hai. Agar aap fresh, affordable aur fast food chahte ho—The Oven Vibe is the
+      cloud kitchen you can trust 🔥
+    </p>
+
+    <a href={waLink} target="_blank" class="cta">
+      👉 Order now on WhatsApp & experience the future of food with The Oven Vibe
+    </a>
+  </BlogPostLayout>
+</Layout>

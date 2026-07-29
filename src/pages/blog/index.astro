@@ -1,18 +1,209 @@
 ---
-// Blog index — Phase 1 stub. Content collections + migrated posts in Phase 4.
+// Blog index — ported verbatim from v1's blog.html (PRD §8 superseded block).
 import Layout from '../../layouts/Layout.astro';
 import { site } from '../../lib/data';
+
+const title = `Blog - ${site.business.name} | Sundargarh Food Stories`;
+const description =
+  'Food stories, tips and local culture from Sundargarh by The Oven Vibe. Read our latest blogs on pizza, food trends, and late-night cravings.';
+const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
+const ogImage = new URL('/static/images/blog_images/blog_1.webp', Astro.site).toString();
 ---
 
-<Layout
-  title={`Blog — ${site.business.name}`}
-  description={`Food stories and local guides from ${site.business.name}, Sundargarh.`}
->
-  <main class="mx-auto max-w-3xl px-4 py-16">
-    <h1 class="text-3xl font-bold">Blog</h1>
-    <p class="mt-4 text-neutral-400">
-      Posts are being migrated to the new site (Phase 4). Hungry meanwhile?
-      <a class="text-amber-400 underline" href="/menu/">See the menu</a>.
-    </p>
-  </main>
+<Layout title={title} description={description}>
+  <Fragment slot="head">
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta
+      property="og:description"
+      content="Food stories, tips and local culture from Sundargarh by The Oven Vibe."
+    />
+    <meta property="og:url" content={pageUrl} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+  </Fragment>
+
+  <!-- MAIN BLOG CONTAINER -->
+  <div class="main">
+    <!-- HERO SECTION -->
+    <section class="hero hero-mini">
+      <div class="hero-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+      </div>
+      <div class="hero-container">
+        <div class="hero-content">
+          <h1 class="hero-display" style="font-size: clamp(2rem, 5vw, 4rem);">
+            <span class="animate-on-scroll">FOOD</span>
+            <span class="text-gradient animate-on-scroll delay-100">STORIES.</span>
+          </h1>
+          <p class="hero-text animate-on-scroll delay-200">
+            Explore the best eats, tips, and local food culture in Sundargarh.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <div class="section" style="padding-top: 0;">
+      <div class="container">
+        <div class="blog-grid">
+          <!-- Blog Card 5 (Newest) -->
+          <article class="blog-card animate-on-scroll delay-200">
+            <div class="blog-card-img-wrapper">
+              <picture>
+                <source type="image/avif" srcset="/static/images/blog_images/blog_5.avif" />
+                <source type="image/webp" srcset="/static/images/blog_images/blog_5.webp" />
+                <img
+                  src="/static/images/blog_images/blog_5.webp"
+                  alt="Cloud Kitchen Future"
+                  class="blog-card-img"
+                  loading="lazy"
+                  width="400"
+                  height="225"
+                />
+              </picture>
+            </div>
+            <div class="blog-card-content">
+              <h3>Why Cloud Kitchens Are the Future of Food in Sundargarh</h3>
+              <p>
+                Discover why cloud kitchens are changing the food scene in Sundargarh. Faster
+                delivery, affordable pricing, and fresh food.
+              </p>
+              <a
+                href="/blog/cloud-kitchen-future/"
+                class="read-more"
+                aria-label="Read full article: Why Cloud Kitchens Are the Future of Food in Sundargarh"
+                >Read Story →</a
+              >
+            </div>
+          </article>
+
+          <!-- Blog Card 4 -->
+          <article class="blog-card animate-on-scroll delay-200">
+            <div class="blog-card-img-wrapper">
+              <picture>
+                <source type="image/avif" srcset="/static/images/blog_images/blog_4.avif" />
+                <source type="image/webp" srcset="/static/images/blog_images/blog_4.webp" />
+                <img
+                  src="/static/images/blog_images/blog_4.webp"
+                  alt="Pizza Under 300"
+                  class="blog-card-img"
+                  loading="lazy"
+                  width="400"
+                  height="225"
+                />
+              </picture>
+            </div>
+            <div class="blog-card-content">
+              <h3>Pizza Under ₹300 in Sundargarh | Student Specials</h3>
+              <p>
+                Looking for pizza under ₹300? Discover budget-friendly student pizza options that
+                are tasty and filling.
+              </p>
+              <a
+                href="/blog/pizza-under-300/"
+                class="read-more"
+                aria-label="Read full article: Pizza Under ₹300 in Sundargarh"
+                >Read Story →</a
+              >
+            </div>
+          </article>
+
+          <!-- Blog Card 3 -->
+          <article class="blog-card animate-on-scroll delay-200">
+            <div class="blog-card-img-wrapper">
+              <picture>
+                <source type="image/avif" srcset="/static/images/blog_images/blog_3.avif" />
+                <source type="image/webp" srcset="/static/images/blog_images/blog_3.webp" />
+                <img
+                  src="/static/images/blog_images/blog_3.webp"
+                  alt="Best Late-Night Food"
+                  class="blog-card-img"
+                  loading="lazy"
+                  width="400"
+                  height="225"
+                />
+              </picture>
+            </div>
+            <div class="blog-card-content">
+              <h3>Best Late-Night Food in Sundargarh</h3>
+              <p>
+                Late-night cravings? Discover the best food options to order after 9 PM in
+                Sundargarh.
+              </p>
+              <a
+                href="/blog/late-night-food/"
+                class="read-more"
+                aria-label="Read full article: Best Late-Night Food in Sundargarh"
+                >Read Story →</a
+              >
+            </div>
+          </article>
+
+          <!-- Blog Card 2 -->
+          <article class="blog-card animate-on-scroll delay-200">
+            <div class="blog-card-img-wrapper">
+              <picture>
+                <source type="image/avif" srcset="/static/images/blog_images/blog_2.avif" />
+                <source type="image/webp" srcset="/static/images/blog_images/blog_2.webp" />
+                <img
+                  src="/static/images/blog_images/blog_2.webp"
+                  alt="Veg vs Non-Veg Pizza"
+                  class="blog-card-img"
+                  loading="lazy"
+                  width="400"
+                  height="225"
+                />
+              </picture>
+            </div>
+            <div class="blog-card-content">
+              <h3>Veg vs Non-Veg Pizza in Sundargarh</h3>
+              <p>
+                Confused between veg and non-veg pizza? Discover what locals love more and our top
+                recommendations.
+              </p>
+              <a
+                href="/blog/veg-vs-non-veg/"
+                class="read-more"
+                aria-label="Read full article: Veg vs Non-Veg Pizza in Sundargarh"
+                >Read Story →</a
+              >
+            </div>
+          </article>
+
+          <!-- Blog Card 1 -->
+          <article class="blog-card animate-on-scroll delay-200">
+            <div class="blog-card-img-wrapper">
+              <picture>
+                <source type="image/avif" srcset="/static/images/blog_images/blog_1.avif" />
+                <source type="image/webp" srcset="/static/images/blog_images/blog_1.webp" />
+                <img
+                  src="/static/images/blog_images/blog_1.webp"
+                  alt="Affordable pizza spots"
+                  class="blog-card-img"
+                  loading="lazy"
+                  width="400"
+                  height="225"
+                />
+              </picture>
+            </div>
+            <div class="blog-card-content">
+              <h3>Top 5 Affordable Pizza Spots in Sundargarh</h3>
+              <p>
+                Sundargarh is buzzing with pizza spots that bring big flavors at small prices.
+                Discover the best budget-friendly places.
+              </p>
+              <a
+                href="/blog/affordable-pizza/"
+                class="read-more"
+                aria-label="Read full article: Top 5 Affordable Pizza Spots in Sundargarh"
+                >Read Story →</a
+              >
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+  </div>
 </Layout>

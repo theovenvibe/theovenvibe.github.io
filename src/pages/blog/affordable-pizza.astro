@@ -1,0 +1,141 @@
+---
+// Ported verbatim from v1's blog-affordable-pizza.html (PRD §8 superseded
+// block). Route is the AGENTS.md-bound slug /blog/affordable-pizza/.
+import Layout from '../../layouts/Layout.astro';
+import BlogPostLayout from '../../components/BlogPostLayout.astro';
+import { site } from '../../lib/data';
+
+const title = `Top 5 Affordable Pizza Spots in Sundargarh | ${site.business.name}`;
+const description =
+  'Sundargarh is buzzing with pizza spots that bring big flavors at small prices. Discover the best budget-friendly places for students and families.';
+const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
+const ogImage = new URL('/static/images/blog_images/blog_1.webp', Astro.site).toString();
+const waLink = `https://wa.me/${site.business.whatsapp}`;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: 'Top 5 Affordable Pizza Spots in Sundargarh',
+  image: ogImage,
+  author: { '@type': 'Organization', name: site.business.name },
+  publisher: {
+    '@type': 'Organization',
+    name: site.business.name,
+    logo: {
+      '@type': 'ImageObject',
+      url: new URL('/static/images/brand_images/The%20Oven%20vibe_logo.webp', Astro.site).toString(),
+    },
+  },
+  datePublished: '2024-05-15',
+  description: 'Sundargarh is buzzing with pizza spots that bring big flavors at small prices.',
+};
+---
+
+<Layout title={title} description={description}>
+  <Fragment slot="head">
+    <meta
+      name="keywords"
+      content="affordable pizza Sundargarh, best pizza in Sundargarh, cheap pizza places, The Oven Vibe, Chicken King, Flavours, Jay Vijay, Chaat Puchka"
+    />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content={title} />
+    <meta
+      property="og:description"
+      content="Discover the top 5 affordable pizza spots in Sundargarh. Budget-friendly and delicious options."
+    />
+    <meta property="og:url" content={pageUrl} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
+  </Fragment>
+
+  <BlogPostLayout
+    line1="AFFORDABLE"
+    lineGradient="PIZZA."
+    subtitle="Top 5 affordable pizza spots in Sundargarh. Big flavors at small prices."
+  >
+    <picture>
+      <source type="image/avif" srcset="/static/images/blog_images/blog_1.avif" />
+      <source type="image/webp" srcset="/static/images/blog_images/blog_1.webp" />
+      <img
+        src="/static/images/blog_images/blog_1.webp"
+        alt="Affordable pizza spots in Sundargarh featuring cheesy pizzas and garlic bread"
+        class="blog-img"
+        loading="lazy"
+        width="1200"
+        height="675"
+      />
+    </picture>
+
+    <p>
+      Sundargarh is buzzing with pizza spots that bring big flavors at small prices. From crispy
+      crusts to cheesy toppings, these places are favorites for students, families, and anyone
+      craving quality food without spending too much.
+    </p>
+
+    <h3>The Top 5 Affordable Pizza Joints 🍴</h3>
+
+    <div class="blog-list">
+      <h4>1. The Oven Vibe (Must-Try!)</h4>
+      <p>
+        Say hello to <strong>The Oven Vibe</strong> – the place where cravings meet creativity, and
+        every bite comes with a whole lot of vibe! It is Sundargarh's very own cloud kitchen,
+        cooking up happiness and delivering it straight to the customer's door.
+        <br /><strong>Location:</strong> Bijaya Talkies Road, In front of Subasini Clinic,
+        Sundargarh, Odisha 770001 <br /><strong>Why It's Affordable:</strong> Food starting at less
+        than a movie ticket <br /><strong>Must-Try:</strong> Herb Paneer Delight + Cheesy Garlic
+        Toast <br /><strong>Price for Two:</strong> Under ₹350
+      </p>
+
+      <h4>2. Chicken King</h4>
+      <p>
+        Craving something crispy, juicy, and full of flavor? <strong>Chicken King</strong> is
+        Sundargarh's favorite spot for chicken that hits all the right vibes. Whether it's a quick
+        bite, chilling with friends, or a late-night snack, they've got it covered.
+        <br /><strong>Location:</strong> Mission Rd, Sundargarh, Odisha 770001
+        <br /><strong>Why It's Affordable:</strong> Cheesy slices, less wallet crisis
+        <br /><strong>Must-Try:</strong> Chicken Sausage Pizza + Chicken Popcorn
+        <br /><strong>Price for Two:</strong> Under ₹600
+      </p>
+
+      <h4>3. Flavours</h4>
+      <p>
+        For pizza lovers tired of the same old toppings, <strong>Flavours</strong> delivers
+        adventure in every slice. Their flavor-packed pizzas keep Sundargarh foodies coming back
+        for more. <br /><strong>Location:</strong> Hariom Colony, Sundargarh, Odisha 770001
+        <br /><strong>Why It's Affordable:</strong> Every slice is a new story of taste
+        <br /><strong>Must-Try:</strong> Paneer Italian Pizza + Veg Italian Pizza
+        <br /><strong>Price for Two:</strong> Under ₹450
+      </p>
+
+      <h4>4. Jay Vijay</h4>
+      <p>
+        <strong>Jay Vijay</strong> is Sundargarh's go-to for quick, tasty, and pocket-friendly
+        meals. Known for its vibrant flavors, it's a hit with students and families alike.
+        <br /><strong>Location:</strong> Rourkela Rd, Near SBI Bank, Sundargarh, Odisha 770001
+        <br /><strong>Why It's Affordable:</strong> Big Taste – Small Spend
+        <br /><strong>Must-Try:</strong> Paneer Tandoori Pizza + Veg Mexican Pizza
+        <br /><strong>Price for Two:</strong> Under ₹450
+      </p>
+
+      <h4>5. Chaat Puchka</h4>
+      <p>
+        <strong>Chaat Puchka</strong> is all about tangy, spicy, and addictive flavors. Beyond
+        street food, their pizzas are loved for bold taste and budget-friendly pricing.
+        <br /><strong>Location:</strong> Raigarh - Sundargarh Rd, Sundargarh, Odisha 770001
+        <br /><strong>Why It's Affordable:</strong> Hunger satisfaction without hurting the pocket
+        <br /><strong>Must-Try:</strong> Chicken Pizza + Paneer Capsicum Pizza
+        <br /><strong>Price for Two:</strong> Under ₹650
+      </p>
+    </div>
+
+    <div class="highlight-box">
+      <p>
+        <strong>💡 Pro Tip:</strong> Check <em>Swiggy</em> & <em>Zomato</em> for local discounts—many
+        of these joints run exclusive deals online!
+      </p>
+    </div>
+
+    <a href={waLink} target="_blank" class="cta"> 👉 Order now on WhatsApp & enjoy your pizza </a>
+  </BlogPostLayout>
+</Layout>
