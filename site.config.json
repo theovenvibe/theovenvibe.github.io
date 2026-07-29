@@ -35,9 +35,18 @@
   "delivery": {
     "hook": "Delivery starts at just ₹29",
     "slabs": [
-      { "label": "0–2 km", "charge": 29 },
-      { "label": "2–4 km", "charge": 59 },
-      { "label": "4–8 km", "charge": 99 }
+      {
+        "label": "0–2 km",
+        "charge": 29
+      },
+      {
+        "label": "2–4 km",
+        "charge": 59
+      },
+      {
+        "label": "4–8 km",
+        "charge": 99
+      }
     ],
     "free_above": 599,
     "free_above_note": "FREE delivery on orders above ₹599 (within 0–8 km)",
@@ -50,6 +59,6 @@
   },
   "analytics": {
     "_comment": "Paste your Umami website ID from cloud.umami.is → Settings → Websites. Leave \"\" to disable analytics.",
-    "umami_website_id": ""
+    "umami_website_id": "a302193f-8dba-4bea-a880-2de3e09cf8d4"
   }
 }
