@@ -1,6 +1,6 @@
 # PROGRESS
 
-## Status: ✅ Phase 2a COMPLETE (2026-07-29, owner reacted). Next: Phase 2b — Design system (Fable 5, medium-high).
+## Status: 🔒 DESIGN LOCKED = v1 AS-IS (2026-07-30). Owner rejected all 3 mockup directions; final decision: pixel-parity migration of main into Astro, zero visible changes. Phase 3 (migration) IN PROGRESS.
 
 ## Phase checklist (from PRD §11)
 
@@ -17,11 +17,12 @@
   - **Owner decisions (binding for 2b):** build BOTH directions as proposed — "Ember Editorial" (dark, primary) + warmed "Fresh Counter" (cream light); logo concepts to draw as SVG: **Ember Arch** + **Flame Mark + wordmark** (Stamp/Seal rejected)
   - Exit: inspiration brief `design/RESEARCH.md` committed (site patterns + **logo/brand research** + photo analysis); Milan has reacted to it
   - ⚠️ **Open:** "Milan has reacted" exit criterion is NOT yet satisfied — brief is written and committed, but owner has not yet reviewed/reacted. Do not treat 2a as fully closed until Milan responds; surface the brief to him before starting 2b.
-- [ ] **Phase 2b — Design system** (Fable 5, medium-high)
-  - Exit: Milan picks mockup direction A/B incl. **logo concept + favicon set** (desktop menu grid in mockups); tokens locked; contrast AA verified; favicon crisp at 16–48px
-  - Scope note (owner, 2026-07-29): logo redesign in scope; food/item photos untouchable; all other imagery (blog headers, OG, illustrations) newly created
-- [ ] **Phase 3 — Build-out** (Sonnet 5, standard)
-  - Exit: all pages, all widths, no h-scroll; WA cart works JS-on and JS-off; build green
+- [x] **Phase 2b — Design system** — CLOSED 2026-07-30 with owner decision: **no new design.**
+  - Built 3 directions (Ember Editorial, Fresh Counter, v1-Faithful) + 2 logo concepts — ALL REJECTED by owner
+  - **Binding outcome (PRD §8 superseded block):** v2 design = v1 design pixel-for-pixel; style.css IS the design system; logo unchanged (brand-refresh scope cancelled); WA cart-builder PARKED pending owner approval post-parity; only invisible changes allowed
+  - Mockups/logos kept in design/ for history only
+- [ ] **Phase 3 — Pixel-parity migration** (Sonnet 5, standard — rescoped)
+  - Exit: v1-vs-v2 screenshot parity at 390/768/1440 per page; menu rendered build-time from menu.json; build green; no visible change without owner sign-off
 - [ ] **Phase 4 — Content, copy & SEO** (Opus 5, medium)
   - Exit: Rich Results Test passes; fabricated reviews gone; zero placeholders; Lighthouse SEO 100
 - [ ] **Phase 5 — Ops & docs** (Sonnet 5 + Haiku 4.5, low)
