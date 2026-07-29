@@ -1,63 +1,44 @@
 ---
-// Local SEO landing page — ported verbatim from v1's sundargarh-770001.html
-// (PRD §8 superseded block). v1 has no sticky WhatsApp FAB on this page —
-// preserved as-is (showWaFab=false). v1 also duplicated the mobile-menu
-// open/close script inline on this page; not re-ported since scripts/site.js
-// already binds the same listeners on every page (duplicating them would
-// just double-bind, not change behaviour).
+// /sundargarh/ — the local-intent landing page (PRD §4, §9), rebuilt in
+// Phase 4 from v1's sundargarh-770001.html, which was three buttons and a
+// one-line paragraph: nothing for a search engine to rank on the query it was
+// named after.
+//
+// Binding constraint on this page: EVERY fact below comes from
+// site.config.json or menu.json. No landmarks, neighbourhoods, delivery
+// promises or claims were invented — if it isn't in the config, it isn't here.
 import Layout from '../layouts/Layout.astro';
-import { site } from '../lib/data';
+import { site, categories } from '../lib/data';
+import { LINKS, PRICE_RANGE, breadcrumbJsonLd, restaurantJsonLd } from '../lib/seo';
 
-const title = `Pizza & Takeaway in Sundargarh ${site.business.address.postal_code} | ${site.business.name}`;
-const description = `Best pizza, burgers, fries and snacks near Sundargarh ${site.business.address.postal_code}. Order via WhatsApp, Zomato or Swiggy.`;
-const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
-const waLink = `https://wa.me/${site.business.whatsapp}?utm_source=site&utm_medium=location&utm_campaign=whatsapp`;
-const zomatoLink =
-  'https://link.zomato.com/xqzv/rshare?id=11990877930563aa9&utm_source=site&utm_medium=location&utm_campaign=delivery';
-const swiggyLink =
-  'https://www.swiggy.com/direct/brand/710285?source=swiggy-direct&subSource=generic&utm_source=site&utm_medium=location&utm_campaign=delivery';
+const pin = site.business.address.postal_code;
+const title = `Food Delivery in Sundargarh ${pin} | The Oven Vibe`;
+const description = `Pure veg food delivery across Sundargarh ${pin}. Delivery from ₹${site.delivery.slabs[0].charge}, free above ₹${site.delivery.free_above}, up to 8 km. Open ${site.business.hours.display}.`;
 
-const localBusinessJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'LocalBusiness',
-  name: site.business.name,
-  image: new URL('/static/images/brand_images/The%20Oven%20Vibe_Hero_lable.webp', Astro.site).toString(),
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: 'Bijaya Talkies Road, In front of Subasini Clinic',
-    addressLocality: site.business.address.locality,
-    addressRegion: site.business.address.region,
-    postalCode: site.business.address.postal_code,
-    addressCountry: site.business.address.country,
-  },
-  telephone: site.business.phone.replace('+91', '+91-'),
-  servesCuisine: ['Pizza', 'Burger', 'Fries', 'Snacks', 'Pasta'],
-  url: pageUrl,
-  sameAs: [
-    site.business.instagram,
-    `https://wa.me/${site.business.whatsapp}`,
-    'https://link.zomato.com/xqzv/rshare?id=11990877930563aa9',
-    'https://www.swiggy.com/direct/brand/710285?source=swiggy-direct&subSource=generic',
-  ],
-};
+const waLink = `${LINKS.whatsapp}?utm_source=site&utm_medium=location&utm_campaign=whatsapp`;
+const zomatoLink = `${LINKS.zomato}&utm_source=site&utm_medium=location&utm_campaign=delivery`;
+const swiggyLink = `${LINKS.swiggy}&utm_source=site&utm_medium=location&utm_campaign=delivery`;
+
+/** Cheapest item per category — real numbers, straight from menu.json. */
+const highlights = categories.map(({ name, items }) => ({
+  name,
+  count: items.length,
+  from: Math.min(...items.map((i) => i.price)),
+}));
 ---
 
-<Layout title={title} description={description} showWaFab={false}>
-  <Fragment slot="head">
-    <meta
-      name="keywords"
-      content="Sundargarh 770001 pizza, best pizza near me, takeaway Sundargarh, cloud kitchen Sundargarh, The Oven Vibe"
-    />
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={`Order fresh oven-baked food in Sundargarh ${site.business.address.postal_code} via WhatsApp, Zomato or Swiggy.`} />
-    <meta property="og:url" content={pageUrl} />
-    <meta property="og:locale" content="en_IN" />
-    <script type="application/ld+json" is:inline set:html={JSON.stringify(localBusinessJsonLd)} />
-  </Fragment>
-
+<Layout
+  title={title}
+  description={description}
+  ogTitle={`Pure Veg Food Delivery in Sundargarh ${pin}`}
+  showWaFab={false}
+  jsonLd={[
+    restaurantJsonLd(),
+    breadcrumbJsonLd([{ name: `Sundargarh ${pin}`, path: '/sundargarh/' }]),
+  ]}
+>
   <main class="main">
-    <!-- HERO SECTION -->
+    <!-- HERO -->
     <section class="hero hero-mini">
       <div class="hero-shapes">
         <div class="shape shape-1"></div>
@@ -67,27 +48,156 @@ const localBusinessJsonLd = {
       <div class="hero-container">
         <div class="hero-content">
           <div class="hero-badge animate-on-scroll">
-            <span>●</span> SERVING {site.business.address.postal_code}
+            <span class="pulse-dot"></span> Serving {site.business.address.locality} {pin}
           </div>
-          <h1 class="hero-display" style="font-size: clamp(2.5rem, 5vw, 4.5rem);">
-            <span class="animate-on-scroll">SUNDARGARH</span>
-            <span class="text-gradient animate-on-scroll delay-100">TAKEAWAY.</span>
+          <h1 class="hero-display" style="font-size: clamp(2rem, 4.5vw, 3.75rem);">
+            <span class="animate-on-scroll">FOOD DELIVERY IN</span>
+            <span class="text-gradient animate-on-scroll delay-100">SUNDARGARH {pin}.</span>
           </h1>
-          <p class="hero-text animate-on-scroll delay-200">
-            Fresh, hot, oven-baked food for Sundargarh {site.business.address.postal_code}.
-            Order via WhatsApp, Zomato, or Swiggy.
+          <p class="animate-on-scroll delay-100" style="margin-bottom: 1.5rem;">
+            <span class="veg-badge">100% Pure Veg</span>
           </p>
+          <p class="hero-text animate-on-scroll delay-200">
+            The Oven Vibe is a 100% pure veg cloud kitchen in {`${site.business.address.locality}, ${site.business.address.region}`}. We bake pizzas, wok-toss fried
+            rice, grill sandwiches and fry sides to order, then deliver them ourselves across town.
+            {` ${site.delivery.hook}, and free on orders above ₹${site.delivery.free_above}.`}
+          </p>
+          <div class="hero-actions animate-on-scroll delay-300">
+            <a
+              href={`tel:${site.business.phone}`}
+              class="btn btn-primary btn-lg"
+              aria-label={`Call ${site.business.name} at ${site.business.phone_display} to order`}
+              >Call {site.business.phone_display}</a
+            >
+            <a
+              href={waLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn-secondary btn-lg">Order on WhatsApp</a
+            >
+          </div>
+          <div class="hero-trust animate-on-scroll delay-300">
+            <div class="trust-item"><span class="label">Open {site.business.hours.display}</span></div>
+            <div class="trust-divider"></div>
+            <div class="trust-item"><span class="label">20 min takeaway</span></div>
+            <div class="trust-divider"></div>
+            <div class="trust-item"><span class="label">30-45 min delivery</span></div>
+          </div>
         </div>
       </div>
     </section>
 
-    <div class="section" style="padding-top: 0;">
+    <!-- DELIVERY AREA & CHARGES -->
+    <section class="section" style="background-color: white;">
       <div class="container">
-        <div class="row-links">
-          <a class="cta" href={waLink} target="_blank" rel="noopener noreferrer" title="Order on WhatsApp">WhatsApp</a> <a class="cta" href={zomatoLink} target="_blank" rel="noopener noreferrer" title="Order on Zomato">Zomato</a> <a class="cta" href={swiggyLink} target="_blank" rel="noopener noreferrer" title="Order on Swiggy">Swiggy</a>
+        <h2>Where we deliver in Sundargarh</h2>
+        <p class="lead" style="margin-bottom: 2rem;">{site.delivery.radius_note}</p>
+
+        <div class="grid-3">
+          {
+            site.delivery.slabs.map((slab, i) => (
+              <article class:list={['feature-card', 'animate-on-scroll', i > 0 && `delay-${i * 100}`]}>
+                <h3>₹{slab.charge}</h3>
+                <p>Delivery charge for {slab.label} from our kitchen.</p>
+              </article>
+            ))
+          }
         </div>
-        <p class="note">20 min takeaway · 30-45 min delivery</p>
+
+        <p style="margin-top: 2rem; font-weight: 700; color: var(--color-primary); font-size: 1.125rem;">
+          {site.delivery.free_above_note}
+        </p>
+        <p>
+          The charge depends on how far you are, so tell us your delivery location when you call or
+          message and we will confirm it before the order goes into the oven. Beyond 8 km we cannot
+          promise the food arrives hot, so we do not deliver there. If you would rather collect,
+          takeaway orders are ready in about 20 minutes — call ahead and the box will be waiting.
+        </p>
+        <p>
+          Prefer to pay online? We are also on <a href={zomatoLink} target="_blank" rel="noopener noreferrer" class="read-more"
+            >Zomato</a
+          > and <a href={swiggyLink} target="_blank" rel="noopener noreferrer" class="read-more"
+            >Swiggy</a
+          >, at their own delivery charges and timings.
+        </p>
       </div>
-    </div>
+    </section>
+
+    <!-- MENU HIGHLIGHTS -->
+    <section class="section">
+      <div class="container">
+        <h2>What we cook</h2>
+        <p class="lead" style="margin-bottom: 2rem;">
+          {categories.length} categories, all pure veg, {PRICE_RANGE} across the menu.
+        </p>
+
+        <div class="grid-3">
+          {
+            highlights.map(({ name, count, from }, i) => (
+              <article class:list={['feature-card', 'animate-on-scroll', i % 3 > 0 && `delay-${(i % 3) * 100}`]}>
+                <h3>{name}</h3>
+                <p>
+                  {count} {count === 1 ? 'item' : 'items'}, from ₹{from}.
+                </p>
+              </article>
+            ))
+          }
+        </div>
+
+        <div style="margin-top: 2.5rem;">
+          <a href="/menu/" class="btn btn-primary btn-lg">See the Full Menu &amp; Prices</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- QUICK ANSWERS -->
+    <section class="section" style="background-color: white;">
+      <div class="container" style="max-width: 800px;">
+        <h2>Quick answers</h2>
+
+        <h3>Is The Oven Vibe pure vegetarian?</h3>
+        <p>
+          Yes — 100% pure veg. No meat, fish or egg is cooked, stored or handled in the kitchen, so
+          nothing on the menu shares equipment with non-vegetarian food.
+        </p>
+
+        <h3>What are the timings in Sundargarh?</h3>
+        <p>
+          We are open {site.business.hours.display}. For a large or party order, call earlier in the
+          day so we can plan the kitchen around it.
+        </p>
+
+        <h3>Is there a dine-in place?</h3>
+        <p>
+          No. We are a cloud kitchen — everything is takeaway or delivery. You can collect from the
+          kitchen in {site.business.address.locality} {pin} or have it sent to you.
+        </p>
+
+        <h3>How do I place a party or bulk order?</h3>
+        <p>
+          Call {site.business.phone_display} with the date, the number of people and roughly what you
+          want. We will put together pure veg platters and combos and quote a price back to you.
+        </p>
+
+        <p style="margin-top: 2rem;">
+          <a href="/faq/" class="read-more">Read all frequently asked questions →</a>
+        </p>
+      </div>
+    </section>
+
+    <!-- CLOSING CTA -->
+    <section class="cta-section animate-on-scroll">
+      <h2>Hungry in Sundargarh right now?</h2>
+      <p>
+        One call and the oven starts. {site.business.hours.display}, {site.delivery.hook.toLowerCase()}.
+      </p>
+      <a
+        class="btn btn-primary"
+        style="background: white; color: var(--color-secondary);"
+        href={`tel:${site.business.phone}`}
+        aria-label={`Call ${site.business.name} at ${site.business.phone_display} to order`}
+        >Call the Kitchen: {site.business.phone_display}</a
+      >
+    </section>
   </main>
 </Layout>
