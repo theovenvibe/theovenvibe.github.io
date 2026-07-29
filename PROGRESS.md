@@ -55,6 +55,12 @@
 
 ## Session log
 
+### 2026-07-30 (owner decisions post-Phase 3)
+- Analytics: Umami confirmed; v1 trackers (GTM/gtag/Yandex) stay dropped. Owner may audit later.
+- Business is 100% PURE VEG → recorded in PRD §3, binding for Phase 4 SEO/copy.
+- Bonus /menu/ page: KEEP. veg-vs-non-veg footer bugfix: understood/accepted.
+- Owner requests a **visual-polish enhancement phase (3.5)** on top of the v1-parity base — plan to be approved before implementation. This AMENDS the "zero visible changes" lock: parity was the floor, approved enhancements now allowed.
+
 <!-- date / what was done / what's next / open questions -->
 
 ### 2026-07-29
