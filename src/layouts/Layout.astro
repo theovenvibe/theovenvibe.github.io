@@ -6,13 +6,12 @@
  * sundargarh-770001.html/blog-*.html (PRD §8 superseded block — pixel parity
  * is binding).
  *
- * Per-page SEO tags (OG/Twitter/JSON-LD/keywords) are NOT generalized into
- * props here — each page fills the `head` slot with its own v1-sourced
- * tags, since v1's meta sets genuinely differ page to page (see PROGRESS.md
- * session log for the page-by-page audit). The one deliberate content change
- * from v1: no fabricated aggregateRating/review JSON-LD anywhere (PRD §3
- * binding ban) — where v1 had it (home page), the Restaurant JSON-LD instead
- * carries the real rating from site.config.json.
+ * Phase 4: per-page SEO markup IS now generalized — `<Seo>` (one component,
+ * PRD §9) renders canonical + OG + Twitter + a single JSON-LD `@graph` from
+ * the props below, so a new page cannot silently ship without them. The
+ * `head` slot remains for genuinely page-specific extras.
+ * No fabricated aggregateRating/review markup anywhere, ever (PRD §3 binding
+ * ban) — the only rating in the build is site.config.json's real GBP value.
  *
  * Dropped from v1 on purpose (not a visual change, flagged in the Phase 3
  * report as an owner question): GTM, Google Ads gtag, and Yandex Metrika
@@ -27,6 +26,7 @@ import '../styles/polish.css'; // Phase 3.5 additive layer (G1+G2) — delete th
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import WhatsAppFab from '../components/WhatsAppFab.astro';
+import Seo, { type OgImage } from '../components/Seo.astro';
 import { site } from '../lib/data';
 
 interface Props {
@@ -35,9 +35,23 @@ interface Props {
   home?: boolean;
   activeContact?: boolean;
   showWaFab?: boolean;
+  ogTitle?: string;
+  ogType?: 'website' | 'article';
+  image?: OgImage;
+  jsonLd?: unknown[];
 }
-const { title, description, home = false, activeContact = false, showWaFab = true } = Astro.props;
-const canonical = new URL(Astro.url.pathname, Astro.site);
+const {
+  title,
+  description,
+  home = false,
+  activeContact = false,
+  showWaFab = true,
+  ogTitle,
+  ogType,
+  image,
+  jsonLd,
+} = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site).toString();
 ---
 
 <!doctype html>
@@ -47,9 +61,17 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
+    <Seo
+      title={title}
+      description={description}
+      canonical={canonical}
+      ogTitle={ogTitle}
+      ogType={ogType}
+      image={image}
+      jsonLd={jsonLd}
+    />
     <slot name="head" />
   </head>
   <body>
