@@ -33,7 +33,7 @@ const { img, title, description, price, meta = [], extraClass } = Astro.props;
       <img src={img.webp} alt={title} class="menu-card-img" loading="lazy" />
     </picture>
     <div class="menu-card-body">
-      <h4 class="menu-card-title">{title}</h4>
+      <h3 class="menu-card-title">{title}</h3>
       {
         meta.length > 0 && (
           <p class="menu-card-meta" style="font-size: 0.78rem; color: var(--color-text-muted); letter-spacing: 0.04em; text-transform: uppercase; margin: -0.35rem 0 0.6rem;">
