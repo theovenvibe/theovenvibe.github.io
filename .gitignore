@@ -1,5 +1,7 @@
 # build output
 dist/
+# Lighthouse CI local run artifacts (skills/deploy-cicd.md §8)
+.lighthouseci/
 # generated types
 .astro/
 # dependencies

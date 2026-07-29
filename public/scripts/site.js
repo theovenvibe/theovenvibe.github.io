@@ -135,4 +135,21 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
   });
+
+  // ===============================
+  // Lead events for Umami (Phase 5) — no-op when analytics is off, since
+  // Layout.astro only loads the Umami script when site.config.json's
+  // analytics.umami_website_id is non-empty. `window.umami` is then simply
+  // undefined and every call below is skipped.
+  // ===============================
+  document.querySelectorAll('a[href^="tel:"]').forEach(function (link) {
+    link.addEventListener('click', function () {
+      if (window.umami) window.umami.track('call_click');
+    });
+  });
+  document.querySelectorAll('a[href*="wa.me"]').forEach(function (link) {
+    link.addEventListener('click', function () {
+      if (window.umami) window.umami.track('wa_click');
+    });
+  });
 });
