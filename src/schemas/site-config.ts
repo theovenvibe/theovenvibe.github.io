@@ -109,13 +109,16 @@ export const siteConfigSchema = z.object({
       active: z.boolean(),
       surcharge: z.number().int().nonnegative('rain.surcharge must be 0 or more rupees'),
       note: z.string().min(1),
+      waived_when_prepaid: z.boolean(),
+      prepaid_note: z.string().min(1),
+      later_note: z.string().min(1),
+      now_window_minutes: z
+        .number()
+        .int()
+        .positive('rain.now_window_minutes must be a whole number of minutes'),
+      _comment: z.string().optional(),
     }),
     pickup_discount: z.number().int().nonnegative('pickup_discount must be 0 or more rupees'),
-    preorder_discount: z.number().int().nonnegative('preorder_discount must be 0 or more rupees'),
-    preorder_hours_ahead: z
-      .number()
-      .int()
-      .positive('preorder_hours_ahead must be a whole number of hours'),
     campus_batch: z.object({
       charge: z.number().int().nonnegative('campus_batch.charge must be 0 or more rupees'),
       window_minutes: z

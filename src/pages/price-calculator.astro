@@ -165,7 +165,8 @@ const calcConfig = {
           {d.rain.active && <li>Rain surcharge active right now: +₹{d.rain.surcharge}. {d.rain.note}</li>}
           <li>Pickup instead of delivery: ₹{d.pickup_discount} off the food, no delivery charge.</li>
           <li>
-            Pre-order {d.preorder_hours_ahead}+ hours ahead: ₹{d.preorder_discount} off.
+            Ordering for later? If it rains when we ride out, ₹{d.rain.surcharge} is added on
+            delivery — unless you pay online now, which locks your price.
           </li>
           <li>{d.beyond_note}</li>
         </ul>
@@ -282,14 +283,18 @@ const calcConfig = {
             <fieldset class="calc-group">
               <legend>Other</legend>
               <label class="calc-check">
-                <input type="checkbox" id="preorderCheck" />
-                Pre-ordering {d.preorder_hours_ahead}+ hours ahead (₹{d.preorder_discount} off)
+                <input type="checkbox" id="prepaidCheck" />
+                I'm paying online now (UPI) — price locked
               </label>
               <label class="calc-check" id="rainLabel">
                 <input type="checkbox" id="rainCheck" checked={d.rain.active} />
                 It's raining right now (+₹{d.rain.surcharge})
                 <span class="calc-check-hint" id="rainHint" hidden>— delivery only</span>
               </label>
+              {/* For an order placed for later nobody knows the weather yet, so
+                  the tick box is replaced by a plain statement of what happens
+                  if it rains — or by the price-locked line once they prepay. */}
+              <p class="calc-note" id="weatherNote" hidden />
               {
                 d.rain.active && (
                   <p class="calc-note calc-note--warn">
@@ -345,7 +350,8 @@ const calcConfig = {
   const dateInput = document.getElementById('dateInput') as HTMLInputElement;
   const timeRuleNote = document.getElementById('timeRuleNote') as HTMLElement;
   const orderTypeRadios = Array.from(document.querySelectorAll<HTMLInputElement>('input[name="orderType"]'));
-  const preorderCheck = document.getElementById('preorderCheck') as HTMLInputElement;
+  const prepaidCheck = document.getElementById('prepaidCheck') as HTMLInputElement;
+  const weatherNote = document.getElementById('weatherNote') as HTMLParagraphElement;
   const rainCheck = document.getElementById('rainCheck') as HTMLInputElement;
   const availabilityNote = document.getElementById('availabilityNote') as HTMLParagraphElement;
   const rainLabel = document.getElementById('rainLabel') as HTMLLabelElement;
@@ -360,6 +366,15 @@ const calcConfig = {
   const now = new Date();
   timeInput.value = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
   dateInput.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+  /** Minutes between now and the date+time the visitor has chosen. */
+  function minutesAhead(): number {
+    const [y, mo, da] = dateInput.value.split('-').map(Number);
+    const [h, mi] = (timeInput.value || '00:00').split(':').map(Number);
+    if ([y, mo, da, h, mi].some(Number.isNaN)) return 0;
+    const chosen = new Date(y, mo - 1, da, h, mi);
+    return (chosen.getTime() - Date.now()) / 60000;
+  }
 
   function currentDayOfWeek(): number {
     const parts = dateInput.value.split('-').map(Number);
@@ -575,13 +590,36 @@ const calcConfig = {
     const time = timeInput.value || '12:00';
     const state = kitchenState(time);
 
-    // Rain pays for a wetter, slower ride. A pickup has no ride, so the
-    // control is disabled rather than left live and quietly ignored by the
-    // engine — a checkbox that changes nothing reads as a bug.
-    const rainOff = orderType === 'pickup';
-    rainCheck.disabled = rainOff;
-    rainLabel.classList.toggle('calc-check--off', rainOff);
-    rainHint.hidden = !rainOff;
+    // Three weather cases, and only one of them is a tick box.
+    //   pickup            -> no ride, so no rain charge at all
+    //   ordering for later -> nobody knows the weather; state the rule instead
+    //   paid online        -> price locked, no doorstep surcharge is possible
+    const isPickup = orderType === 'pickup';
+    const later = minutesAhead() > delivery.rain.now_window_minutes;
+    const prepaid = prepaidCheck.checked;
+    const rainBoxUsable = !isPickup && !later && !prepaid;
+
+    rainCheck.disabled = !rainBoxUsable;
+    rainLabel.classList.toggle('calc-check--off', !rainBoxUsable);
+    rainHint.hidden = !isPickup;
+    rainLabel.hidden = isPickup ? false : later || prepaid;
+
+    if (isPickup) {
+      weatherNote.hidden = true;
+    } else if (prepaid) {
+      weatherNote.hidden = false;
+      weatherNote.className = 'calc-note calc-note--good';
+      weatherNote.textContent = delivery.rain.prepaid_note;
+    } else if (later) {
+      weatherNote.hidden = false;
+      weatherNote.className = 'calc-note calc-note--warn';
+      weatherNote.textContent = delivery.rain.later_note.replace(
+        '{surcharge}',
+        String(delivery.rain.surcharge),
+      );
+    } else {
+      weatherNote.hidden = true;
+    }
     // Availability first: it can empty the basket, so the subtotal is read after.
     applyAvailability(state);
 
@@ -617,7 +655,7 @@ const calcConfig = {
       time,
       dayOfWeek: currentDayOfWeek(),
       orderType,
-      preorder: preorderCheck.checked,
+      prepaid: prepaidCheck.checked,
       rain: rainCheck.checked,
       // The regulars waiver is applied by the kitchen when it quotes, not
       // self-declared here: there is no way to verify it on a public page.
@@ -631,7 +669,7 @@ const calcConfig = {
   kmInput.addEventListener('input', update);
   timeInput.addEventListener('input', update);
   dateInput.addEventListener('input', update);
-  preorderCheck.addEventListener('change', update);
+  prepaidCheck.addEventListener('change', update);
   rainCheck.addEventListener('change', update);
 
   copyBtn.addEventListener('click', async () => {
@@ -851,6 +889,11 @@ const calcConfig = {
     flex-wrap: wrap;
     gap: 1rem;
     margin-top: 1.5rem;
+  }
+
+  .calc-note--good {
+    color: #1a7f37;
+    font-weight: 600;
   }
 
   .calc-check--off {
