@@ -86,11 +86,14 @@
     "rain": {
       "active": false,
       "surcharge": 29,
-      "note": "Only while it is actually raining — we turn it off when it stops."
+      "note": "Only while it is actually raining — we turn it off when it stops.",
+      "waived_when_prepaid": true,
+      "prepaid_note": "Paid online? Your price is locked — no rain charge, whatever the weather does.",
+      "later_note": "If it rains when we ride out, ₹{surcharge} is added on delivery. Pay online now and your price is locked instead.",
+      "now_window_minutes": 60,
+      "_comment": "rain.active is the kitchen declaring it is raining NOW. For an order placed for later, nobody knows the weather yet: the calculator shows later_note instead of the tick box, unless the customer is paying online, in which case the price is locked and no rain charge can be added at the door. Asking someone who already paid for another Rs.29 on the doorstep is not worth the review it earns."
     },
     "pickup_discount": 30,
-    "preorder_discount": 10,
-    "preorder_hours_ahead": 3,
     "campus_batch": {
       "charge": 39,
       "window_minutes": 20,
@@ -116,8 +119,7 @@
     },
     "cod_cap": 500,
     "radius_note": "We deliver up to 4 km ourselves. Zomato and Swiggy carry the rest.",
-    "_max_delivery_charge_comment": "Ceiling on the SUM of every delivery-related charge - base fee plus late-night plus rain. Worst realistic stack is 2-4 km (69) + late night (79) + rain (29) = 177, so this caps it at 149. Raising a slab charge later cannot silently break the promise.",
-    "_preorder_discount_comment": "Taken off the food, not the delivery fee, so it still applies to pickup orders and never disappears when delivery happens to be free."
+    "_max_delivery_charge_comment": "Ceiling on the SUM of every delivery-related charge - base fee plus late-night plus rain. Worst realistic stack is 2-4 km (69) + late night (79) + rain (29) = 177, so this caps it at 149. Raising a slab charge later cannot silently break the promise."
   },
   "hero_dish_code": "752649876",
   "announcement": {

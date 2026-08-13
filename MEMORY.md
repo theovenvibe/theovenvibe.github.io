@@ -40,6 +40,24 @@ attach rate over Mar–Aug 2026. Full reasoning lives in
   plus a side to work.
 - The Coke in combos is assumed at ₹40; it is not a priced SKU in this file.
 
+## Rain, and why prepaying locks the price
+
+Rain is the one charge that can appear *after* the quote, so it has three cases
+and only one of them is a tick box:
+
+- **Ordering now, delivery** — "It's raining right now (+₹29)" is tickable.
+- **Ordering for later** — nobody knows the weather yet, so the box is hidden and
+  replaced by a plain line: if it rains when we ride out, ₹29 is added on delivery.
+- **Paid online** — no rain charge, ever. Asking someone who already paid on the
+  QR for another ₹29 at the door is not worth the review it earns, and a
+  confirmed prepaid order is worth more to the kitchen than the ₹29.
+
+Pickup never carries it: no ride, no charge.
+
+The pre-order discount (₹10 for ordering ahead) was removed — it paid people for
+saying "later" with no commitment. Prepaying now buys a locked price instead,
+which costs nothing when it isn't raining and buys a confirmed order when it is.
+
 ## Kitchen hours and what they mean in code
 
 The calculator has three states, driven by `site.config.json` and verified on
