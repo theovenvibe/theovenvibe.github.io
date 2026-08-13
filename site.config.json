@@ -83,8 +83,9 @@
       "delivery_premium": 30,
       "_charge_comment": "Two different costs, priced separately. kitchen_charge covers relighting the oven and the owner being awake - it applies to every late order, pickup included, because a pickup still reopens the kitchen. delivery_premium is the extra cost of riding out at that hour and applies on top of the normal distance fee. The normal pickup discount does NOT apply during the window: collecting your own order saves the ride, not the reopen.",
       "advance_note": "Late-night orders are paid online in advance. If it rains when we ride out, ₹{surcharge} is added on delivery.",
-      "advance_note_quote": "Late-night order — Needs to be paid online in advance. So please send your QR so I can pay it. If it rains when you ride out, ₹{surcharge} is added in my bill and will be paid on delivery.",
-      "_advance_comment": "Late night is prepaid AND still carries the rain charge - paying up front is the condition of cooking at that hour, not a waiver. That is why the prepaid tick box is hidden inside the window: it is not a choice there. Outside the window prepaying DOES waive rain, which is the only thing it buys."
+      "advance_note_quote": "Late-night order — Needs to be paid online in advance. So please send your QR so I can pay it. I understand that if it rains when you ride out, ₹{surcharge} is added in my bill and will be paid on delivery.",
+      "_advance_comment": "Late night is prepaid AND still carries the rain charge - paying up front is the condition of cooking at that hour, not a waiver. That is why the prepaid tick box is hidden inside the window: it is not a choice there. Outside the window prepaying DOES waive rain, which is the only thing it buys.",
+      "pickup_note_quote": "Late-night pickup — Needs to be paid online in advance. So please send your QR so I can pay it. I will collect it myself."
     },
     "rain": {
       "active": false,
@@ -95,8 +96,8 @@
       "later_note": "If it rains when we ride out, ₹{surcharge} is added on delivery. Pay online now and your price is locked instead.",
       "now_window_minutes": 60,
       "_comment": "rain.active is the kitchen declaring it is raining NOW. For an order placed for later, nobody knows the weather yet: the calculator shows later_note instead of the tick box, unless the customer is paying online, in which case the price is locked and no rain charge can be added at the door. Asking someone who already paid for another Rs.29 on the doorstep is not worth the review it earns.",
-      "later_note_quote": "I will pay on delivery. If it rains when you ride out, ₹{surcharge} extra is added to my bill.",
-      "prepaid_note_quote": "I am paying online now — please send your QR. My price is locked, so no rain charge is added.",
+      "later_note_quote": "I will pay on delivery. I understand that if it rains when you ride out, ₹{surcharge} extra is added to my bill.",
+      "prepaid_note_quote": "Paid online — so my price is locked, no rain charge. Please send your QR so I can pay it.",
       "_note_voice_comment": "later_note / prepaid_note speak TO the customer on the page. The _quote variants are written in the CUSTOMER's voice, because the customer is the one sending them: they land in the kitchen's WhatsApp as \"please send your QR\", \"my bill\", \"when you ride out\". Same facts, spoken by the person pressing send."
     },
     "pickup_discount": 30,
@@ -127,7 +128,9 @@
     "radius_note": "We deliver up to 4 km ourselves. Zomato and Swiggy carry the rest.",
     "_max_delivery_charge_comment": "Ceiling on the SUM of every delivery-related charge - base fee plus late-night plus rain. Worst realistic stack is 2-4 km (69) + late night (79) + rain (29) = 177, so this caps it at 149. Raising a slab charge later cannot silently break the promise.",
     "pickup_min_order": 299,
-    "_pickup_comment": "The Rs.30 pickup discount only applies from this basket size up. At 15% margin a Rs.100 order contributes Rs.15, so Rs.30 off it is a Rs.15 loss - break-even is Rs.200. Rs.299 clears that with room and still fires on about half of all orders; a higher gate (Rs.399 qualifies only 18%) would rarely trigger and stop pulling anyone away from a delivery that costs the kitchen Rs.78 a ride."
+    "_pickup_comment": "The Rs.30 pickup discount only applies from this basket size up. At 15% margin a Rs.100 order contributes Rs.15, so Rs.30 off it is a Rs.15 loss - break-even is Rs.200. Rs.299 clears that with room and still fires on about half of all orders; a higher gate (Rs.399 qualifies only 18%) would rarely trigger and stop pulling anyone away from a delivery that costs the kitchen Rs.78 a ride.",
+    "pickup_note_quote": "I will collect this order myself from the kitchen.",
+    "_quote_voice_comment": "Everything the customer SENDS is written in their own voice and reads as an acknowledgement (\"I understand that...\", \"my bill\"), so the message doubles as a record of what they agreed to. The notes shown ON the page stay in the site's voice - that is the website informing them, and it is deliberately left alone."
   },
   "hero_dish_code": "752649876",
   "announcement": {
