@@ -285,7 +285,7 @@ const calcConfig = {
 
             <fieldset class="calc-group">
               <legend>Other</legend>
-              <label class="calc-check">
+              <label class="calc-check" id="prepaidLabel">
                 <input type="checkbox" id="prepaidCheck" />
                 I'm paying online now (UPI) — price locked
               </label>
@@ -355,6 +355,7 @@ const calcConfig = {
   const orderTypeRadios = Array.from(document.querySelectorAll<HTMLInputElement>('input[name="orderType"]'));
   const prepaidCheck = document.getElementById('prepaidCheck') as HTMLInputElement;
   const weatherNote = document.getElementById('weatherNote') as HTMLParagraphElement;
+  const prepaidLabel = document.getElementById('prepaidLabel') as HTMLLabelElement;
   const rainCheck = document.getElementById('rainCheck') as HTMLInputElement;
   const availabilityNote = document.getElementById('availabilityNote') as HTMLParagraphElement;
   const rainLabel = document.getElementById('rainLabel') as HTMLLabelElement;
@@ -609,7 +610,15 @@ const calcConfig = {
     //   paid online        -> price locked, no doorstep surcharge is possible
     const isPickup = orderType === 'pickup';
     const later = minutesAhead() > delivery.rain.now_window_minutes;
-    const prepaid = prepaidCheck.checked;
+
+    // Paying up front only changes the price by waiving rain, and a pickup has
+    // no ride to rain on — so the control cannot move a single rupee here and
+    // is hidden outright rather than sitting there claiming to "lock" a price.
+    // (Late-night orders are prepaid regardless; that is stated in their own
+    // line, not asked as a question.)
+    prepaidLabel.hidden = isPickup;
+    prepaidCheck.disabled = isPickup;
+    const prepaid = prepaidCheck.checked && !isPickup;
     const rainBoxUsable = !isPickup && !later && !prepaid;
 
     rainCheck.disabled = !rainBoxUsable;
