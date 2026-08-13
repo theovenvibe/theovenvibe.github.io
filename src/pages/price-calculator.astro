@@ -159,7 +159,9 @@ const calcConfig = {
           <li>
             Late night ({lateNightTimeRange}): +₹{d.late_night.kitchen_charge} kitchen charge on every
             order, +₹{d.late_night.delivery_premium} more if we deliver (so picking up saves ₹
-            {d.late_night.delivery_premium}, and the usual pickup discount does not apply), ₹{d.late_night.min_order}{' '}
+            {d.late_night.delivery_premium}, and the usual pickup discount does not apply), ₹
+            {d.late_night.min_order} minimum, paid online in advance — and if it rains when we ride out,
+            ₹{d.rain.surcharge} is added on delivery.{' '}
             minimum, paid online in advance. {d.late_night.note}
           </li>
           {d.rain.active && <li>Rain surcharge active right now: +₹{d.rain.surcharge}. {d.rain.note}</li>}
@@ -360,6 +362,9 @@ const calcConfig = {
   const pastNote = document.getElementById('pastNote') as HTMLParagraphElement;
   const weatherNote = document.getElementById('weatherNote') as HTMLParagraphElement;
   const otherGroup = document.getElementById('otherGroup') as HTMLFieldSetElement;
+  const prepaidLabel = document.getElementById('prepaidLabel') as HTMLLabelElement;
+  /** After closing the only thing left in "Other" is rain, which a pickup never pays. */
+  const rainOffForLate = (orderType: string) => orderType === 'pickup';
   const rainCheck = document.getElementById('rainCheck') as HTMLInputElement;
   const availabilityNote = document.getElementById('availabilityNote') as HTMLParagraphElement;
   const rainLabel = document.getElementById('rainLabel') as HTMLLabelElement;
@@ -653,9 +658,14 @@ const calcConfig = {
     // is hidden outright rather than sitting there claiming to "lock" a price.
     // (Late-night orders are prepaid regardless; that is stated in their own
     // line, not asked as a question.)
-    otherGroup.hidden = isPickup;
-    prepaidCheck.disabled = isPickup;
-    const prepaid = prepaidCheck.checked && !isPickup;
+    // The prepaid tick is only a choice outside the late-night window. After
+    // closing, paying up front is the condition of cooking at all — and on a
+    // pickup nothing in this group applies, so the whole group goes.
+    const lateNow = kitchenState(time) === 'late_night';
+    prepaidLabel.hidden = lateNow;
+    prepaidCheck.disabled = isPickup || lateNow;
+    otherGroup.hidden = isPickup || (lateNow && rainOffForLate(orderType));
+    const prepaid = prepaidCheck.checked && !isPickup && !lateNow;
     const rainBoxUsable = !isPickup && !later && !prepaid;
 
     rainCheck.disabled = !rainBoxUsable;

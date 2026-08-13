@@ -95,10 +95,12 @@ export const siteConfigSchema = z.object({
       min_order: z.number().int().positive('late_night.min_order must be a positive rupee amount'),
       prepaid: z.boolean(),
       note: z.string().min(1),
-      /* One line covering both facts, so the quote cannot say "paid in advance"
-         and "not paid online" in the same breath. */
-      locked_note: z.string().min(1),
-      locked_note_quote: z.string().min(1),
+      /* One line covering both facts of a late order: paid up front, and rain
+         still applies. Prepaying is the condition of cooking at that hour, not
+         a waiver of anything. */
+      advance_note: z.string().min(1),
+      advance_note_quote: z.string().min(1),
+      _advance_comment: z.string().optional(),
       /* What the kitchen STOPS cooking after closing. Everything not named
          here stays available during the late-night window. */
       unavailable_categories: z
