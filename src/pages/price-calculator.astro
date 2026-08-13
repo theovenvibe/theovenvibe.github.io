@@ -163,7 +163,10 @@ const calcConfig = {
             minimum, paid online in advance. {d.late_night.note}
           </li>
           {d.rain.active && <li>Rain surcharge active right now: +₹{d.rain.surcharge}. {d.rain.note}</li>}
-          <li>Pickup instead of delivery: ₹{d.pickup_discount} off the food, no delivery charge.</li>
+          <li>
+            Pickup instead of delivery: no delivery charge, and ₹{d.pickup_discount} off the food on
+            orders over ₹{d.pickup_min_order}.
+          </li>
           <li>
             Ordering for later? If it rains when we ride out, ₹{d.rain.surcharge} is added on
             delivery — unless you pay online now, which locks your price.
@@ -275,7 +278,7 @@ const calcConfig = {
                 </label>
                 <label class="calc-radio">
                   <input type="radio" name="orderType" value="pickup" />
-                  Pickup (₹{d.pickup_discount} off)
+                  Pickup (₹{d.pickup_discount} off over ₹{d.pickup_min_order})
                 </label>
               </div>
             </fieldset>

@@ -40,6 +40,15 @@ attach rate over Mar–Aug 2026. Full reasoning lives in
   plus a side to work.
 - The Coke in combos is assumed at ₹40; it is not a priced SKU in this file.
 
+## The pickup discount needs a floor
+
+₹30 off applies only from **₹299** up. At 15% margin a ₹100 order contributes
+about ₹15, so ₹30 off it is a ₹15 loss — break-even is ₹200. ₹299 clears that
+and still fires on roughly half of all orders. A higher gate was considered and
+rejected: at ₹399 only 18% of orders qualify, so the discount would rarely
+trigger and stop pulling anyone away from a delivery that costs the kitchen ₹78
+a ride. The discount never applies during the late-night window.
+
 ## Rain, and why prepaying locks the price
 
 Rain is the one charge that can appear *after* the quote, so it has three cases
