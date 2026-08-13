@@ -6,17 +6,23 @@
 import Layout from '../layouts/Layout.astro';
 import MenuAccordions from '../components/MenuAccordions.astro';
 import AddonsAccordion from '../components/AddonsAccordion.astro';
-import { site } from '../lib/data';
+import {
+  site,
+  deliverySlabLine,
+  deliveryMinimumLine,
+  deliveryFreeAboveBannerLine,
+  quietHoursLine,
+  lateNightBannerLine,
+  rainBannerLine,
+  surchargesCompactLine,
+  maxDeliveryKm,
+} from '../lib/data';
 import { LINKS, restaurantJsonLd } from '../lib/seo';
 
 const title = 'Pure Veg Pizza & Burgers in Sundargarh | The Oven Vibe';
-const description =
-  '100% pure veg kitchen in Sundargarh 770001. Oven-baked pizza, burgers, fried rice and snacks. Delivery from ₹29, free above ₹599. Call to order.';
+const description = `100% pure veg kitchen in Sundargarh 770001. Oven-baked pizza, burgers, fried rice and snacks. Delivery from ₹${site.delivery.slabs[0].charge}, free above ₹${site.delivery.slabs[0].free_above}. Call to order.`;
 
 const localPhone = site.business.phone.replace('+91', '');
-const deliverySlabsLine = site.delivery.slabs
-  .map((s) => `₹${s.charge} for ${s.label}`)
-  .join(', ');
 ---
 
 <Layout
@@ -67,11 +73,29 @@ const deliverySlabsLine = site.delivery.slabs
           <p style="margin-bottom: 0.5rem; font-size: 1.25rem; font-weight: 700; color: var(--color-text-main);">
             {site.delivery.hook}
           </p>
-          <p style="margin-bottom: 0.5rem; font-size: 1rem; color: var(--color-text-muted);">
-            {deliverySlabsLine}
+          <p style="margin-bottom: 0.4rem; font-size: 1rem; color: var(--color-text-muted);">
+            {deliverySlabLine} · {deliveryMinimumLine}
           </p>
-          <p style="margin-bottom: 0; font-size: 1rem; color: var(--color-primary); font-weight: 700;">
-            {site.delivery.free_above_note}
+          <p style="margin-bottom: 0.4rem; font-size: 1rem; color: var(--color-text-muted);">
+            {deliveryFreeAboveBannerLine}
+          </p>
+          <p style="margin-bottom: 0.4rem; font-size: 1rem; color: var(--color-primary); font-weight: 700;">
+            {quietHoursLine}
+          </p>
+          <p style="margin-bottom: 0.4rem; font-size: 1rem; color: var(--color-text-muted);">
+            Beyond {maxDeliveryKm} km: order on Zomato or Swiggy
+          </p>
+
+          {/* Late-night and rain are surcharges disclosed here so nobody meets them for
+              the first time at checkout — the calculator link travels with them in the
+              same block on both the full and compact variant (owner rule, 2026-08-14).
+              Rain stays visible regardless of delivery.rain.active: it's a standing
+              policy disclosure, worded conditionally, not a live status light. */}
+          <p class="banner-surcharge-full" style="margin-bottom: 0; font-size: 0.9rem; color: var(--color-text-muted);">
+            {lateNightBannerLine} · {rainBannerLine} · <a href="/price-calculator/" class="read-more">Check your exact total →</a>
+          </p>
+          <p class="banner-surcharge-compact" style="margin-bottom: 0; font-size: 0.9rem; color: var(--color-text-muted);">
+            {surchargesCompactLine} — <a href="/price-calculator/" class="read-more">check your exact total →</a>
           </p>
         </div>
 
@@ -140,8 +164,8 @@ const deliverySlabsLine = site.delivery.slabs
           <article class="feature-card animate-on-scroll delay-200">
             <h3>Made in Sundargarh</h3>
             <p>
-              We are a local kitchen serving Sundargarh {site.business.address.postal_code} and 8 km
-              around it. Call us and a person here picks up.
+              We are a local kitchen serving Sundargarh {site.business.address.postal_code} and {maxDeliveryKm} km
+              around it ourselves — Zomato and Swiggy carry it further. Call us and a person here picks up.
             </p>
           </article>
         </div>
@@ -282,3 +306,21 @@ const deliverySlabsLine = site.delivery.slabs
     </section>
   </main>
 </Layout>
+
+<style>
+  /* Full surcharge disclosure crowds the delivery-info card below ~600px
+     (measured against the hero-delivery-info box, not the viewport at
+     large — the card itself is display:inline-block and narrows first);
+     the compact line keeps the disclosure + calculator link without wrapping. */
+  .banner-surcharge-compact {
+    display: none;
+  }
+  @media (max-width: 600px) {
+    .banner-surcharge-full {
+      display: none;
+    }
+    .banner-surcharge-compact {
+      display: block;
+    }
+  }
+</style>
