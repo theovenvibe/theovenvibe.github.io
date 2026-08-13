@@ -91,7 +91,10 @@
       "prepaid_note": "Paid online? Your price is locked — no rain charge, whatever the weather does.",
       "later_note": "If it rains when we ride out, ₹{surcharge} is added on delivery. Pay online now and your price is locked instead.",
       "now_window_minutes": 60,
-      "_comment": "rain.active is the kitchen declaring it is raining NOW. For an order placed for later, nobody knows the weather yet: the calculator shows later_note instead of the tick box, unless the customer is paying online, in which case the price is locked and no rain charge can be added at the door. Asking someone who already paid for another Rs.29 on the doorstep is not worth the review it earns."
+      "_comment": "rain.active is the kitchen declaring it is raining NOW. For an order placed for later, nobody knows the weather yet: the calculator shows later_note instead of the tick box, unless the customer is paying online, in which case the price is locked and no rain charge can be added at the door. Asking someone who already paid for another Rs.29 on the doorstep is not worth the review it earns.",
+      "later_note_quote": "Not paid online — if it rains at delivery time, ₹{surcharge} will be added.",
+      "prepaid_note_quote": "Paid online — price locked, no rain charge.",
+      "_note_voice_comment": "later_note / prepaid_note are written TO the customer on the page. The _quote variants go into the copied text and the WhatsApp message, which the customer sends TO the kitchen - so they state the condition as a fact instead of telling the reader to pay. Same fact, opposite direction of speech."
     },
     "pickup_discount": 30,
     "campus_batch": {

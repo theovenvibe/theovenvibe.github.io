@@ -267,6 +267,9 @@ const calcConfig = {
                 <input type="time" id="timeInput" />
               </label>
               <p id="timeRuleNote" class="calc-note" aria-hidden="true"></p>
+              <p id="pastNote" class="calc-note calc-note--warn" role="status" hidden>
+                We can't quote for a time that has already passed — showing now instead.
+              </p>
             </fieldset>
 
             <fieldset class="calc-group">
@@ -354,6 +357,7 @@ const calcConfig = {
   const timeRuleNote = document.getElementById('timeRuleNote') as HTMLElement;
   const orderTypeRadios = Array.from(document.querySelectorAll<HTMLInputElement>('input[name="orderType"]'));
   const prepaidCheck = document.getElementById('prepaidCheck') as HTMLInputElement;
+  const pastNote = document.getElementById('pastNote') as HTMLParagraphElement;
   const weatherNote = document.getElementById('weatherNote') as HTMLParagraphElement;
   const otherGroup = document.getElementById('otherGroup') as HTMLFieldSetElement;
   const rainCheck = document.getElementById('rainCheck') as HTMLInputElement;
@@ -367,9 +371,36 @@ const calcConfig = {
   // Date and time default to "now" from the browser clock, but both stay
   // editable: the afternoon rate is weekday-only, so quoting a Saturday
   // order on a Wednesday (or vice versa) needs the day, not just the time.
-  const now = new Date();
-  timeInput.value = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-  dateInput.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const dateStr = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const timeStr = (d: Date) => `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+
+  // The page follows the clock until the visitor deliberately picks a slot.
+  // Without this, a quote taken at 01:55 still claims late-night pricing at
+  // 02:05, when the kitchen has actually closed — the same trap exists at
+  // 11:30am and 4pm, wherever a rule changes.
+  let followingClock = true;
+
+  function applyNow() {
+    const n = new Date();
+    dateInput.value = dateStr(n);
+    timeInput.value = timeStr(n);
+    dateInput.min = dateStr(n);
+    timeInput.min = timeStr(n);
+  }
+
+  /** Nothing can be ordered for a time that has already gone. */
+  function clampToNow(): boolean {
+    const n = new Date();
+    dateInput.min = dateStr(n);
+    timeInput.min = dateInput.value === dateStr(n) ? timeStr(n) : '';
+    if (minutesAhead() >= 0) return false;
+    applyNow();
+    followingClock = true;
+    return true;
+  }
+
+  applyNow();
 
   /** Minutes between now and the date+time the visitor has chosen. */
   function minutesAhead(): number {
@@ -382,7 +413,7 @@ const calcConfig = {
 
   function currentDayOfWeek(): number {
     const parts = dateInput.value.split('-').map(Number);
-    if (parts.length !== 3 || parts.some(Number.isNaN)) return now.getDay();
+    if (parts.length !== 3 || parts.some(Number.isNaN)) return new Date().getDay();
     return new Date(parts[0], parts[1] - 1, parts[2]).getDay();
   }
 
@@ -506,9 +537,9 @@ const calcConfig = {
       for (const l of result.lines) lines.push(`${l.label}: ${rupee(l.amount)}`);
       lines.push(`Total: ${rupee(result.total)}`);
       if (result.latenightPrepaid) lines.push('(Late-night orders are paid online in advance)');
-      // The conditions the total depends on go into the copied text too — a
-      // quote pasted into WhatsApp must not read firmer than it is.
-      for (const n of result.notes ?? []) lines.push(n);
+      // The copied text is sent BY the customer TO the kitchen, so it uses the
+      // quote-voice variants: facts about the order, not instructions to pay.
+      for (const n of result.quoteNotes ?? []) lines.push(n);
     } else if (result.kind === 'below_minimum') {
       lines.push(`Below the ₹${result.minimum} minimum for this order — add ${rupee(result.short)} more.`);
     } else {
@@ -696,8 +727,32 @@ const calcConfig = {
 
   [...distanceRadios, ...orderTypeRadios].forEach((el) => el.addEventListener('change', update));
   kmInput.addEventListener('input', update);
-  timeInput.addEventListener('input', update);
-  dateInput.addEventListener('input', update);
+  function onSlotEdited() {
+    followingClock = false;
+    const snapped = clampToNow();
+    if (snapped) {
+      pastNote.hidden = false;
+      window.setTimeout(() => (pastNote.hidden = true), 6000);
+    }
+    update();
+  }
+  timeInput.addEventListener('input', onSlotEdited);
+  dateInput.addEventListener('input', onSlotEdited);
+
+  // While the visitor is still on "now", keep the clock current so the rule and
+  // the total stay true. Skipped while either field has focus, so a half-typed
+  // time is never overwritten mid-keystroke.
+  window.setInterval(() => {
+    if (!followingClock) {
+      if (clampToNow()) update();
+      return;
+    }
+    if (document.activeElement === timeInput || document.activeElement === dateInput) return;
+    const n = new Date();
+    if (timeInput.value === timeStr(n) && dateInput.value === dateStr(n)) return;
+    applyNow();
+    update();
+  }, 30000);
   prepaidCheck.addEventListener('change', update);
   rainCheck.addEventListener('change', update);
 
