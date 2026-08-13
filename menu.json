@@ -156,61 +156,6 @@
       "status": "available"
     },
     {
-      "product_code": "760600654",
-      "item_id": 22,
-      "category": "Grilled Sandwiches",
-      "subcategory": "Sandwiches",
-      "item_name": "Dahi Tadka Veg Grilled Sandwich",
-      "display_name": "Dahi Tadka Veg Grilled Sandwich",
-      "price": 159,
-      "description": "[Veg preparation] Fresh curd blended with desi tadka, spices and crunchy vegetables, grilled until golden. Cool, spicy and satisfying.",
-      "status": "available"
-    },
-    {
-      "product_code": "760794370",
-      "item_id": 23,
-      "category": "Grilled Sandwiches",
-      "subcategory": "Sandwiches",
-      "item_name": "Khatti Meethi Imli Khajoor Veg Grilled Sandwich",
-      "display_name": "Khatti Meethi Imli Khajoor Veg Grilled Sandwich",
-      "price": 159,
-      "description": "[veg preparation] A desi fusion sandwich made with tangy imli and sweet khajoor chutney, layered with fresh vegetables and grilled till golden. Perfect balance of sweet and sour flavours.",
-      "status": "available"
-    },
-    {
-      "product_code": "760794703",
-      "item_id": 24,
-      "category": "Grilled Sandwiches",
-      "subcategory": "Sandwiches",
-      "item_name": "Chilli Peanut Thecha Veg Grilled Sandwich",
-      "display_name": "Chilli Peanut Thecha Veg Grilled Sandwich",
-      "price": 159,
-      "description": "[veg preparation] Spicy Maharashtrian style peanut thecha spread with green chillies and garlic, paired with crunchy vegetables and grilled bread. Bold, spicy and flavour packed.",
-      "status": "available"
-    },
-    {
-      "product_code": "760607587",
-      "item_id": 25,
-      "category": "Sides & Snacks",
-      "subcategory": "Snacks",
-      "item_name": "Chilli Garlic Potato Pops",
-      "display_name": "Chilli Garlic Potato Pops",
-      "price": 119,
-      "description": "[Veg preparation] Crispy potato bites tossed in chilli garlic seasoning, served with creamy cheese dip.",
-      "status": "available"
-    },
-    {
-      "product_code": "760605226",
-      "item_id": 26,
-      "category": "Sides & Snacks",
-      "subcategory": "Snacks",
-      "item_name": "Cheese Onion Crispy Pocket Bombs",
-      "display_name": "Cheese Onion Crispy Pocket Bombs",
-      "price": 189,
-      "description": "[Veg preparation] Golden crispy pockets filled with cheesy onion stuffing, served hot with refreshing green chutney dip.",
-      "status": "available"
-    },
-    {
       "product_code": "745802374",
       "item_id": 27,
       "category": "Sides & Snacks",
