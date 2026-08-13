@@ -83,7 +83,7 @@
       "delivery_premium": 30,
       "_charge_comment": "Two different costs, priced separately. kitchen_charge covers relighting the oven and the owner being awake - it applies to every late order, pickup included, because a pickup still reopens the kitchen. delivery_premium is the extra cost of riding out at that hour and applies on top of the normal distance fee. The normal pickup discount does NOT apply during the window: collecting your own order saves the ride, not the reopen.",
       "advance_note": "Late-night orders are paid online in advance. If it rains when we ride out, ₹{surcharge} is added on delivery.",
-      "advance_note_quote": "Late-night order — Needs to be paid online in advance. If it rains when we ride out, ₹{surcharge} is added on delivery.",
+      "advance_note_quote": "Late-night order — Needs to be paid online in advance. So please send your QR so I can pay it. If it rains when you ride out, ₹{surcharge} is added in my bill and will be paid on delivery.",
       "_advance_comment": "Late night is prepaid AND still carries the rain charge - paying up front is the condition of cooking at that hour, not a waiver. That is why the prepaid tick box is hidden inside the window: it is not a choice there. Outside the window prepaying DOES waive rain, which is the only thing it buys."
     },
     "rain": {
@@ -95,9 +95,9 @@
       "later_note": "If it rains when we ride out, ₹{surcharge} is added on delivery. Pay online now and your price is locked instead.",
       "now_window_minutes": 60,
       "_comment": "rain.active is the kitchen declaring it is raining NOW. For an order placed for later, nobody knows the weather yet: the calculator shows later_note instead of the tick box, unless the customer is paying online, in which case the price is locked and no rain charge can be added at the door. Asking someone who already paid for another Rs.29 on the doorstep is not worth the review it earns.",
-      "later_note_quote": "Not paid online — if it rains at delivery time, ₹{surcharge} will be added.",
-      "prepaid_note_quote": "Paid online — price locked, no rain charge.",
-      "_note_voice_comment": "later_note / prepaid_note are written TO the customer on the page. The _quote variants go into the copied text and the WhatsApp message, which the customer sends TO the kitchen - so they state the condition as a fact instead of telling the reader to pay. Same fact, opposite direction of speech."
+      "later_note_quote": "I will pay on delivery. If it rains when you ride out, ₹{surcharge} extra is added to my bill.",
+      "prepaid_note_quote": "I am paying online now — please send your QR. My price is locked, so no rain charge is added.",
+      "_note_voice_comment": "later_note / prepaid_note speak TO the customer on the page. The _quote variants are written in the CUSTOMER's voice, because the customer is the one sending them: they land in the kitchen's WhatsApp as \"please send your QR\", \"my bill\", \"when you ride out\". Same facts, spoken by the person pressing send."
     },
     "pickup_discount": 30,
     "campus_batch": {
