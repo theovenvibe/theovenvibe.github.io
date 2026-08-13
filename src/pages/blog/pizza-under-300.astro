@@ -5,7 +5,7 @@
 // Prices in the body are read from menu.json — they can never go stale.
 import Layout from '../../layouts/Layout.astro';
 import BlogPostLayout from '../../components/BlogPostLayout.astro';
-import { availableItems, availableCombos, displayName, site } from '../../lib/data';
+import { availableItems, availableCombos, displayName, site, deliveryFreeAboveLine } from '../../lib/data';
 import { LINKS, abs, blogPostingJsonLd, breadcrumbJsonLd } from '../../lib/seo';
 
 const headline = 'Pizza Under ₹300 in Sundargarh | Student Specials';
@@ -96,8 +96,8 @@ const combos = availableCombos.filter((c) => c.combo_price < 350).sort((a, b) =>
       </li>
       <li>Split a pizza and a large side between two people rather than buying two pizzas.</li>
       <li>
-        Push the bill past ₹{site.delivery.free_above} in a group order and the delivery charge
-        disappears completely.
+        Clear our {deliveryFreeAboveLine.toLowerCase()} threshold in a group order and the delivery
+        charge disappears completely.
       </li>
       <li>Call ahead and collect — takeaway is ready in about 20 minutes and costs nothing extra.</li>
     </ul>
@@ -114,7 +114,7 @@ const combos = availableCombos.filter((c) => c.combo_price < 350).sort((a, b) =>
         }
       </ul>
       <p style="margin-top: 10px; font-weight: 700; color: #ad210a">
-        Delivery: {site.delivery.hook.toLowerCase()}, free above ₹{site.delivery.free_above}
+        Delivery: {site.delivery.hook.toLowerCase()}, {deliveryFreeAboveLine.toLowerCase()}
       </p>
     </div>
 

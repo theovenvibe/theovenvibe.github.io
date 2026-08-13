@@ -8,7 +8,7 @@
 // instead of the earlier plan-around-9-PM framing.
 import Layout from '../../layouts/Layout.astro';
 import BlogPostLayout from '../../components/BlogPostLayout.astro';
-import { site } from '../../lib/data';
+import { site, deliveryFreeAboveLine } from '../../lib/data';
 import { LINKS, abs, blogPostingJsonLd, breadcrumbJsonLd } from '../../lib/seo';
 
 const headline = 'Late-Night Food in Sundargarh: We Cook Till 11:30 PM';
@@ -121,8 +121,8 @@ const path = '/blog/late-night-food/';
           sandwiches, fries).
         </li>
         <li>
-          A group order past ₹{site.delivery.free_above} pays no delivery charge, which is usually the
-          cheapest way to feed four people.
+          A group order that clears the {deliveryFreeAboveLine.toLowerCase()} threshold pays no delivery
+          charge, which is usually the cheapest way to feed four people.
         </li>
         <li>Collecting yourself? Takeaway is ready in about 20 minutes.</li>
       </ul>

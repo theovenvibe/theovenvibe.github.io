@@ -59,12 +59,79 @@ export const siteConfigSchema = z.object({
       .array(
         z.object({
           label: z.string().min(1),
+          km_from: z.number().nonnegative('km_from must be 0 or more'),
+          km_to: z.number().positive('km_to must be a positive number of km'),
           charge: z.number().int().nonnegative('slab charge must be 0 or more rupees'),
+          min_order: z.number().int().positive('min_order must be a positive rupee amount'),
+          min_order_quiet: z
+            .number()
+            .int()
+            .positive('min_order_quiet must be a positive rupee amount'),
+          free_above: z.number().int().positive('free_above must be a positive rupee amount'),
         }),
       )
-      .min(1),
-    free_above: z.number().int().positive('free_above must be a positive rupee amount'),
-    free_above_note: z.string().min(1),
+      .min(1, 'delivery.slabs must list at least one slab'),
+    beyond_note: z.string().min(1),
+    quiet_hours: z.object({
+      from: z.string().regex(/^\d{2}:\d{2}$/, "quiet_hours.from must be 24h 'HH:MM', e.g. '12:00'"),
+      to: z.string().regex(/^\d{2}:\d{2}$/, "quiet_hours.to must be 24h 'HH:MM', e.g. '16:00'"),
+      days: z.string().min(1),
+      charge: z.number().int().nonnegative('quiet_hours.charge must be 0 or more rupees'),
+      applies_to_slab: z.string().min(1),
+      note: z.string().min(1),
+    }),
+    late_night: z.object({
+      from: z.string().regex(/^\d{2}:\d{2}$/, "late_night.from must be 24h 'HH:MM', e.g. '23:30'"),
+      to: z.string().regex(/^\d{2}:\d{2}$/, "late_night.to must be 24h 'HH:MM', e.g. '01:00'"),
+      surcharge: z.number().int().nonnegative('late_night.surcharge must be 0 or more rupees'),
+      min_order: z.number().int().positive('late_night.min_order must be a positive rupee amount'),
+      prepaid: z.boolean(),
+      note: z.string().min(1),
+    }),
+    rain: z.object({
+      active: z.boolean(),
+      surcharge: z.number().int().nonnegative('rain.surcharge must be 0 or more rupees'),
+      note: z.string().min(1),
+    }),
+    pickup_discount: z.number().int().nonnegative('pickup_discount must be 0 or more rupees'),
+    preorder_discount: z.number().int().nonnegative('preorder_discount must be 0 or more rupees'),
+    preorder_hours_ahead: z
+      .number()
+      .int()
+      .positive('preorder_hours_ahead must be a whole number of hours'),
+    campus_batch: z.object({
+      charge: z.number().int().nonnegative('campus_batch.charge must be 0 or more rupees'),
+      window_minutes: z
+        .number()
+        .int()
+        .positive('campus_batch.window_minutes must be a whole number of minutes'),
+      min_orders: z.number().int().min(2, 'campus_batch.min_orders must be 2 or more'),
+      areas: z.array(z.string().min(1)).min(1, 'campus_batch.areas must list at least one area'),
+      note: z.string().min(1),
+    }),
+    bulk: z.object({
+      min_pizzas: z.number().int().positive('bulk.min_pizzas must be a positive whole number'),
+      discount_pct: z
+        .number()
+        .int()
+        .min(1, 'bulk.discount_pct must be between 1 and 100')
+        .max(100, 'bulk.discount_pct must be between 1 and 100'),
+      notice_minutes: z
+        .number()
+        .int()
+        .positive('bulk.notice_minutes must be a whole number of minutes'),
+      prepaid: z.boolean(),
+    }),
+    max_delivery_charge: z
+      .number()
+      .int()
+      .positive('max_delivery_charge must be a positive rupee amount'),
+    regulars: z.object({
+      min_orders: z.number().int().positive('regulars.min_orders must be a positive whole number'),
+      free_above: z.number().int().positive('regulars.free_above must be a positive rupee amount'),
+      note: z.string().min(1),
+    }),
+    cod_cap: z.number().int().positive('cod_cap must be a positive rupee amount'),
     radius_note: z.string().min(1),
   }),
   hero_dish_code: z.union([z.string(), z.number()]).transform(String),

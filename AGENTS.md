@@ -135,3 +135,11 @@ PRD.md / PROGRESS.md     ← requirements / current state — read at session st
 - The CI/deploy workflow file is `.github/workflows/deploy.yml` (renamed
   from `ci.yml` in Phase 5, owner requirement) — build runs on every
   branch, deploy is gated to `main` only.
+- **NEVER add a root `.nojekyll` file.** While the repo's Pages setting is
+  still "deploy from a branch" (owner account `theovenvibe` hasn't switched
+  it to "GitHub Actions" yet), a harmless-looking failing "pages build and
+  deployment / build (dynamic)" check runs on every main push. That Jekyll
+  failure is PROTECTIVE — with `.nojekyll` it would SUCCEED and publish the
+  raw Astro source over the live site. The correct fix is the owner
+  flipping Settings → Pages → Source to "GitHub Actions"; ignore the red ✗
+  until then.

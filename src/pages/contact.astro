@@ -5,7 +5,7 @@
 // land on when they want to reach us. The NAP block below is also what keeps
 // the site's address/phone/hours identical to the Google Business Profile.
 import Layout from '../layouts/Layout.astro';
-import { site } from '../lib/data';
+import { site, deliverySlabLine, deliveryFreeAboveLine } from '../lib/data';
 import { LINKS, breadcrumbJsonLd, restaurantJsonLd } from '../lib/seo';
 
 const title = 'Contact & Order | The Oven Vibe Sundargarh';
@@ -84,8 +84,8 @@ const description = `Call or WhatsApp ${site.business.name}, Sundargarh ${site.b
             <article class="feature-card animate-on-scroll delay-200">
               <h3>Delivery</h3>
               <p>
-                {site.delivery.slabs.map((s) => `₹${s.charge} for ${s.label}`).join(' · ')}<br />
-                {site.delivery.free_above_note}
+                {deliverySlabLine}<br />
+                {deliveryFreeAboveLine}
               </p>
             </article>
         </div>
