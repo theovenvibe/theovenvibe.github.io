@@ -23,6 +23,7 @@ import {
   lateNightTimeRange,
   maxDeliveryKm,
 } from '../lib/data';
+import { formatTime } from '../lib/pricing';
 import {
   LINKS,
   PRICE_RANGE,
@@ -57,7 +58,11 @@ const faqs: Qa[] = [
   },
   {
     q: 'Do you deliver late at night?',
-    a: `Yes, after we close. ${d.late_night.note} There's a ₹${d.late_night.surcharge} late-night charge (${lateNightTimeRange}), a ₹${d.late_night.min_order} minimum order, and it has to be paid online in advance.`,
+    a: `Yes, after we close. ${d.late_night.note} ${d.late_night.menu_note} There's a ₹${d.late_night.surcharge} late-night charge (${lateNightTimeRange}), a ₹${d.late_night.min_order} minimum order, and it has to be paid online in advance.`,
+  },
+  {
+    q: 'What time does the kitchen close?',
+    a: `We cook ${site.business.hours.display}. After that the late-night window runs to ${formatTime(d.late_night.to)} for pizzas, sandwiches and fries only. Between ${formatTime(d.late_night.to)} and ${formatTime(site.business.hours.open)} the kitchen is shut — the price calculator will tell you so rather than quoting an order we cannot cook.`,
   },
   {
     q: 'Do charges change in the rain?',

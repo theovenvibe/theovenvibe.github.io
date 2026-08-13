@@ -66,11 +66,20 @@
     },
     "late_night": {
       "from": "23:30",
-      "to": "01:00",
+      "to": "02:00",
       "surcharge": 79,
       "min_order": 399,
       "prepaid": true,
-      "note": "After closing we fire the oven again just for your order."
+      "note": "After closing we fire the oven again just for your order.",
+      "menu_note": "Late night: no pasta or maggi — those stations are shut. Everything else is on.",
+      "unavailable_categories": [
+        "Pasta",
+        "Maggi"
+      ],
+      "unavailable_items": [
+        "Pasta Treat Combo"
+      ],
+      "_availability_comment": "What the kitchen STOPS cooking after closing (the boiling stations). Everything not listed here stays available. Categories cover future items automatically; unavailable_items is for one-offs inside a category that otherwise stays on."
     },
     "rain": {
       "active": false,

@@ -40,6 +40,24 @@ attach rate over Mar–Aug 2026. Full reasoning lives in
   plus a side to work.
 - The Coke in combos is assumed at ₹40; it is not a priced SKU in this file.
 
+## Kitchen hours and what they mean in code
+
+The calculator has three states, driven by `site.config.json` and verified on
+the built page, not assumed:
+
+- **Open** (11:30–23:30): everything available, standard or afternoon pricing.
+- **Late night** (23:30–**02:00**): +₹79, ₹399 minimum, prepaid — and the
+  boiling stations are shut, so pasta, maggi and the Pasta Treat Combo grey out.
+  Set by `late_night.unavailable_categories` / `unavailable_items`; anything not
+  named there stays available. A combo is only orderable if the items inside it
+  are.
+- **Closed** (02:00–11:30): every item greys out and the page says "Kitchen is
+  closed — we open at 11:30 AM" instead of producing a total. Quoting an order
+  the kitchen cannot cook is worse than quoting nothing.
+
+Late night deliberately wins over opening hours, because the window starts at
+closing time — that overlap is intended, not a bug.
+
 ## Menu decisions
 
 - **Aug 2026 — wok station retired, menu cut from 32 SKUs to 18.** Gas price

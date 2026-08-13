@@ -87,6 +87,15 @@ export const siteConfigSchema = z.object({
       min_order: z.number().int().positive('late_night.min_order must be a positive rupee amount'),
       prepaid: z.boolean(),
       note: z.string().min(1),
+      /* What the kitchen STOPS cooking after closing. Everything not named
+         here stays available during the late-night window. */
+      unavailable_categories: z
+        .array(z.string().min(1))
+        .default([])
+        .describe('Menu categories the kitchen stops cooking after closing'),
+      unavailable_items: z.array(z.string().min(1)).default([]),
+      menu_note: z.string().min(1, 'late_night.menu_note is shown to customers — say what is off the menu'),
+      _availability_comment: z.string().optional(),
     }),
     rain: z.object({
       active: z.boolean(),

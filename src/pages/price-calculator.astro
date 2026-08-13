@@ -39,7 +39,15 @@ interface CalcRow {
   id: string;
   name: string;
   price: number;
+  /** Still cooked during the late-night window? Pasta and maggi are not. */
+  lateNight: boolean;
 }
+
+const lateNightOffCategories = new Set(d.late_night.unavailable_categories);
+const lateNightOffItems = new Set(d.late_night.unavailable_items);
+/** Only the boiling stations shut after closing — everything else stays on. */
+const servedLateNight = (category: string, itemName: string) =>
+  !lateNightOffCategories.has(category) && !lateNightOffItems.has(itemName);
 
 const itemGroups: { name: string; rows: CalcRow[] }[] = [
   ...categories.map(({ name, items }) => ({
@@ -48,6 +56,7 @@ const itemGroups: { name: string; rows: CalcRow[] }[] = [
       id: `item-${i.product_code}`,
       name: displayName(i.display_name || i.item_name),
       price: i.price,
+      lateNight: servedLateNight(name, i.item_name),
     })),
   })),
   {
@@ -56,6 +65,7 @@ const itemGroups: { name: string; rows: CalcRow[] }[] = [
       id: `combo-${c.combo_code}`,
       name: displayName(c.combo_name),
       price: c.combo_price,
+      lateNight: !lateNightOffItems.has(c.combo_name),
     })),
   },
   {
@@ -64,6 +74,7 @@ const itemGroups: { name: string; rows: CalcRow[] }[] = [
       id: `addon-${a.addon_code}`,
       name: displayName(a.addon_name),
       price: a.addon_price,
+      lateNight: !lateNightOffItems.has(a.addon_name),
     })),
   },
 ];
@@ -72,6 +83,7 @@ const calcConfig = {
   delivery: d,
   whatsapp: site.business.whatsapp,
   businessName: site.business.name,
+  hours: site.business.hours,
 };
 ---
 
@@ -169,9 +181,13 @@ const calcConfig = {
         </noscript>
 
         <h2 style="margin-bottom: 0.5rem;">Build your order</h2>
-        <p class="lead" style="margin-bottom: 2rem;">
+        <p class="lead" style="margin-bottom: 1rem;">
           Tap + to add items. Your total updates as you go.
         </p>
+        {/* Filled by the client script from the chosen date/time: the kitchen
+            is shut outside its hours, and only part of the menu is cooked in
+            the late-night window. Both states grey out what cannot be made. */}
+        <p id="availabilityNote" class="calc-availability" hidden></p>
 
         <form id="calcForm" class="calc-form">
           <!-- ITEMS -->
@@ -181,7 +197,7 @@ const calcConfig = {
                 <fieldset class="calc-group">
                   <legend>{group.name}</legend>
                   {group.rows.map((row) => (
-                    <div class="item-row" data-id={row.id} data-name={row.name} data-price={row.price}>
+                    <div class="item-row" data-id={row.id} data-name={row.name} data-price={row.price} data-late-night={String(row.lateNight)}>
                       <div class="item-row-info">
                         <span class="item-row-name">{row.name}</span>
                         <span class="item-row-price">₹{row.price}</span>
@@ -306,12 +322,13 @@ const calcConfig = {
 <script type="application/json" id="calc-config" is:inline set:html={JSON.stringify(calcConfig)} />
 
 <script>
-  import { computeQuote, type QuoteResult } from '../lib/pricing';
+  import { computeQuote, isTimeInRange, type QuoteResult } from '../lib/pricing';
 
   interface CalcConfig {
     delivery: import('../schemas/site-config').SiteConfig['delivery'];
     whatsapp: string;
     businessName: string;
+    hours: { open: string; close: string; display: string };
   }
 
   const configEl = document.getElementById('calc-config');
@@ -327,6 +344,7 @@ const calcConfig = {
   const orderTypeRadios = Array.from(document.querySelectorAll<HTMLInputElement>('input[name="orderType"]'));
   const preorderCheck = document.getElementById('preorderCheck') as HTMLInputElement;
   const rainCheck = document.getElementById('rainCheck') as HTMLInputElement;
+  const availabilityNote = document.getElementById('availabilityNote') as HTMLParagraphElement;
   const output = document.getElementById('quoteOutput') as HTMLElement;
   const copyBtn = document.getElementById('copyQuoteBtn') as HTMLButtonElement;
   const waLink = document.getElementById('waShareLink') as HTMLAnchorElement;
@@ -342,6 +360,50 @@ const calcConfig = {
     const parts = dateInput.value.split('-').map(Number);
     if (parts.length !== 3 || parts.some(Number.isNaN)) return now.getDay();
     return new Date(parts[0], parts[1] - 1, parts[2]).getDay();
+  }
+
+  type KitchenState = 'open' | 'late_night' | 'closed';
+
+  /** Late night wins over opening hours: the window deliberately starts at
+   *  closing time, when the kitchen reopens only for what it can still cook. */
+  function kitchenState(time: string): KitchenState {
+    if (isTimeInRange(time, delivery.late_night.from, delivery.late_night.to)) return 'late_night';
+    if (isTimeInRange(time, CFG.hours.open, CFG.hours.close)) return 'open';
+    return 'closed';
+  }
+
+  function applyAvailability(state: KitchenState) {
+    itemRows.forEach((row) => {
+      const servedLate = row.dataset.lateNight === 'true';
+      const off = state === 'closed' || (state === 'late_night' && !servedLate);
+      row.classList.toggle('item-row--unavailable', off);
+      const plus = row.querySelector('.qty-plus') as HTMLButtonElement;
+      plus.disabled = off;
+      // Anything already in the basket that the kitchen cannot cook at the
+      // chosen time is cleared, so the total never includes an unmakeable item.
+      if (off && qtyOf(row) > 0) setQty(row, 0);
+      if (off) (row.querySelector('.qty-minus') as HTMLButtonElement).disabled = true;
+    });
+
+    if (state === 'closed') {
+      availabilityNote.hidden = false;
+      availabilityNote.className = 'calc-availability calc-availability--closed';
+      availabilityNote.textContent = `Kitchen is closed at this time — we open at ${formatOpen()}. Pick a time inside our hours to see a total.`;
+    } else if (state === 'late_night') {
+      availabilityNote.hidden = false;
+      availabilityNote.className = 'calc-availability calc-availability--late';
+      availabilityNote.textContent = delivery.late_night.menu_note;
+    } else {
+      availabilityNote.hidden = true;
+      availabilityNote.textContent = '';
+    }
+  }
+
+  function formatOpen(): string {
+    const [h, m] = CFG.hours.open.split(':').map(Number);
+    const suffix = h < 12 ? 'AM' : 'PM';
+    const hour = h % 12 === 0 ? 12 : h % 12;
+    return `${hour}${m ? ':' + String(m).padStart(2, '0') : ''} ${suffix}`;
   }
 
   function qtyOf(row: HTMLElement): number {
@@ -402,11 +464,11 @@ const calcConfig = {
   function timeRuleLabel(time: string): string {
     // Mirrors computeQuote's own gating so the note is accurate before any
     // items are picked (computeQuote only runs once there's a slab match).
-    const inQuiet =
-      time >= delivery.quiet_hours.from && time <= delivery.quiet_hours.to;
-    const inLate = time >= delivery.late_night.from || time <= delivery.late_night.to;
-    if (inLate) return 'Late-night';
-    if (inQuiet) return 'Afternoon rate (weekdays only)';
+    const state = kitchenState(time);
+    if (state === 'closed') return `Kitchen closed — opens ${formatOpen()}`;
+    if (state === 'late_night') return 'Late-night (limited menu)';
+    if (isTimeInRange(time, delivery.quiet_hours.from, delivery.quiet_hours.to))
+      return 'Afternoon rate (weekdays only)';
     return 'Standard';
   }
 
@@ -503,10 +565,24 @@ const calcConfig = {
   }
 
   function update() {
-    const sub = subtotal();
     const orderType = (orderTypeRadios.find((r) => r.checked)?.value ?? 'delivery') as 'delivery' | 'pickup';
     const time = timeInput.value || '12:00';
+    const state = kitchenState(time);
+    // Availability first: it can empty the basket, so the subtotal is read after.
+    applyAvailability(state);
+    const sub = subtotal();
     timeRuleNote.textContent = `Rule at this time: ${timeRuleLabel(time)}`;
+
+    if (state === 'closed') {
+      clear(output);
+      output.appendChild(
+        textEl('p', 'calc-note calc-note--warn', `Kitchen is closed at ${time}. We open at ${formatOpen()} — change the time above to price an order.`),
+      );
+      copyBtn.disabled = true;
+      waLink.removeAttribute('href');
+      waLink.setAttribute('aria-disabled', 'true');
+      return;
+    }
 
     if (sub === 0) {
       clear(output);
@@ -760,6 +836,28 @@ const calcConfig = {
     flex-wrap: wrap;
     gap: 1rem;
     margin-top: 1.5rem;
+  }
+
+  .calc-availability {
+    border-radius: var(--radius-sm, 8px);
+    padding: 0.75rem 1rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+  }
+  .calc-availability--late,
+  .calc-availability--closed {
+    background: #fdecea;
+    color: #a4211a;
+    border: 1px solid #f5c2be;
+  }
+
+  /* Greyed rather than removed: the reader still sees the item exists and
+     learns when it comes back, instead of wondering where it went. */
+  .item-row--unavailable {
+    opacity: 0.45;
+  }
+  .item-row--unavailable .item-row-name {
+    text-decoration: line-through;
   }
 
   /* aria-disabled tells a screen reader the action is unavailable; without a
