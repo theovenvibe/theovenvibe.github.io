@@ -119,6 +119,11 @@ export const siteConfigSchema = z.object({
       _comment: z.string().optional(),
     }),
     pickup_discount: z.number().int().nonnegative('pickup_discount must be 0 or more rupees'),
+    pickup_min_order: z
+      .number()
+      .int()
+      .nonnegative('pickup_min_order must be a rupee amount — the basket size the pickup discount needs'),
+    _pickup_comment: z.string().optional(),
     campus_batch: z.object({
       charge: z.number().int().nonnegative('campus_batch.charge must be 0 or more rupees'),
       window_minutes: z

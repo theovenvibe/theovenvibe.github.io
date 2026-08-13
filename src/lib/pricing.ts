@@ -17,7 +17,7 @@
  *   6. Add surcharges: late night, rain (when the caller says it is
  *      raining, defaulting to the rain.active flag).
  *   7. Subtract the pickup discount outside the late-night window (a pickup
- *      still reopens the kitchen).
+ *      still reopens the kitchen), and only from pickup_min_order upwards.
  *   8. Cap the SUM of delivery charges (fee + surcharges) at
  *      max_delivery_charge — the banner's promise covers surcharges too.
  *   9. Regulars: surcharges waived entirely (shown as a $0 waived line, not
@@ -174,9 +174,14 @@ export function computeQuote(cfg: DeliveryConfig, input: QuoteInput): QuoteResul
         label: `Late-night kitchen (prepaid, min ₹${cfg.late_night.min_order})`,
         amount: input.regular ? 0 : cfg.late_night.kitchen_charge,
       });
-    } else {
-      lines.push({ label: 'Pickup discount', amount: -cfg.pickup_discount });
+    } else if (subtotal >= cfg.pickup_min_order) {
+      lines.push({
+        label: `Pickup discount (orders over ₹${cfg.pickup_min_order})`,
+        amount: -cfg.pickup_discount,
+      });
     }
+    // Below the threshold there is simply no discount line: ₹30 off a ₹100
+    // order is a loss, since the food itself only contributes about ₹15.
     return {
       kind: 'ok',
       lines,
