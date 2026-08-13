@@ -275,7 +275,13 @@ export function computeQuote(cfg: DeliveryConfig, input: QuoteInput): QuoteResul
   // A prepaid order cannot take a doorstep surcharge, so rain never applies to
   // one. This is the only thing prepaying buys, and it is worth more than the
   // charge: a confirmed order the kitchen can plan around.
-  const rainApplies = (input.rain ?? cfg.rain.active) && !(cfg.rain.waived_when_prepaid && input.prepaid);
+  //
+  // Late-night orders are prepaid BY RULE, so the rule decides here, not the
+  // checkbox — otherwise a quote reads "paid online in advance" and "not paid
+  // online" in the same breath, which is what a customer noticed.
+  const prepaidEffective = input.prepaid || (isLateNight && cfg.late_night.prepaid);
+  const rainApplies =
+    (input.rain ?? cfg.rain.active) && !(cfg.rain.waived_when_prepaid && prepaidEffective);
   if (rainApplies) {
     lines.push({
       label: input.regular ? 'Rain surcharge — waived for regulars' : 'Rain surcharge',
@@ -303,7 +309,11 @@ export function computeQuote(cfg: DeliveryConfig, input: QuoteInput): QuoteResul
   const notes: string[] = [];
   const quoteNotes: string[] = [];
   const rupees = String(cfg.rain.surcharge);
-  if (cfg.rain.waived_when_prepaid && input.prepaid) {
+  if (isLateNight && cfg.late_night.prepaid) {
+    // One line, both facts: prepaid because it is late, and therefore locked.
+    notes.push(cfg.late_night.locked_note);
+    quoteNotes.push(cfg.late_night.locked_note_quote);
+  } else if (cfg.rain.waived_when_prepaid && input.prepaid) {
     notes.push(cfg.rain.prepaid_note);
     quoteNotes.push(cfg.rain.prepaid_note_quote.replace('{surcharge}', rupees));
   } else if (!rainApplies) {
