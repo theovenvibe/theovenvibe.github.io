@@ -14,7 +14,8 @@
  *      ONLY for the slab named in quiet_hours.applies_to_slab.
  *   5. Free delivery at/above the slab's free_above (regulars use
  *      regulars.free_above instead).
- *   6. Add surcharges: late night, rain (only when rain.active).
+ *   6. Add surcharges: late night, rain (when the caller says it is
+ *      raining, defaulting to the rain.active flag).
  *   7. Subtract pickup / pre-order discounts.
  *   8. Cap the SUM of delivery charges (fee + surcharges) at
  *      max_delivery_charge — the banner's promise covers surcharges too.
@@ -110,6 +111,10 @@ export interface QuoteInput {
   orderType: 'delivery' | 'pickup';
   preorder: boolean;
   regular: boolean;
+  /** Customer ticked "it's raining". Defaults to the kitchen's rain.active flag
+   *  when omitted, so the config stays the authoritative declaration. A customer
+   *  can only ever add this charge to their own quote, never remove one. */
+  rain?: boolean;
 }
 
 export interface QuoteLine {
@@ -216,7 +221,8 @@ export function computeQuote(cfg: DeliveryConfig, input: QuoteInput): QuoteResul
       amount: input.regular ? 0 : cfg.late_night.surcharge,
     });
   }
-  if (cfg.rain.active) {
+  const rainApplies = input.rain ?? cfg.rain.active;
+  if (rainApplies) {
     lines.push({
       label: input.regular ? 'Rain surcharge — waived for regulars' : 'Rain surcharge',
       amount: input.regular ? 0 : cfg.rain.surcharge,
