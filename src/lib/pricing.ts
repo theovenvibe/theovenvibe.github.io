@@ -148,6 +148,8 @@ export interface QuoteOk {
   isLateNight: boolean;
   latenightPrepaid: boolean;
   freeDeliveryNudge?: { needed: number; threshold: number };
+  /** Pickup only: how much more would unlock the pickup discount. */
+  pickupNudge?: { needed: number; threshold: number; discount: number };
 }
 
 export type QuoteResult = QuoteBeyond | QuoteBelowMinimum | QuoteOk;
@@ -169,6 +171,16 @@ export function computeQuote(cfg: DeliveryConfig, input: QuoteInput): QuoteResul
       };
     }
     const lines: QuoteLine[] = [{ label: 'Food', amount: subtotal }];
+    // Below the threshold, tell them what the discount would take to reach —
+    // the same courtesy the delivery side gets with its free-delivery nudge.
+    let pickupNudge: { needed: number; threshold: number; discount: number } | undefined;
+    if (!lateNight && subtotal < cfg.pickup_min_order) {
+      pickupNudge = {
+        needed: cfg.pickup_min_order - subtotal,
+        threshold: cfg.pickup_min_order,
+        discount: cfg.pickup_discount,
+      };
+    }
     if (lateNight) {
       lines.push({
         label: `Late-night kitchen (prepaid, min ₹${cfg.late_night.min_order})`,
@@ -189,6 +201,7 @@ export function computeQuote(cfg: DeliveryConfig, input: QuoteInput): QuoteResul
       timeRule: lateNight ? 'late_night' : 'standard',
       isLateNight: lateNight,
       latenightPrepaid: lateNight && cfg.late_night.prepaid,
+      pickupNudge,
     };
   }
 
