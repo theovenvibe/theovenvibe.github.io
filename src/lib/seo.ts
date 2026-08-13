@@ -19,6 +19,7 @@ import {
   displayName,
   displayDescription,
   imageFor,
+  maxDeliveryKm,
 } from './data';
 
 /**
@@ -185,7 +186,7 @@ export function restaurantJsonLd(opts: { withMenu?: boolean } = {}) {
     areaServed: {
       '@type': 'GeoCircle',
       geoMidpoint: geo,
-      geoRadius: '8000',
+      geoRadius: String(maxDeliveryKm * 1000),
       description: site.delivery.radius_note,
     },
     // Real GBP numbers only — see the header note and PRD §3.

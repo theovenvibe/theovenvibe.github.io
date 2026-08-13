@@ -5,7 +5,7 @@
 // links added to /menu/ and /sundargarh/.
 import Layout from '../../layouts/Layout.astro';
 import BlogPostLayout from '../../components/BlogPostLayout.astro';
-import { site } from '../../lib/data';
+import { site, deliverySlabLine, deliveryFreeAboveLine, maxDeliveryKm } from '../../lib/data';
 import { LINKS, abs, blogPostingJsonLd, breadcrumbJsonLd } from '../../lib/seo';
 
 const headline = 'Why Cloud Kitchens Are the Future of Food in Sundargarh';
@@ -18,7 +18,6 @@ const image = {
   alt: 'The Oven Vibe cloud kitchen in Sundargarh',
 };
 const path = '/blog/cloud-kitchen-future/';
-const slabLine = site.delivery.slabs.map((s) => `₹${s.charge} for ${s.label}`).join(', ');
 ---
 
 <Layout
@@ -91,7 +90,7 @@ const slabLine = site.delivery.slabs.map((s) => `₹${s.charge} for ${s.label}`)
       <li>Lower fixed cost, so menu prices can stay honest</li>
       <li>One small kitchen is far easier to keep consistent than a full service floor</li>
       <li>Food goes out the moment it is made, not when a table frees up</li>
-      <li>Delivery is planned around the town — we cover 8 km from the kitchen</li>
+      <li>Delivery is planned around the town — we cover {maxDeliveryKm} km ourselves, Zomato and Swiggy carry it further</li>
     </ul>
 
     <h2>What that means for you</h2>
@@ -99,7 +98,7 @@ const slabLine = site.delivery.slabs.map((s) => `₹${s.charge} for ${s.label}`)
       <li>Pizzas that go into the oven after you order, not before</li>
       <li>The same recipe every time, because one kitchen makes all of it</li>
       <li>Ordering that takes one phone call or one WhatsApp message</li>
-      <li>Clear delivery pricing: {slabLine}, and {site.delivery.free_above_note.toLowerCase()}</li>
+      <li>Clear delivery pricing: {deliverySlabLine}, and {deliveryFreeAboveLine.toLowerCase()}</li>
     </ul>
 
     <h2>The Oven Vibe, Sundargarh's pure veg cloud kitchen</h2>

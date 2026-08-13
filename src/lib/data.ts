@@ -7,6 +7,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { z } from 'astro/zod';
 import { menuSchema, type Menu, type MenuItem, type Combo, type Addon } from '../schemas/menu';
 import { siteConfigSchema, type SiteConfig } from '../schemas/site-config';
+import { formatTime, formatTimeRange } from './pricing';
 
 function loadJson<T>(file: string, schema: z.ZodType<T>): T {
   let raw: unknown;
@@ -110,6 +111,73 @@ export const heroDish: MenuItem =
       `site.config.json → hero_dish_code ${site.hero_dish_code} matches no available item in menu.json`,
     );
   })();
+
+/* ---------- delivery copy (spec: FAQ, banner and calculator all read
+   site.delivery — these helpers exist so that no page hand-formats a rupee
+   or a time range on its own) ---------- */
+
+/** "₹29 for 0–2 km · ₹69 for 2–4 km" */
+export const deliverySlabLine = site.delivery.slabs.map((s) => `₹${s.charge} for ${s.label}`).join(' · ');
+
+/** "FREE above ₹499 within 2 km" for a given slab. */
+export function slabFreeAboveLine(slab: SiteConfig['delivery']['slabs'][number]): string {
+  return `FREE above ₹${slab.free_above} within ${slab.km_to} km`;
+}
+
+/** Free-delivery line for the first (cheapest) slab — matches the banner's target wording. */
+export const deliveryFreeAboveLine = slabFreeAboveLine(site.delivery.slabs[0]);
+
+/** All slabs' free-delivery thresholds, e.g. for pages that list every slab. */
+export const deliveryFreeAboveLineAll = site.delivery.slabs.map(slabFreeAboveLine).join(' · ');
+
+/**
+ * "FREE delivery above ₹499, within 2 km" — banner phrasing for the first
+ * (cheapest) slab. Every price claim carries its condition (owner rule,
+ * 2026-08-14): this line is meaningless without the "within X km" part.
+ */
+export const deliveryFreeAboveBannerLine = `FREE delivery above ₹${site.delivery.slabs[0].free_above}, within ${site.delivery.slabs[0].km_to} km`;
+
+/**
+ * "Minimum order ₹249 (₹399 beyond 2 km)" — assumes exactly two slabs, which
+ * is the current shape of site.delivery.slabs; if a third slab is ever
+ * added this line needs a rewrite, not just new numbers.
+ */
+export const deliveryMinimumLine =
+  site.delivery.slabs.length >= 2
+    ? `Minimum order ₹${site.delivery.slabs[0].min_order} (₹${site.delivery.slabs[1].min_order} beyond ${site.delivery.slabs[0].km_to} km)`
+    : `Minimum order ₹${site.delivery.slabs[0].min_order}`;
+
+/** "Afternoons 12–4pm, Mon–Fri: ₹19 delivery, minimum order ₹199" — the ₹19 claim never appears without its unlocking minimum. */
+export const quietHoursLine = `Afternoons ${formatTimeRange(site.delivery.quiet_hours.from, site.delivery.quiet_hours.to)}, ${site.delivery.quiet_hours.days}: ₹${site.delivery.quiet_hours.charge} delivery, minimum order ₹${site.delivery.slabs[0].min_order_quiet}`;
+
+/** "Late night (11:30pm–1am): +₹79, ₹399 minimum, paid online in advance." */
+export const lateNightLine = `Late night (${formatTimeRange(site.delivery.late_night.from, site.delivery.late_night.to)}): +₹${site.delivery.late_night.surcharge}, ₹${site.delivery.late_night.min_order} minimum, paid online in advance`;
+
+/**
+ * Banner disclosure lines (owner rule, 2026-08-14): a surcharge is never
+ * advertised without a way to see the real number before ordering — both
+ * of these are always paired with the calculator link wherever they render.
+ * "Late night after 11:30pm: +₹79, minimum ₹399, prepaid"
+ */
+export const lateNightBannerLine = `Late night after ${formatTime(site.delivery.late_night.from)}: +₹${site.delivery.late_night.surcharge}, minimum ₹${site.delivery.late_night.min_order}, prepaid`;
+
+/**
+ * Rain is a standing POLICY disclosure — it stays on the banner regardless
+ * of delivery.rain.active, worded conditionally so it never surprises
+ * anyone the day it turns on. Only the calculator and the live charge
+ * itself read `rain.active`.
+ * "Rain: +₹29 while it lasts"
+ */
+export const rainBannerLine = `Rain: +₹${site.delivery.rain.surcharge} while it lasts`;
+
+/** Compact single-line fallback for narrow banners: discloses the surcharges exist without the numbers, always paired with the calculator link. */
+export const surchargesCompactLine = 'Late-night and rain orders cost extra';
+
+/** Furthest distance served directly (the last slab's km_to) — beyond this, Zomato/Swiggy. */
+export const maxDeliveryKm = site.delivery.slabs[site.delivery.slabs.length - 1].km_to;
+
+export const quietHoursTimeRange = formatTimeRange(site.delivery.quiet_hours.from, site.delivery.quiet_hours.to);
+export const lateNightTimeRange = formatTimeRange(site.delivery.late_night.from, site.delivery.late_night.to);
 
 /* ---------- images ---------- */
 

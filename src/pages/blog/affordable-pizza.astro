@@ -10,7 +10,7 @@
 // here is invented.
 import Layout from '../../layouts/Layout.astro';
 import BlogPostLayout from '../../components/BlogPostLayout.astro';
-import { site } from '../../lib/data';
+import { site, deliveryFreeAboveLine } from '../../lib/data';
 import { LINKS, abs, blogPostingJsonLd, breadcrumbJsonLd } from '../../lib/seo';
 
 const headline = 'Affordable Pizza in Sundargarh: Where to Eat on a Budget';
@@ -118,8 +118,8 @@ const path = '/blog/affordable-pizza/';
       <li>Order a combo rather than the same items separately — it is almost always cheaper.</li>
       <li>Share one pizza and one large side between two people instead of buying two pizzas.</li>
       <li>
-        In a group order, push past ₹{site.delivery.free_above} with us and the delivery charge goes
-        to zero.
+        In a group order, clear our {deliveryFreeAboveLine.toLowerCase()} threshold and the delivery
+        charge goes to zero.
       </li>
       <li>Collect it yourself if you are nearby — takeaway costs nothing extra.</li>
     </ul>
