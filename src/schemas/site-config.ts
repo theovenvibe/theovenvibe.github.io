@@ -112,6 +112,12 @@ export const siteConfigSchema = z.object({
       waived_when_prepaid: z.boolean(),
       prepaid_note: z.string().min(1),
       later_note: z.string().min(1),
+      /* The _quote variants are read by the kitchen, not the customer: the
+         message is sent TO the shop, so it states the fact rather than
+         telling the reader to pay. */
+      prepaid_note_quote: z.string().min(1),
+      later_note_quote: z.string().min(1),
+      _note_voice_comment: z.string().optional(),
       now_window_minutes: z
         .number()
         .int()

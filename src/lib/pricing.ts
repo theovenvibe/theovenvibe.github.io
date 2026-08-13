@@ -150,10 +150,11 @@ export interface QuoteOk {
   freeDeliveryNudge?: { needed: number; threshold: number };
   /** Pickup only: how much more would unlock the pickup discount. */
   pickupNudge?: { needed: number; threshold: number; discount: number };
-  /** Conditions the total depends on. These must travel with the number —
-   *  into the copied quote and the WhatsApp message — or a conditional price
-   *  gets forwarded as a firm one. */
+  /** Conditions the total depends on, addressed to the customer on the page. */
   notes?: string[];
+  /** The same conditions written for the message the customer SENDS to the
+   *  kitchen — stated as facts, since the reader there is the shop owner. */
+  quoteNotes?: string[];
 }
 
 export type QuoteResult = QuoteBeyond | QuoteBelowMinimum | QuoteOk;
@@ -300,11 +301,15 @@ export function computeQuote(cfg: DeliveryConfig, input: QuoteInput): QuoteResul
   const total = lines.reduce((sum, l) => sum + l.amount, 0);
 
   const notes: string[] = [];
+  const quoteNotes: string[] = [];
+  const rupees = String(cfg.rain.surcharge);
   if (cfg.rain.waived_when_prepaid && input.prepaid) {
     notes.push(cfg.rain.prepaid_note);
+    quoteNotes.push(cfg.rain.prepaid_note_quote.replace('{surcharge}', rupees));
   } else if (!rainApplies) {
     // Not raining as far as we know — but it might be by the time we ride.
-    notes.push(cfg.rain.later_note.replace('{surcharge}', String(cfg.rain.surcharge)));
+    notes.push(cfg.rain.later_note.replace('{surcharge}', rupees));
+    quoteNotes.push(cfg.rain.later_note_quote.replace('{surcharge}', rupees));
   }
 
   let freeDeliveryNudge: { needed: number; threshold: number } | undefined;
@@ -323,5 +328,6 @@ export function computeQuote(cfg: DeliveryConfig, input: QuoteInput): QuoteResul
     latenightPrepaid: isLateNight && cfg.late_night.prepaid,
     freeDeliveryNudge,
     notes,
+    quoteNotes,
   };
 }
