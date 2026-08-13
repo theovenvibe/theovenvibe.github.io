@@ -40,6 +40,40 @@ attach rate over Mar–Aug 2026. Full reasoning lives in
   plus a side to work.
 - The Coke in combos is assumed at ₹40; it is not a priced SKU in this file.
 
+## Kitchen hours and what they mean in code
+
+The calculator has three states, driven by `site.config.json` and verified on
+the built page, not assumed:
+
+- **Open** (11:30–23:30): everything available, standard or afternoon pricing.
+- **Late night** (23:30–**02:00**): ₹399 minimum, prepaid, and two separate
+  charges — **₹49 kitchen** on every order including pickup (the oven is fired
+  either way) and **₹30 delivery premium** on top of the normal distance fee.
+  The usual ₹30 pickup discount does not apply in the window, so late night adds
+  ₹79 to an order whichever way it travels. Free delivery is switched off here
+  too: the ride costs more at 1am, not less. The boiling stations are shut, so
+  pasta, maggi and the Pasta Treat Combo grey out.
+  Set by `late_night.unavailable_categories` / `unavailable_items`; anything not
+  named there stays available. A combo is only orderable if the items inside it
+  are.
+- **Closed** (02:00–11:30): every item greys out and the page says "Kitchen is
+  closed — we open at 11:30 AM" instead of producing a total. Quoting an order
+  the kitchen cannot cook is worse than quoting nothing.
+
+Late night deliberately wins over opening hours, because the window starts at
+closing time — that overlap is intended, not a bug.
+
+## Data blind spot — read before trusting any number
+
+The analytics dashboard sees **Zomato orders only**. Direct WhatsApp and phone
+orders are not recorded anywhere, and Zomato's listing closes with the kitchen,
+so the entire late-night and pickup trade is invisible to it. This has already
+distorted three analyses: the regulars policy (no way to identify a regular),
+the delivery-band picture, and a late-night recommendation that was withdrawn
+after the owner pointed out that real late orders average ₹400–500, not the
+₹232 the Zomato tail suggested. Logging direct orders is the highest-value data
+fix available.
+
 ## Menu decisions
 
 - **Aug 2026 — wok station retired, menu cut from 32 SKUs to 18.** Gas price

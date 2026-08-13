@@ -66,11 +66,22 @@
     },
     "late_night": {
       "from": "23:30",
-      "to": "01:00",
-      "surcharge": 79,
+      "to": "02:00",
       "min_order": 399,
       "prepaid": true,
-      "note": "After closing we fire the oven again just for your order."
+      "note": "After closing we fire the oven again just for your order.",
+      "menu_note": "Late night: no pasta or maggi — those stations are shut. Everything else is on.",
+      "unavailable_categories": [
+        "Pasta",
+        "Maggi"
+      ],
+      "unavailable_items": [
+        "Pasta Treat Combo"
+      ],
+      "_availability_comment": "What the kitchen STOPS cooking after closing (the boiling stations). Everything not listed here stays available. Categories cover future items automatically; unavailable_items is for one-offs inside a category that otherwise stays on.",
+      "kitchen_charge": 49,
+      "delivery_premium": 30,
+      "_charge_comment": "Two different costs, priced separately. kitchen_charge covers relighting the oven and the owner being awake - it applies to every late order, pickup included, because a pickup still reopens the kitchen. delivery_premium is the extra cost of riding out at that hour and applies on top of the normal distance fee. The normal pickup discount does NOT apply during the window: collecting your own order saves the ride, not the reopen."
     },
     "rain": {
       "active": false,

@@ -13,9 +13,11 @@
  *   4. Base fee: quiet hours replace the slab charge with quiet_hours.charge
  *      ONLY for the slab named in quiet_hours.applies_to_slab.
  *   5. Free delivery at/above the slab's free_above (regulars use
- *      regulars.free_above instead).
- *   6. Add surcharges: late night, rain (only when rain.active).
- *   7. Subtract pickup / pre-order discounts.
+ *      regulars.free_above instead) — never during the late-night window.
+ *   6. Add surcharges: late night, rain (when the caller says it is
+ *      raining, defaulting to the rain.active flag).
+ *   7. Subtract pre-order discount, and the pickup discount outside the
+ *      late-night window (a pickup still reopens the kitchen).
  *   8. Cap the SUM of delivery charges (fee + surcharges) at
  *      max_delivery_charge — the banner's promise covers surcharges too.
  *   9. Regulars: surcharges waived entirely (shown as a $0 waived line, not
@@ -110,6 +112,10 @@ export interface QuoteInput {
   orderType: 'delivery' | 'pickup';
   preorder: boolean;
   regular: boolean;
+  /** Customer ticked "it's raining". Defaults to the kitchen's rain.active flag
+   *  when omitted, so the config stays the authoritative declaration. A customer
+   *  can only ever add this charge to their own quote, never remove one. */
+  rain?: boolean;
 }
 
 export interface QuoteLine {
@@ -147,18 +153,35 @@ export type QuoteResult = QuoteBeyond | QuoteBelowMinimum | QuoteOk;
 export function computeQuote(cfg: DeliveryConfig, input: QuoteInput): QuoteResult {
   const { subtotal } = input;
 
+  const lateNight = isTimeInRange(input.time, cfg.late_night.from, cfg.late_night.to);
+
   if (input.orderType === 'pickup') {
-    const lines: QuoteLine[] = [
-      { label: 'Food', amount: subtotal },
-      { label: 'Pickup discount', amount: -cfg.pickup_discount },
-    ];
+    // Collecting your own order saves the ride, not the reopen — so the
+    // kitchen charge still applies after closing and the usual pickup
+    // discount does not. Same minimum either way: the oven costs the same.
+    if (lateNight && subtotal < cfg.late_night.min_order) {
+      return {
+        kind: 'below_minimum',
+        minimum: cfg.late_night.min_order,
+        short: cfg.late_night.min_order - subtotal,
+      };
+    }
+    const lines: QuoteLine[] = [{ label: 'Food', amount: subtotal }];
+    if (lateNight) {
+      lines.push({
+        label: `Late-night kitchen (prepaid, min ₹${cfg.late_night.min_order})`,
+        amount: input.regular ? 0 : cfg.late_night.kitchen_charge,
+      });
+    } else {
+      lines.push({ label: 'Pickup discount', amount: -cfg.pickup_discount });
+    }
     return {
       kind: 'ok',
       lines,
-      total: subtotal - cfg.pickup_discount,
-      timeRule: 'standard',
-      isLateNight: false,
-      latenightPrepaid: false,
+      total: lines.reduce((sum, l) => sum + l.amount, 0),
+      timeRule: lateNight ? 'late_night' : 'standard',
+      isLateNight: lateNight,
+      latenightPrepaid: lateNight && cfg.late_night.prepaid,
     };
   }
 
@@ -170,7 +193,7 @@ export function computeQuote(cfg: DeliveryConfig, input: QuoteInput): QuoteResul
   const isQuiet =
     isTimeInRange(input.time, cfg.quiet_hours.from, cfg.quiet_hours.to) &&
     parseDayRange(cfg.quiet_hours.days).has(input.dayOfWeek);
-  const isLateNight = isTimeInRange(input.time, cfg.late_night.from, cfg.late_night.to);
+  const isLateNight = lateNight;
   const timeRule: TimeRule = isLateNight ? 'late_night' : isQuiet ? 'quiet' : 'standard';
 
   let minimum = isQuiet ? slab.min_order_quiet : slab.min_order;
@@ -193,7 +216,9 @@ export function computeQuote(cfg: DeliveryConfig, input: QuoteInput): QuoteResul
   let fee = quietFeeApplies ? cfg.quiet_hours.charge : slab.charge;
 
   const freeAbove = input.regular ? cfg.regulars.free_above : slab.free_above;
-  const isFree = subtotal >= freeAbove;
+  // Free delivery does not survive into the late-night window: the ride costs
+  // more at 1am, not less, and the window already carries its own minimum.
+  const isFree = subtotal >= freeAbove && !isLateNight;
   if (isFree) fee = 0;
 
   // Every price claim carries its unlocking condition in the same line
@@ -209,14 +234,21 @@ export function computeQuote(cfg: DeliveryConfig, input: QuoteInput): QuoteResul
   });
 
   if (isLateNight) {
+    // Split so the reader can see what picking up would save: the kitchen
+    // charge stays either way, the delivery premium is the part that goes.
     lines.push({
       label: input.regular
         ? 'Late-night kitchen — waived for regulars'
         : `Late-night kitchen (prepaid, min ₹${cfg.late_night.min_order})`,
-      amount: input.regular ? 0 : cfg.late_night.surcharge,
+      amount: input.regular ? 0 : cfg.late_night.kitchen_charge,
+    });
+    lines.push({
+      label: input.regular ? 'Late-night delivery — waived for regulars' : 'Late-night delivery',
+      amount: input.regular ? 0 : cfg.late_night.delivery_premium,
     });
   }
-  if (cfg.rain.active) {
+  const rainApplies = input.rain ?? cfg.rain.active;
+  if (rainApplies) {
     lines.push({
       label: input.regular ? 'Rain surcharge — waived for regulars' : 'Rain surcharge',
       amount: input.regular ? 0 : cfg.rain.surcharge,
@@ -244,7 +276,7 @@ export function computeQuote(cfg: DeliveryConfig, input: QuoteInput): QuoteResul
   const total = lines.reduce((sum, l) => sum + l.amount, 0);
 
   let freeDeliveryNudge: { needed: number; threshold: number } | undefined;
-  if (!isFree) {
+  if (!isFree && !isLateNight) {
     const needed = freeAbove - subtotal;
     if (needed > 0) freeDeliveryNudge = { needed, threshold: freeAbove };
   }

@@ -83,10 +83,27 @@ export const siteConfigSchema = z.object({
     late_night: z.object({
       from: z.string().regex(/^\d{2}:\d{2}$/, "late_night.from must be 24h 'HH:MM', e.g. '23:30'"),
       to: z.string().regex(/^\d{2}:\d{2}$/, "late_night.to must be 24h 'HH:MM', e.g. '01:00'"),
-      surcharge: z.number().int().nonnegative('late_night.surcharge must be 0 or more rupees'),
+      kitchen_charge: z
+        .number()
+        .int()
+        .nonnegative('late_night.kitchen_charge must be 0 or more rupees — it covers reopening the kitchen'),
+      delivery_premium: z
+        .number()
+        .int()
+        .nonnegative('late_night.delivery_premium must be 0 or more rupees — the extra cost of riding out late'),
+      _charge_comment: z.string().optional(),
       min_order: z.number().int().positive('late_night.min_order must be a positive rupee amount'),
       prepaid: z.boolean(),
       note: z.string().min(1),
+      /* What the kitchen STOPS cooking after closing. Everything not named
+         here stays available during the late-night window. */
+      unavailable_categories: z
+        .array(z.string().min(1))
+        .default([])
+        .describe('Menu categories the kitchen stops cooking after closing'),
+      unavailable_items: z.array(z.string().min(1)).default([]),
+      menu_note: z.string().min(1, 'late_night.menu_note is shown to customers — say what is off the menu'),
+      _availability_comment: z.string().optional(),
     }),
     rain: z.object({
       active: z.boolean(),
