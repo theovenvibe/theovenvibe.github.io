@@ -545,9 +545,11 @@ const calcConfig = {
       // quote-voice variants: facts about the order, not instructions to pay.
       for (const n of result.quoteNotes ?? []) lines.push(n);
     } else if (result.kind === 'below_minimum') {
-      lines.push(`Below the ₹${result.minimum} minimum for this order — add ${rupee(result.short)} more.`);
+      lines.push(
+        `My order is below the ₹${result.minimum} minimum — I need to add ${rupee(result.short)} more.`,
+      );
     } else {
-      lines.push(result.note);
+      lines.push('I am beyond your delivery range, so I will order through Zomato or Swiggy.');
     }
     return lines.join('\n');
   }

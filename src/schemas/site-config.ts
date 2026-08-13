@@ -100,6 +100,7 @@ export const siteConfigSchema = z.object({
          a waiver of anything. */
       advance_note: z.string().min(1),
       advance_note_quote: z.string().min(1),
+      pickup_note_quote: z.string().min(1),
       _advance_comment: z.string().optional(),
       /* What the kitchen STOPS cooking after closing. Everything not named
          here stays available during the late-night window. */
@@ -131,6 +132,8 @@ export const siteConfigSchema = z.object({
       _comment: z.string().optional(),
     }),
     pickup_discount: z.number().int().nonnegative('pickup_discount must be 0 or more rupees'),
+    pickup_note_quote: z.string().min(1),
+    _quote_voice_comment: z.string().optional(),
     pickup_min_order: z
       .number()
       .int()

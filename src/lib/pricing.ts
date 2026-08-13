@@ -207,6 +207,9 @@ export function computeQuote(cfg: DeliveryConfig, input: QuoteInput): QuoteResul
       isLateNight: lateNight,
       latenightPrepaid: lateNight && cfg.late_night.prepaid,
       pickupNudge,
+      quoteNotes: [
+        lateNight ? cfg.late_night.pickup_note_quote : cfg.pickup_note_quote,
+      ],
     };
   }
 
