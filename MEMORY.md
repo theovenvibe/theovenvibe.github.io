@@ -42,11 +42,17 @@ attach rate over Mar–Aug 2026. Full reasoning lives in
 
 ## Menu decisions
 
-- **Aug 2026 — wok station retired.** Gas price rise and shortage forced the cut.
-  Dropped: all five fried rice SKUs, both rice meal-box combos, Creamy Cheese
-  Maggi, Tangy Masala Corn, Cheesy Corn Mix, Motu Burger (never ordered, never on
-  the printed menu). Kept Classic Red Sauce Pasta by owner's call despite low
-  volume.
+- **Aug 2026 — wok station retired, menu cut from 32 SKUs to 18.** Gas price
+  rise and shortage forced the cut. Dropped: all five fried rice SKUs, both rice
+  meal-box combos, Creamy Cheese Maggi, Tangy Masala Corn, Cheesy Corn Mix,
+  Motu Burger (never ordered, never on the printed menu), the three sandwich
+  experiments that did not work (Dahi Tadka, Khatti Meethi Imli Khajoor, Chilli
+  Peanut Thecha), Chilli Garlic Potato Pops and Cheese Onion Crispy Pocket
+  Bombs. Kept Classic Red Sauce Pasta by owner's call despite low volume.
+- What remains: 8 pizzas, 2 pastas, 3 sandwiches, 1 maggi, 4 sides, 3 combos,
+  6 add-ons. Sides are now Classic Fries ₹99, Peri Peri Fries ₹129, Garlic Bread
+  Toast ₹129, Peri Makhana ₹129 — fries carry the whole attach opportunity, so
+  do not drop either without a replacement side.
 - New SKUs must be **oven, griddle or fryer only** — no wok, no long boil — until
   gas economics change.
 - Under review, not yet added: Small Fries ₹59 (attach driver), Midnight Pizza
