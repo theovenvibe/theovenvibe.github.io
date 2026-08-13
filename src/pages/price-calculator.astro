@@ -164,8 +164,8 @@ const calcConfig = {
           </li>
           {d.rain.active && <li>Rain surcharge active right now: +₹{d.rain.surcharge}. {d.rain.note}</li>}
           <li>
-            Pickup instead of delivery: no delivery charge, and ₹{d.pickup_discount} off the food on
-            orders over ₹{d.pickup_min_order}.
+            Pickup instead of delivery: ₹{d.pickup_discount} off the food, no delivery charge — to get
+            the ₹{d.pickup_discount} off, the order must be ₹{d.pickup_min_order} or more.
           </li>
           <li>
             Ordering for later? If it rains when we ride out, ₹{d.rain.surcharge} is added on
@@ -571,6 +571,16 @@ const calcConfig = {
     if (result.latenightPrepaid) {
       output.appendChild(textEl('p', 'calc-note', 'Late-night orders are paid online in advance.'));
     }
+    if (result.pickupNudge) {
+      output.appendChild(
+        textEl(
+          'p',
+          'calc-note',
+          `Add ${rupee(result.pickupNudge.needed)} more to reach ${rupee(result.pickupNudge.threshold)} and take ${rupee(result.pickupNudge.discount)} off this pickup.`,
+        ),
+      );
+    }
+
     if (result.freeDeliveryNudge) {
       output.appendChild(
         textEl(
