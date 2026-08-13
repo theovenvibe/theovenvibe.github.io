@@ -119,7 +119,9 @@
     },
     "cod_cap": 500,
     "radius_note": "We deliver up to 4 km ourselves. Zomato and Swiggy carry the rest.",
-    "_max_delivery_charge_comment": "Ceiling on the SUM of every delivery-related charge - base fee plus late-night plus rain. Worst realistic stack is 2-4 km (69) + late night (79) + rain (29) = 177, so this caps it at 149. Raising a slab charge later cannot silently break the promise."
+    "_max_delivery_charge_comment": "Ceiling on the SUM of every delivery-related charge - base fee plus late-night plus rain. Worst realistic stack is 2-4 km (69) + late night (79) + rain (29) = 177, so this caps it at 149. Raising a slab charge later cannot silently break the promise.",
+    "pickup_min_order": 299,
+    "_pickup_comment": "The Rs.30 pickup discount only applies from this basket size up. At 15% margin a Rs.100 order contributes Rs.15, so Rs.30 off it is a Rs.15 loss - break-even is Rs.200. Rs.299 clears that with room and still fires on about half of all orders; a higher gate (Rs.399 qualifies only 18%) would rarely trigger and stop pulling anyone away from a delivery that costs the kitchen Rs.78 a ride."
   },
   "hero_dish_code": "752649876",
   "announcement": {
