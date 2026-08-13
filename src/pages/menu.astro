@@ -9,7 +9,7 @@
 import Layout from '../layouts/Layout.astro';
 import MenuAccordions from '../components/MenuAccordions.astro';
 import AddonsAccordion from '../components/AddonsAccordion.astro';
-import { site, categories } from '../lib/data';
+import { site, categories, deliveryFreeAboveLine } from '../lib/data';
 import { breadcrumbJsonLd, restaurantJsonLd, LOW_PRICE, LINKS } from '../lib/seo';
 
 const title = 'Full Menu & Prices | The Oven Vibe Sundargarh';
@@ -43,7 +43,7 @@ const categoryLine = categories.map((c) => c.name).join(' · ');
             <span class="veg-badge">100% Pure Veg</span>
           </p>
           <p class="hero-text animate-on-scroll delay-200">
-            {categoryLine}. {site.delivery.free_above_note}
+            {categoryLine}. {deliveryFreeAboveLine}
           </p>
           <div class="hero-actions animate-on-scroll delay-300">
             <a

@@ -8,12 +8,12 @@
 // site.config.json or menu.json. No landmarks, neighbourhoods, delivery
 // promises or claims were invented — if it isn't in the config, it isn't here.
 import Layout from '../layouts/Layout.astro';
-import { site, categories } from '../lib/data';
+import { site, categories, deliveryFreeAboveLineAll, maxDeliveryKm } from '../lib/data';
 import { LINKS, PRICE_RANGE, breadcrumbJsonLd, restaurantJsonLd } from '../lib/seo';
 
 const pin = site.business.address.postal_code;
 const title = `Food Delivery in Sundargarh ${pin} | The Oven Vibe`;
-const description = `Pure veg food delivery across Sundargarh ${pin}. Delivery from ₹${site.delivery.slabs[0].charge}, free above ₹${site.delivery.free_above}, up to 8 km. Open ${site.business.hours.display}.`;
+const description = `Pure veg food delivery across Sundargarh ${pin}. Delivery from ₹${site.delivery.slabs[0].charge}, free above ₹${site.delivery.slabs[0].free_above}, up to ${maxDeliveryKm} km. Open ${site.business.hours.display}.`;
 
 const waLink = `${LINKS.whatsapp}?utm_source=site&utm_medium=location&utm_campaign=whatsapp`;
 const zomatoLink = `${LINKS.zomato}&utm_source=site&utm_medium=location&utm_campaign=delivery`;
@@ -60,7 +60,7 @@ const highlights = categories.map(({ name, items }) => ({
           <p class="hero-text animate-on-scroll delay-200">
             The Oven Vibe is a 100% pure veg cloud kitchen in {`${site.business.address.locality}, ${site.business.address.region}`}. We bake pizzas, wok-toss fried
             rice, grill sandwiches and fry sides to order, then deliver them ourselves across town.
-            {` ${site.delivery.hook}, and free on orders above ₹${site.delivery.free_above}.`}
+            {` ${site.delivery.hook}, and free on orders above ₹${site.delivery.slabs[0].free_above} within ${site.delivery.slabs[0].km_to} km.`}
           </p>
           <div class="hero-actions animate-on-scroll delay-300">
             <a
@@ -104,13 +104,16 @@ const highlights = categories.map(({ name, items }) => ({
         </div>
 
         <p style="margin-top: 2rem; font-weight: 700; color: #d63031; font-size: 1.125rem;">
-          {site.delivery.free_above_note}
+          {deliveryFreeAboveLineAll}
         </p>
         <p>
           The charge depends on how far you are, so tell us your delivery location when you call or
-          message and we will confirm it before the order goes into the oven. Beyond 8 km we cannot
-          promise the food arrives hot, so we do not deliver there. If you would rather collect,
-          takeaway orders are ready in about 20 minutes — call ahead and the box will be waiting.
+          message and we will confirm it before the order goes into the oven. {site.delivery.beyond_note}
+          If you would rather collect, takeaway orders are ready in about 20 minutes — call ahead and
+          the box will be waiting.
+        </p>
+        <p>
+          Want your exact total first? Use our <a href="/price-calculator/" class="read-more">price calculator →</a>
         </p>
         <p>
           Prefer to pay online? We are also on <a href={zomatoLink} target="_blank" rel="noopener noreferrer" class="read-more"
