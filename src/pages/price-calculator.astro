@@ -262,11 +262,6 @@ const calcConfig = {
                 <input type="checkbox" id="preorderCheck" />
                 Pre-ordering {d.preorder_hours_ahead}+ hours ahead (₹{d.preorder_discount} off)
               </label>
-              <label class="calc-check">
-                <input type="checkbox" id="regularCheck" />
-                Regular customer — kitchen-confirmed after {d.regulars.min_orders}+ orders. Tick this
-                only if we've told you it applies to your number.
-              </label>
               {
                 d.rain.active && (
                   <p class="calc-note calc-note--warn">
@@ -321,7 +316,6 @@ const calcConfig = {
   const timeRuleNote = document.getElementById('timeRuleNote') as HTMLElement;
   const orderTypeRadios = Array.from(document.querySelectorAll<HTMLInputElement>('input[name="orderType"]'));
   const preorderCheck = document.getElementById('preorderCheck') as HTMLInputElement;
-  const regularCheck = document.getElementById('regularCheck') as HTMLInputElement;
   const output = document.getElementById('quoteOutput') as HTMLElement;
   const copyBtn = document.getElementById('copyQuoteBtn') as HTMLButtonElement;
   const waLink = document.getElementById('waShareLink') as HTMLAnchorElement;
@@ -514,7 +508,9 @@ const calcConfig = {
       dayOfWeek,
       orderType,
       preorder: preorderCheck.checked,
-      regular: regularCheck.checked,
+      // The regulars waiver is applied by the kitchen when it quotes, not
+      // self-declared here: there is no way to verify it on a public page.
+      regular: false,
     });
 
     renderOutput(result);
@@ -524,7 +520,6 @@ const calcConfig = {
   kmInput.addEventListener('input', update);
   timeInput.addEventListener('input', update);
   preorderCheck.addEventListener('change', update);
-  regularCheck.addEventListener('change', update);
 
   copyBtn.addEventListener('click', async () => {
     const text = copyBtn.dataset.quote ?? '';

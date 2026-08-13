@@ -91,12 +91,19 @@ const localPhone = site.business.phone.replace('+91', '');
               same block on both the full and compact variant (owner rule, 2026-08-14).
               Rain stays visible regardless of delivery.rain.active: it's a standing
               policy disclosure, worded conditionally, not a live status light. */}
-          <p class="banner-surcharge-full" style="margin-bottom: 0; font-size: 0.9rem; color: var(--color-text-muted);">
-            {lateNightBannerLine} · {rainBannerLine} · <a href="/price-calculator/" class="read-more">Check your exact total →</a>
+          <p class="banner-surcharge-full" style="margin-bottom: 0.9rem; font-size: 0.9rem; color: var(--color-text-muted);">
+            {lateNightBannerLine} · {rainBannerLine}
           </p>
-          <p class="banner-surcharge-compact" style="margin-bottom: 0; font-size: 0.9rem; color: var(--color-text-muted);">
-            {surchargesCompactLine} — <a href="/price-calculator/" class="read-more">check your exact total →</a>
+          <p class="banner-surcharge-compact" style="margin-bottom: 0.9rem; font-size: 0.9rem; color: var(--color-text-muted);">
+            {surchargesCompactLine}
           </p>
+
+          {/* The disclosure above always travels with this button. The label
+              carries both jobs — check the price, then order — because a price
+              checker that reads like a dead end does not get tapped. */}
+          <div class="banner-actions">
+            <a href="/price-calculator/" class="btn btn-primary">Check your exact total &amp; Order Now →</a>
+          </div>
         </div>
 
         <p class="hero-text animate-on-scroll delay-400">
@@ -321,6 +328,24 @@ const localPhone = site.business.phone.replace('+91', '');
     }
     .banner-surcharge-compact {
       display: block;
+    }
+  }
+
+  /* Pair the price-checker with the order CTA: checking a price is a step
+     towards ordering, so the next step has to be visible in the same breath. */
+  .banner-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+  .banner-actions .btn {
+    font-size: 0.95rem;
+    padding: 0.6rem 1.1rem;
+  }
+  @media (max-width: 420px) {
+    .banner-actions .btn {
+      flex: 1 1 100%;
+      text-align: center;
     }
   }
 </style>
