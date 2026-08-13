@@ -536,7 +536,6 @@ const calcConfig = {
     if (result.kind === 'ok') {
       for (const l of result.lines) lines.push(`${l.label}: ${rupee(l.amount)}`);
       lines.push(`Total: ${rupee(result.total)}`);
-      if (result.latenightPrepaid) lines.push('(Late-night orders are paid online in advance)');
       // The copied text is sent BY the customer TO the kitchen, so it uses the
       // quote-voice variants: facts about the order, not instructions to pay.
       for (const n of result.quoteNotes ?? []) lines.push(n);
