@@ -16,8 +16,8 @@
  *      regulars.free_above instead) — never during the late-night window.
  *   6. Add surcharges: late night, rain (when the caller says it is
  *      raining, defaulting to the rain.active flag).
- *   7. Subtract pre-order discount, and the pickup discount outside the
- *      late-night window (a pickup still reopens the kitchen).
+ *   7. Subtract the pickup discount outside the late-night window (a pickup
+ *      still reopens the kitchen).
  *   8. Cap the SUM of delivery charges (fee + surcharges) at
  *      max_delivery_charge — the banner's promise covers surcharges too.
  *   9. Regulars: surcharges waived entirely (shown as a $0 waived line, not
@@ -110,7 +110,9 @@ export interface QuoteInput {
   time: string; // "HH:MM", 24h
   dayOfWeek: number; // 0=Sun..6=Sat
   orderType: 'delivery' | 'pickup';
-  preorder: boolean;
+  /** Customer is paying online now. Locks the price: no rain charge can be
+   *  added at the door to an order that has already been paid for. */
+  prepaid: boolean;
   regular: boolean;
   /** Customer ticked "it's raining". Defaults to the kitchen's rain.active flag
    *  when omitted, so the config stays the authoritative declaration. A customer
@@ -247,7 +249,10 @@ export function computeQuote(cfg: DeliveryConfig, input: QuoteInput): QuoteResul
       amount: input.regular ? 0 : cfg.late_night.delivery_premium,
     });
   }
-  const rainApplies = input.rain ?? cfg.rain.active;
+  // A prepaid order cannot take a doorstep surcharge, so rain never applies to
+  // one. This is the only thing prepaying buys, and it is worth more than the
+  // charge: a confirmed order the kitchen can plan around.
+  const rainApplies = (input.rain ?? cfg.rain.active) && !(cfg.rain.waived_when_prepaid && input.prepaid);
   if (rainApplies) {
     lines.push({
       label: input.regular ? 'Rain surcharge — waived for regulars' : 'Rain surcharge',
@@ -269,9 +274,6 @@ export function computeQuote(cfg: DeliveryConfig, input: QuoteInput): QuoteResul
     });
   }
 
-  if (input.preorder) {
-    lines.push({ label: 'Pre-order discount', amount: -cfg.preorder_discount });
-  }
 
   const total = lines.reduce((sum, l) => sum + l.amount, 0);
 
