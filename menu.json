@@ -2,61 +2,6 @@
   "_comment": "Menu data organized exactly as per Zomato catalogue",
   "Menu_Items": [
     {
-      "product_code": "751393909",
-      "item_id": 1,
-      "category": "Fried Rice Bowls",
-      "subcategory": "Classic Veg Fried Rice",
-      "item_name": "Veg Fried Rice",
-      "display_name": "Veg Fried Rice",
-      "price": 199,
-      "description": "[Veg preparation] Fluffy wok tossed basmati rice with crunchy carrots, beans and sweet corn. Light soy seasoning a hint of black pepper finished with a squeeze of lemon. Served hot in a leak proof box a balanced everyday plate for quick lunches or dinners.",
-      "status": "available"
-    },
-    {
-      "product_code": "751393910",
-      "item_id": 2,
-      "category": "Fried Rice Bowls",
-      "subcategory": "Classic Veg Fried Rice",
-      "item_name": "Garlic Fried Rice",
-      "display_name": "Garlic Fried Rice",
-      "price": 239,
-      "description": "[Veg preparation] Aromatic fried rice kissed with roasted garlic and butter notes. Stir fried with julienne capsicum and corn mild, fragrant and comforting. Topped with thin garlic chips on request for extra crunch.",
-      "status": "available"
-    },
-    {
-      "product_code": "751393911",
-      "item_id": 3,
-      "category": "Fried Rice Bowls",
-      "subcategory": "Spicy and Signature Indo Chinese",
-      "item_name": "Schezwan Fried Rice",
-      "display_name": "Schezwan Fried Rice 🌶️",
-      "price": 239,
-      "description": "[Veg preparation] Smoky, tangy and spicy our house made schezwan paste is wok fried with rice, cabbage, capsicum and onions. Bold red colour, slight char and a balanced heat that builds with each bite.",
-      "status": "available"
-    },
-    {
-      "product_code": "751393912",
-      "item_id": 4,
-      "category": "Fried Rice Bowls",
-      "subcategory": "Premium Veg Protein Bowls",
-      "item_name": "Paneer Fried Rice",
-      "display_name": "Paneer Fried Rice",
-      "price": 309,
-      "description": "[Veg preparation] Large, soft cubes of marinated paneer, pan seared and tossed with wok fried rice, crisp vegetables and tangy Indo Chinese sauce. High protein, filling and flavorful.",
-      "status": "available"
-    },
-    {
-      "product_code": "751397746",
-      "item_id": 5,
-      "category": "Fried Rice Bowls",
-      "subcategory": "Premium Veg Protein Bowls",
-      "item_name": "Mixed Treasure Fried Rice",
-      "display_name": "Mixed Treasure Fried Rice",
-      "price": 349,
-      "description": "[Veg preparation] Feast in a box paneer, baby corn, capsicum and roasted cashews in a rich slightly sweet savory wok sauce.",
-      "status": "available"
-    },
-    {
       "product_code": "745802369",
       "item_id": 6,
       "category": "Pizza",
@@ -200,17 +145,6 @@
       "status": "available"
     },
     {
-      "product_code": "759685338",
-      "item_id": 19,
-      "category": "Burgers",
-      "subcategory": "Burgers",
-      "item_name": "Motu Burger",
-      "display_name": "Motu Burger",
-      "price": 199,
-      "description": "[Veg preparation] A big, filling burger loaded with a double-sized crispy aloo patty, rich cheese sauce, cheese slice, tangy mustard, fresh cabbage, onion, tomato, French fries and classic tomato ketchup. Heavy, juicy and super satisfying.",
-      "status": "available"
-    },
-    {
       "product_code": "760595845",
       "item_id": 20,
       "category": "Maggi",
@@ -219,17 +153,6 @@
       "display_name": "Street Style Korean Spicy Veg Maggi",
       "price": 159,
       "description": "[Veg preparation] Street-style veg Maggi prepared in a spicy Korean-inspired garlic sauce with vegetables. To maintain the perfect texture and avoid overcooking, the noodles are cooled during preparation and then tossed in sauce. Bold flavours, saucy and highly addictive.",
-      "status": "available"
-    },
-    {
-      "product_code": "760597710",
-      "item_id": 21,
-      "category": "Maggi",
-      "subcategory": "Maggi",
-      "item_name": "Creamy Cheese Maggi",
-      "display_name": "Creamy Cheese Maggi",
-      "price": 199,
-      "description": "[Veg preparation] Classic veg Maggi loaded with rich, creamy melted cheese.",
       "status": "available"
     },
     {
@@ -321,28 +244,6 @@
       "status": "available"
     },
     {
-      "product_code": "745802356",
-      "item_id": 30,
-      "category": "Sides & Snacks",
-      "subcategory": "Snacks",
-      "item_name": "Tangy Masala Corn",
-      "display_name": "Tangy Masala Corn",
-      "price": 119,
-      "description": "[veg preparation] Corn kernels tossed with spice.",
-      "status": "available"
-    },
-    {
-      "product_code": "745802367",
-      "item_id": 31,
-      "category": "Sides & Snacks",
-      "subcategory": "Snacks",
-      "item_name": "Cheesy Corn Mix",
-      "display_name": "Cheesy Corn Mix",
-      "price": 149,
-      "description": "[veg preparation] Corn with cheese and herbs.",
-      "status": "available"
-    },
-    {
       "product_code": "745802352",
       "item_id": 32,
       "category": "Sides & Snacks",
@@ -356,47 +257,38 @@
   ],
   "Combos": [
     {
-      "combo_code": "752694444",
-      "combo_name": "Veg Fried Rice Meal Box Combo",
-      "combo_price": 209,
-      "description": "Fluffy wok-tossed basmati rice with fresh vegetables, served with a refreshing Coke.",
-      "items_included": ["751393909"],
-      "image_code": "752694444",
-      "status": "available"
-    },
-    {
-      "combo_code": "752694468",
-      "combo_name": "Schezwan Fried Rice Meal Box Combo 🌶️",
-      "combo_price": 249,
-      "description": "Smoky, tangy spiced fried rice with bold flavors, paired with a cold Coke to cool down.",
-      "items_included": ["751393911"],
-      "image_code": "752694468",
-      "status": "available"
-    },
-    {
       "combo_code": "745802348",
       "combo_name": "Fiesta Pizza Combo",
-      "combo_price": 319,
+      "combo_price": 339,
       "description": "Our signature Herb Paneer Delight Pizza with creamy makhni sauce, crispy Peri Fries, and Coke. Complete meal for pizza lovers.",
-      "items_included": ["745802364", "745802351"],
+      "items_included": [
+        "745802364",
+        "745802351"
+      ],
       "image_code": "745802348",
       "status": "available"
     },
     {
       "combo_code": "745802384",
       "combo_name": "Pasta Treat Combo",
-      "combo_price": 289,
+      "combo_price": 309,
       "description": "Creamy Alfredo Pasta made with perfectly cooked fusilli, served with golden fries and a refreshing Coke.",
-      "items_included": ["751793935", "745802374"],
+      "items_included": [
+        "751793935",
+        "745802374"
+      ],
       "image_code": "745802384",
       "status": "available"
     },
     {
       "combo_code": "745802354",
       "combo_name": "Sandwich Meal Box Combo",
-      "combo_price": 259,
+      "combo_price": 279,
       "description": "Paneer Tikka Grilled Sandwich packed with marinated paneer, served with crispy fries and Coke. Perfect quick meal.",
-      "items_included": ["752623131", "745802374"],
+      "items_included": [
+        "752623131",
+        "745802374"
+      ],
       "image_code": "745802354",
       "status": "available"
     }
