@@ -82,8 +82,9 @@
       "kitchen_charge": 49,
       "delivery_premium": 30,
       "_charge_comment": "Two different costs, priced separately. kitchen_charge covers relighting the oven and the owner being awake - it applies to every late order, pickup included, because a pickup still reopens the kitchen. delivery_premium is the extra cost of riding out at that hour and applies on top of the normal distance fee. The normal pickup discount does NOT apply during the window: collecting your own order saves the ride, not the reopen.",
-      "locked_note": "Late-night orders are paid online in advance, so your price is locked — no rain charge.",
-      "locked_note_quote": "Late-night order — paid online in advance. Price locked, no rain charge."
+      "advance_note": "Late-night orders are paid online in advance. If it rains when we ride out, ₹{surcharge} is added on delivery.",
+      "advance_note_quote": "Late-night order — Needs to be paid online in advance. If it rains when we ride out, ₹{surcharge} is added on delivery.",
+      "_advance_comment": "Late night is prepaid AND still carries the rain charge - paying up front is the condition of cooking at that hour, not a waiver. That is why the prepaid tick box is hidden inside the window: it is not a choice there. Outside the window prepaying DOES waive rain, which is the only thing it buys."
     },
     "rain": {
       "active": false,
