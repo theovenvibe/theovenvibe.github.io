@@ -283,7 +283,7 @@ const calcConfig = {
               </div>
             </fieldset>
 
-            <fieldset class="calc-group">
+            <fieldset class="calc-group" id="otherGroup">
               <legend>Other</legend>
               <label class="calc-check" id="prepaidLabel">
                 <input type="checkbox" id="prepaidCheck" />
@@ -355,7 +355,7 @@ const calcConfig = {
   const orderTypeRadios = Array.from(document.querySelectorAll<HTMLInputElement>('input[name="orderType"]'));
   const prepaidCheck = document.getElementById('prepaidCheck') as HTMLInputElement;
   const weatherNote = document.getElementById('weatherNote') as HTMLParagraphElement;
-  const prepaidLabel = document.getElementById('prepaidLabel') as HTMLLabelElement;
+  const otherGroup = document.getElementById('otherGroup') as HTMLFieldSetElement;
   const rainCheck = document.getElementById('rainCheck') as HTMLInputElement;
   const availabilityNote = document.getElementById('availabilityNote') as HTMLParagraphElement;
   const rainLabel = document.getElementById('rainLabel') as HTMLLabelElement;
@@ -616,7 +616,7 @@ const calcConfig = {
     // is hidden outright rather than sitting there claiming to "lock" a price.
     // (Late-night orders are prepaid regardless; that is stated in their own
     // line, not asked as a question.)
-    prepaidLabel.hidden = isPickup;
+    otherGroup.hidden = isPickup;
     prepaidCheck.disabled = isPickup;
     const prepaid = prepaidCheck.checked && !isPickup;
     const rainBoxUsable = !isPickup && !later && !prepaid;
@@ -916,6 +916,12 @@ const calcConfig = {
   .calc-note--good {
     color: #1a7f37;
     font-weight: 600;
+  }
+
+  /* The hidden attribute loses to any class that sets display (.calc-check is
+     display:flex), so say it here — otherwise "hidden" elements still paint. */
+  [hidden] {
+    display: none !important;
   }
 
   .calc-check--off {
