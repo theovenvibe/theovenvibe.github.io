@@ -14,7 +14,15 @@
 // JSON-LD, and every fact in it comes from site.config.json / menu.json. They
 // can no longer drift apart.
 import Layout from '../layouts/Layout.astro';
-import { site } from '../lib/data';
+import {
+  site,
+  deliverySlabLine,
+  deliveryMinimumLine,
+  deliveryFreeAboveLineAll,
+  quietHoursTimeRange,
+  lateNightTimeRange,
+  maxDeliveryKm,
+} from '../lib/data';
 import {
   LINKS,
   PRICE_RANGE,
@@ -28,7 +36,7 @@ const title = 'FAQ — Delivery, Timings & Orders | The Oven Vibe';
 const description = `Answers on delivery charges and areas in Sundargarh, opening hours, pure veg food, party orders and prices at ${site.business.name}.`;
 const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
 
-const slabLine = site.delivery.slabs.map((s) => `₹${s.charge} for ${s.label}`).join(', ');
+const d = site.delivery;
 
 const faqs: Qa[] = [
   {
@@ -36,8 +44,42 @@ const faqs: Qa[] = [
     a: `Call or message ${site.business.phone_display} on WhatsApp between ${site.business.hours.display.replace(', all days', '')} and tell us what you would like. You can also order through Zomato or Swiggy if you prefer to pay online.`,
   },
   {
-    q: 'Do you deliver in Sundargarh, and what does delivery cost?',
-    a: `Yes. We deliver within 8 km of Sundargarh town: ${slabLine}. ${site.delivery.free_above_note}. Zomato and Swiggy also deliver our food at their own charges.`,
+    q: 'What does delivery cost?',
+    a: `${deliverySlabLine}, depending on how far you are. ${deliveryMinimumLine}. ${deliveryFreeAboveLineAll}. We deliver up to ${maxDeliveryKm} km ourselves — beyond that, order through Zomato or Swiggy. You can work out your exact total on our price calculator.`,
+  },
+  {
+    q: 'Is there a minimum order?',
+    a: `Yes. For ${d.slabs[0].label} it's ₹${d.slabs[0].min_order}, and for ${d.slabs[1].label} it's ₹${d.slabs[1].min_order}. Order in the afternoon (${quietHoursTimeRange}, ${d.quiet_hours.days}) and the minimum drops to ₹${d.slabs[0].min_order_quiet} on either slab.`,
+  },
+  {
+    q: 'Why is afternoon delivery cheaper?',
+    a: `${d.quiet_hours.note} Order between ${quietHoursTimeRange} on ${d.quiet_hours.days} and delivery for ${d.quiet_hours.applies_to_slab} drops to just ₹${d.quiet_hours.charge}, with a lower minimum order of ₹${d.slabs[0].min_order_quiet} too.`,
+  },
+  {
+    q: 'Do you deliver late at night?',
+    a: `Yes, after we close. ${d.late_night.note} There's a ₹${d.late_night.surcharge} late-night charge (${lateNightTimeRange}), a ₹${d.late_night.min_order} minimum order, and it has to be paid online in advance.`,
+  },
+  {
+    q: 'Do charges change in the rain?',
+    a: d.rain.active
+      ? `Right now, yes — a ₹${d.rain.surcharge} rain surcharge is active. ${d.rain.note}`
+      : `Only when it's actually raining, and it's off right now. ${d.rain.note}`,
+  },
+  {
+    q: 'Do you deliver to NTPC Hospital or Sriram Nagar?',
+    a: `Yes — both fall in our ${d.slabs[1].label} slab. ${d.campus_batch.note} Order together with someone nearby within ${d.campus_batch.window_minutes} minutes of each other and you both pay ₹${d.campus_batch.charge} instead of the usual charge.`,
+  },
+  {
+    q: 'What if I am further than 4 km away?',
+    a: `${d.beyond_note} Order through Zomato or Swiggy and they'll bring it to you.`,
+  },
+  {
+    q: 'Is delivery cheaper if I order often?',
+    a: `Yes. Order with us ${d.regulars.min_orders} times and surcharges stop applying to you, and delivery becomes free above ₹${d.regulars.free_above} — no need to ask, the kitchen keeps track.`,
+  },
+  {
+    q: 'Can I pick up instead?',
+    a: `Yes — collect it yourself and take ₹${d.pickup_discount} off the food, no delivery charge at all. Takeaway is usually ready in about 20 minutes.`,
   },
   {
     q: 'What are your timings?',
@@ -57,7 +99,7 @@ const faqs: Qa[] = [
   },
   {
     q: 'Do you take party or bulk orders?',
-    a: 'Yes. We make pure veg platters, combos and bulk boxes for birthdays, office lunches and small functions. Call us with the date, the number of people and what you would like, and we will quote a price.',
+    a: `Yes. We make pure veg platters, combos and bulk boxes for birthdays, office lunches and small functions. Order ${d.bulk.min_pizzas} or more pizzas and get ${d.bulk.discount_pct}% off with free delivery — just give us ${d.bulk.notice_minutes} minutes' notice and pay online in advance. Call us with the date, the number of people and what you would like, and we will quote a price.`,
   },
   {
     q: 'Where is The Oven Vibe located?',
@@ -127,6 +169,9 @@ const faqs: Qa[] = [
         }
 
         <div style="text-align: center; margin-top: 3rem;">
+          <p class="lead" style="margin-bottom: 1.5rem;">
+            Want your exact total? <a href="/price-calculator/" class="read-more">Use the price calculator →</a>
+          </p>
           <p class="lead" style="margin-bottom: 1.5rem;">Still not sure? Ask us directly.</p>
           <div class="hero-actions" style="justify-content: center;">
             <a
