@@ -506,6 +506,9 @@ const calcConfig = {
       for (const l of result.lines) lines.push(`${l.label}: ${rupee(l.amount)}`);
       lines.push(`Total: ${rupee(result.total)}`);
       if (result.latenightPrepaid) lines.push('(Late-night orders are paid online in advance)');
+      // The conditions the total depends on go into the copied text too — a
+      // quote pasted into WhatsApp must not read firmer than it is.
+      for (const n of result.notes ?? []) lines.push(n);
     } else if (result.kind === 'below_minimum') {
       lines.push(`Below the ₹${result.minimum} minimum for this order — add ${rupee(result.short)} more.`);
     } else {
@@ -572,6 +575,10 @@ const calcConfig = {
     if (result.latenightPrepaid) {
       output.appendChild(textEl('p', 'calc-note', 'Late-night orders are paid online in advance.'));
     }
+    for (const note of result.notes ?? []) {
+      output.appendChild(textEl('p', 'calc-note', note));
+    }
+
     if (result.pickupNudge) {
       output.appendChild(
         textEl(
