@@ -533,8 +533,26 @@ const calcConfig = {
     return 'Standard';
   }
 
+  /** "Friday, 15 Aug at 8:00pm" for the slot currently chosen. */
+  function slotLabel(): string {
+    const [y, mo, da] = dateInput.value.split('-').map(Number);
+    const [h, mi] = (timeInput.value || '00:00').split(':').map(Number);
+    if ([y, mo, da, h, mi].some(Number.isNaN)) return '';
+    const when = new Date(y, mo - 1, da, h, mi);
+    const day = when.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' });
+    const suffix = h < 12 ? 'am' : 'pm';
+    const hour = h % 12 === 0 ? 12 : h % 12;
+    return `${day} at ${hour}:${String(mi).padStart(2, '0')}${suffix}`;
+  }
+
   function buildQuoteText(result: QuoteResult): string {
     const lines: string[] = [`${CFG.businessName} — price quote`];
+    // A pre-order is an appointment, not a hint: name the slot the customer
+    // picked so the kitchen reads WHEN before it reads what.
+    if (minutesAhead() > delivery.rain.now_window_minutes) {
+      const slot = slotLabel();
+      if (slot) lines.push(`Pre-order — I want this on ${slot}.`);
+    }
     for (const it of chosenItems()) {
       lines.push(`${it.name} x${it.qty} — ₹${it.price * it.qty}`);
     }
