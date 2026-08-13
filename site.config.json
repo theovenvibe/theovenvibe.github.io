@@ -96,7 +96,7 @@
       "notice_minutes": 60,
       "prepaid": true
     },
-    "max_delivery_charge": 99,
+    "max_delivery_charge": 149,
     "regulars": {
       "min_orders": 3,
       "free_above": 399,
@@ -104,7 +104,9 @@
       "_comment": "Not offered on the public site: there is no system yet that tracks who is a regular, so a self-declared tick could not be verified. The kitchen applies this manually when it quotes. Re-expose it in the calculator and the FAQ once repeat customers are actually tracked."
     },
     "cod_cap": 500,
-    "radius_note": "We deliver up to 4 km ourselves. Zomato and Swiggy carry the rest."
+    "radius_note": "We deliver up to 4 km ourselves. Zomato and Swiggy carry the rest.",
+    "_max_delivery_charge_comment": "Ceiling on the SUM of every delivery-related charge - base fee plus late-night plus rain. Worst realistic stack is 2-4 km (69) + late night (79) + rain (29) = 177, so this caps it at 149. Raising a slab charge later cannot silently break the promise.",
+    "_preorder_discount_comment": "Taken off the food, not the delivery fee, so it still applies to pickup orders and never disappears when delivery happens to be free."
   },
   "hero_dish_code": "752649876",
   "announcement": {

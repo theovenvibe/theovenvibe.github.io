@@ -16,7 +16,8 @@
  *      regulars.free_above instead).
  *   6. Add surcharges: late night, rain (only when rain.active).
  *   7. Subtract pickup / pre-order discounts.
- *   8. Cap the base delivery fee at max_delivery_charge.
+ *   8. Cap the SUM of delivery charges (fee + surcharges) at
+ *      max_delivery_charge — the banner's promise covers surcharges too.
  *   9. Regulars: surcharges waived entirely (shown as a $0 waived line, not
  *      dropped, so the breakdown still explains itself).
  */
@@ -190,7 +191,6 @@ export function computeQuote(cfg: DeliveryConfig, input: QuoteInput): QuoteResul
 
   const quietFeeApplies = isQuiet && slab.label === cfg.quiet_hours.applies_to_slab;
   let fee = quietFeeApplies ? cfg.quiet_hours.charge : slab.charge;
-  fee = Math.min(fee, cfg.max_delivery_charge); // step 8: cap the base fee
 
   const freeAbove = input.regular ? cfg.regulars.free_above : slab.free_above;
   const isFree = subtotal >= freeAbove;
@@ -222,6 +222,21 @@ export function computeQuote(cfg: DeliveryConfig, input: QuoteInput): QuoteResul
       amount: input.regular ? 0 : cfg.rain.surcharge,
     });
   }
+  // Step 8: the cap covers EVERY delivery-related charge, not just the base
+  // fee. The banner promises "delivery never costs more than ₹X", and a
+  // promise that quietly excludes surcharges is the kind of small print this
+  // pricing was written to avoid. Shown as its own line so the breakdown
+  // still explains where the money went.
+  const deliveryCharges = lines
+    .filter((l) => l.label !== 'Food')
+    .reduce((sum, l) => sum + l.amount, 0);
+  if (deliveryCharges > cfg.max_delivery_charge) {
+    lines.push({
+      label: `Delivery charges capped at ₹${cfg.max_delivery_charge}`,
+      amount: cfg.max_delivery_charge - deliveryCharges,
+    });
+  }
+
   if (input.preorder) {
     lines.push({ label: 'Pre-order discount', amount: -cfg.preorder_discount });
   }

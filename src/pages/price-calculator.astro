@@ -235,6 +235,11 @@ const calcConfig = {
 
             <fieldset class="calc-group">
               <legend>Time</legend>
+              <label class="calc-field" for="dateInput">
+                Order date (auto-filled with today — the afternoon rate only runs
+                {d.quiet_hours.days})
+                <input type="date" id="dateInput" />
+              </label>
               <label class="calc-field" for="timeInput">
                 Order time (auto-filled with now — change it to quote for later)
                 <input type="time" id="timeInput" />
@@ -313,6 +318,7 @@ const calcConfig = {
   const distanceRadios = Array.from(document.querySelectorAll<HTMLInputElement>('input[name="distance"]'));
   const kmInput = document.getElementById('kmInput') as HTMLInputElement;
   const timeInput = document.getElementById('timeInput') as HTMLInputElement;
+  const dateInput = document.getElementById('dateInput') as HTMLInputElement;
   const timeRuleNote = document.getElementById('timeRuleNote') as HTMLElement;
   const orderTypeRadios = Array.from(document.querySelectorAll<HTMLInputElement>('input[name="orderType"]'));
   const preorderCheck = document.getElementById('preorderCheck') as HTMLInputElement;
@@ -320,10 +326,18 @@ const calcConfig = {
   const copyBtn = document.getElementById('copyQuoteBtn') as HTMLButtonElement;
   const waLink = document.getElementById('waShareLink') as HTMLAnchorElement;
 
-  // Time defaults to "now", auto-detected from the browser clock (spec §4).
+  // Date and time default to "now" from the browser clock, but both stay
+  // editable: the afternoon rate is weekday-only, so quoting a Saturday
+  // order on a Wednesday (or vice versa) needs the day, not just the time.
   const now = new Date();
   timeInput.value = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-  const dayOfWeek = now.getDay();
+  dateInput.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+  function currentDayOfWeek(): number {
+    const parts = dateInput.value.split('-').map(Number);
+    if (parts.length !== 3 || parts.some(Number.isNaN)) return now.getDay();
+    return new Date(parts[0], parts[1] - 1, parts[2]).getDay();
+  }
 
   function qtyOf(row: HTMLElement): number {
     return Number(row.querySelector('.qty-value')?.textContent) || 0;
@@ -505,7 +519,7 @@ const calcConfig = {
       subtotal: sub,
       km,
       time,
-      dayOfWeek,
+      dayOfWeek: currentDayOfWeek(),
       orderType,
       preorder: preorderCheck.checked,
       // The regulars waiver is applied by the kitchen when it quotes, not
@@ -519,6 +533,7 @@ const calcConfig = {
   [...distanceRadios, ...orderTypeRadios].forEach((el) => el.addEventListener('change', update));
   kmInput.addEventListener('input', update);
   timeInput.addEventListener('input', update);
+  dateInput.addEventListener('input', update);
   preorderCheck.addEventListener('change', update);
 
   copyBtn.addEventListener('click', async () => {
@@ -738,5 +753,13 @@ const calcConfig = {
     flex-wrap: wrap;
     gap: 1rem;
     margin-top: 1.5rem;
+  }
+
+  /* aria-disabled tells a screen reader the action is unavailable; without a
+     matching visual state a sighted user just taps a dead button. */
+  .calc-actions [aria-disabled='true'] {
+    opacity: 0.5;
+    pointer-events: none;
+    filter: grayscale(1);
   }
 </style>
