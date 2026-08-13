@@ -151,7 +151,7 @@ export const deliveryMinimumLine =
 export const quietHoursLine = `Afternoons ${formatTimeRange(site.delivery.quiet_hours.from, site.delivery.quiet_hours.to)}, ${site.delivery.quiet_hours.days}: ₹${site.delivery.quiet_hours.charge} delivery, minimum order ₹${site.delivery.slabs[0].min_order_quiet}`;
 
 /** "Late night (11:30pm–1am): +₹79, ₹399 minimum, paid online in advance." */
-export const lateNightLine = `Late night (${formatTimeRange(site.delivery.late_night.from, site.delivery.late_night.to)}): +₹${site.delivery.late_night.surcharge}, ₹${site.delivery.late_night.min_order} minimum, paid online in advance`;
+export const lateNightLine = `Late night (${formatTimeRange(site.delivery.late_night.from, site.delivery.late_night.to)}): +₹${site.delivery.late_night.kitchen_charge} kitchen charge on every order, +₹${site.delivery.late_night.delivery_premium} more if we deliver, ₹${site.delivery.late_night.min_order} minimum, paid online in advance. Collecting it yourself saves the ₹${site.delivery.late_night.delivery_premium} — the usual pickup discount does not apply after closing`;
 
 /**
  * Banner disclosure lines (owner rule, 2026-08-14): a surcharge is never
@@ -159,7 +159,7 @@ export const lateNightLine = `Late night (${formatTimeRange(site.delivery.late_n
  * of these are always paired with the calculator link wherever they render.
  * "Late night after 11:30pm: +₹79, minimum ₹399, prepaid"
  */
-export const lateNightBannerLine = `Late night after ${formatTime(site.delivery.late_night.from)}: +₹${site.delivery.late_night.surcharge}, minimum ₹${site.delivery.late_night.min_order}, prepaid`;
+export const lateNightBannerLine = `Late night after ${formatTime(site.delivery.late_night.from)}: +₹${site.delivery.late_night.kitchen_charge} kitchen, +₹${site.delivery.late_night.delivery_premium} to deliver, minimum ₹${site.delivery.late_night.min_order}, prepaid`;
 
 /**
  * Rain is a standing POLICY disclosure — it stays on the banner regardless

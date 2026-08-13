@@ -157,7 +157,9 @@ const calcConfig = {
             for {d.quiet_hours.applies_to_slab}, minimum order ₹{d.slabs[0].min_order_quiet}. {d.quiet_hours.note}
           </li>
           <li>
-            Late night ({lateNightTimeRange}): +₹{d.late_night.surcharge}, ₹{d.late_night.min_order}{' '}
+            Late night ({lateNightTimeRange}): +₹{d.late_night.kitchen_charge} kitchen charge on every
+            order, +₹{d.late_night.delivery_premium} more if we deliver (so picking up saves ₹
+            {d.late_night.delivery_premium}, and the usual pickup discount does not apply), ₹{d.late_night.min_order}{' '}
             minimum, paid online in advance. {d.late_night.note}
           </li>
           {d.rain.active && <li>Rain surcharge active right now: +₹{d.rain.surcharge}. {d.rain.note}</li>}
@@ -283,9 +285,10 @@ const calcConfig = {
                 <input type="checkbox" id="preorderCheck" />
                 Pre-ordering {d.preorder_hours_ahead}+ hours ahead (₹{d.preorder_discount} off)
               </label>
-              <label class="calc-check">
+              <label class="calc-check" id="rainLabel">
                 <input type="checkbox" id="rainCheck" checked={d.rain.active} />
                 It's raining right now (+₹{d.rain.surcharge})
+                <span class="calc-check-hint" id="rainHint" hidden>— delivery only</span>
               </label>
               {
                 d.rain.active && (
@@ -345,6 +348,8 @@ const calcConfig = {
   const preorderCheck = document.getElementById('preorderCheck') as HTMLInputElement;
   const rainCheck = document.getElementById('rainCheck') as HTMLInputElement;
   const availabilityNote = document.getElementById('availabilityNote') as HTMLParagraphElement;
+  const rainLabel = document.getElementById('rainLabel') as HTMLLabelElement;
+  const rainHint = document.getElementById('rainHint') as HTMLElement;
   const output = document.getElementById('quoteOutput') as HTMLElement;
   const copyBtn = document.getElementById('copyQuoteBtn') as HTMLButtonElement;
   const waLink = document.getElementById('waShareLink') as HTMLAnchorElement;
@@ -465,6 +470,7 @@ const calcConfig = {
     // Mirrors computeQuote's own gating so the note is accurate before any
     // items are picked (computeQuote only runs once there's a slab match).
     const state = kitchenState(time);
+
     if (state === 'closed') return `Kitchen closed — opens ${formatOpen()}`;
     if (state === 'late_night') return 'Late-night (limited menu)';
     if (isTimeInRange(time, delivery.quiet_hours.from, delivery.quiet_hours.to))
@@ -568,8 +574,17 @@ const calcConfig = {
     const orderType = (orderTypeRadios.find((r) => r.checked)?.value ?? 'delivery') as 'delivery' | 'pickup';
     const time = timeInput.value || '12:00';
     const state = kitchenState(time);
+
+    // Rain pays for a wetter, slower ride. A pickup has no ride, so the
+    // control is disabled rather than left live and quietly ignored by the
+    // engine — a checkbox that changes nothing reads as a bug.
+    const rainOff = orderType === 'pickup';
+    rainCheck.disabled = rainOff;
+    rainLabel.classList.toggle('calc-check--off', rainOff);
+    rainHint.hidden = !rainOff;
     // Availability first: it can empty the basket, so the subtotal is read after.
     applyAvailability(state);
+
     const sub = subtotal();
     timeRuleNote.textContent = `Rule at this time: ${timeRuleLabel(time)}`;
 
@@ -836,6 +851,14 @@ const calcConfig = {
     flex-wrap: wrap;
     gap: 1rem;
     margin-top: 1.5rem;
+  }
+
+  .calc-check--off {
+    opacity: 0.45;
+  }
+  .calc-check-hint {
+    font-size: 0.85em;
+    color: var(--color-text-muted);
   }
 
   .calc-availability {
