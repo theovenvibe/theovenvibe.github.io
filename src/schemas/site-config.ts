@@ -134,6 +134,15 @@ export const siteConfigSchema = z.object({
     pickup_discount: z.number().int().nonnegative('pickup_discount must be 0 or more rupees'),
     pickup_note_quote: z.string().min(1),
     _quote_voice_comment: z.string().optional(),
+    preorder: z.object({
+      min_hours_ahead: z
+        .number()
+        .int()
+        .positive('preorder.min_hours_ahead must be a whole number of hours of prep notice'),
+      note: z.string().min(1),
+      earliest_note: z.string().min(1),
+      _comment: z.string().optional(),
+    }),
     pickup_min_order: z
       .number()
       .int()

@@ -259,6 +259,11 @@ const calcConfig = {
 
             <fieldset class="calc-group">
               <legend>Time</legend>
+              <label class="calc-check" id="preorderLabel">
+                <input type="checkbox" id="preorderCheck" />
+                Pre-order — I want this later, not now
+              </label>
+              <p class="calc-note" id="preorderNote" hidden></p>
               <label class="calc-field" for="dateInput">
                 Order date (auto-filled with today — the afternoon rate only runs
                 {d.quiet_hours.days})
@@ -360,6 +365,8 @@ const calcConfig = {
   const orderTypeRadios = Array.from(document.querySelectorAll<HTMLInputElement>('input[name="orderType"]'));
   const prepaidCheck = document.getElementById('prepaidCheck') as HTMLInputElement;
   const pastNote = document.getElementById('pastNote') as HTMLParagraphElement;
+  const preorderCheck = document.getElementById('preorderCheck') as HTMLInputElement;
+  const preorderNote = document.getElementById('preorderNote') as HTMLParagraphElement;
   const weatherNote = document.getElementById('weatherNote') as HTMLParagraphElement;
   const otherGroup = document.getElementById('otherGroup') as HTMLFieldSetElement;
   const prepaidLabel = document.getElementById('prepaidLabel') as HTMLLabelElement;
@@ -386,6 +393,21 @@ const calcConfig = {
   // 11:30am and 4pm, wherever a rule changes.
   let followingClock = true;
 
+  /** Earliest slot the kitchen will accept: now, or now + prep notice. */
+  function earliest(): Date {
+    const n = new Date();
+    if (!preorderCheck.checked) return n;
+    return new Date(n.getTime() + delivery.preorder.min_hours_ahead * 3600000);
+  }
+
+  function applyEarliest() {
+    const e = earliest();
+    dateInput.value = dateStr(e);
+    timeInput.value = timeStr(e);
+    dateInput.min = dateStr(e);
+    timeInput.min = timeStr(e);
+  }
+
   function applyNow() {
     const n = new Date();
     dateInput.value = dateStr(n);
@@ -394,18 +416,28 @@ const calcConfig = {
     timeInput.min = timeStr(n);
   }
 
-  /** Nothing can be ordered for a time that has already gone. */
-  function clampToNow(): boolean {
-    const n = new Date();
-    dateInput.min = dateStr(n);
-    timeInput.min = dateInput.value === dateStr(n) ? timeStr(n) : '';
-    if (minutesAhead() >= 0) return false;
-    applyNow();
-    followingClock = true;
+  /** Nothing before the earliest slot the kitchen can actually cook for. */
+  function clampToEarliest(): boolean {
+    const e = earliest();
+    dateInput.min = dateStr(e);
+    timeInput.min = dateInput.value === dateStr(e) ? timeStr(e) : '';
+    const chosen = chosenDate();
+    if (chosen && chosen.getTime() >= e.getTime() - 1000) return false;
+    applyEarliest();
+    if (!preorderCheck.checked) followingClock = true;
     return true;
   }
 
+  function chosenDate(): Date | null {
+    const [y, mo, da] = dateInput.value.split('-').map(Number);
+    const [h, mi] = (timeInput.value || '00:00').split(':').map(Number);
+    if ([y, mo, da, h, mi].some(Number.isNaN)) return null;
+    return new Date(y, mo - 1, da, h, mi);
+  }
+
   applyNow();
+  dateInput.disabled = true;
+  timeInput.disabled = true;
 
   /** Minutes between now and the date+time the visitor has chosen. */
   function minutesAhead(): number {
@@ -549,7 +581,7 @@ const calcConfig = {
     const lines: string[] = [`${CFG.businessName} — price quote`];
     // A pre-order is an appointment, not a hint: name the slot the customer
     // picked so the kitchen reads WHEN before it reads what.
-    if (minutesAhead() > delivery.rain.now_window_minutes) {
+    if (preorderCheck.checked) {
       const slot = slotLabel();
       if (slot) lines.push(`Pre-order — I want this on ${slot}.`);
     }
@@ -671,7 +703,8 @@ const calcConfig = {
     //   ordering for later -> nobody knows the weather; state the rule instead
     //   paid online        -> price locked, no doorstep surcharge is possible
     const isPickup = orderType === 'pickup';
-    const later = minutesAhead() > delivery.rain.now_window_minutes;
+    // "Later" is now the customer's own declaration, not a guess from the clock.
+    const later = preorderCheck.checked;
 
     // Paying up front only changes the price by waiving rain, and a pickup has
     // no ride to rain on — so the control cannot move a single rupee here and
@@ -756,12 +789,42 @@ const calcConfig = {
 
   [...distanceRadios, ...orderTypeRadios].forEach((el) => el.addEventListener('change', update));
   kmInput.addEventListener('input', update);
+  function onPreorderToggled() {
+    const on = preorderCheck.checked;
+    dateInput.disabled = !on;
+    timeInput.disabled = !on;
+    followingClock = !on;
+    if (on) {
+      applyEarliest();
+      preorderNote.hidden = false;
+      preorderNote.className = 'calc-note';
+      preorderNote.textContent =
+        delivery.preorder.note.replace('{hours}', String(delivery.preorder.min_hours_ahead)) +
+        ' ' +
+        delivery.preorder.earliest_note.replace('{earliest}', slotLabel());
+    } else {
+      applyNow();
+      preorderNote.hidden = true;
+    }
+    update();
+  }
+  preorderCheck.addEventListener('change', onPreorderToggled);
+
   function onSlotEdited() {
     followingClock = false;
-    const snapped = clampToNow();
+    const snapped = clampToEarliest();
     if (snapped) {
       pastNote.hidden = false;
+      pastNote.textContent = preorderCheck.checked
+        ? `${delivery.preorder.note.replace('{hours}', String(delivery.preorder.min_hours_ahead))} Moved to ${slotLabel()}.`
+        : "We can't quote for a time that has already passed — showing now instead.";
       window.setTimeout(() => (pastNote.hidden = true), 6000);
+    }
+    if (preorderCheck.checked) {
+      preorderNote.textContent =
+        delivery.preorder.note.replace('{hours}', String(delivery.preorder.min_hours_ahead)) +
+        ' ' +
+        delivery.preorder.earliest_note.replace('{earliest}', slotLabel());
     }
     update();
   }
@@ -773,7 +836,7 @@ const calcConfig = {
   // time is never overwritten mid-keystroke.
   window.setInterval(() => {
     if (!followingClock) {
-      if (clampToNow()) update();
+      if (clampToEarliest()) update();
       return;
     }
     if (document.activeElement === timeInput || document.activeElement === dateInput) return;
