@@ -187,17 +187,6 @@
       "price": 129,
       "description": "[veg preparation] Garlic butter with melted cheese.",
       "status": "available"
-    },
-    {
-      "product_code": "745802352",
-      "item_id": 32,
-      "category": "Sides & Snacks",
-      "subcategory": "Snacks",
-      "item_name": "Crunchy Peri Peri Makhana",
-      "display_name": "Crunchy Peri Peri Makhana [25 g]",
-      "price": 129,
-      "description": "[veg preparation] Healthy roasted makhana tossed in spice.",
-      "status": "available"
     }
   ],
   "Combos": [
@@ -214,27 +203,15 @@
       "status": "available"
     },
     {
-      "combo_code": "745802384",
-      "combo_name": "Pasta Treat Combo",
-      "combo_price": 309,
-      "description": "Creamy Alfredo Pasta made with perfectly cooked fusilli, served with golden fries and a refreshing Coke.",
+      "combo_code": "772085440",
+      "combo_name": "Midnight Pizza Box Combo",
+      "combo_price": 179,
+      "description": "Our Zesty Onion Feast Pizza with a small portion of Classic French Fries. Crisp, cheesy and easy to share — built for late nights and long evenings.",
       "items_included": [
-        "751793935",
+        "745802369",
         "745802374"
       ],
-      "image_code": "745802384",
-      "status": "available"
-    },
-    {
-      "combo_code": "745802354",
-      "combo_name": "Sandwich Meal Box Combo",
-      "combo_price": 279,
-      "description": "Paneer Tikka Grilled Sandwich packed with marinated paneer, served with crispy fries and Coke. Perfect quick meal.",
-      "items_included": [
-        "752623131",
-        "745802374"
-      ],
-      "image_code": "745802354",
+      "image_code": "772085440",
       "status": "available"
     }
   ],
