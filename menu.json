@@ -117,7 +117,7 @@
       "category": "Grilled Sandwiches",
       "subcategory": "Sandwiches",
       "item_name": "Fiery Cheese Chilli Sandwich [2 slices]",
-      "display_name": "Fiery Cheese Chilli Sandwich 🌶️ 🌶️",
+      "display_name": "Fiery Cheese Chilli Sandwich [2 slices] 🌶️ 🌶️",
       "price": 129,
       "description": "[veg preparation] Spicy cheese and chilli filing.",
       "status": "available"
@@ -209,7 +209,7 @@
       "combo_code": "745802348",
       "combo_name": "Fiesta Pizza Combo",
       "combo_price": 339,
-      "description": "Our signature Herb Paneer Delight Pizza with creamy makhni sauce, crispy Peri Fries, and Coke. Complete meal for pizza lovers.",
+      "description": "Our signature Herb Paneer Delight Pizza with crispy Peri Peri Fries and a chilled Coke. A complete meal for pizza lovers.",
       "items_included": [
         "745802364",
         "997492919"
