@@ -172,3 +172,17 @@
   2. The scooter returns ~10 km/l against a normal 40–50. Every 2–4 km delivery earns only ₹5–7 until that is fixed, versus ₹71–73 after. Worth measuring full-tank-to-full-tank before spending on repairs.
   3. Direct (WhatsApp/phone) orders are not recorded anywhere the dashboard can read — which is why the regulars policy cannot be administered. Logging them is the prerequisite for putting that benefit back.
 - Next: **owner UAT on the release PR**, then merge `develop` → `main` and tag. Not merged by the agent — owner's explicit instruction after an earlier PR was raised against `main` by mistake.
+
+### 2026-08-14 (Price calculator hardening — v3.2.0 → v3.7.0)
+Ten releases, all owner-driven from using the live page. Each shipped through `feature/*` → `develop` → release PR → tag, with `npm run build` and `skills/qa-check.md` green at both gates.
+
+- **v3.2.0** — rain toggle in the calculator; late-night window extended to 02:00; limited late-night menu (pasta, maggi and the Pasta Treat Combo grey out, quantities cleared); closed-hours state between 02:00 and 11:30 that names the opening time instead of quoting an order the kitchen cannot cook.
+- **v3.2.1** — a prepaid order cannot take a doorstep surcharge, so rain is waived for it; the ₹10 pre-order discount removed (it paid people for saying "later" with no commitment). Free delivery no longer survives into the late-night window.
+- **v3.3.0 / v3.4.0** — pickup discount floored at ₹299 (₹30 off a ₹100 order was a ₹15 loss; break-even is ₹200; at ₹399 only 18% of orders would qualify and the discount would stop diverting deliveries). Baskets below the floor are told what would earn it. The whole "Other" group is hidden on pickup. Slots cannot be set in the past, and the page follows the clock until a slot is deliberately chosen.
+- **v3.5.0** — late-night prepayment is the *condition* of firing the oven, not a rain waiver: a late order is prepaid **and** still rain-charged, and the prepaid tick box is hidden inside the window because it is not a choice there.
+- **v3.5.1 / v3.5.2** — everything the customer sends reads as their own acknowledgement ("please send your QR so I can pay it", "I understand that… is added to my bill"), so the message doubles as a record of what was agreed. Pickup orders had no acknowledgement at all; that gap is closed.
+- **v3.6.0 / v3.7.0** — pre-ordering became an explicit mode with a 3-hour prep notice rather than an inference from the clock, and the chosen slot leads the message. Every rule is judged at that slot: a pre-order for 11:45pm gets late-night pricing and its limited menu.
+
+**Bugs found in my own verification, both recorded in MEMORY.md:** a probe that read back the `hidden` property it had just set (passing while the element was still painted, because a class `display` beats `[hidden]`), and a build grep matching `- 0 errors` from `astro check` while an `astro build` failure printed underneath it.
+
+**Open for the owner, unchanged:** log direct orders somewhere the pipeline can read (the Zomato-only blind spot has now bent three analyses); measure the scooter's real mileage; switch Settings → Pages → Source to "GitHub Actions" to stop the phantom Jekyll failures; fill `unit_cost` so the menu matrix shows margin instead of price.
