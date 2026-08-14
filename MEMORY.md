@@ -49,23 +49,53 @@ rejected: at ₹399 only 18% of orders qualify, so the discount would rarely
 trigger and stop pulling anyone away from a delivery that costs the kitchen ₹78
 a ride. The discount never applies during the late-night window.
 
-## Rain, and why prepaying locks the price
+## Rain — the one charge that can appear after the quote
 
-Rain is the one charge that can appear *after* the quote, so it has three cases
-and only one of them is a tick box:
+Four cases, and only one of them is a tick box:
 
 - **Ordering now, delivery** — "It's raining right now (+₹29)" is tickable.
-- **Ordering for later** — nobody knows the weather yet, so the box is hidden and
-  replaced by a plain line: if it rains when we ride out, ₹29 is added on delivery.
-- **Paid online** — no rain charge, ever. Asking someone who already paid on the
-  QR for another ₹29 at the door is not worth the review it earns, and a
-  confirmed prepaid order is worth more to the kitchen than the ₹29.
+- **Pre-order** — nobody knows the weather yet, so the box is hidden and replaced
+  by a plain line: if it rains when we ride out, ₹29 is added on delivery.
+- **Paid online, outside the late-night window** — no rain charge. Asking someone
+  who already paid on the QR for another ₹29 at the door is not worth the review
+  it earns, and a confirmed prepaid order is worth more than the ₹29.
+- **Late night** — prepaid **and** still rain-charged. Paying up front after
+  closing is the condition of firing the oven at all, not a waiver. This is the
+  one place where prepayment does *not* lock the price, and it is deliberate
+  (owner's rule). The prepaid tick box is therefore hidden inside the window: it
+  is not a choice there.
 
-Pickup never carries it: no ride, no charge.
+Pickup never carries rain: no ride, no charge.
 
-The pre-order discount (₹10 for ordering ahead) was removed — it paid people for
-saying "later" with no commitment. Prepaying now buys a locked price instead,
-which costs nothing when it isn't raining and buys a confirmed order when it is.
+The old ₹10 pre-order discount was removed — it paid people for saying "later"
+with no commitment attached.
+
+## Pre-ordering is a mode, not a guess
+
+`preorder.min_hours_ahead` (3) is the kitchen's prep notice. With the toggle off,
+the date and time are locked to now and follow the clock; with it on, the fields
+open and the earliest slot is now + 3 hours. Anything chosen inside that window
+is pulled forward, with a note saying why.
+
+**Every rule is judged at the slot the customer picked, not the moment they are
+typing.** A pre-order for 11:45pm gets late-night pricing, the limited menu and
+the prepaid-plus-rain wording; one for 10pm stays standard. The slot leads the
+message so the kitchen reads WHEN before it reads what.
+
+## Two voices, and they must not be mixed
+
+The same fact is written twice in `site.config.json`, because it has two readers:
+
+- **Page notes** (`rain.later_note`, `rain.prepaid_note`, `late_night.advance_note`)
+  — the website speaking **to** the customer. "Your price is locked", "when we
+  ride out". Do not change these to first person.
+- **`*_quote` variants** — the message the customer **sends to the kitchen** via
+  clipboard or WhatsApp. Written in the customer's voice as an acknowledgement:
+  "please send your QR so I can pay it", "I understand that… is added to my bill".
+  This makes the message a record of what they agreed to, which is the point.
+
+Every state has one: delivery paid/unpaid, late night, pickup, late-night pickup.
+A message with no acknowledgement line is a bug — pickup had that gap once.
 
 ## Kitchen hours and what they mean in code
 
@@ -119,6 +149,21 @@ fix available.
 - Under review, not yet added: Small Fries ₹59 (attach driver), Midnight Pizza
   Box ₹249 locally (top-selling combo on Zomato, absent here), Cheese Pizza +
   Fries combo ₹279, a ₹299 premium pizza as the top rung.
+
+## Verifying UI changes — two traps already hit
+
+- **Never verify a DOM change by reading back the property you just set.** A
+  probe that checked `element.hidden` passed while the element was still painted:
+  `.calc-check` sets `display: flex`, which beats the user-agent stylesheet's
+  `[hidden] { display: none }`. Read `getComputedStyle().display` and the layout
+  height instead. The page now states `[hidden] { display: none !important }`.
+- **Never grep a build for the type-check summary alone.** `- 0 errors` comes from
+  `astro check` and prints happily above a failed `astro build`. Grep for
+  `Complete!` and `ERROR`.
+- To exercise time-dependent rules, fake the clock in the probe (override
+  `window.Date` before the page's script runs) rather than waiting for a real
+  hour, and drive the page from the built `dist/` over a local HTTP server —
+  `file://` breaks the absolute asset paths and renders the page unstyled.
 
 ## Keep in sync
 
