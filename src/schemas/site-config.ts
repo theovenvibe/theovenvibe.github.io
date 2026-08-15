@@ -195,6 +195,23 @@ export const siteConfigSchema = z.object({
       .string()
       .regex(/^$|^[a-zA-Z0-9-]+$/, "umami_website_id must be empty \"\" or the ID copied from cloud.umami.is (letters, numbers, hyphens only)"),
   }),
+  notifications: z.object({
+    _comment: comment,
+    /**
+     * ntfy.sh topic that the price calculator pings when a customer opens the
+     * WhatsApp order (or copies the quote). Empty = no alerts are sent.
+     *
+     * The topic name is public — it ships in the page source. That is safe ONLY
+     * while the topic is reserved on an ntfy.sh account with access
+     * "everyone can publish, only I can read"; see skills/setup-order-alerts.md.
+     */
+    ntfy_topic: z
+      .string()
+      .regex(
+        /^$|^[a-zA-Z0-9_-]{1,64}$/,
+        'ntfy_topic must be empty "" or the topic name you reserved on ntfy.sh (letters, numbers, hyphens, underscores; 64 chars max)',
+      ),
+  }),
 });
 
 export type SiteConfig = z.infer<typeof siteConfigSchema>;

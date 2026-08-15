@@ -131,6 +131,30 @@ after the owner pointed out that real late orders average ₹400–500, not the
 ₹232 the Zomato tail suggested. Logging direct orders is the highest-value data
 fix available.
 
+## Order alerts — why ntfy, and what the alert actually means
+
+The calculator's WhatsApp hand-off was never the weak point; nobody watching
+WhatsApp was. `notifications.ntfy_topic` in `site.config.json` turns on a
+POST to `https://ntfy.sh/<topic>` at urgent priority when a customer opens
+WhatsApp with the quote **or** copies it, so four devices sound at once.
+Empty topic = no request is made at all. Setup: `skills/setup-order-alerts.md`.
+
+- **The whole design rests on one property:** an ntfy topic reserved with
+  "everyone can publish, only I can read" needs no token to publish to. This
+  site is a static public build — a Telegram bot token or a Discord webhook
+  in the page source would be a giveaway, which is why both were rejected.
+  Never add an alert channel that needs a secret in client code.
+- **The alert is order *intent*, not a sent message.** It fires on the click,
+  and the customer can still walk away. Accepted deliberately: a false alarm
+  costs a glance, a missed order costs the order.
+- **It is not the order log.** Free-tier ntfy retains messages briefly. The
+  "direct orders are invisible" blind spot below is still open — this is the
+  first thing that even sees a direct order, not a fix for it.
+- Two browser details that will look like bugs if forgotten: the fetch needs
+  `keepalive: true` (the tab is handing off to WhatsApp and would otherwise
+  cancel it), and ntfy headers are latin-1, so `₹` and the en-dash in slab
+  labels must be stripped from the `Title` — body text stays UTF-8.
+
 ## Menu decisions
 
 - **Aug 2026 — wok station retired, menu cut from 32 SKUs to 18.** Gas price

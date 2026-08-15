@@ -146,5 +146,9 @@
   "analytics": {
     "_comment": "Paste your Umami website ID from cloud.umami.is → Settings → Websites. Leave \"\" to disable analytics.",
     "umami_website_id": "a302193f-8dba-4bea-a880-2de3e09cf8d4"
+  },
+  "notifications": {
+    "_comment": "Order alerts. Paste the ntfy.sh topic you reserved (see skills/setup-order-alerts.md) to make every phone and the laptop ring when someone places an order from the price calculator. Leave \"\" to disable alerts. The topic MUST be reserved on your ntfy.sh account with access 'everyone can publish, only I can read' — the name is visible in the page source.",
+    "ntfy_topic": ""
   }
 }
