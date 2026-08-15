@@ -146,5 +146,9 @@
   "analytics": {
     "_comment": "Paste your Umami website ID from cloud.umami.is → Settings → Websites. Leave \"\" to disable analytics.",
     "umami_website_id": "a302193f-8dba-4bea-a880-2de3e09cf8d4"
+  },
+  "notifications": {
+    "_comment": "Order alerts — makes every phone and the laptop ring when someone places an order from the price calculator. Leave \"\" to disable alerts entirely. THE TOPIC NAME IS THE ONLY PASSWORD: free ntfy.sh cannot restrict access, and this name is visible in the page source, so it must stay long and random. If it is ever spammed, generate a new random name here and re-subscribe the devices — see skills/setup-order-alerts.md.",
+    "ntfy_topic": "ovenvibe-myt6ecdgbgyll6ot2978iw"
   }
 }

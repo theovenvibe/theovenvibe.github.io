@@ -131,6 +131,43 @@ after the owner pointed out that real late orders average ₹400–500, not the
 ₹232 the Zomato tail suggested. Logging direct orders is the highest-value data
 fix available.
 
+## Order alerts — why ntfy, and what the alert actually means
+
+The calculator's WhatsApp hand-off was never the weak point; nobody watching
+WhatsApp was. `notifications.ntfy_topic` in `site.config.json` turns on a
+POST to `https://ntfy.sh/<topic>` at urgent priority when a customer opens
+WhatsApp with the quote **or** copies it, so four devices sound at once.
+Empty topic = no request is made at all. Setup: `skills/setup-order-alerts.md`.
+
+- **Why ntfy and not Telegram/Discord:** this is a static public build, so the
+  alert is sent by code anyone can read. ntfy needs no token to publish; a bot
+  token or webhook URL in page source would be a giveaway. Never add an alert
+  channel that needs a secret in client code.
+- **The topic name is the only password, and that was a forced choice.** The
+  first design used a *reserved* topic set to "everyone can publish, only I can
+  read" — that turned out to be an ntfy **paid** feature. Free ntfy.sh has no
+  access control at all, so anyone who reads the topic name out of the page
+  source can both read and post to it. Two consequences that must survive any
+  future edit: the topic stays **long and random** (never a guessable word like
+  `ovenvibe-orders`), and **nothing carrying a customer's name, phone or
+  address may ever be added to the alert body** — what makes the exposure
+  acceptable is that the quote is only items, prices and a slot. Spam is the
+  live risk, not privacy; the fix is rotating the name, one line of config.
+- A Cloudflare Worker proxy holding the topic as a server-side secret was
+  considered and rejected: it removes an exposure worth little (order volume)
+  in exchange for a second service that can fail silently between the customer
+  and the kitchen. Revisit only if the topic actually gets spammed.
+- **The alert is order *intent*, not a sent message.** It fires on the click,
+  and the customer can still walk away. Accepted deliberately: a false alarm
+  costs a glance, a missed order costs the order.
+- **It is not the order log.** Free-tier ntfy retains messages briefly. The
+  "direct orders are invisible" blind spot below is still open — this is the
+  first thing that even sees a direct order, not a fix for it.
+- Two browser details that will look like bugs if forgotten: the fetch needs
+  `keepalive: true` (the tab is handing off to WhatsApp and would otherwise
+  cancel it), and ntfy headers are latin-1, so `₹` and the en-dash in slab
+  labels must be stripped from the `Title` — body text stays UTF-8.
+
 ## Menu decisions
 
 - **Aug 2026 — wok station retired, menu cut from 32 SKUs to 18.** Gas price
