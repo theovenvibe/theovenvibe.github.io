@@ -100,6 +100,15 @@
 
 ## Session log
 
+### 2026-08-15 (Hotfix — the disabled send button was untappable)
+
+- **Owner report:** on `/checkout/` with an 8-digit mobile, the field error appeared but tapping the greyed-out "Send order on WhatsApp" did not scroll to the field or focus it.
+- **Root cause:** `.calc-actions [aria-disabled='true']` in `src/styles/order-form.css` carried `pointer-events: none`. The tap never reached the link, so the click handler — the thing that names the invalid field, scrolls to it and focuses it — never ran. The error the owner saw came from the field's own `blur`, which is why it looked like only the scrolling was broken. The rule predates this work (it came across with the calculator's CSS) and became wrong the moment a blocked tap was given something to say.
+- **I had already seen this and dismissed it.** Playwright reported `<div class="calc-actions"> intercepts pointer events` during the cart/checkout work and I wrote it off as a scroll-animation artifact, then said so in the docs. It was the bug. Measuring `document.elementFromPoint` over the button at rest — instead of trusting the explanation — showed the wrapper on top, and the pointer-events rule underneath it.
+- **Fix:** drop `pointer-events: none`, keep the greyed look, add `cursor: not-allowed`. The tap can do no harm: `disableActions()` strips the href, and `beforeSend` re-validates before anything is sent.
+- Verified with the owner's exact reproduction: scroll moves 1960 → 466, the field is on screen, focused, error shown. All six suites green, calculator regression 0 diffs. A regression guard now asserts the disabled button keeps `pointer-events: auto` and that a tap at its centre lands on the link.
+- **`skills/release-manager.md` gained §8.2**, the post-launch hotfix flow. §9 already said a hotfix was "just a normal `hotfix/*` branch off main, released per §8", but §8 never mentioned back-merging `main` into `develop` — and without it the next release silently reverts the fix.
+
 ### 2026-08-15 (Cart, checkout, and one order form instead of two)
 
 - **Owner unparked the WA cart-builder** (PRD §8 / Phase 2b parked it pending approval post-parity). Built on `feature/cart-and-checkout`: an **Add** button on every menu card, a basket in the nav **and** a floating basket (owner asked for both — "some people can miss the nav button"), and a new `/checkout/` page that prices the basket by the same rules as the calculator and sends it on WhatsApp. Design and rationale: `docs/CART_AND_CHECKOUT.md`. New `TODO.md` is now the queue of decided-but-undone work.

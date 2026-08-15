@@ -178,6 +178,41 @@ whenever Milan wants the live site updated. `feature/* → develop` stays
 the everyday flow either way; `develop → main` is the only thing that
 changed cadence.
 
+### 8.2 Hotfix (post-launch): the live site is wrong and it cannot wait
+
+`develop` is usually ahead of `main`, so shipping a fix through the normal
+`feature/* → develop → release PR` route drags every unreleased change live
+with it. A hotfix branches from `main` instead, so only the fix ships.
+
+```bash
+git status --short                     # MUST be clean
+git fetch origin main --quiet
+git checkout -b hotfix/<short-slug> origin/main
+# ... smallest fix that solves it ...
+npm run build                          # + skills/qa-check.md (§8.1 applies)
+git add <exact files> PROGRESS.md
+git commit -m "fix(scope): what broke, imperative"
+git push -u origin hotfix/<slug>
+gh pr create --base main --head hotfix/<slug> --title "fix: <what>"
+gh pr merge <N> --merge                # deploys on merge
+```
+
+**Then back-merge into `develop` — this step is not optional:**
+
+```bash
+git checkout develop && git pull --ff-only origin develop
+git merge --no-ff origin/main -m "merge: hotfix <slug> back into develop"
+npm run build                          # verify the merged state
+git push origin develop
+git branch -d hotfix/<slug> && git push origin --delete hotfix/<slug>
+```
+
+Skip the back-merge and `develop` still contains the broken code. The next
+`develop → main` release then silently reverts the fix, and it looks like the
+bug "came back on its own". Added 2026-08-15 after the first real post-launch
+hotfix, because §8 described releases but never said what to do with `develop`
+afterwards.
+
 ## 9. Emergency v1 hotfix (only path that touches main early — PRE-LAUNCH ONLY)
 
 This section is now **historical** — it only applied during the pre-v3.0.0
