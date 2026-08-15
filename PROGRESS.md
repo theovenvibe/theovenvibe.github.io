@@ -266,3 +266,39 @@ Fourth phase this session (`feature/push-subscribe-phase3` off `origin/develop`)
 - Verification: `npm run build` green, `skills/qa-check.md` steps 1–5 pass. Real UAT against the deployed Worker (not just typechecking): confirmed a subscription created before any order lands with `customer_id = NULL`, then gets linked the moment a matching-`device_id` order arrives; separately confirmed a subscription created *after* an order already exists links immediately. Did **not** attempt to drive the native browser permission dialog through browser automation — that dialog lives outside page/DOM context and a stuck `Notification.requestPermission()` call can hang the tab; the client-side `PushManager` call itself is standard MDN-documented usage, so confidence there rests on that rather than a live grant/subscribe round-trip. Test rows deleted after.
 - **Not done, on purpose:** no campaign compose/send UI, no admin visibility into subscriptions — Phase 4.
 - Next (do not start in this session): **Phase 4 — Send one campaign to everyone**. See `the-oven-vibe-backend/HANDOFF.md`.
+
+### 2026-08-16 (bug fix, off-phase) — checkout was silently deleting the basket when the kitchen is closed
+
+Found by the owner mid-Phase-4-UAT: add an item any time, land on `/checkout/`
+while the kitchen happens to be closed (e.g. 2am, before the 11:30am open),
+and the entire basket vanished — no error, no warning, just gone. Ticking
+"Pre-order" afterward didn't bring it back, because it was already gone.
+Pre-existing bug from the 2026-08-14 pricing session, unrelated to any of
+tonight's phases; fixed on `fix/preserve-basket-when-closed` off
+`origin/develop` since it was blocking real pre-order use, not a new phase.
+
+- **Root cause**: `order-form.ts`'s `applyAvailability()` called
+  `row.setQty(0)` on every basket line whenever the kitchen state was
+  `'closed'` — and on `/checkout/`, `setQty` persists straight to
+  `localStorage` via `setItemQty`, which drops any line at qty 0. This ran
+  on page load, before the customer had any chance to tick "Pre-order."
+- **Fix**: stopped mutating quantity for unavailability at all. Added a
+  `Set<string>` of currently-unavailable row names inside `order-form.ts`'s
+  own closure, populated by `applyAvailability()` and read by `subtotal()`
+  and `chosenItems()` to exclude those rows from the total and the
+  WhatsApp/copy quote — same financial correctness as before (an unmakeable
+  item was never priced or sent), but the basket itself is never touched.
+  `BasketRow` still has no stable id in its shared interface, so this keys
+  on `row.name`, which is safe given cart.ts's own invariant of one line per
+  distinct item.
+- Also reworded the two "kitchen closed" messages (the availability banner
+  and the quote-output warning) to name the actual fix — "tick Pre-order
+  and pick a time after we open; nothing in your basket is lost" — instead
+  of the old, useless "change the time above."
+- **Verified in a real browser**, not just build/typecheck: added two items
+  at the real current time (kitchen genuinely closed), confirmed both stayed
+  visible in the basket (greyed out, "Not cooked at this time", struck-through
+  price) instead of disappearing; ticked Pre-order, chose 1pm; confirmed a
+  correct priced breakdown (₹568, food + free delivery) and a live send
+  button with name/phone filled in.
+- `npm run build` green, 0 errors.
