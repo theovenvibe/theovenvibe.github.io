@@ -208,6 +208,19 @@ export const siteConfigSchema = z.object({
       .string()
       .regex(/^$|^https:\/\/\S+$/, 'worker_url must be empty "" or an https:// URL with no spaces'),
   }),
+  push: z.object({
+    _comment: comment,
+    /**
+     * The VAPID key pair's PUBLIC half (Phase 3) — safe here, that's what
+     * "public" means. The matching private key is a Worker secret and never
+     * appears in this repo. Empty = push subscribe is disabled; the soft-ask
+     * card never shows. See CREDENTIALS.local.md in the backend repo for the
+     * pairing rule: regenerating the pair invalidates every subscription.
+     */
+    vapid_public_key: z
+      .string()
+      .regex(/^$|^[A-Za-z0-9_-]{80,90}$/, 'vapid_public_key must be empty "" or the VAPID public key (base64url, ~87 chars)'),
+  }),
 });
 
 export type SiteConfig = z.infer<typeof siteConfigSchema>;

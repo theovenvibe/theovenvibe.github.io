@@ -1,0 +1,159 @@
+---
+/**
+ * The push soft-ask (Phase 3, PRD §8.2 — read that section before touching
+ * this file, the sequencing is the entire point of it):
+ *
+ *   customer taps "Send order on WhatsApp"
+ *           ↓ (on return to the tab)
+ *   our own card, styled like the site
+ *      [ Yes, notify me ]   [ Not now ]
+ *           ↓                    ↓
+ *     native prompt fires   nothing fires — the browser's one-shot
+ *                            permission is NOT spent, askable again later
+ *
+ * Never on page load. Never before an order. `Notification.requestPermission()`
+ * is called from exactly one place below — inside the "Yes" click handler —
+ * so a "Not now" can never accidentally burn it.
+ */
+import { site } from '../lib/data';
+
+const enabled = Boolean(site.push.vapid_public_key) && Boolean(site.backend.worker_url);
+---
+
+{
+  enabled && (
+    <div id="pushAskBanner" class="soft-banner" hidden>
+      <p>Want our flash deals and new-item alerts on this device?</p>
+      <div class="soft-banner-actions">
+        <button type="button" id="pushAskYes" class="btn btn-primary">
+          Yes, notify me
+        </button>
+        <button type="button" id="pushAskNo" class="btn btn-secondary">
+          Not now
+        </button>
+      </div>
+    </div>
+    <script
+      type="application/json"
+      id="push-config"
+      is:inline
+      set:html={JSON.stringify({ vapidPublicKey: site.push.vapid_public_key, workerUrl: site.backend.worker_url })}
+    />
+  )
+}
+
+<script>
+  import { getDeviceId } from '../lib/device';
+  import { consumeOrderJustSent } from '../lib/push-signal';
+  import { anotherBannerVisible } from '../lib/soft-banner';
+
+  const bannerEl = document.getElementById('pushAskBanner');
+  if (bannerEl) {
+    const banner: HTMLElement = bannerEl;
+    const configEl = document.getElementById('push-config');
+    const { vapidPublicKey, workerUrl } = JSON.parse(configEl?.textContent ?? '{}') as {
+      vapidPublicKey: string;
+      workerUrl: string;
+    };
+
+    const DISMISS_KEY = 'ovenvibe.push_ask_dismissed_at';
+    const DISMISS_DAYS = 30;
+
+    function recentlyDismissed(): boolean {
+      try {
+        const raw = window.localStorage.getItem(DISMISS_KEY);
+        if (!raw) return false;
+        return (Date.now() - Number(raw)) / 86400000 < DISMISS_DAYS;
+      } catch {
+        return false;
+      }
+    }
+
+    function recordDismissal() {
+      try {
+        window.localStorage.setItem(DISMISS_KEY, String(Date.now()));
+      } catch {
+        // Not remembering just means we might ask again sooner than 30 days.
+      }
+    }
+
+    function isStandalone(): boolean {
+      return (
+        window.matchMedia?.('(display-mode: standalone)').matches ||
+        (navigator as Navigator & { standalone?: boolean }).standalone === true
+      );
+    }
+
+    /** PRD §4.2: push on iOS works only once installed. Never ask before that. */
+    function iosNotInstalled(): boolean {
+      const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+      return isIOS && !isStandalone();
+    }
+
+    function supported(): boolean {
+      return 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+    }
+
+    /** VAPID key ships base64url; the Push API wants a raw Uint8Array. */
+    function urlBase64ToUint8Array(base64url: string): Uint8Array {
+      const padding = '='.repeat((4 - (base64url.length % 4)) % 4);
+      const base64 = (base64url + padding).replace(/-/g, '+').replace(/_/g, '/');
+      const raw = window.atob(base64);
+      return Uint8Array.from([...raw].map((c) => c.charCodeAt(0)));
+    }
+
+    async function subscribe() {
+      const registration = await navigator.serviceWorker.ready;
+      const subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey) as BufferSource,
+      });
+      const json = subscription.toJSON();
+      await fetch(`${workerUrl}/subscriptions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          device_id: getDeviceId(),
+          endpoint: json.endpoint,
+          p256dh: json.keys?.p256dh,
+          auth: json.keys?.auth,
+        }),
+      });
+    }
+
+    function hide() {
+      banner.hidden = true;
+    }
+
+    document.getElementById('pushAskNo')?.addEventListener('click', () => {
+      // No requestPermission call on this path — the native prompt is
+      // untouched, so this customer can be asked again after DISMISS_DAYS.
+      recordDismissal();
+      hide();
+    });
+
+    document.getElementById('pushAskYes')?.addEventListener('click', async () => {
+      recordDismissal(); // either way, don't show the card again this soon
+      hide();
+      try {
+        const permission = await Notification.requestPermission();
+        if (permission !== 'granted') return;
+        await subscribe();
+      } catch {
+        // Subscribing failed (offline, push service hiccup, etc.) — the
+        // customer already said yes; there is nothing useful to tell them
+        // beyond that, and no harm in trying again on a future visit.
+      }
+    });
+
+    if (supported() && !iosNotInstalled() && Notification.permission === 'default') {
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState !== 'visible') return;
+        if (recentlyDismissed()) return;
+        if (!consumeOrderJustSent()) return;
+        if (anotherBannerVisible()) return;
+        banner.hidden = false;
+      });
+    }
+  }
+</script>
