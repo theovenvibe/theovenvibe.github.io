@@ -28,6 +28,7 @@ import Footer from '../components/Footer.astro';
 import WhatsAppFab from '../components/WhatsAppFab.astro';
 import CartScript from '../components/CartScript.astro';
 import PartnerClickAlerts from '../components/PartnerClickAlerts.astro';
+import PwaInstall from '../components/PwaInstall.astro';
 import Seo, { type OgImage } from '../components/Seo.astro';
 import { site } from '../lib/data';
 
@@ -70,6 +71,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
     <meta name="description" content={description} />
     <link rel="icon" href="/favicon.png" type="image/png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
     <meta name="theme-color" content="#e63946" />
     <meta name="generator" content={Astro.generator} />
     {
@@ -115,6 +117,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
     {/* Rings the kitchen when a visitor leaves for Zomato or Swiggy — those
         orders land in an app nobody is necessarily watching either. */}
     <PartnerClickAlerts />
+
+    <PwaInstall />
 
     <Footer />
 
