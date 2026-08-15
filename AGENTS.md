@@ -48,13 +48,24 @@ orders. No backend, no payments. Astro (v7+) static site on GitHub Pages.
     all (verified byte-for-byte in Phase 5). Never add a tracking script
     anywhere else in the codebase — Umami Cloud is the only analytics
     (PRD §5); v1's GTM/gtag/Yandex Metrika are dropped for good.
+11. **Order alerts are opt-in the same way, and the topic name IS the
+    password.** `site.config.json` → `notifications.ntfy_topic` empty = the
+    price calculator makes no request at all. When set, it publishes the
+    quote to `https://ntfy.sh/<topic>` so the kitchen's phones ring
+    (skills/setup-order-alerts.md). Free ntfy.sh has **no** access control —
+    reservations are a paid tier — so the topic must stay long and random,
+    and it is only safe to send there because the quote carries no customer
+    name, phone or address. **Never** put an API key, bot token or webhook
+    secret in client-side code to add another alert channel, and never send
+    customer PII to the topic; the whole site is public source.
 
 ## Repo map
 
 ```
 menu.json                ← THE menu (items, combos, add-ons) — Zomato mirror
 site.config.json         ← business settings (delivery, hours, phone, rating,
-                           announcement banner, analytics.umami_website_id)
+                           announcement banner, analytics.umami_website_id,
+                           notifications.ntfy_topic)
 src/schemas/             ← Zod schemas guarding both JSON files
 src/lib/data.ts          ← the ONLY place JSON is loaded; helpers (isVeg, imageFor,
                            displayName/displayMeta/displayDescription = render-time
@@ -110,6 +121,7 @@ PRD.md / PROGRESS.md     ← requirements / current state — read at session st
 | Update the star rating / review count | skills/update-rating.md |
 | Add a new blog post | skills/add-blog-post.md |
 | Turn on Umami analytics | skills/setup-analytics.md |
+| Turn on order alerts (ntfy) so the kitchen hears an order | skills/setup-order-alerts.md |
 | Pre-merge QA (JSON-LD, emoji, honesty checks) | skills/qa-check.md |
 | Check the site actually works (routes, phone flow) | skills/verify-site.md |
 | How CI/deploy works, reading `gh run list` | skills/deploy-cicd.md |

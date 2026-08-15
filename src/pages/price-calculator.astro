@@ -84,6 +84,7 @@ const calcConfig = {
   whatsapp: site.business.whatsapp,
   businessName: site.business.name,
   hours: site.business.hours,
+  ntfyTopic: site.notifications.ntfy_topic,
 };
 ---
 
@@ -350,6 +351,7 @@ const calcConfig = {
     whatsapp: string;
     businessName: string;
     hours: { open: string; close: string; display: string };
+    ntfyTopic: string;
   }
 
   const configEl = document.getElementById('calc-config');
@@ -689,6 +691,7 @@ const calcConfig = {
     copyBtn.disabled = false;
     const text = buildQuoteText(result);
     copyBtn.dataset.quote = text;
+    copyBtn.dataset.total = result.kind === 'ok' ? String(result.total) : '';
     waLink.href = `https://wa.me/${CFG.whatsapp}?text=${encodeURIComponent(text)}`;
     waLink.removeAttribute('aria-disabled');
   }
@@ -848,9 +851,73 @@ const calcConfig = {
   prepaidCheck.addEventListener('change', update);
   rainCheck.addEventListener('change', update);
 
+  // ---------------------------------------------------------------------------
+  // Order alert (ntfy.sh)
+  //
+  // The kitchen's problem is not the quote, it is that nobody is staring at
+  // WhatsApp when the message lands. So the moment a customer commits to
+  // ordering — opening WhatsApp with the quote, or copying it to paste
+  // themselves — we publish the same text to an ntfy.sh topic that every phone
+  // and the laptop are subscribed to, at urgent priority so it makes a sound.
+  //
+  // This is an order *intent*, not a confirmed order: it fires on the click,
+  // and the customer may still abandon before sending. False alarms are the
+  // price of never missing a real one, and the wording says so.
+  //
+  // No secret ships here. The topic is reserved on the owner's ntfy.sh account
+  // with "everyone can publish, only I can read", so a name in the page source
+  // grants nothing but the ability to post. See skills/setup-order-alerts.md.
+  // ---------------------------------------------------------------------------
+
+  /** ntfy sends headers as latin-1; a ₹ or en-dash in a title breaks the request. */
+  function asciiHeader(s: string): string {
+    return s
+      .replace(/₹/g, 'Rs ')
+      .replace(/[–—]/g, '-')
+      .replace(/[^\x20-\x7E]/g, '')
+      .trim();
+  }
+
+  /** One alert per distinct quote — a double-tap must not ring four phones twice. */
+  let lastNotified = '';
+
+  function notifyKitchen(text: string, via: 'whatsapp' | 'copy') {
+    const topic = CFG.ntfyTopic;
+    if (!topic || !text) return;
+    const key = `${via}:${text}`;
+    if (key === lastNotified) return;
+    lastNotified = key;
+
+    const total = copyBtn.dataset.total;
+    const orderType = orderTypeRadios.find((r) => r.checked)?.value ?? 'delivery';
+    const headline = total
+      ? `New order Rs ${total} (${orderType})`
+      : `New order enquiry (${orderType})`;
+
+    // keepalive: the tab is about to hand off to WhatsApp, and a normal fetch
+    // is cancelled when that happens. Failure is silent by design — a dead
+    // alert must never block the customer from placing the order.
+    fetch(`https://ntfy.sh/${encodeURIComponent(topic)}`, {
+      method: 'POST',
+      keepalive: true,
+      headers: {
+        Title: asciiHeader(headline),
+        Priority: 'urgent',
+        Tags: 'pizza',
+      },
+      body: `${via === 'whatsapp' ? 'Opened WhatsApp to send:' : 'Copied the quote:'}\n\n${text}`,
+    }).catch(() => {});
+  }
+
+  waLink.addEventListener('click', () => {
+    if (waLink.getAttribute('aria-disabled') === 'true') return;
+    notifyKitchen(copyBtn.dataset.quote ?? '', 'whatsapp');
+  });
+
   copyBtn.addEventListener('click', async () => {
     const text = copyBtn.dataset.quote ?? '';
     if (!text) return;
+    notifyKitchen(text, 'copy');
     try {
       await navigator.clipboard.writeText(text);
       const original = copyBtn.textContent;
