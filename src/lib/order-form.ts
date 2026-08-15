@@ -232,19 +232,30 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
     return 'closed';
   }
 
+  /**
+   * Names of rows the kitchen cannot cook at the currently-chosen time.
+   * Excluded from the total and the quote (below), but their quantity is
+   * left untouched in the basket — landing on checkout with the kitchen
+   * closed must not silently delete what was added earlier. A customer
+   * who ticks "Pre-order" for a time inside hours gets those items back
+   * automatically, since nothing was ever removed.
+   */
+  const unavailableNames = new Set<string>();
+
   function applyAvailability(state: KitchenState) {
+    unavailableNames.clear();
     hooks.rows().forEach((row) => {
       const off = state === 'closed' || (state === 'late_night' && !row.lateNight);
       row.setUnavailable(off);
-      // Anything already in the basket that the kitchen cannot cook at the
-      // chosen time is cleared, so the total never includes an unmakeable item.
-      if (off && row.getQty() > 0) row.setQty(0);
+      if (off) unavailableNames.add(row.name);
     });
 
     if (state === 'closed') {
       availabilityNote.hidden = false;
       availabilityNote.className = 'calc-availability calc-availability--closed';
-      availabilityNote.textContent = `Kitchen is closed at this time — we open at ${formatOpen()}. Pick a time inside our hours to see a total.`;
+      availabilityNote.textContent = preorderCheck.checked
+        ? `That time is still outside our hours — we open at ${formatOpen()}. Pick a later time to see your total; nothing in your basket is lost.`
+        : `Kitchen is closed right now — we open at ${formatOpen()}. Tick "Pre-order" below and choose a time after we open; we'll confirm your order once the kitchen's back. Nothing in your basket is lost.`;
     } else if (state === 'late_night') {
       availabilityNote.hidden = false;
       availabilityNote.className = 'calc-availability calc-availability--late';
@@ -271,11 +282,12 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
   function subtotal(): number {
     return hooks
       .rows()
+      .filter((row) => !unavailableNames.has(row.name))
       .reduce((sum, row) => sum + row.getQty() * row.price + extrasTotal(row), 0);
   }
 
   function chosenItems(): BasketRow[] {
-    return hooks.rows().filter((row) => row.getQty() > 0);
+    return hooks.rows().filter((row) => row.getQty() > 0 && !unavailableNames.has(row.name));
   }
 
   function isBeyond(): boolean {
@@ -538,7 +550,13 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
     if (state === 'closed') {
       clear(output);
       output.appendChild(
-        textEl('p', 'calc-note calc-note--warn', `Kitchen is closed at ${time}. We open at ${formatOpen()} — change the time above to price an order.`),
+        textEl(
+          'p',
+          'calc-note calc-note--warn',
+          preorderCheck.checked
+            ? `${time} is still outside our hours — we open at ${formatOpen()}. Choose a later time to see your total.`
+            : `Kitchen is closed at ${time} — we open at ${formatOpen()}. Tick "Pre-order" above to schedule this for when we're open; we'll confirm it then.`,
+        ),
       );
       disableActions();
       hooks.onUpdate?.({ subtotal: sub, result: null });
