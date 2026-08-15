@@ -47,30 +47,6 @@ next. When an item ships, delete it here and write it up there.
       - **Do not build this without agreeing the approach first** — owner's
         explicit instruction, 2026-08-15.
 
-## Bugs
-
-- [ ] **Clicking the greyed-out "Send order on WhatsApp" does not scroll to the
-      invalid field.** Reported by the owner 2026-08-15, reproduced with an
-      8-digit mobile number: the error message appears correctly under the
-      field, but tapping the disabled button does not bring that field into
-      view or focus it. Expected: scroll to the FIRST invalid field, show its
-      error, put the cursor in it.
-      - The code that should do this is `validateDetails()` in
-        `src/pages/checkout.astro` — it calls `scrollIntoView` then focuses on a
-        deferred turn — and it is reached from the `aria-disabled` branch of the
-        send-link click handler in `src/lib/order-form.ts`.
-      - **Prime suspect:** the click may never reach the link at all. Playwright
-        reported `<div class="calc-actions"> intercepts pointer events` on that
-        button during testing, which was written off as a scroll-animation
-        artifact. The owner's report is the same symptom from a real browser, so
-        that interception is worth re-testing properly with
-        `document.elementFromPoint` over the button's centre while the page is
-        at rest. If the wrapper really is swallowing the tap, the validation is
-        fine and the fix belongs in the CSS.
-      - Not urgent: the order is still correctly blocked, the error message is
-        visible under the field, and the field turns red. This is a "help the
-        customer find it faster" fix, not a correctness one.
-
 ## Known gaps, deliberately left
 
 - [ ] **Order alerts fire from `/price-calculator/`, `/checkout/`, and any
