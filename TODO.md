@@ -64,6 +64,21 @@ next. When an item ships, delete it here and write it up there.
       kitchen reading a WhatsApp message; revisit only if it actually confuses
       an order.
 
+## Housekeeping
+
+- [ ] **Move the remaining repos to the `theovenvibe` account.** `theovenvibe`
+      is the business and the rightful owner; Milan should be a collaborator.
+      Already correct: `theovenvibe.github.io` (and it cannot move — a
+      user-site's URL is its account name) and `the-oven-vibe-backend`.
+      **To transfer:** `the-oven-vibe-dashboard`,
+      `the-oven-vibe-data-pipeline`, `the-oven-vibe-marketing`.
+      Steps and the one trap — a transfer does NOT keep you as a collaborator,
+      so you lose push access until you add yourself back — are in
+      `../the-oven-vibe-backend/docs/ECOSYSTEM.md`, "Who owns what on GitHub".
+      Low risk (local-only tools, no CI), 10 minutes, all three in one sitting.
+      Worth doing soon rather than at the end: every doc and script we write
+      from here bakes in an account name.
+
 ## Carried over, still not done
 
 - [ ] Fold `docs/SEO_PLAYBOOK.md` Part B into a short owner-facing checklist.
