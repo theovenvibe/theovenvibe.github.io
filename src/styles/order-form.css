@@ -254,9 +254,19 @@
 }
 
 /* aria-disabled tells a screen reader the action is unavailable; without a
-   matching visual state a sighted user just taps a dead button. */
+   matching visual state a sighted user just taps a dead button.
+
+   It must NOT set `pointer-events: none`. That made the greyed-out button
+   literally untappable, so the click never reached its handler — and the
+   handler is what tells the customer WHICH field is holding the order up,
+   scrolls to it and focuses it. The result was a button that looked disabled,
+   said nothing when tapped, and left the customer hunting for the problem
+   (owner-reported, 2026-08-15, with an 8-digit mobile number).
+
+   The click still cannot do any harm: `disableActions()` strips the href, and
+   the handler re-validates before anything is sent. */
 .calc-actions [aria-disabled='true'] {
   opacity: 0.5;
-  pointer-events: none;
   filter: grayscale(1);
+  cursor: not-allowed;
 }
