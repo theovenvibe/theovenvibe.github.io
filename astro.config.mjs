@@ -16,6 +16,11 @@ export default defineConfig({
   },
   integrations: [
     sitemap({
+      // /checkout/ is one customer's basket, and empty for everyone else. It
+      // carries noindex, and a URL that is both noindex and in the sitemap is
+      // a contradictory signal — Phase 4 removed exactly that pattern from the
+      // v1 stubs, so don't reintroduce it here.
+      filter: (page) => !page.includes('/checkout'),
       // lastmod = build time: pages are regenerated wholesale each deploy,
       // so the build date is the honest per-URL modification signal here.
       serialize: (item) => ({ ...item, lastmod: new Date().toISOString() }),

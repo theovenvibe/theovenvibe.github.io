@@ -1,0 +1,36 @@
+---
+/**
+ * The live quote and the two actions that send it — the end of every order
+ * flow, shared by `/price-calculator/` and `/checkout/`.
+ *
+ * Driven by `src/lib/order-form.ts`, which owns these element IDs. Both
+ * buttons are disabled until there is a real total to send: an empty basket,
+ * a closed kitchen, a below-minimum order and an out-of-range address each
+ * leave them inert rather than sending the kitchen something it cannot cook.
+ *
+ * Styles: `styles/order-form.css` (global — see OrderOptions.astro).
+ */
+interface Props {
+  /** Heading above the quote. Checkout says "Your order"; the calculator "Your total". */
+  heading?: string;
+  /** Label on the primary button. */
+  sendLabel?: string;
+}
+
+const { heading = 'Your total', sendLabel = 'Send on WhatsApp' } = Astro.props;
+---
+
+<div class="calc-output-wrap">
+  <h2 style="margin-bottom: 1rem;">{heading}</h2>
+  <div id="quoteOutput" class="calc-output" aria-live="polite"></div>
+  <div class="calc-actions">
+    <button type="button" id="copyQuoteBtn" class="btn btn-secondary" disabled>Copy quote</button>
+    <a
+      id="waShareLink"
+      class="btn btn-primary"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-disabled="true">{sendLabel}</a
+    >
+  </div>
+</div>

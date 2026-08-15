@@ -1,0 +1,75 @@
+---
+/**
+ * Rings the kitchen when someone leaves this site for Zomato or Swiggy.
+ *
+ * Those orders arrive in the partner's own app, which the kitchen may not be
+ * watching either — and unlike a WhatsApp order there is no message to miss,
+ * just a tablet that beeps somewhere. A heads-up that a customer went that way
+ * means the kitchen knows to look, and it is the only visibility we have into
+ * how much traffic this site actually sends to the partners.
+ *
+ * Like every alert here, it fires on the CLICK: someone can still change their
+ * mind in the app. The wording says "may land", never "you have an order".
+ *
+ * Delegated on the document and matched by hostname, so every Zomato/Swiggy
+ * link is covered — the home-page buttons, the footer, `/sundargarh/`, and any
+ * added later without anyone remembering to wire this up.
+ */
+import { site } from '../lib/data';
+
+const partnerConfig = { ntfyTopic: site.notifications.ntfy_topic };
+---
+
+<script
+  type="application/json"
+  id="partner-alert-config"
+  is:inline
+  set:html={JSON.stringify(partnerConfig)}
+/>
+
+<script>
+  import { publishNtfy, makeOnce } from '../lib/notify';
+
+  const el = document.getElementById('partner-alert-config');
+  const { ntfyTopic } = JSON.parse(el?.textContent ?? '{}') as { ntfyTopic?: string };
+
+  if (ntfyTopic) {
+    // Matched on hostname rather than on a CSS class: a link is a partner link
+    // because of where it points, not because someone remembered to label it.
+    const PARTNERS: { match: RegExp; name: string; tags: string }[] = [
+      { match: /(^|\.)zomato\.com$/i, name: 'Zomato', tags: 'motorcycle' },
+      { match: /(^|\.)swiggy\.com$/i, name: 'Swiggy', tags: 'motorcycle' },
+    ];
+
+    const once = makeOnce();
+
+    document.addEventListener('click', (e) => {
+      const link = (e.target as HTMLElement | null)?.closest<HTMLAnchorElement>('a[href]');
+      if (!link) return;
+
+      let host: string;
+      try {
+        host = new URL(link.href, window.location.href).hostname;
+      } catch {
+        return;
+      }
+
+      const partner = PARTNERS.find((p) => p.match.test(host));
+      if (!partner) return;
+      // Same partner twice in a row is one customer, not two.
+      if (!once(partner.name)) return;
+
+      publishNtfy(ntfyTopic, {
+        title: `Heads up - ${partner.name}`,
+        body:
+          `Someone just left the website for ${partner.name}.\n\n` +
+          `An order may land on your ${partner.name} tablet shortly — worth a look.\n` +
+          `(They tapped through from the site; they may still change their mind.)`,
+        // Deliberately below the order alert. A maybe-order on a partner app
+        // should not sound the same as a customer messaging you directly.
+        priority: 'high',
+        tags: partner.tags,
+      });
+    });
+  }
+</script>

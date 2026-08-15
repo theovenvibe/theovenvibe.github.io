@@ -1,0 +1,321 @@
+/*
+ * Cart chrome: the Add button on a menu card, the floating basket, and the
+ * editable basket on /checkout/.
+ *
+ * Global rather than component-scoped for the same reason as
+ * styles/order-form.css — these elements are rendered by several components
+ * (MenuCard, CartFab, checkout.astro) and an Astro scoped block only reaches
+ * the markup written in its own file. Additive: nothing here restyles an
+ * existing v1 element, so deleting this file restores the previous appearance.
+ */
+
+/* ---------- Add button on a menu card ---------- */
+
+.menu-card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.add-to-cart {
+  flex: 0 0 auto;
+  border: 1px solid var(--color-primary);
+  background: transparent;
+  color: var(--color-primary);
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.03em;
+  padding: 0.4rem 0.95rem;
+  border-radius: var(--radius-md, 8px);
+  cursor: pointer;
+  transition:
+    background-color 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.add-to-cart:hover,
+.add-to-cart:focus-visible {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.add-to-cart:active {
+  transform: scale(0.96);
+}
+
+/* Confirmation lives on the button itself — a customer who taps Add and sees
+   nothing change taps again, and orders two. */
+.add-to-cart.is-added {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+/* ---------- basket in the nav ---------- */
+
+/* The nav's call to action. It carries .btn.btn-primary from the v1 design
+   system for its colour and shape; these rules only handle the icon, the label
+   and the badge sitting together. */
+.nav-cart {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+}
+
+.nav-cart svg {
+  flex: 0 0 auto;
+}
+
+.nav-cart-label {
+  line-height: 1;
+}
+
+/* Sits on the button's corner, so it reads as a count on the CTA rather than
+   another word inside it. Inverted (white pill, red number) because the button
+   itself is already the brand red. */
+.nav-cart-count {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 10px;
+  background: #fff;
+  color: var(--color-primary);
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 20px;
+  text-align: center;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+.nav-cart-count[hidden] {
+  display: none !important;
+}
+
+/* In the mobile overlay the count sits inline after the words, not pinned to
+   an icon — there is no icon there to pin it to. */
+.mobile-nav-link .nav-cart-count {
+  position: static;
+  display: inline-block;
+  margin-left: 0.4rem;
+  vertical-align: middle;
+}
+
+/* ---------- floating basket ---------- */
+
+.cart-fab {
+  position: fixed;
+  bottom: 6.5rem; /* clear of the WhatsApp FAB at bottom: 2rem */
+  right: 2rem;
+  width: 60px;
+  height: 60px;
+  background-color: var(--color-primary);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  z-index: 9999;
+  transition: transform var(--transition-base, 0.2s ease);
+}
+
+.cart-fab:hover {
+  transform: scale(1.1);
+}
+
+.cart-fab[hidden] {
+  display: none !important;
+}
+
+.cart-fab-count {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 5px;
+  border-radius: 11px;
+  background: #fff;
+  color: var(--color-primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 22px;
+  text-align: center;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* ---------- the basket on /checkout/ ---------- */
+
+.cart-lines {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.cart-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.cart-line-info {
+  display: grid;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.cart-line-name {
+  font-weight: 600;
+}
+
+.cart-line-price {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.cart-line-amount {
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.cart-line-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* An item the kitchen cannot cook at the chosen slot. It stays visible and
+   says why — silently dropping a line the customer chose reads as a bug. */
+.cart-line--unavailable .cart-line-name,
+.cart-line--unavailable .cart-line-price {
+  text-decoration: line-through;
+  opacity: 0.55;
+}
+
+.cart-line-note {
+  font-size: 0.8rem;
+  color: var(--color-primary);
+}
+
+/* ---------- extras attached to a basket line ---------- */
+
+.cart-line-block {
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* The block owns the separator now, so the line inside it must not draw a
+   second one between a dish and its own extras. */
+.cart-line-block .cart-line {
+  border-bottom: none;
+}
+
+.cart-extra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.35rem 0 0.35rem 1.25rem;
+}
+
+.cart-extra-name {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.cart-extras-picker {
+  padding: 0 0 0.75rem 1.25rem;
+}
+
+.cart-extras-picker summary {
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--color-primary);
+  list-style: none;
+}
+
+.cart-extras-picker summary::-webkit-details-marker {
+  display: none;
+}
+
+.cart-extras-picker summary::before {
+  content: '+ ';
+  font-weight: 700;
+}
+
+.cart-extras-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding-top: 0.6rem;
+}
+
+.cart-extra-add {
+  border: 1px dashed var(--color-border);
+  background: transparent;
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: 0.8rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: var(--radius-md, 8px);
+  cursor: pointer;
+  transition:
+    border-color 0.18s ease,
+    color 0.18s ease;
+}
+
+.cart-extra-add:hover,
+.cart-extra-add:focus-visible {
+  border-color: var(--color-primary);
+  border-style: solid;
+  color: var(--color-primary);
+}
+
+/* An unavailable dish takes its extras down with it, visually as well. */
+.cart-line--unavailable ~ .cart-extra .cart-extra-name,
+.cart-line--unavailable ~ .cart-extra .cart-line-price {
+  text-decoration: line-through;
+  opacity: 0.55;
+}
+
+.cart-empty {
+  padding: 2rem 0;
+  text-align: center;
+}
+
+.cart-empty .btn {
+  margin-top: 1rem;
+}
+
+.cart-actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.cart-clear {
+  border: none;
+  background: none;
+  color: var(--color-text-muted);
+  font-family: inherit;
+  font-size: 0.85rem;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0.25rem 0;
+}
+
+.cart-clear:hover {
+  color: var(--color-primary);
+}

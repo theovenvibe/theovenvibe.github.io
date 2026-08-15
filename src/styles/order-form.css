@@ -1,0 +1,262 @@
+/*
+ * Order-form styles: the price calculator, the checkout page, and the shared
+ * OrderOptions/OrderQuote components.
+ *
+ * These rules used to be a scoped <style> block inside price-calculator.astro.
+ * They moved here when the order form was split into shared components —
+ * Astro scopes a component's styles to that component's own markup, so a rule
+ * written in the page would silently stop applying the moment the element it
+ * targets moved into a child component. Global is the honest place for styles
+ * shared by two pages and two components.
+ *
+ * Imported by the pages that need it, exactly like styles/polish.css.
+ */
+.calc-rules-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+.calc-rules-table th,
+.calc-rules-table td {
+  border: 1px solid var(--color-border);
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  white-space: nowrap;
+}
+.calc-rules-table thead th {
+  background: var(--color-bg-body);
+}
+.calc-rules-list {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: var(--color-text-muted);
+  display: grid;
+  gap: 0.5rem;
+}
+
+.calc-form {
+  display: grid;
+  gap: 2rem;
+}
+.calc-items {
+  display: grid;
+  gap: 1.5rem;
+}
+.calc-options {
+  display: grid;
+  gap: 1.5rem;
+}
+@media (min-width: 900px) {
+  .calc-form {
+    grid-template-columns: 1.4fr 1fr;
+    align-items: start;
+  }
+}
+
+.calc-group {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.25rem 1.25rem;
+}
+.calc-group legend {
+  font-weight: 700;
+  padding: 0 0.4rem;
+}
+
+.item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--color-border);
+}
+.item-row:last-child {
+  border-bottom: none;
+}
+.item-row-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.item-row-name {
+  font-weight: 600;
+}
+.item-row-price {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+.stepper button {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-body);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.stepper button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.stepper button:focus-visible,
+.calc-radio input:focus-visible,
+.calc-check input:focus-visible,
+.calc-field input:focus-visible,
+.btn:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
+.qty-value {
+  min-width: 1.5rem;
+  text-align: center;
+  font-weight: 700;
+}
+
+.calc-radio-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  margin-bottom: 0.75rem;
+}
+.calc-radio,
+.calc-check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+}
+.calc-check {
+  margin-top: 0.75rem;
+  align-items: flex-start;
+}
+.calc-check input {
+  margin-top: 0.2rem;
+}
+
+.calc-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+.calc-field input {
+  font-size: 1rem;
+  color: var(--color-text-main);
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  max-width: 220px;
+}
+
+.calc-output-wrap {
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 2px solid var(--color-border);
+}
+.calc-output {
+  min-height: 3rem;
+}
+.calc-breakdown {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.4rem 1rem;
+  max-width: 420px;
+  font-size: 1.05rem;
+}
+.calc-breakdown dt,
+.calc-breakdown dd {
+  margin: 0;
+  padding: 0.25rem 0;
+}
+.calc-breakdown dd {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.calc-total-label,
+.calc-total-amount {
+  font-weight: 800;
+  font-size: 1.3rem;
+  border-top: 2px solid var(--color-border);
+  padding-top: 0.6rem;
+  color: var(--color-primary);
+}
+
+.calc-note {
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  margin: 0.5rem 0;
+}
+.calc-note--warn {
+  color: var(--color-primary-dark);
+  font-weight: 600;
+}
+.calc-note--nudge {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.calc-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.calc-note--good {
+  color: #1a7f37;
+  font-weight: 600;
+}
+
+/* The hidden attribute loses to any class that sets display (.calc-check is
+   display:flex), so say it here — otherwise "hidden" elements still paint. */
+[hidden] {
+  display: none !important;
+}
+
+.calc-check--off {
+  opacity: 0.45;
+}
+.calc-check-hint {
+  font-size: 0.85em;
+  color: var(--color-text-muted);
+}
+
+.calc-availability {
+  border-radius: var(--radius-sm, 8px);
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+.calc-availability--late,
+.calc-availability--closed {
+  background: #fdecea;
+  color: #a4211a;
+  border: 1px solid #f5c2be;
+}
+
+/* Greyed rather than removed: the reader still sees the item exists and
+   learns when it comes back, instead of wondering where it went. */
+.item-row--unavailable {
+  opacity: 0.45;
+}
+.item-row--unavailable .item-row-name {
+  text-decoration: line-through;
+}
+
+/* aria-disabled tells a screen reader the action is unavailable; without a
+   matching visual state a sighted user just taps a dead button. */
+.calc-actions [aria-disabled='true'] {
+  opacity: 0.5;
+  pointer-events: none;
+  filter: grayscale(1);
+}

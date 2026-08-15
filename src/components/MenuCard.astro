@@ -21,8 +21,15 @@ interface Props {
   price: number;
   meta?: string[];
   extraClass?: string;
+  /**
+   * Catalogue id (see `orderCatalog` in lib/data.ts). When present the card
+   * gets an Add button that puts the item in the cart; when absent the card is
+   * display-only, which is what a no-JS visitor keeps either way — the button
+   * is inert without JS, so the card never promises an action it cannot do.
+   */
+  cartId?: string;
 }
-const { img, title, description, price, meta = [], extraClass } = Astro.props;
+const { img, title, description, price, meta = [], extraClass, cartId } = Astro.props;
 ---
 
 <article class:list={['menu-card', extraClass]}>
@@ -44,7 +51,22 @@ const { img, title, description, price, meta = [], extraClass } = Astro.props;
       <p style="font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 1rem;">
         {description}
       </p>
-      <div class="menu-card-price">₹{price}</div>
+      <div class="menu-card-foot">
+        <div class="menu-card-price">₹{price}</div>
+        {
+          cartId && (
+            <button
+              type="button"
+              class="add-to-cart"
+              data-cart-id={cartId}
+              data-cart-name={title}
+              aria-label={`Add ${title} to your order`}
+            >
+              Add
+            </button>
+          )
+        }
+      </div>
     </div>
   </div>
 </article>
