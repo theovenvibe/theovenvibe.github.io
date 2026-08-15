@@ -103,8 +103,13 @@ spam actually happens.
   It answers the "nobody sees the order" problem, not the standing
   "direct orders are invisible to the dashboard" problem in MEMORY.md —
   though it is the first thing that captures a direct order at all.
-- **Calculator only.** The nav/FAB WhatsApp buttons stay silent: those are
-  conversations, not orders. Wiring them up later means lifting
+- **Calculator only — owner decision, 2026-08-15.** The nav/FAB WhatsApp
+  buttons stay silent: people tap those to ask "are you open?" as often as to
+  order, and an alert with no basket behind it is noise. The cost is real and
+  was accepted knowingly: an order that arrives by the home-page button,
+  Instagram or the saved number still lands silently.
+  **Review trigger:** if a meaningful share of real orders turn up in WhatsApp
+  with no alert before them, wire the other buttons by lifting
   `notifyKitchen()` into a shared script.
 - **The topic name is effectively public**, and free ntfy cannot restrict it.
   Acceptable only because the body carries no customer PII, and only while it
