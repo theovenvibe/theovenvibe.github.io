@@ -1,0 +1,104 @@
+---
+/**
+ * Registers the service worker (public/sw.js) and shows a soft, dismissible
+ * install banner — never a native prompt on page load.
+ *
+ * Android Chrome fires `beforeinstallprompt`; we capture and defer it, and
+ * only call `.prompt()` from an explicit tap on our own banner (PRD §8.2's
+ * soft-ask philosophy, applied to install instead of push permission).
+ *
+ * iOS Safari never fires that event and has no programmatic install prompt
+ * at all (PRD §4.2) — Share → Add to Home Screen is manual, so the banner
+ * there is a one-line instruction instead of a button.
+ */
+---
+
+<div id="pwaInstallBanner" class="soft-banner" hidden>
+  <p id="pwaInstallText"></p>
+  <div class="soft-banner-actions">
+    <button type="button" id="pwaInstallBtn" class="btn btn-primary" hidden>Install app</button>
+    <button type="button" id="pwaInstallDismiss" class="btn btn-secondary">Not now</button>
+  </div>
+</div>
+
+<script>
+  import { anotherBannerVisible } from '../lib/soft-banner';
+
+  const DISMISS_KEY = 'ovenvibe.pwa_install_dismissed_at';
+  const DISMISS_DAYS = 30;
+
+  function recentlyDismissed(): boolean {
+    try {
+      const raw = window.localStorage.getItem(DISMISS_KEY);
+      if (!raw) return false;
+      const days = (Date.now() - Number(raw)) / 86400000;
+      return days < DISMISS_DAYS;
+    } catch {
+      return false;
+    }
+  }
+
+  function isStandalone(): boolean {
+    return (
+      window.matchMedia?.('(display-mode: standalone)').matches ||
+      // iOS Safari's own flag — not in the standard matchMedia check.
+      (navigator as Navigator & { standalone?: boolean }).standalone === true
+    );
+  }
+
+  if ('serviceWorker' in navigator) {
+    // After load, not blocking first paint or the checkout flow.
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    });
+  }
+
+  if (!isStandalone() && !recentlyDismissed()) {
+    const banner = document.getElementById('pwaInstallBanner') as HTMLElement;
+    const text = document.getElementById('pwaInstallText') as HTMLElement;
+    const installBtn = document.getElementById('pwaInstallBtn') as HTMLButtonElement;
+    const dismissBtn = document.getElementById('pwaInstallDismiss') as HTMLButtonElement;
+
+    let deferredPrompt: Event | null = null;
+
+    function dismiss() {
+      banner.hidden = true;
+      try {
+        window.localStorage.setItem(DISMISS_KEY, String(Date.now()));
+      } catch {
+        // Not being able to remember the dismissal just means it may show
+        // again sooner — never worth blocking on.
+      }
+    }
+    dismissBtn.addEventListener('click', dismiss);
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      if (anotherBannerVisible()) return; // e.g. the push soft-ask just took the slot
+      text.textContent = 'Install The Oven Vibe for faster ordering — no app store needed.';
+      installBtn.hidden = false;
+      banner.hidden = false;
+    });
+
+    installBtn.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      installBtn.disabled = true;
+      // @ts-expect-error — BeforeInstallPromptEvent isn't in lib.dom yet.
+      await deferredPrompt.prompt();
+      dismiss();
+    });
+
+    // iOS: no event to wait for, so show the manual instruction once the
+    // page has settled, on Safari specifically (not just any WebKit UA
+    // sniff — this is deliberately narrow so Chrome/Android never sees it
+    // even if beforeinstallprompt is slow to fire).
+    const ua = navigator.userAgent;
+    const isIOS = /iPhone|iPad|iPod/.test(ua);
+    const isSafari = /Safari/.test(ua) && !/CriOS|FxiOS|EdgiOS/.test(ua);
+    if (isIOS && isSafari && !anotherBannerVisible()) {
+      text.textContent = 'Add The Oven Vibe to your Home Screen: tap Share, then "Add to Home Screen".';
+      banner.hidden = false;
+    }
+  }
+</script>

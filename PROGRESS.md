@@ -224,3 +224,81 @@ Ten releases, all owner-driven from using the live page. Each shipped through `f
 **Bugs found in my own verification, both recorded in MEMORY.md:** a probe that read back the `hidden` property it had just set (passing while the element was still painted, because a class `display` beats `[hidden]`), and a build grep matching `- 0 errors` from `astro check` while an `astro build` failure printed underneath it.
 
 **Open for the owner, unchanged:** log direct orders somewhere the pipeline can read (the Zomato-only blind spot has now bent three analyses); measure the scooter's real mileage; switch Settings → Pages → Source to "GitHub Actions" to stop the phantom Jekyll failures; fill `unit_cost` so the menu matrix shows margin instead of price.
+
+### 2026-08-16 (Phase 0 — order capture, backend side)
+
+The direct-order blind spot flagged in every session above finally has a fix. Cross-repo work with `the-oven-vibe-backend` (see that repo's PROGRESS.md for the Worker/D1 half); this entry covers what changed here, on `feature/order-capture-phase0` off `origin/develop`.
+
+- **`/checkout/` now POSTs every send to the backend Worker as a `pending` order** — fires on the same click that opens WhatsApp or copies the quote, `keepalive: true`, never awaited, swallowed on failure (AGENTS.md rule 5: a backend outage must never block an order). Gated on `copyBtn.dataset.quote` being populated, which order-form.ts only does once the basket, slot and customer details are all valid — so this piggybacks on validation that already existed rather than duplicating it.
+- **A `device_id` (UUID) is now generated into `localStorage`** (`ovenvibe.device_id.v1`) on first checkout visit and sent with every order — the join key Phase 3 will use to link a push subscription to a customer (PRD §7.1).
+- **`publishNtfy` no longer talks to `ntfy.sh` directly.** It POSTs `{title, body, priority, tags}` to the Worker's `/alert`, which holds the real topic as a secret. `notify.ts`'s header-escaping (`asciiHeader`) moved server-side with it and was dropped from this repo — dead code once the client stopped building ntfy headers itself.
+- **`site.config.json`'s `notifications.ntfy_topic` is gone**, replaced by `backend.worker_url` (`https://oven-vibe-backend.theovenvibe.workers.dev`) — a URL, not a secret, so it is fine in a public static site. Renamed straight through: `site-config.ts` schema, `OrderFormConfig.ntfyTopic` → `workerUrl` in `order-form.ts`, and the three call sites (`checkout.astro`, `price-calculator.astro`, `PartnerClickAlerts.astro`).
+- Distance band (`'0-2 km'` / `'2-4 km'` / `'beyond 4 km'`, or the exact typed km) and the pre-order slot (ISO datetime) are read straight from the existing `OrderOptions.astro` DOM by `checkout.astro`'s own script — no new fields, no new questions asked at checkout, matching PRD §7.2's "the site never asks where, only how far."
+- Deliberately **not touched**: `order-form.ts`'s hook surface (no new hooks — reused the existing `onUpdate` hook to capture the priced `QuoteResult`), the WhatsApp message itself, and `price-calculator.astro`'s behaviour beyond the config rename (it fires no order POST — `primaryAction: 'handoff'` there means nothing has been ordered yet, same as before).
+- Verification: `npm run build` green (0 errors); `skills/qa-check.md` steps 1–5 pass (0 JSON-LD failures, 0 emoji, rating 4.9/16 matches config everywhere, 0 non-veg word hits, the same 9 pre-existing v1-redirect-stub pages missing descriptions as the 2026-08-14 session, 0 images missing alt).
+- **Owner questions raised:**
+  1. This was pushed as a PR against `develop`, not merged — same convention as every prior phase. Needs your UAT before merging.
+  2. The Worker needed a one-time manual step this session couldn't do non-interactively: registering the account's `workers.dev` subdomain in the Cloudflare dashboard (Workers & Pages → Domains → toggle "Worker URL" on). Already done for `oven-vibe-backend`; flagging in case a future Worker in this account hits the same wall.
+- Next (do not start in this session): **Phase 1 — Admin: Today + Orders** (backend repo). See `the-oven-vibe-backend/HANDOFF.md`.
+
+### 2026-08-16 (Phase 2 — PWA)
+
+Backend Phases 0 and 1 shipped same-day (see `the-oven-vibe-backend/PROGRESS.md`), owner asked to continue straight into Phase 2 — the website-repo half, on `feature/pwa-phase2` off `origin/develop`.
+
+- **`public/manifest.webmanifest`**: name, short_name, `theme_color` (`#e63946`, matching the existing `<meta name="theme-color">`), `display: "standalone"`, three icon entries. Linked from `Layout.astro`'s `<head>`.
+- **Icons**: tried to isolate just the oven-in-cloud mark from the master brand lockup (`static/images/brand_images/The Oven vibe_logo.webp`, 2362×2362) via connected-component pixel analysis, to get a clean minimalist app icon — dead end. The cloud icon and the wordmark's "N" are fused in the source artwork itself (touching/overlapping by design), not two separable shapes, so no crop or masking approach could isolate one without the other. Fell back to the already-published `apple-touch-icon.png` (180×180, the full logo lockup — same asset already serving as the site's icon in browser tabs and existing Home Screen bookmarks) as the source, upscaled cleanly to 192/512, plus a maskable 512 variant (logo at 65% scale, centered, so OS mask shapes don't crop it). Not a new design — reused what's already live. **Worth a design pass later** if a proper standalone icon mark is ever wanted; flagging rather than inventing one now (no new-design authority this phase).
+- **`public/sw.js`**: minimal — `install`/`activate` for a small shell cache, network-first `fetch` handler (the menu/prices change often enough that a stale cached page would be worse than no cache at all). No `push` event handler — that's Phase 3's job once VAPID subscriptions exist.
+- **`src/components/PwaInstall.astro`**: registers the service worker on `load`, and shows one soft, dismissible banner — never a native prompt unprompted. Android Chrome: captures `beforeinstallprompt`, only calls `.prompt()` from a tap on our own button. iOS Safari: no such event exists (PRD §4.2), so a plain "Share → Add to Home Screen" instruction shows instead, gated on a narrow iOS+Safari check (excluding Chrome/Firefox-on-iOS, which wrap Safari's engine but aren't Safari). Dismissal is remembered 30 days, same rate-limit philosophy as PRD §8.2's push soft-ask.
+- Verification: `npm run build` green; `skills/qa-check.md` steps 1–5 pass; drove it in a real browser (not just typechecking) — confirmed the service worker registers and reaches `active` state, the manifest fetches and parses with all three icon URLs resolving 200, and all three icon files serve as `image/png`.
+- **Not done, on purpose:** no push subscription wiring, no VAPID key in the site config, no service-worker `push` handler — all Phase 3. No campaign UI.
+- Next (do not start in this session): **Phase 3 — Push subscribe** (backend repo, touches both repos — VAPID public key into this site's config, subscription storage in the Worker). See `the-oven-vibe-backend/HANDOFF.md`.
+
+### 2026-08-16 (Phase 3 — push subscribe)
+
+Fourth phase this session (`feature/push-subscribe-phase3` off `origin/develop`), touching both repos in one sitting for the first time. Backend half (migration, `POST /subscriptions`) is in `the-oven-vibe-backend/PROGRESS.md`.
+
+- **`site.config.json`** gained a `push.vapid_public_key` field (public, not a secret — the private half stays a Worker secret). Schema validated in `site-config.ts` (base64url, ~87 chars).
+- **`src/lib/device.ts`**: extracted `getDeviceId()` out of `checkout.astro` — Phase 3 needs the same id in a second place (the subscribe flow) and it must never diverge from the one an order was placed with, or the two can never link (PRD §7.1).
+- **`src/lib/push-signal.ts`**: the handoff between "order just sent" (`checkout.astro`) and "show the soft-ask" (the new `PushSubscribe.astro`, rendered globally). Deliberately `localStorage`, not `sessionStorage` — iOS Safari can reload a backgrounded tab under memory pressure while WhatsApp has focus, which would silently drop a `sessionStorage` flag before the customer ever returns.
+- **`src/components/PushSubscribe.astro`**: the soft-ask card, PRD §8.2's exact sequencing — fires on `visibilitychange` after an order send, never on load. `Notification.requestPermission()` is called from exactly one code path (the "Yes" button), so "Not now" can never burn the browser's one-shot permission. On accept: `PushManager.subscribe()` with the VAPID key, then `POST` to the Worker's `/subscriptions`, `device_id` shared with the order. On iOS, gated on already being installed (PRD §4.2 — push doesn't work there otherwise).
+- **Two soft banners can now exist** (this and Phase 2's install prompt) — extracted their shared CSS into `global.css`'s `.soft-banner`/`.soft-banner-actions` (was duplicated inline in `PwaInstall.astro`) and added `src/lib/soft-banner.ts`'s `anotherBannerVisible()` guard so they never stack in the same fixed bottom-center slot.
+- **`public/sw.js`** gained `push` (parses `{title, body, url}`, calls `showNotification`) and `notificationclick` (focuses an already-open matching tab instead of stacking a duplicate, else opens one) — no campaign exists yet to send one, this just makes the client capable of receiving.
+- Verification: `npm run build` green, `skills/qa-check.md` steps 1–5 pass. Real UAT against the deployed Worker (not just typechecking): confirmed a subscription created before any order lands with `customer_id = NULL`, then gets linked the moment a matching-`device_id` order arrives; separately confirmed a subscription created *after* an order already exists links immediately. Did **not** attempt to drive the native browser permission dialog through browser automation — that dialog lives outside page/DOM context and a stuck `Notification.requestPermission()` call can hang the tab; the client-side `PushManager` call itself is standard MDN-documented usage, so confidence there rests on that rather than a live grant/subscribe round-trip. Test rows deleted after.
+- **Not done, on purpose:** no campaign compose/send UI, no admin visibility into subscriptions — Phase 4.
+- Next (do not start in this session): **Phase 4 — Send one campaign to everyone**. See `the-oven-vibe-backend/HANDOFF.md`.
+
+### 2026-08-16 (bug fix, off-phase) — checkout was silently deleting the basket when the kitchen is closed
+
+Found by the owner mid-Phase-4-UAT: add an item any time, land on `/checkout/`
+while the kitchen happens to be closed (e.g. 2am, before the 11:30am open),
+and the entire basket vanished — no error, no warning, just gone. Ticking
+"Pre-order" afterward didn't bring it back, because it was already gone.
+Pre-existing bug from the 2026-08-14 pricing session, unrelated to any of
+tonight's phases; fixed on `fix/preserve-basket-when-closed` off
+`origin/develop` since it was blocking real pre-order use, not a new phase.
+
+- **Root cause**: `order-form.ts`'s `applyAvailability()` called
+  `row.setQty(0)` on every basket line whenever the kitchen state was
+  `'closed'` — and on `/checkout/`, `setQty` persists straight to
+  `localStorage` via `setItemQty`, which drops any line at qty 0. This ran
+  on page load, before the customer had any chance to tick "Pre-order."
+- **Fix**: stopped mutating quantity for unavailability at all. Added a
+  `Set<string>` of currently-unavailable row names inside `order-form.ts`'s
+  own closure, populated by `applyAvailability()` and read by `subtotal()`
+  and `chosenItems()` to exclude those rows from the total and the
+  WhatsApp/copy quote — same financial correctness as before (an unmakeable
+  item was never priced or sent), but the basket itself is never touched.
+  `BasketRow` still has no stable id in its shared interface, so this keys
+  on `row.name`, which is safe given cart.ts's own invariant of one line per
+  distinct item.
+- Also reworded the two "kitchen closed" messages (the availability banner
+  and the quote-output warning) to name the actual fix — "tick Pre-order
+  and pick a time after we open; nothing in your basket is lost" — instead
+  of the old, useless "change the time above."
+- **Verified in a real browser**, not just build/typecheck: added two items
+  at the real current time (kitchen genuinely closed), confirmed both stayed
+  visible in the basket (greyed out, "Not cooked at this time", struck-through
+  price) instead of disappearing; ticked Pre-order, chose 1pm; confirmed a
+  correct priced breakdown (₹568, food + free delivery) and a live send
+  button with name/phone filled in.
+- `npm run build` green, 0 errors.
