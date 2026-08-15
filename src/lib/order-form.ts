@@ -70,18 +70,57 @@ export interface OrderFormHooks {
    * checkout puts the customer's name and number here so the kitchen can call
    * without scrolling. These go in the MESSAGE ONLY.
    *
-   * They are deliberately NOT passed to `notifyKitchen`: the ntfy topic has no
-   * access control on the free tier (skills/setup-order-alerts.md), so anything
-   * published there should be assumed public. A customer's phone number must
-   * never be published to it.
+   * Whether these also go into the ntfy alert is `alertIncludesCustomer`.
    */
   leadLines?(): string[];
   /**
-   * A reason the order cannot be sent yet — a missing name, an invalid phone.
-   * Returning a string shows it and keeps both buttons disabled; return null
-   * when the order is good to go.
+   * Put `leadLines` in the ntfy alert as well as the WhatsApp message.
+   *
+   * Off by default, and the default is the safe one: a free ntfy topic has no
+   * access control (skills/setup-order-alerts.md), so anything published there
+   * should be assumed public — including, if this is on, customers' phone
+   * numbers.
+   *
+   * `/checkout/` turns it ON, by the owner's explicit decision (2026-08-15):
+   * the alert is the kitchen's working copy of the order and they want to be
+   * able to ring the customer straight from it. The mitigation, if that
+   * exposure ever matters, is to put the topic behind a proxy that keeps its
+   * name secret — see docs/CART_AND_CHECKOUT.md.
    */
-  blockReason?(): string | null;
+  alertIncludesCustomer?: boolean;
+  /**
+   * Is the order complete enough to send? Checked on every recalculation to
+   * decide whether the buttons are live. Must be side-effect free — it runs
+   * constantly, including before the customer has typed anything, so it must
+   * not throw errors onto the screen.
+   */
+  canSend?(): boolean;
+  /**
+   * Last check before the order actually leaves. Return false to stop it, and
+   * mark up the offending field while you are there.
+   *
+   * This is a second, independent gate. `canSend` greys the button out, but a
+   * disabled-looking button is a presentation detail — a stray click handler,
+   * a script, or a browser restoring form state could still get here. Nothing
+   * may leave without passing this.
+   */
+  beforeSend?(): boolean;
+  /**
+   * What the primary button does.
+   *
+   * `whatsapp` (default) sends the order to the kitchen — that is `/checkout/`,
+   * the one page that has the customer's name and number.
+   *
+   * `handoff` carries the basket to another page instead. The price calculator
+   * uses this: it is where you work out a total, not where an order is placed,
+   * and sending from there produced an order the kitchen could not call back
+   * about. It fires no alert, because nothing has been ordered yet.
+   */
+  primaryAction?: 'whatsapp' | 'handoff';
+  /** Where `handoff` goes. */
+  handoffHref?: string;
+  /** Called just before a `handoff` navigation — write the basket out here. */
+  onHandoff?(): void;
 }
 
 export interface OrderForm {
@@ -91,6 +130,7 @@ export interface OrderForm {
 
 export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): OrderForm {
   const delivery = CFG.delivery;
+  const isHandoff = hooks.primaryAction === 'handoff';
 
   const distanceRadios = Array.from(document.querySelectorAll<HTMLInputElement>('input[name="distance"]'));
   const kmInput = document.getElementById('kmInput') as HTMLInputElement;
@@ -286,11 +326,11 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
   /**
    * The order as text.
    *
-   * `withCustomer` is the whole reason this takes an argument. The WhatsApp
-   * message goes privately to the kitchen and SHOULD carry the customer's name
-   * and number. The ntfy alert goes to a topic that anyone who reads the page
-   * source can subscribe to, and MUST NOT. Same order, two audiences, and the
-   * difference is not optional — see skills/setup-order-alerts.md.
+   * `withCustomer` exists because the same order has two audiences. The
+   * WhatsApp message always carries the customer's name and number. The ntfy
+   * alert carries them only when the page opts in (`alertIncludesCustomer`),
+   * because that topic has no access control on free ntfy and should be
+   * treated as public — see skills/setup-order-alerts.md.
    */
   function buildQuoteText(result: QuoteResult, withCustomer: boolean): string {
     const lines: string[] = [`${CFG.businessName} — price quote`];
@@ -421,12 +461,9 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
       );
     }
 
-    // The order prices fine but is missing something the kitchen needs to act
-    // on it. Show the total — seeing the price is what the customer came for —
-    // but keep both buttons shut until it can actually be fulfilled.
-    const blocked = hooks.blockReason?.() ?? null;
-    if (blocked) {
-      output.appendChild(textEl('p', 'calc-note calc-note--warn', blocked));
+    // The quote above stays on screen either way — seeing the price is what the
+    // customer came for. Only the send controls wait on a complete order.
+    if (hooks.canSend && !hooks.canSend()) {
       disableActions();
       return;
     }
@@ -437,8 +474,10 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
     copyBtn.dataset.total = String(result.total);
     // Kept apart from the message on purpose: this is what gets published to a
     // world-readable topic, so it is built without the customer's details.
-    alertText = buildQuoteText(result, false);
-    waLink.href = `https://wa.me/${CFG.whatsapp}?text=${encodeURIComponent(text)}`;
+    alertText = buildQuoteText(result, hooks.alertIncludesCustomer === true);
+    waLink.href = isHandoff
+      ? (hooks.handoffHref ?? '/checkout/')
+      : `https://wa.me/${CFG.whatsapp}?text=${encodeURIComponent(text)}`;
     waLink.removeAttribute('aria-disabled');
   }
 
@@ -648,6 +687,25 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
   /** One alert per distinct quote — a double-tap must not ring four phones twice. */
   const once = makeOnce();
 
+  /**
+   * "Someone is heading to checkout with this basket." Not an order — the
+   * matching order alert, if it comes, arrives seconds later at urgent
+   * priority. Silence after one of these is the abandonment.
+   */
+  function notifyHandoff(text: string) {
+    if (!text || !once(`handoff:${text}`)) return;
+    const total = copyBtn.dataset.total;
+    publishNtfy(CFG.ntfyTopic, {
+      title: total ? `Building an order - Rs ${total}` : 'Building an order',
+      body:
+        'Someone worked out a total on the price calculator and went to checkout.\n' +
+        'Nothing is ordered yet. If no order alert follows in a few minutes, they left without ordering.\n\n' +
+        text,
+      priority: 'low',
+      tags: 'thinking_face',
+    });
+  }
+
   function notifyKitchen(text: string, via: 'whatsapp' | 'copy') {
     if (!text || !once(`${via}:${text}`)) return;
 
@@ -662,14 +720,42 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
     });
   }
 
-  waLink.addEventListener('click', () => {
-    if (waLink.getAttribute('aria-disabled') === 'true') return;
+  waLink.addEventListener('click', (event) => {
+    if (waLink.getAttribute('aria-disabled') === 'true') {
+      event.preventDefault();
+      // Greyed out, but a tap still deserves an answer. Run the same checks so
+      // the customer is told which field is holding the order up, instead of
+      // pressing a dead button and guessing.
+      hooks.beforeSend?.();
+      return;
+    }
+    // Validation happens here, not by greying the button out: the customer
+    // must be told which field is wrong, not left tapping a dead control.
+    if (hooks.beforeSend && !hooks.beforeSend()) {
+      event.preventDefault();
+      return;
+    }
+    if (isHandoff) {
+      hooks.onHandoff?.();
+      // Nothing is ordered yet — this is someone carrying a basket to the page
+      // that can take an order. It is still worth knowing: pair it with the
+      // order alert that may follow, and a handoff with no order behind it is
+      // the clearest abandonment signal this site can produce.
+      //
+      // LOW priority on purpose. It must not sound like an order — at 1am the
+      // phone should not ring for someone browsing.
+      notifyHandoff(alertText);
+      return;
+    }
     notifyKitchen(alertText, 'whatsapp');
   });
 
   copyBtn.addEventListener('click', async () => {
     const text = copyBtn.dataset.quote ?? '';
     if (!text) return;
+    // A copied quote is pasted into WhatsApp by hand, so it needs the same
+    // details as a sent one — otherwise the kitchen gets an anonymous order.
+    if (hooks.beforeSend && !hooks.beforeSend()) return;
     notifyKitchen(alertText, 'copy');
     try {
       await navigator.clipboard.writeText(text);

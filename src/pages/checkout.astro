@@ -112,7 +112,9 @@ const checkoutConfig = {
               autocomplete="name"
               placeholder="e.g. Hungry Human"
               maxlength="60"
+              aria-describedby="custNameError"
             />
+            <span class="field-error" id="custNameError" role="alert" hidden></span>
           </label>
           <label class="calc-field" for="custPhone">
             Mobile number (so we can call if we can't find you)
@@ -123,9 +125,10 @@ const checkoutConfig = {
               inputmode="numeric"
               placeholder="10-digit number"
               maxlength="15"
+              aria-describedby="custPhoneError"
             />
+            <span class="field-error" id="custPhoneError" role="alert" hidden></span>
           </label>
-          <p class="calc-note calc-note--warn" id="custError" hidden></p>
           <label class="calc-check">
             <input type="checkbox" id="custOffers" />
             Send me offers and new items on WhatsApp
@@ -280,10 +283,11 @@ const checkoutConfig = {
           extraEl.className = 'cart-extra';
           const extraInfo = document.createElement('div');
           extraInfo.className = 'cart-line-info';
+          // No "₹39 each" under an extra: the amount column on the right
+          // already carries its price, and an extra is a one-line thing.
+          // The dish keeps its unit price, where a quantity above one makes
+          // the per-item figure worth stating.
           extraInfo.appendChild(textEl('span', 'cart-extra-name', `+ ${addon.name}`));
-          extraInfo.appendChild(
-            textEl('span', 'cart-line-price', `${rupee(addon.price)} each`),
-          );
           extraEl.appendChild(extraInfo);
 
           const extraControls = document.createElement('div');
@@ -381,7 +385,8 @@ const checkoutConfig = {
   const nameInput = document.getElementById('custName') as HTMLInputElement;
   const phoneInput = document.getElementById('custPhone') as HTMLInputElement;
   const offersCheck = document.getElementById('custOffers') as HTMLInputElement;
-  const custError = document.getElementById('custError') as HTMLElement;
+  const nameError = document.getElementById('custNameError') as HTMLElement;
+  const phoneError = document.getElementById('custPhoneError') as HTMLElement;
 
   const DETAILS_KEY = 'ovenvibe.customer.v1';
 
@@ -409,32 +414,138 @@ const checkoutConfig = {
     }
   }
 
-  /** Indian mobile numbers are 10 digits starting 6-9; +91 / 0 prefixes allowed. */
+  /**
+   * The mobile number, reduced to its 10 local digits, or null if it is not a
+   * valid Indian mobile number.
+   *
+   * Strict about what a number may contain: digits, and only the separators
+   * people really paste (`+`, spaces, dashes, brackets). Anything else — a
+   * letter, a stray symbol — is rejected outright rather than stripped, because
+   * stripping would quietly turn "aaaaaaaaaa" into an empty string and
+   * "9abc692261138" into a plausible-looking number.
+   *
+   * Then: an optional +91 or leading 0, exactly ten digits, starting 6-9.
+   */
   function normalisedPhone(): string | null {
-    const digits = phoneInput.value.replace(/\D/g, '');
-    const local = digits.startsWith('91') && digits.length === 12
-      ? digits.slice(2)
-      : digits.startsWith('0') && digits.length === 11
-        ? digits.slice(1)
-        : digits;
-    return /^[6-9]\d{9}$/.test(local) ? local : null;
+    const raw = phoneInput.value.trim();
+    if (!raw) return null;
+    if (/[^\d+\-\s()]/.test(raw)) return null;
+
+    let digits = raw.replace(/\D/g, '');
+    if (digits.length === 12 && digits.startsWith('91')) digits = digits.slice(2);
+    else if (digits.length === 11 && digits.startsWith('0')) digits = digits.slice(1);
+
+    return /^[6-9]\d{9}$/.test(digits) ? digits : null;
   }
 
-  function detailsProblem(): string | null {
-    if (!nameInput.value.trim()) return 'Add your name so the kitchen knows whose order this is.';
-    if (!normalisedPhone()) return 'Add a 10-digit mobile number so we can call if we cannot find you.';
-    return null;
+  /** Side-effect free — drives the button's state on every recalculation. */
+  function detailsValid(): boolean {
+    return Boolean(nameInput.value.trim()) && normalisedPhone() !== null;
+  }
+
+  /** What is wrong with each field right now, in the order they appear. */
+  function fieldProblems(): { input: HTMLInputElement; error: HTMLElement; message: string }[] {
+    const problems: { input: HTMLInputElement; error: HTMLElement; message: string }[] = [];
+
+    if (!nameInput.value.trim()) {
+      problems.push({
+        input: nameInput,
+        error: nameError,
+        message: 'Please enter your name so the kitchen knows whose order this is.',
+      });
+    }
+
+    // Name the actual fault. "Invalid number" leaves someone who typed nine
+    // digits staring at a field that looks right to them.
+    const raw = phoneInput.value.trim();
+    if (!raw) {
+      problems.push({
+        input: phoneInput,
+        error: phoneError,
+        message: 'Please enter your 10-digit mobile number so we can call you.',
+      });
+    } else if (/[^\d+\-\s()]/.test(raw)) {
+      problems.push({
+        input: phoneInput,
+        error: phoneError,
+        message: 'A mobile number can only contain digits — please enter 10 numbers.',
+      });
+    } else if (!normalisedPhone()) {
+      let digits = raw.replace(/\D/g, '');
+      if (digits.length === 12 && digits.startsWith('91')) digits = digits.slice(2);
+      else if (digits.length === 11 && digits.startsWith('0')) digits = digits.slice(1);
+      problems.push({
+        input: phoneInput,
+        error: phoneError,
+        message:
+          digits.length !== 10
+            ? `That is ${digits.length} digit${digits.length === 1 ? '' : 's'} — a mobile number needs exactly 10.`
+            : 'That does not look like a mobile number — it should start with 6, 7, 8 or 9.',
+      });
+    }
+
+    return problems;
+  }
+
+  function clearFieldErrors() {
+    for (const [input, error] of [
+      [nameInput, nameError],
+      [phoneInput, phoneError],
+    ] as const) {
+      error.hidden = true;
+      error.textContent = '';
+      input.removeAttribute('aria-invalid');
+      input.closest('.calc-field')?.classList.remove('calc-field--error');
+    }
+  }
+
+  /**
+   * Shows every problem, then puts the customer in the first one. Returns true
+   * when the order is good to send.
+   *
+   * Called on the click rather than disabling the button: a dead button tells
+   * someone nothing about which field it is waiting on.
+   */
+  function validateDetails(): boolean {
+    clearFieldErrors();
+    const problems = fieldProblems();
+    if (!problems.length) return true;
+
+    for (const { input, error, message } of problems) {
+      error.textContent = message;
+      error.hidden = false;
+      input.setAttribute('aria-invalid', 'true');
+      input.closest('.calc-field')?.classList.add('calc-field--error');
+    }
+
+    const first = problems[0].input;
+    first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // Deferred by one turn: this runs from a click on the send link, and the
+    // browser moves focus to the clicked element AFTER the handler returns —
+    // which was undoing the focus and leaving the customer with an error
+    // message and no cursor in the field it was about.
+    window.setTimeout(() => first.focus({ preventScroll: true }), 0);
+    return false;
   }
 
   const form = initOrderForm(CFG, {
     leadLines: () => {
       const phone = normalisedPhone();
-      const out = [`Name: ${nameInput.value.trim()}`];
-      if (phone) out.push(`Mobile: ${phone}`);
+      const out = [`Customer Name: ${nameInput.value.trim()}`];
+      if (phone) out.push(`Mobile Number: ${phone}`);
       if (offersCheck.checked) out.push('You can send me offers and new items on WhatsApp.');
       return out;
     },
-    blockReason: detailsProblem,
+    // Owner decision, 2026-08-15: the alert is the kitchen's working copy of
+    // the order, so it carries the customer's name and number too. The cost is
+    // that those are published to a topic with no access control — see
+    // docs/CART_AND_CHECKOUT.md for the mitigation if that ever matters.
+    alertIncludesCustomer: true,
+    // Two independent gates. canSend greys the button out so an incomplete
+    // order never looks sendable; beforeSend re-checks at the moment of
+    // sending, because a disabled-looking button is only a presentation.
+    canSend: detailsValid,
+    beforeSend: validateDetails,
     rows: (): BasketRow[] =>
       lines.map((line) => ({
         name: line.name,
@@ -471,31 +582,39 @@ const checkoutConfig = {
     emptyMessage: 'Your basket is empty — add something from the menu to see your total.',
   });
 
-  // The error only appears once they have started typing, so an untouched form
-  // does not open with a complaint.
-  let touched = false;
+  // A field that has already been marked wrong re-checks itself as the
+  // customer types, so the message clears the moment they fix it. A field that
+  // has never complained stays quiet until they leave it or try to send —
+  // nobody wants "enter your name" while typing the second letter of it.
+  function reviewField(input: HTMLInputElement, error: HTMLElement) {
+    const problem = fieldProblems().find((p) => p.input === input);
+    if (!problem) {
+      error.hidden = true;
+      error.textContent = '';
+      input.removeAttribute('aria-invalid');
+      input.closest('.calc-field')?.classList.remove('calc-field--error');
+      return;
+    }
+    error.textContent = problem.message;
+    error.hidden = false;
+    input.setAttribute('aria-invalid', 'true');
+    input.closest('.calc-field')?.classList.add('calc-field--error');
+  }
 
-  function onDetailsEdited() {
-    touched = true;
+  function onDetailsEdited(input: HTMLInputElement, error: HTMLElement) {
     saveDetails();
-    const problem = detailsProblem();
-    custError.hidden = !problem;
-    custError.textContent = problem ?? '';
+    if (input.getAttribute('aria-invalid') === 'true') reviewField(input, error);
+    // Drives the send button: it turns live the moment everything is valid.
     form.update();
   }
 
-  nameInput.addEventListener('input', onDetailsEdited);
-  phoneInput.addEventListener('input', onDetailsEdited);
+  nameInput.addEventListener('input', () => onDetailsEdited(nameInput, nameError));
+  phoneInput.addEventListener('input', () => onDetailsEdited(phoneInput, phoneError));
+  nameInput.addEventListener('blur', () => reviewField(nameInput, nameError));
+  phoneInput.addEventListener('blur', () => reviewField(phoneInput, phoneError));
   offersCheck.addEventListener('change', () => {
     saveDetails();
     form.update();
-  });
-  // Leaving a field empty is worth flagging on the way out, even untouched.
-  phoneInput.addEventListener('blur', () => {
-    if (touched) return;
-    const problem = detailsProblem();
-    custError.hidden = !problem;
-    custError.textContent = problem ?? '';
   });
 
   clearBtn.addEventListener('click', () => {

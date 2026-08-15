@@ -66,11 +66,19 @@ orders. No backend, no payments. Astro (v7+) static site on GitHub Pages.
     third page, and never restyle it from a page's scoped `<style>` — its CSS
     is global in `styles/order-form.css` / `styles/cart.css` because scoped
     rules do not reach into a child component. See docs/CART_AND_CHECKOUT.md.
-13. **Customer PII goes in the WhatsApp message, never in the ntfy alert.**
-    The cart stores quantities against catalogue ids only — no names, no
-    prices. `/checkout/` collects a name and mobile; `order-form.ts` builds the
-    alert text separately from the message text so the alert cannot leak them
-    to a world-readable topic (see rule 11).
+13. **Know what the ntfy alert publishes.** The cart stores quantities against
+    catalogue ids only — no names, no prices. `/checkout/` collects a name and
+    mobile, and by owner decision (2026-08-15) those go into the alert as well
+    as the WhatsApp message, via `alertIncludesCustomer` in `order-form.ts`.
+    That flag defaults to **off** and only `/checkout/` opts in — keep it that
+    way. The topic has no access control (rule 11), so treat everything sent
+    there as public; if that exposure ever needs closing, put a Cloudflare
+    Worker in front of ntfy rather than weakening the order form. Never add an
+    API key or webhook secret to client code.
+14. **Order sending is gated twice.** `canSend` greys the buttons out;
+    `beforeSend` re-validates at the moment of sending and refuses regardless
+    of how the button looked. Never replace the pair with just one — a disabled
+    button is presentation, not a guarantee. See docs/CART_AND_CHECKOUT.md.
 
 ## Repo map
 

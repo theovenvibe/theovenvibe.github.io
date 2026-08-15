@@ -203,7 +203,7 @@ const calcConfig = {
           <OrderOptions />
         </form>
 
-        <OrderQuote />
+        <OrderQuote sendLabel="Continue to checkout →" newTab={false} />
       </div>
     </div>
   </main>
@@ -213,6 +213,7 @@ const calcConfig = {
 
 <script>
   import { initOrderForm, type BasketRow, type OrderFormConfig } from '../lib/order-form';
+  import { getCart, setItemQty } from '../lib/cart';
 
   const configEl = document.getElementById('calc-config');
   const CFG: OrderFormConfig = JSON.parse(configEl?.textContent ?? '{}');
@@ -243,7 +244,33 @@ const calcConfig = {
     },
   }));
 
-  const form = initOrderForm(CFG, { rows: () => rows });
+  // This page works out a total; it does not take orders. Sending from here
+  // produced an order with no name and no callback number, so the primary
+  // button now carries the basket to /checkout/, which asks for both. Copy
+  // quote stays — it is how the kitchen quotes a price over the phone.
+  const form = initOrderForm(CFG, {
+    rows: () => rows,
+    primaryAction: 'handoff',
+    handoffHref: '/checkout/',
+    onHandoff() {
+      // Write what was picked here into the basket, so checkout opens already
+      // filled in. Quantities are SET, not added: this screen is the basket the
+      // customer just built, and adding to whatever was already there would
+      // silently double it. Extras attached to a line at checkout survive,
+      // because setItemQty only touches the quantity.
+      const chosen = new Map<string, number>();
+      itemRows.forEach((row, i) => {
+        const qty = rows[i].getQty();
+        if (qty > 0) chosen.set(row.dataset.id as string, qty);
+      });
+      for (const line of getCart()) {
+        if (!chosen.has(line.id)) continue;
+        setItemQty(line.id, chosen.get(line.id) as number);
+        chosen.delete(line.id);
+      }
+      for (const [id, qty] of chosen) setItemQty(id, qty);
+    },
+  });
 
   rows.forEach((r, i) => {
     minusOf(itemRows[i]).addEventListener('click', () => {

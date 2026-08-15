@@ -193,10 +193,20 @@ each page would still look correct on its own. Full design:
   their dish in the message. A loose "Extra Cheese" next to two pizzas is not an
   order anyone can cook. One line per distinct item; "cheese on one of the two"
   is the extra's quantity.
-- **Customer name and mobile go in the WhatsApp message, never in the ntfy
-  alert.** `order-form.ts` builds two texts for exactly this reason. This was a
-  live bug during development — the alert published the whole quote, which had
-  just grown a phone number. The test suite asserts it; keep it that way.
+- **Customer name and mobile go in the WhatsApp message AND, by owner decision
+  (2026-08-15), in the ntfy alert** so the kitchen can call back from the
+  notification. `order-form.ts` still builds the two texts separately and
+  `alertIncludesCustomer` defaults to **off**; only `/checkout/` opts in. The
+  cost is real and was accepted knowingly: a free ntfy topic has no access
+  control, so every customer number is published to a channel strangers can
+  subscribe to if they find the topic name in the page source. The fix, if it
+  ever matters, is a Cloudflare Worker holding the topic as a server-side
+  secret — not weakening the order form.
+- **Sending is gated twice**: `canSend` greys the buttons out, `beforeSend`
+  re-validates at the moment of sending. A disabled button is presentation, not
+  a guarantee — keep both. The phone check rejects letters outright rather than
+  stripping them, because stripping turns "aaaaaaaaaa" into "" and
+  "9abc692261138" into something that looks valid.
 
 ## Menu decisions
 

@@ -85,18 +85,53 @@ Until both are valid the send buttons stay shut, **but the total is still
 shown**: seeing the price is what the customer came for, and hiding it to
 extract a phone number would be a dark pattern.
 
-### The one thing that must never change here
+### Customer details are in the alert too — a deliberate, informed choice
 
-The name and number go into the **WhatsApp message only**. They are deliberately
-kept out of the ntfy alert, which is published to a topic anyone who reads the
-page source can subscribe to (free ntfy has no access control —
-`skills/setup-order-alerts.md`). `order-form.ts` builds the two texts separately
-for exactly this reason, and the test suite asserts the customer's name and
-number never appear in the alert body.
+They appear as `Customer Name:` / `Mobile Number:` near the top of the WhatsApp
+message, and — by the owner's explicit decision on 2026-08-15 — in the ntfy
+alert as well, so the kitchen can ring the customer straight from the
+notification.
 
-**This was a real bug during development**, caught by that test: the alert was
-publishing the whole quote, which had just grown a phone number. If you add a
-field to the order, check it against that test.
+**Understand what that costs.** A free ntfy topic has no access control
+(`skills/setup-order-alerts.md`): the topic name is the password, it ships in
+the page source, and anyone who finds it can subscribe. Every customer phone
+number that passes through checkout is therefore published to a channel that
+should be treated as readable by strangers. The owner was told this plainly
+before it was built and chose to proceed; the exposure is the price of a
+one-tap callback.
+
+The switch is `alertIncludesCustomer` in `order-form.ts`, and it defaults to
+**off** — the safe default is preserved in code, and only `/checkout/` opts in.
+
+**If that exposure ever matters**, the fix does not require changing this
+feature: put a free Cloudflare Worker in front of ntfy holding the real topic
+name as a server-side secret, and point `publishNtfy` at the Worker. The page
+then knows no topic name at all, and nobody can subscribe to the feed. That
+option was costed during design and deferred only because the alert carried no
+personal data at the time — which is no longer true.
+
+### Validation before anything is sent
+
+Two independent gates, because one is not enough:
+
+- `canSend` greys the send and copy buttons out while the name is empty or the
+  mobile is not a valid Indian mobile number. The **total stays visible** —
+  seeing the price is what the customer came for, and hiding it to extract a
+  phone number would be a dark pattern.
+- `beforeSend` re-runs the same checks at the moment of sending and refuses
+  regardless of what the button looked like. A disabled button is presentation;
+  a stray handler, a script, or restored form state could still reach the send
+  path, and nothing may leave without passing this.
+
+The number must be exactly ten digits starting 6–9. `+91`, a leading `0`,
+spaces, dashes and brackets are accepted because people paste numbers that way;
+**any letter or other character is rejected outright rather than stripped** —
+stripping would quietly turn `aaaaaaaaaa` into an empty string and
+`9abc692261138` into a plausible-looking number.
+
+A blocked click is never silent: it marks the offending field, says exactly what
+is wrong (`That is 9 digits — a mobile number needs exactly 10.`), scrolls to it
+and puts the cursor in it.
 
 ## The nav's "Order Now" button is gone
 

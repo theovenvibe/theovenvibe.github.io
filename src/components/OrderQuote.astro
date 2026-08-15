@@ -15,9 +15,16 @@ interface Props {
   heading?: string;
   /** Label on the primary button. */
   sendLabel?: string;
+  /**
+   * false when the button leads somewhere on this site (the calculator's
+   * handoff to /checkout/). Leaving a WhatsApp link's `target="_blank"` on an
+   * internal hop strands the customer in a second tab with the first one still
+   * showing the old basket.
+   */
+  newTab?: boolean;
 }
 
-const { heading = 'Your total', sendLabel = 'Send on WhatsApp' } = Astro.props;
+const { heading = 'Your total', sendLabel = 'Send on WhatsApp', newTab = true } = Astro.props;
 ---
 
 <div class="calc-output-wrap">
@@ -28,8 +35,8 @@ const { heading = 'Your total', sendLabel = 'Send on WhatsApp' } = Astro.props;
     <a
       id="waShareLink"
       class="btn btn-primary"
-      target="_blank"
-      rel="noopener noreferrer"
+      target={newTab ? '_blank' : undefined}
+      rel={newTab ? 'noopener noreferrer' : undefined}
       aria-disabled="true">{sendLabel}</a
     >
   </div>
