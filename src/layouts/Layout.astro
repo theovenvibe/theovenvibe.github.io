@@ -27,6 +27,7 @@ import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import WhatsAppFab from '../components/WhatsAppFab.astro';
 import CartScript from '../components/CartScript.astro';
+import PartnerClickAlerts from '../components/PartnerClickAlerts.astro';
 import Seo, { type OgImage } from '../components/Seo.astro';
 import { site } from '../lib/data';
 
@@ -110,6 +111,10 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
     {/* Cart chrome on every page: the Add buttons only do something once this
         is present, and the floating basket stays hidden until it has contents. */}
     <CartScript showFab={showCartFab} />
+
+    {/* Rings the kitchen when a visitor leaves for Zomato or Swiggy — those
+        orders land in an app nobody is necessarily watching either. */}
+    <PartnerClickAlerts />
 
     <Footer />
 

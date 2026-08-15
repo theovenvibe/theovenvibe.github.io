@@ -49,13 +49,13 @@ next. When an item ships, delete it here and write it up there.
 
 ## Known gaps, deliberately left
 
-- [ ] **Order alerts only fire from `/price-calculator/` and `/checkout/`.** The
-      nav "Order Now" button, the floating WhatsApp button, Instagram and the
-      saved number all still land silently. Owner chose this scope on
-      2026-08-15 to keep false alarms down. **Review after a week of real use:**
-      if real orders keep arriving with no alert before them, lift
-      `notifyKitchen()` out of `lib/order-form.ts` into a shared script and wire
-      the other buttons.
+- [ ] **Order alerts fire from `/price-calculator/`, `/checkout/`, and any
+      Zomato/Swiggy link.** Still silent: the floating WhatsApp button, the
+      WhatsApp links in the blog posts and on `/contact/`, Instagram, and people
+      messaging the saved number directly. Owner chose this scope on 2026-08-15
+      to keep false alarms down. **Review after a week of real use:** if real
+      orders keep arriving with no alert before them, wire the remaining
+      WhatsApp links using `publishNtfy()` from `lib/notify.ts`.
 - [ ] **Direct orders are still not logged anywhere the dashboard can read.**
       The ntfy alert is the first thing that even sees a direct order, but free
       ntfy expires messages after about 12 hours, so it is not a log. This blind

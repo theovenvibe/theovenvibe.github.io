@@ -98,6 +98,36 @@ number never appear in the alert body.
 publishing the whole quote, which had just grown a phone number. If you add a
 field to the order, check it against that test.
 
+## The nav's "Order Now" button is gone
+
+It pointed at a bare `wa.me` link. Tapping a button labelled *Order Now* opened
+an empty WhatsApp chat — no item, no quote, no context — leaving the customer to
+type their order from memory, which is the exact problem this site keeps trying
+to solve. A button that promises ordering should carry the order.
+
+The basket took its place as the nav's call to action: same red button, cart
+icon, the word "Order", and a count badge once there is something in it. Owner
+decision, 2026-08-15.
+
+The home page's "Check your exact total & Order Now →" button was **kept** — it
+goes to the price calculator and does exactly what it says.
+
+## Partner clicks ring the kitchen too
+
+A Zomato or Swiggy order lands in the partner's app, which nobody is necessarily
+watching either. So leaving the site for either now publishes a **high**-priority
+alert ("Heads up - Zomato"), deliberately quieter than the **urgent** order alert:
+a customer messaging you directly needs you now, a maybe-order on a tablet is
+worth a glance.
+
+Matched on the link's hostname rather than a CSS class, so every placement is
+covered — home buttons, footer, `/sundargarh/` — including ones added later by
+someone who has never read this file.
+
+Publishing now lives in `src/lib/notify.ts`, shared by the order form and the
+partner alerts, so escaping and failure behaviour cannot drift between them. Its
+header comment carries the no-PII rule.
+
 ## Two pre-existing bugs fixed on the way
 
 1. **`runsMon–Fri`** — a missing space, live on the site since Phase 3. Astro

@@ -55,35 +55,45 @@
 
 /* ---------- basket in the nav ---------- */
 
+/* The nav's call to action. It carries .btn.btn-primary from the v1 design
+   system for its colour and shape; these rules only handle the icon, the label
+   and the badge sitting together. */
 .nav-cart {
   position: relative;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  color: var(--color-text);
-  padding: 0.35rem;
-  transition: color 0.18s ease;
+  gap: 0.45rem;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
 }
 
-.nav-cart:hover,
-.nav-cart:focus-visible {
-  color: var(--color-primary);
+.nav-cart svg {
+  flex: 0 0 auto;
 }
 
+.nav-cart-label {
+  line-height: 1;
+}
+
+/* Sits on the button's corner, so it reads as a count on the CTA rather than
+   another word inside it. Inverted (white pill, red number) because the button
+   itself is already the brand red. */
 .nav-cart-count {
   position: absolute;
-  top: -2px;
+  top: -6px;
   right: -6px;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 4px;
-  border-radius: 9px;
-  background: var(--color-primary);
-  color: #fff;
-  font-size: 0.68rem;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 10px;
+  background: #fff;
+  color: var(--color-primary);
+  font-size: 0.7rem;
   font-weight: 700;
-  line-height: 18px;
+  line-height: 20px;
   text-align: center;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
 }
 
 .nav-cart-count[hidden] {

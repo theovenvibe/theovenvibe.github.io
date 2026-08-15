@@ -17,6 +17,7 @@
  * below are that component's contract, so both pages must render it.
  */
 import { computeQuote, isTimeInRange, type QuoteResult } from './pricing';
+import { publishNtfy, makeOnce } from './notify';
 import type { SiteConfig } from '../schemas/site-config';
 
 /**
@@ -644,44 +645,21 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
   // not add any. See skills/setup-order-alerts.md.
   // ---------------------------------------------------------------------------
 
-  /** ntfy sends headers as latin-1; a ₹ or en-dash in a title breaks the request. */
-  function asciiHeader(s: string): string {
-    return s
-      .replace(/₹/g, 'Rs ')
-      .replace(/[–—]/g, '-')
-      .replace(/[^\x20-\x7E]/g, '')
-      .trim();
-  }
-
   /** One alert per distinct quote — a double-tap must not ring four phones twice. */
-  let lastNotified = '';
+  const once = makeOnce();
 
   function notifyKitchen(text: string, via: 'whatsapp' | 'copy') {
-    const topic = CFG.ntfyTopic;
-    if (!topic || !text) return;
-    const key = `${via}:${text}`;
-    if (key === lastNotified) return;
-    lastNotified = key;
+    if (!text || !once(`${via}:${text}`)) return;
 
     const total = copyBtn.dataset.total;
     const orderType = orderTypeRadios.find((r) => r.checked)?.value ?? 'delivery';
-    const headline = total
-      ? `New order Rs ${total} (${orderType})`
-      : `New order enquiry (${orderType})`;
 
-    // keepalive: the tab is about to hand off to WhatsApp, and a normal fetch
-    // is cancelled when that happens. Failure is silent by design — a dead
-    // alert must never block the customer from placing the order.
-    fetch(`https://ntfy.sh/${encodeURIComponent(topic)}`, {
-      method: 'POST',
-      keepalive: true,
-      headers: {
-        Title: asciiHeader(headline),
-        Priority: 'urgent',
-        Tags: 'pizza',
-      },
+    publishNtfy(CFG.ntfyTopic, {
+      title: total ? `New order Rs ${total} (${orderType})` : `New order enquiry (${orderType})`,
+      // `text` is the PII-free build — see buildQuoteText's `withCustomer`.
       body: `${via === 'whatsapp' ? 'Opened WhatsApp to send:' : 'Copied the quote:'}\n\n${text}`,
-    }).catch(() => {});
+      tags: 'pizza',
+    });
   }
 
   waLink.addEventListener('click', () => {
