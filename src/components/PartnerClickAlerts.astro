@@ -17,7 +17,7 @@
  */
 import { site } from '../lib/data';
 
-const partnerConfig = { ntfyTopic: site.notifications.ntfy_topic };
+const partnerConfig = { workerUrl: site.backend.worker_url };
 ---
 
 <script
@@ -31,9 +31,9 @@ const partnerConfig = { ntfyTopic: site.notifications.ntfy_topic };
   import { publishNtfy, makeOnce } from '../lib/notify';
 
   const el = document.getElementById('partner-alert-config');
-  const { ntfyTopic } = JSON.parse(el?.textContent ?? '{}') as { ntfyTopic?: string };
+  const { workerUrl } = JSON.parse(el?.textContent ?? '{}') as { workerUrl?: string };
 
-  if (ntfyTopic) {
+  if (workerUrl) {
     // Matched on hostname rather than on a CSS class: a link is a partner link
     // because of where it points, not because someone remembered to label it.
     const PARTNERS: { match: RegExp; name: string; tags: string }[] = [
@@ -59,7 +59,7 @@ const partnerConfig = { ntfyTopic: site.notifications.ntfy_topic };
       // Same partner twice in a row is one customer, not two.
       if (!once(partner.name)) return;
 
-      publishNtfy(ntfyTopic, {
+      publishNtfy(workerUrl, {
         title: `Heads up - ${partner.name}`,
         body:
           `Someone just left the website for ${partner.name}.\n\n` +

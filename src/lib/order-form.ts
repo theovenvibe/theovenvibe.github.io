@@ -55,7 +55,8 @@ export interface OrderFormConfig {
   whatsapp: string;
   businessName: string;
   hours: { open: string; close: string; display: string };
-  ntfyTopic: string;
+  /** The backend Worker's URL — alerts go through its /alert proxy now. */
+  workerUrl: string;
 }
 
 export interface OrderFormHooks {
@@ -695,7 +696,7 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
   function notifyHandoff(text: string) {
     if (!text || !once(`handoff:${text}`)) return;
     const total = copyBtn.dataset.total;
-    publishNtfy(CFG.ntfyTopic, {
+    publishNtfy(CFG.workerUrl, {
       title: total ? `Building an order - Rs ${total}` : 'Building an order',
       body:
         'Someone worked out a total on the price calculator and went to checkout.\n' +
@@ -712,7 +713,7 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
     const total = copyBtn.dataset.total;
     const orderType = orderTypeRadios.find((r) => r.checked)?.value ?? 'delivery';
 
-    publishNtfy(CFG.ntfyTopic, {
+    publishNtfy(CFG.workerUrl, {
       title: total ? `New order Rs ${total} (${orderType})` : `New order enquiry (${orderType})`,
       // `text` is the PII-free build — see buildQuoteText's `withCustomer`.
       body: `${via === 'whatsapp' ? 'Opened WhatsApp to send:' : 'Copied the quote:'}\n\n${text}`,
