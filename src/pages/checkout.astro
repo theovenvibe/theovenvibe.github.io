@@ -1,0 +1,631 @@
+---
+/**
+ * /checkout/ — the basket the customer built on the menu, priced by exactly the
+ * same rules as /price-calculator/, and sent to the kitchen on WhatsApp.
+ *
+ * This page owns very little. The questions it asks (distance, slot, pickup or
+ * delivery, rain, prepayment), the arithmetic, the quote wording, the WhatsApp
+ * hand-off and the ntfy alert are all shared with the calculator via
+ * `components/OrderOptions.astro` + `components/OrderQuote.astro` +
+ * `lib/order-form.ts`. The ONLY thing this page does differently is where the
+ * basket comes from: localStorage instead of a stepper against the whole menu.
+ *
+ * Prices are NOT stored in the cart — only quantities against catalogue ids.
+ * They are re-read from this build at render time, so a cart left open
+ * overnight cannot quote yesterday's price, and an item that has since sold out
+ * drops out of the basket instead of being ordered. That is why the catalogue
+ * is inlined below rather than fetched.
+ *
+ * noindex: a personal basket is not a search result, and an empty /checkout/ is
+ * a thin page. It stays linked from the floating basket, not from the sitemap.
+ */
+import Layout from '../layouts/Layout.astro';
+import OrderOptions from '../components/OrderOptions.astro';
+import OrderQuote from '../components/OrderQuote.astro';
+import { site, orderCatalog } from '../lib/data';
+import { breadcrumbJsonLd } from '../lib/seo';
+import '../styles/order-form.css';
+
+const title = 'Your order — The Oven Vibe';
+const description = `Review your ${site.business.name} order, tell us how far and when, and send it to the kitchen on WhatsApp.`;
+
+const checkoutConfig = {
+  delivery: site.delivery,
+  whatsapp: site.business.whatsapp,
+  businessName: site.business.name,
+  hours: site.business.hours,
+  ntfyTopic: site.notifications.ntfy_topic,
+  // The catalogue the cart's ids resolve against. Inlined at build time: the
+  // cart stores quantities only, so this is where names and prices come from.
+  catalog: orderCatalog,
+};
+---
+
+<Layout
+  title={title}
+  description={description}
+  ogTitle="Your order — The Oven Vibe"
+  noindex={true}
+  showWaFab={false}
+  showCartFab={false}
+  jsonLd={[breadcrumbJsonLd([{ name: 'Your order', path: '/checkout/' }])]}
+>
+  <main class="main">
+    <section class="hero hero-mini">
+      <div class="hero-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+      </div>
+      <div class="hero-container">
+        <div class="hero-content">
+          <h1 class="hero-display" style="font-size: clamp(2rem, 5vw, 4rem)">
+            <span class="animate-on-scroll">YOUR</span>
+            <span class="text-gradient animate-on-scroll delay-100">ORDER.</span>
+          </h1>
+          <p class="hero-text animate-on-scroll delay-200">
+            Check what's in your basket, tell us how far and when, and send it straight to the
+            kitchen.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <div class="section" style="background-color: white; padding-top: 0">
+      <div class="container" style="max-width: 900px">
+        <noscript>
+          <p class="calc-note calc-note--warn">
+            Your basket is stored in this browser, so it needs JavaScript to show. You can still
+            build an order and see every price on the
+            <a href="/price-calculator/">price calculator</a>, or call {site.business.phone_display}.
+          </p>
+        </noscript>
+
+        <h2 style="margin-bottom: 0.5rem;">Your basket</h2>
+        <p id="availabilityNote" class="calc-availability" hidden></p>
+
+        <div id="cartLines" class="cart-lines"></div>
+
+        <div id="cartEmpty" class="cart-empty" hidden>
+          <p class="calc-note">Your basket is empty.</p>
+          <a href="/#menu" class="btn btn-primary">Browse the menu</a>
+        </div>
+
+        <div class="cart-actions-row">
+          <a href="/#menu" class="btn btn-secondary">Add more items</a>
+          <button type="button" id="cartClear" class="cart-clear">Empty the basket</button>
+        </div>
+
+        {/* Name and number, owner request 2026-08-15. They travel in the
+            WhatsApp message only — never into the ntfy alert, whose topic is
+            world-readable on the free tier (skills/setup-order-alerts.md).
+            The offers tick is unticked by default and stays that way: a
+            pre-ticked consent box is not consent, and the number is given here
+            to get an order cooked, not to join a mailing list. */}
+        <fieldset class="calc-group" id="customerGroup" style="margin-top: 2rem">
+          <legend>Your details</legend>
+          <label class="calc-field" for="custName">
+            Your name
+            <input
+              type="text"
+              id="custName"
+              autocomplete="name"
+              placeholder="e.g. Hungry Human"
+              maxlength="60"
+              aria-describedby="custNameError"
+            />
+            <span class="field-error" id="custNameError" role="alert" hidden></span>
+          </label>
+          <label class="calc-field" for="custPhone">
+            Mobile number (so we can call if we can't find you)
+            <input
+              type="tel"
+              id="custPhone"
+              autocomplete="tel"
+              inputmode="numeric"
+              placeholder="10-digit number"
+              maxlength="15"
+              aria-describedby="custPhoneError"
+            />
+            <span class="field-error" id="custPhoneError" role="alert" hidden></span>
+          </label>
+          <label class="calc-check">
+            <input type="checkbox" id="custOffers" />
+            Send me offers and new items on WhatsApp
+          </label>
+        </fieldset>
+
+        <form id="calcForm" class="calc-form calc-form--checkout" style="margin-top: 2rem">
+          <OrderOptions />
+        </form>
+
+        <OrderQuote heading="Your total" sendLabel="Send order on WhatsApp" />
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<script type="application/json" id="calc-config" is:inline set:html={JSON.stringify(checkoutConfig)} />
+
+<script>
+  import { initOrderForm, type BasketRow, type OrderFormConfig } from '../lib/order-form';
+  import type { OrderableRow } from '../lib/data';
+  import {
+    getCart,
+    setItemQty,
+    setAddonQty,
+    clearCart,
+    onCartChange,
+    type CartLine,
+  } from '../lib/cart';
+
+  interface CheckoutConfig extends OrderFormConfig {
+    catalog: OrderableRow[];
+  }
+
+  const configEl = document.getElementById('calc-config');
+  const CFG: CheckoutConfig = JSON.parse(configEl?.textContent ?? '{}');
+  const catalog = new Map(CFG.catalog.map((row) => [row.id, row]));
+
+  const linesEl = document.getElementById('cartLines') as HTMLElement;
+  const emptyEl = document.getElementById('cartEmpty') as HTMLElement;
+  const clearBtn = document.getElementById('cartClear') as HTMLButtonElement;
+
+  /** Everything that can be ordered as an extra on top of a dish. */
+  const addons = CFG.catalog.filter((row) => row.group === 'Add-ons');
+  const isAddon = (id: string) => id.startsWith('addon-');
+
+  /** A basket line: what the cart says, resolved against this build's catalogue. */
+  interface Line extends OrderableRow {
+    qty: number;
+    extras: { row: OrderableRow; qty: number }[];
+    el: HTMLElement;
+  }
+  let lines: Line[] = [];
+
+  const rupee = (n: number) => `₹${Math.round(n)}`;
+
+  function textEl(tag: string, className: string, text: string): HTMLElement {
+    const el = document.createElement(tag);
+    el.className = className;
+    el.textContent = text;
+    return el;
+  }
+
+  /** A −/count/+ control. Used for basket lines and for each extra. */
+  function stepper(
+    label: string,
+    qty: number,
+    onChange: (delta: number) => void,
+  ): { el: HTMLElement; value: HTMLElement } {
+    const wrap = document.createElement('div');
+    wrap.className = 'stepper';
+    wrap.setAttribute('role', 'group');
+    wrap.setAttribute('aria-label', label);
+
+    const minus = document.createElement('button');
+    minus.type = 'button';
+    minus.className = 'qty-minus';
+    minus.setAttribute('aria-label', `Decrease ${label}`);
+    minus.textContent = '−';
+    minus.disabled = qty === 0;
+
+    const value = textEl('span', 'qty-value', String(qty));
+    value.setAttribute('aria-hidden', 'true');
+
+    const plus = document.createElement('button');
+    plus.type = 'button';
+    plus.className = 'qty-plus';
+    plus.setAttribute('aria-label', `Increase ${label}`);
+    plus.textContent = '+';
+
+    minus.addEventListener('click', () => onChange(-1));
+    plus.addEventListener('click', () => onChange(+1));
+
+    wrap.append(minus, value, plus);
+    return { el: wrap, value };
+  }
+
+  /**
+   * Rebuild the basket from storage. Ids the current build no longer knows —
+   * an item taken off the menu since the cart was filled — are dropped here,
+   * which is the whole reason the cart stores ids rather than prices.
+   */
+  function renderCart() {
+    const cart = getCart();
+    while (linesEl.firstChild) linesEl.removeChild(linesEl.firstChild);
+    lines = [];
+
+    for (const entry of cart) {
+      const row = catalog.get(entry.id);
+      // An id this build no longer knows — an item taken off the menu since the
+      // cart was filled. Drop it rather than order something that is gone.
+      if (!row) {
+        setItemQty(entry.id, 0);
+        continue;
+      }
+
+      const block = document.createElement('div');
+      block.className = 'cart-line-block';
+
+      const el = document.createElement('div');
+      el.className = 'cart-line';
+
+      const info = document.createElement('div');
+      info.className = 'cart-line-info';
+      info.appendChild(textEl('span', 'cart-line-name', row.name));
+      info.appendChild(textEl('span', 'cart-line-price', `${rupee(row.price)} each`));
+      el.appendChild(info);
+
+      const controls = document.createElement('div');
+      controls.className = 'cart-line-controls';
+      controls.appendChild(
+        stepper(`quantity of ${row.name}`, entry.qty, (d) => changeQty(entry.id, d)).el,
+      );
+      controls.appendChild(textEl('span', 'cart-line-amount', rupee(row.price * entry.qty)));
+      el.appendChild(controls);
+      block.appendChild(el);
+
+      const extras: Line['extras'] = [];
+
+      // Extras belong to their dish, so they are rendered inside its block and
+      // an add-on ordered on its own never grows extras of its own.
+      if (!isAddon(entry.id)) {
+        for (const [addonId, aqty] of Object.entries(entry.addons)) {
+          const addon = catalog.get(addonId);
+          if (!addon) {
+            setAddonQty(entry.id, addonId, 0);
+            continue;
+          }
+          extras.push({ row: addon, qty: aqty });
+
+          const extraEl = document.createElement('div');
+          extraEl.className = 'cart-extra';
+          const extraInfo = document.createElement('div');
+          extraInfo.className = 'cart-line-info';
+          // No "₹39 each" under an extra: the amount column on the right
+          // already carries its price, and an extra is a one-line thing.
+          // The dish keeps its unit price, where a quantity above one makes
+          // the per-item figure worth stating.
+          extraInfo.appendChild(textEl('span', 'cart-extra-name', `+ ${addon.name}`));
+          extraEl.appendChild(extraInfo);
+
+          const extraControls = document.createElement('div');
+          extraControls.className = 'cart-line-controls';
+          extraControls.appendChild(
+            stepper(`${addon.name} on ${row.name}`, aqty, (d) =>
+              changeAddon(entry.id, addonId, aqty + d),
+            ).el,
+          );
+          extraControls.appendChild(
+            textEl('span', 'cart-line-amount', rupee(addon.price * aqty)),
+          );
+          extraEl.appendChild(extraControls);
+          block.appendChild(extraEl);
+        }
+
+        block.appendChild(buildExtrasPicker(entry, row));
+      }
+
+      linesEl.appendChild(block);
+      lines.push({ ...row, qty: entry.qty, extras, el });
+    }
+
+    const empty = lines.length === 0;
+    emptyEl.hidden = !empty;
+    clearBtn.hidden = empty;
+  }
+
+  /**
+   * The "Add extras" drawer under a dish. Collapsed by default: most orders do
+   * not want extras, and six open steppers under every pizza would bury the
+   * basket itself.
+   */
+  function buildExtrasPicker(entry: CartLine, row: OrderableRow): HTMLElement {
+    const details = document.createElement('details');
+    details.className = 'cart-extras-picker';
+
+    const summary = document.createElement('summary');
+    summary.textContent = `Add extras to ${row.name}`;
+    details.appendChild(summary);
+
+    const list = document.createElement('div');
+    list.className = 'cart-extras-list';
+    for (const addon of addons) {
+      // Anything already on the line has its own stepper above; no duplicates.
+      if (entry.addons[addon.id]) continue;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'cart-extra-add';
+      btn.textContent = `${addon.name} +${rupee(addon.price)}`;
+      btn.addEventListener('click', () => changeAddon(entry.id, addon.id, 1));
+      list.appendChild(btn);
+    }
+    if (!list.childElementCount) {
+      list.appendChild(textEl('p', 'calc-note', 'Every extra is already on this item.'));
+    }
+    details.appendChild(list);
+    return details;
+  }
+
+  /**
+   * Quantity changes go to storage first and re-render from it, so the basket
+   * on screen is always what would be sent — never a DOM state that drifted
+   * from what is stored.
+   */
+  function changeQty(id: string, delta: number) {
+    const line = getCart().find((l) => l.id === id);
+    setItemQty(id, (line?.qty ?? 0) + delta);
+    renderCart();
+    form.update();
+  }
+
+  function changeAddon(lineId: string, addonId: string, qty: number) {
+    setAddonQty(lineId, addonId, qty);
+    renderCart();
+    form.update();
+  }
+
+  renderCart();
+
+  // ---------------------------------------------------------------------------
+  // Who is ordering
+  //
+  // The kitchen needs a name to shout and a number to ring; the owner also
+  // wants the number for offers later, which is what the (unticked) opt-in is
+  // for. Both values go into the WhatsApp message ONLY — never into the ntfy
+  // alert, because a free ntfy topic is readable by anyone who finds its name
+  // in the page source. Publishing a customer's phone number there would turn
+  // an order alert into a public leak.
+  //
+  // The details are remembered in this browser so a regular does not retype
+  // them every order. Same store as the cart, same reasoning: it never leaves
+  // the device except in the message the customer themselves sends.
+  // ---------------------------------------------------------------------------
+  const nameInput = document.getElementById('custName') as HTMLInputElement;
+  const phoneInput = document.getElementById('custPhone') as HTMLInputElement;
+  const offersCheck = document.getElementById('custOffers') as HTMLInputElement;
+  const nameError = document.getElementById('custNameError') as HTMLElement;
+  const phoneError = document.getElementById('custPhoneError') as HTMLElement;
+
+  const DETAILS_KEY = 'ovenvibe.customer.v1';
+
+  try {
+    const saved = JSON.parse(window.localStorage.getItem(DETAILS_KEY) ?? '{}');
+    if (typeof saved.name === 'string') nameInput.value = saved.name;
+    if (typeof saved.phone === 'string') phoneInput.value = saved.phone;
+    if (typeof saved.offers === 'boolean') offersCheck.checked = saved.offers;
+  } catch {
+    // Storage unavailable (private mode) — the fields simply start empty.
+  }
+
+  function saveDetails() {
+    try {
+      window.localStorage.setItem(
+        DETAILS_KEY,
+        JSON.stringify({
+          name: nameInput.value.trim(),
+          phone: phoneInput.value.trim(),
+          offers: offersCheck.checked,
+        }),
+      );
+    } catch {
+      // Not being able to remember the details is not a reason to block an order.
+    }
+  }
+
+  /**
+   * The mobile number, reduced to its 10 local digits, or null if it is not a
+   * valid Indian mobile number.
+   *
+   * Strict about what a number may contain: digits, and only the separators
+   * people really paste (`+`, spaces, dashes, brackets). Anything else — a
+   * letter, a stray symbol — is rejected outright rather than stripped, because
+   * stripping would quietly turn "aaaaaaaaaa" into an empty string and
+   * "9abc692261138" into a plausible-looking number.
+   *
+   * Then: an optional +91 or leading 0, exactly ten digits, starting 6-9.
+   */
+  function normalisedPhone(): string | null {
+    const raw = phoneInput.value.trim();
+    if (!raw) return null;
+    if (/[^\d+\-\s()]/.test(raw)) return null;
+
+    let digits = raw.replace(/\D/g, '');
+    if (digits.length === 12 && digits.startsWith('91')) digits = digits.slice(2);
+    else if (digits.length === 11 && digits.startsWith('0')) digits = digits.slice(1);
+
+    return /^[6-9]\d{9}$/.test(digits) ? digits : null;
+  }
+
+  /** Side-effect free — drives the button's state on every recalculation. */
+  function detailsValid(): boolean {
+    return Boolean(nameInput.value.trim()) && normalisedPhone() !== null;
+  }
+
+  /** What is wrong with each field right now, in the order they appear. */
+  function fieldProblems(): { input: HTMLInputElement; error: HTMLElement; message: string }[] {
+    const problems: { input: HTMLInputElement; error: HTMLElement; message: string }[] = [];
+
+    if (!nameInput.value.trim()) {
+      problems.push({
+        input: nameInput,
+        error: nameError,
+        message: 'Please enter your name so the kitchen knows whose order this is.',
+      });
+    }
+
+    // Name the actual fault. "Invalid number" leaves someone who typed nine
+    // digits staring at a field that looks right to them.
+    const raw = phoneInput.value.trim();
+    if (!raw) {
+      problems.push({
+        input: phoneInput,
+        error: phoneError,
+        message: 'Please enter your 10-digit mobile number so we can call you.',
+      });
+    } else if (/[^\d+\-\s()]/.test(raw)) {
+      problems.push({
+        input: phoneInput,
+        error: phoneError,
+        message: 'A mobile number can only contain digits — please enter 10 numbers.',
+      });
+    } else if (!normalisedPhone()) {
+      let digits = raw.replace(/\D/g, '');
+      if (digits.length === 12 && digits.startsWith('91')) digits = digits.slice(2);
+      else if (digits.length === 11 && digits.startsWith('0')) digits = digits.slice(1);
+      problems.push({
+        input: phoneInput,
+        error: phoneError,
+        message:
+          digits.length !== 10
+            ? `That is ${digits.length} digit${digits.length === 1 ? '' : 's'} — a mobile number needs exactly 10.`
+            : 'That does not look like a mobile number — it should start with 6, 7, 8 or 9.',
+      });
+    }
+
+    return problems;
+  }
+
+  function clearFieldErrors() {
+    for (const [input, error] of [
+      [nameInput, nameError],
+      [phoneInput, phoneError],
+    ] as const) {
+      error.hidden = true;
+      error.textContent = '';
+      input.removeAttribute('aria-invalid');
+      input.closest('.calc-field')?.classList.remove('calc-field--error');
+    }
+  }
+
+  /**
+   * Shows every problem, then puts the customer in the first one. Returns true
+   * when the order is good to send.
+   *
+   * Called on the click rather than disabling the button: a dead button tells
+   * someone nothing about which field it is waiting on.
+   */
+  function validateDetails(): boolean {
+    clearFieldErrors();
+    const problems = fieldProblems();
+    if (!problems.length) return true;
+
+    for (const { input, error, message } of problems) {
+      error.textContent = message;
+      error.hidden = false;
+      input.setAttribute('aria-invalid', 'true');
+      input.closest('.calc-field')?.classList.add('calc-field--error');
+    }
+
+    const first = problems[0].input;
+    first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // Deferred by one turn: this runs from a click on the send link, and the
+    // browser moves focus to the clicked element AFTER the handler returns —
+    // which was undoing the focus and leaving the customer with an error
+    // message and no cursor in the field it was about.
+    window.setTimeout(() => first.focus({ preventScroll: true }), 0);
+    return false;
+  }
+
+  const form = initOrderForm(CFG, {
+    leadLines: () => {
+      const phone = normalisedPhone();
+      const out = [`Customer Name: ${nameInput.value.trim()}`];
+      if (phone) out.push(`Mobile Number: ${phone}`);
+      if (offersCheck.checked) out.push('You can send me offers and new items on WhatsApp.');
+      return out;
+    },
+    // Owner decision, 2026-08-15: the alert is the kitchen's working copy of
+    // the order, so it carries the customer's name and number too. The cost is
+    // that those are published to a topic with no access control — see
+    // docs/CART_AND_CHECKOUT.md for the mitigation if that ever matters.
+    alertIncludesCustomer: true,
+    // Two independent gates. canSend greys the button out so an incomplete
+    // order never looks sendable; beforeSend re-checks at the moment of
+    // sending, because a disabled-looking button is only a presentation.
+    canSend: detailsValid,
+    beforeSend: validateDetails,
+    rows: (): BasketRow[] =>
+      lines.map((line) => ({
+        name: line.name,
+        price: line.price,
+        lateNight: line.lateNight,
+        // Extras ride with their dish into the subtotal and into the message.
+        extras: line.extras.map((e) => ({ name: e.row.name, price: e.row.price, qty: e.qty })),
+        getQty: () => line.qty,
+        setQty(n: number) {
+          // The order form clears items the kitchen cannot cook at the chosen
+          // slot. Persist that: the basket the customer sees IS the order.
+          line.qty = Math.max(0, n);
+          setItemQty(line.id, line.qty);
+          if (line.qty === 0) renderCart();
+          else {
+            const v = line.el.querySelector('.qty-value') as HTMLElement;
+            v.textContent = String(line.qty);
+            const amount = line.el.querySelector('.cart-line-amount') as HTMLElement;
+            amount.textContent = rupee(line.price * line.qty);
+          }
+        },
+        setUnavailable(off: boolean) {
+          line.el.classList.toggle('cart-line--unavailable', off);
+          (line.el.querySelector('.qty-plus') as HTMLButtonElement).disabled = off;
+          if (off && !line.el.querySelector('.cart-line-note')) {
+            line.el
+              .querySelector('.cart-line-info')
+              ?.appendChild(textEl('span', 'cart-line-note', 'Not cooked at this time'));
+          } else if (!off) {
+            line.el.querySelector('.cart-line-note')?.remove();
+          }
+        },
+      })),
+    emptyMessage: 'Your basket is empty — add something from the menu to see your total.',
+  });
+
+  // A field that has already been marked wrong re-checks itself as the
+  // customer types, so the message clears the moment they fix it. A field that
+  // has never complained stays quiet until they leave it or try to send —
+  // nobody wants "enter your name" while typing the second letter of it.
+  function reviewField(input: HTMLInputElement, error: HTMLElement) {
+    const problem = fieldProblems().find((p) => p.input === input);
+    if (!problem) {
+      error.hidden = true;
+      error.textContent = '';
+      input.removeAttribute('aria-invalid');
+      input.closest('.calc-field')?.classList.remove('calc-field--error');
+      return;
+    }
+    error.textContent = problem.message;
+    error.hidden = false;
+    input.setAttribute('aria-invalid', 'true');
+    input.closest('.calc-field')?.classList.add('calc-field--error');
+  }
+
+  function onDetailsEdited(input: HTMLInputElement, error: HTMLElement) {
+    saveDetails();
+    if (input.getAttribute('aria-invalid') === 'true') reviewField(input, error);
+    // Drives the send button: it turns live the moment everything is valid.
+    form.update();
+  }
+
+  nameInput.addEventListener('input', () => onDetailsEdited(nameInput, nameError));
+  phoneInput.addEventListener('input', () => onDetailsEdited(phoneInput, phoneError));
+  nameInput.addEventListener('blur', () => reviewField(nameInput, nameError));
+  phoneInput.addEventListener('blur', () => reviewField(phoneInput, phoneError));
+  offersCheck.addEventListener('change', () => {
+    saveDetails();
+    form.update();
+  });
+
+  clearBtn.addEventListener('click', () => {
+    clearCart();
+    renderCart();
+    form.update();
+  });
+
+  // Another tab changed the basket (the menu is a likely second tab).
+  onCartChange(() => {
+    renderCart();
+    form.update();
+  });
+</script>

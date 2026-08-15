@@ -155,6 +155,26 @@ curl -H "Title: Test alert" -H "Priority: urgent" \
 If that rings but a real order does not, the fault is in the site or the
 deploy, not in ntfy.
 
+## The two kinds of alert
+
+| Sound | Title | What happened |
+|---|---|---|
+| **Urgent** (the loud one) | `New order Rs 549 (delivery)` | Someone tapped **Send order on WhatsApp** or **Copy quote** on `/checkout/` or `/price-calculator/`. The body is the whole basket — every item, quantity, extra, and the full price breakdown. |
+| **High** (quieter) | `Heads up - Zomato` / `Heads up - Swiggy` | Someone left the website by tapping a Zomato or Swiggy link. An order may appear on that tablet shortly. |
+
+They are deliberately different priorities. A customer messaging you directly
+needs you now; a maybe-order on a partner app is worth a glance, not an alarm.
+
+The partner alert covers **every** Zomato/Swiggy link on the site — the home
+page buttons, the footer, `/sundargarh/` — because it matches on where a link
+points, not on a label someone has to remember to add.
+
+**What the alert never contains:** the customer's name, phone number or
+address. `/checkout/` collects a name and mobile, and they go into the WhatsApp
+message only. The topic is world-readable, so publishing them there would be a
+public leak. If you ever add a field to the order form, keep it out of the
+alert.
+
 ## What the alert means — read this once
 
 The alert fires when the customer **opens WhatsApp or copies the quote**,

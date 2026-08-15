@@ -168,6 +168,46 @@ Empty topic = no request is made at all. Setup: `skills/setup-order-alerts.md`.
   cancel it), and ntfy headers are latin-1, so `₹` and the en-dash in slab
   labels must be stripped from the `Title` — body text stays UTF-8.
 
+## The order form exists once, and that is load-bearing
+
+`/price-calculator/` and `/checkout/` are the same form with different baskets.
+The behaviour — slot handling, availability, the rain/prepaid interplay, the
+quote wording, the WhatsApp hand-off, the ntfy alert — lives in
+`src/lib/order-form.ts`; the markup in `components/OrderOptions.astro` and
+`OrderQuote.astro`; the arithmetic, as always, in `src/lib/pricing.ts`. A page
+supplies a `BasketRow[]` and nothing else.
+
+**Do not copy that logic into a third page.** Ten releases went into getting
+these rules right; two copies would drift, and the drift would be silent because
+each page would still look correct on its own. Full design:
+`docs/CART_AND_CHECKOUT.md`.
+
+- Styles for it are in `styles/order-form.css` and `styles/cart.css`, **global,
+  not scoped**. Astro scopes a component's styles to its own markup, so a rule
+  written in the page silently stops applying the moment the element moves into
+  a shared component. This bit once; it is why those files exist.
+- The cart stores **quantities against catalogue ids only** — never names or
+  prices. Prices come from the current build, so an overnight basket cannot
+  quote a stale price and a delisted item drops out instead of being ordered.
+- **Add-ons attach to a basket line**, with their own quantity, and nest under
+  their dish in the message. A loose "Extra Cheese" next to two pizzas is not an
+  order anyone can cook. One line per distinct item; "cheese on one of the two"
+  is the extra's quantity.
+- **Customer name and mobile go in the WhatsApp message AND, by owner decision
+  (2026-08-15), in the ntfy alert** so the kitchen can call back from the
+  notification. `order-form.ts` still builds the two texts separately and
+  `alertIncludesCustomer` defaults to **off**; only `/checkout/` opts in. The
+  cost is real and was accepted knowingly: a free ntfy topic has no access
+  control, so every customer number is published to a channel strangers can
+  subscribe to if they find the topic name in the page source. The fix, if it
+  ever matters, is a Cloudflare Worker holding the topic as a server-side
+  secret — not weakening the order form.
+- **Sending is gated twice**: `canSend` greys the buttons out, `beforeSend`
+  re-validates at the moment of sending. A disabled button is presentation, not
+  a guarantee — keep both. The phone check rejects letters outright rather than
+  stripping them, because stripping turns "aaaaaaaaaa" into "" and
+  "9abc692261138" into something that looks valid.
+
 ## Menu decisions
 
 - **Aug 2026 — wok station retired, menu cut from 32 SKUs to 18.** Gas price

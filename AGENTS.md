@@ -59,6 +59,27 @@ orders. No backend, no payments. Astro (v7+) static site on GitHub Pages.
     secret in client-side code to add another alert channel, and never send
     customer PII to the topic; the whole site is public source.
 
+12. **The order form is implemented once.** `/price-calculator/` and
+    `/checkout/` share `src/lib/order-form.ts` +
+    `components/OrderOptions.astro` + `components/OrderQuote.astro`; a page
+    supplies only its basket (`BasketRow[]`). Never copy that behaviour into a
+    third page, and never restyle it from a page's scoped `<style>` — its CSS
+    is global in `styles/order-form.css` / `styles/cart.css` because scoped
+    rules do not reach into a child component. See docs/CART_AND_CHECKOUT.md.
+13. **Know what the ntfy alert publishes.** The cart stores quantities against
+    catalogue ids only — no names, no prices. `/checkout/` collects a name and
+    mobile, and by owner decision (2026-08-15) those go into the alert as well
+    as the WhatsApp message, via `alertIncludesCustomer` in `order-form.ts`.
+    That flag defaults to **off** and only `/checkout/` opts in — keep it that
+    way. The topic has no access control (rule 11), so treat everything sent
+    there as public; if that exposure ever needs closing, put a Cloudflare
+    Worker in front of ntfy rather than weakening the order form. Never add an
+    API key or webhook secret to client code.
+14. **Order sending is gated twice.** `canSend` greys the buttons out;
+    `beforeSend` re-validates at the moment of sending and refuses regardless
+    of how the button looked. Never replace the pair with just one — a disabled
+    button is presentation, not a guarantee. See docs/CART_AND_CHECKOUT.md.
+
 ## Repo map
 
 ```
@@ -122,6 +143,8 @@ PRD.md / PROGRESS.md     ← requirements / current state — read at session st
 | Add a new blog post | skills/add-blog-post.md |
 | Turn on Umami analytics | skills/setup-analytics.md |
 | Turn on order alerts (ntfy) so the kitchen hears an order | skills/setup-order-alerts.md |
+| Change the cart, checkout, or the shared order form | docs/CART_AND_CHECKOUT.md |
+| What we have decided to do but not done yet | TODO.md |
 | Pre-merge QA (JSON-LD, emoji, honesty checks) | skills/qa-check.md |
 | Check the site actually works (routes, phone flow) | skills/verify-site.md |
 | How CI/deploy works, reading `gh run list` | skills/deploy-cicd.md |

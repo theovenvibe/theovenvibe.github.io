@@ -1,0 +1,107 @@
+---
+/**
+ * The logistics half of an order: distance, slot, pickup-or-delivery, rain,
+ * prepayment.
+ *
+ * Rendered by BOTH `/price-calculator/` and `/checkout/`. The element IDs in
+ * here are the contract `src/lib/order-form.ts` binds to, so the two pages ask
+ * the customer identical questions and can never drift into quoting different
+ * answers. The only thing a page supplies for itself is the basket.
+ *
+ * Emits only the `.calc-options` column — the page owns the `.calc-form` grid
+ * around it, because on desktop that grid puts the basket and these options
+ * side by side and only the page knows what its basket looks like. The quote
+ * itself is `OrderQuote.astro`. Styles live in `styles/order-form.css`
+ * (global): a scoped style block in the page would not reach in here.
+ */
+import { site, maxDeliveryKm } from '../lib/data';
+
+const d = site.delivery;
+---
+
+<div class="calc-options">
+    <fieldset class="calc-group">
+      <legend>Distance</legend>
+      <div class="calc-radio-row">
+        <label class="calc-radio">
+          <input type="radio" name="distance" value="under2" checked />
+          Under 2 km
+        </label>
+        <label class="calc-radio">
+          <input type="radio" name="distance" value="2to4" />
+          2–4 km
+        </label>
+        <label class="calc-radio">
+          <input type="radio" name="distance" value="beyond4" />
+          More than {maxDeliveryKm} km
+        </label>
+      </div>
+      <label class="calc-field" for="kmInput">
+        Or enter exact distance (km) — owner precision
+        <input type="number" id="kmInput" min="0" step="0.1" inputmode="decimal" placeholder="e.g. 3.2" />
+      </label>
+    </fieldset>
+
+    <fieldset class="calc-group">
+      <legend>Time</legend>
+      <label class="calc-check" id="preorderLabel">
+        <input type="checkbox" id="preorderCheck" />
+        Pre-order — I want this later, not now
+      </label>
+      <p class="calc-note" id="preorderNote" hidden></p>
+      <label class="calc-field" for="dateInput">
+        {/* The expression stays on the same source line as the word before it:
+            Astro deletes a whitespace-only text node that spans a line break
+            between inline nodes, which had been rendering "runsMon–Fri" on the
+            live site since Phase 3. See PROGRESS.md's Phase 3 entry. */}
+        Order date (auto-filled with today — the afternoon rate only runs {d.quiet_hours.days})
+        <input type="date" id="dateInput" />
+      </label>
+      <label class="calc-field" for="timeInput">
+        Order time (auto-filled with now — change it to quote for later)
+        <input type="time" id="timeInput" />
+      </label>
+      <p id="timeRuleNote" class="calc-note" aria-hidden="true"></p>
+      <p id="pastNote" class="calc-note calc-note--warn" role="status" hidden>
+        We can't quote for a time that has already passed — showing now instead.
+      </p>
+    </fieldset>
+
+    <fieldset class="calc-group">
+      <legend>Order type</legend>
+      <div class="calc-radio-row">
+        <label class="calc-radio">
+          <input type="radio" name="orderType" value="delivery" checked />
+          Delivery
+        </label>
+        <label class="calc-radio">
+          <input type="radio" name="orderType" value="pickup" />
+          Pickup (₹{d.pickup_discount} off over ₹{d.pickup_min_order})
+        </label>
+      </div>
+    </fieldset>
+
+    <fieldset class="calc-group" id="otherGroup">
+      <legend>Other</legend>
+      <label class="calc-check" id="prepaidLabel">
+        <input type="checkbox" id="prepaidCheck" />
+        I'm paying online now (UPI) — price locked
+      </label>
+      <label class="calc-check" id="rainLabel">
+        <input type="checkbox" id="rainCheck" checked={d.rain.active} />
+        It's raining right now (+₹{d.rain.surcharge})
+        <span class="calc-check-hint" id="rainHint" hidden>— delivery only</span>
+      </label>
+      {/* For an order placed for later nobody knows the weather yet, so
+          the tick box is replaced by a plain statement of what happens
+          if it rains — or by the price-locked line once they prepay. */}
+      <p class="calc-note" id="weatherNote" hidden />
+      {
+        d.rain.active && (
+          <p class="calc-note calc-note--warn">
+            Rain surcharge is active right now: +₹{d.rain.surcharge}. {d.rain.note}
+          </p>
+        )
+      }
+    </fieldset>
+</div>
