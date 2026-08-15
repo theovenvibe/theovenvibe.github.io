@@ -156,10 +156,12 @@ const checkoutConfig = {
     setAddonQty,
     clearCart,
     onCartChange,
+    cartCount,
     type CartLine,
   } from '../lib/cart';
   import { makeOnce } from '../lib/notify';
   import type { QuoteResult } from '../lib/pricing';
+  import { pingCartActivity } from '../lib/cart-activity';
   import { getDeviceId } from '../lib/device';
   import { markOrderJustSent } from '../lib/push-signal';
 
@@ -169,6 +171,7 @@ const checkoutConfig = {
 
   const configEl = document.getElementById('calc-config');
   const CFG: CheckoutConfig = JSON.parse(configEl?.textContent ?? '{}');
+  const deviceId = getDeviceId();
   const catalog = new Map(CFG.catalog.map((row) => [row.id, row]));
 
   const linesEl = document.getElementById('cartLines') as HTMLElement;
@@ -371,6 +374,7 @@ const checkoutConfig = {
   }
 
   renderCart();
+  pingCartActivity(CFG.workerUrl, deviceId, cartCount());
 
   // ---------------------------------------------------------------------------
   // Who is ordering
@@ -640,7 +644,6 @@ const checkoutConfig = {
   // Fire-and-forget and never awaited: a backend outage must never block an
   // order (AGENTS.md rule 5), so failures are swallowed silently.
   // ---------------------------------------------------------------------------
-  const deviceId = getDeviceId();
 
   const distanceRadios = Array.from(document.querySelectorAll<HTMLInputElement>('input[name="distance"]'));
   const orderTypeRadios = Array.from(document.querySelectorAll<HTMLInputElement>('input[name="orderType"]'));
@@ -728,9 +731,12 @@ const checkoutConfig = {
     form.update();
   });
 
-  // Another tab changed the basket (the menu is a likely second tab).
+  // Fires for changes on this page too (cart.ts notifies every registered
+  // listener on commit, not just other tabs) — one place to keep the
+  // Worker's abandonment-detection signal current, including on clear.
   onCartChange(() => {
     renderCart();
     form.update();
+    pingCartActivity(CFG.workerUrl, deviceId, cartCount());
   });
 </script>
