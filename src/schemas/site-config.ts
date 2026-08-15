@@ -201,9 +201,11 @@ export const siteConfigSchema = z.object({
      * ntfy.sh topic that the price calculator pings when a customer opens the
      * WhatsApp order (or copies the quote). Empty = no alerts are sent.
      *
-     * The topic name is public — it ships in the page source. That is safe ONLY
-     * while the topic is reserved on an ntfy.sh account with access
-     * "everyone can publish, only I can read"; see skills/setup-order-alerts.md.
+     * The topic name IS the password. Free ntfy.sh has no access control
+     * (reservations are a paid tier), and this name ships in the page source,
+     * so it must be long and random — never a guessable word like
+     * "ovenvibe-orders". Rotating it is a one-line change here.
+     * See skills/setup-order-alerts.md.
      */
     ntfy_topic: z
       .string()

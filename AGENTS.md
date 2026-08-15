@@ -48,14 +48,16 @@ orders. No backend, no payments. Astro (v7+) static site on GitHub Pages.
     all (verified byte-for-byte in Phase 5). Never add a tracking script
     anywhere else in the codebase — Umami Cloud is the only analytics
     (PRD §5); v1's GTM/gtag/Yandex Metrika are dropped for good.
-11. **Order alerts are opt-in the same way, and carry no secret.**
-    `site.config.json` → `notifications.ntfy_topic` empty = the price
-    calculator makes no request at all. When set, it publishes the quote to
-    `https://ntfy.sh/<topic>` so the kitchen's phones ring
-    (skills/setup-order-alerts.md). This works only because the topic is
-    reserved write-only-for-everyone — **never** put an API key, bot token
-    or webhook secret in client-side code to add another alert channel;
-    the whole site is public source.
+11. **Order alerts are opt-in the same way, and the topic name IS the
+    password.** `site.config.json` → `notifications.ntfy_topic` empty = the
+    price calculator makes no request at all. When set, it publishes the
+    quote to `https://ntfy.sh/<topic>` so the kitchen's phones ring
+    (skills/setup-order-alerts.md). Free ntfy.sh has **no** access control —
+    reservations are a paid tier — so the topic must stay long and random,
+    and it is only safe to send there because the quote carries no customer
+    name, phone or address. **Never** put an API key, bot token or webhook
+    secret in client-side code to add another alert channel, and never send
+    customer PII to the topic; the whole site is public source.
 
 ## Repo map
 

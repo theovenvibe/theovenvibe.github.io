@@ -16,8 +16,8 @@ anyone can read.
 ## The decision: ntfy.sh
 
 Free, open source, apps on Android/iOS and a web app. The deciding property
-is that a **reserved** topic can be set to *"everyone can publish, only I
-can read"* — so the public page can post to it with **no token at all**.
+is that it accepts a plain POST with **no token at all** — the only thing
+that can work from public client-side code.
 
 Every alternative fails on that one point:
 
@@ -29,6 +29,44 @@ Every alternative fails on that one point:
 | Pushover | Works, but paid per platform |
 
 Full owner-facing setup lives in `skills/setup-order-alerts.md`.
+
+## The correction that shaped the final design
+
+The first version of this plan relied on an ntfy **reserved** topic set to
+*"everyone can publish, only I can read"*. That turned out to be a **paid**
+feature — ntfy's own docs say the free tier has no access control and that
+*"your topic name functions as a password, so you are responsible for
+choosing topic names that cannot be easily guessed."*
+
+So on the free tier, anyone who reads the topic name out of the page source
+can both read the topic and post to it. Two options remained:
+
+1. **A long random topic name**, accepting that it is effectively public.
+2. **A Cloudflare Worker** in front of ntfy, holding the real topic as a
+   server-side secret. Free (100k requests/day), hides the topic from
+   readers — but does not stop spam either, since the Worker URL is just as
+   public, and it inserts a second service that can fail silently between
+   the customer and the kitchen.
+
+**Chosen: option 1**, with the topic generated from `secrets` (22 random
+characters, ~113 bits). The reasoning is that the exposure being bought back
+by option 2 is worth very little: the alert body carries **no customer PII**
+— items, prices, delivery slab, pre-order slot, and nothing else. A snooper
+learns the day's order volume. Against that, an extra hop between a customer
+placing an order and the kitchen hearing it is a real reliability cost, and
+reliability is the entire point of this feature.
+
+This makes two things binding, both recorded in AGENTS.md golden rule 11 and
+MEMORY.md:
+
+- The topic name stays **long and random** — never a readable word.
+- **No customer name, phone or address may ever be added to the alert body.**
+  If the calculator starts collecting those, the alert becomes a public leak
+  the same day.
+
+The realistic risk is spam, not privacy. Rotation is one line of config plus
+re-subscribing four devices, and the Worker option gets revisited only if
+spam actually happens.
 
 ## What was built
 
@@ -51,10 +89,10 @@ Full owner-facing setup lives in `skills/setup-order-alerts.md`.
    - A dedupe guard so a double-tap does not ring four devices twice.
    - `.catch(() => {})` — a dead alert must never block the customer from
      ordering.
-4. **`skills/setup-order-alerts.md`** — the owner's step-by-step: account,
-   reserved topic with write-only access, subscribing four devices, making
-   Android/iOS actually ring, pasting the topic into the config, verifying
-   live, and turning it back off.
+4. **`skills/setup-order-alerts.md`** — the owner's step-by-step: subscribing
+   four devices (no ntfy account is needed at all on a free topic), making
+   Android/iOS actually ring, a `curl` test that isolates ntfy from the site,
+   rotating the topic if it is spammed, and turning alerts back off.
 
 ## Known limits — stated, not hidden
 
@@ -68,9 +106,9 @@ Full owner-facing setup lives in `skills/setup-order-alerts.md`.
 - **Calculator only.** The nav/FAB WhatsApp buttons stay silent: those are
   conversations, not orders. Wiring them up later means lifting
   `notifyKitchen()` into a shared script.
-- **The topic name is public.** Safe only while the topic is reserved with
-  read restricted to the owner. If it is ever spammed, reserve a new random
-  name and change one line of config.
+- **The topic name is effectively public**, and free ntfy cannot restrict it.
+  Acceptable only because the body carries no customer PII, and only while it
+  stays long and random. Spam is the live risk; rotation is the fix.
 
 ## Status
 
@@ -89,9 +127,9 @@ Full owner-facing setup lives in `skills/setup-order-alerts.md`.
       and the full ₹-bearing quote intact in the UTF-8 body.
 - [x] Off-by-default proven, not assumed: rebuilt with `ntfy_topic: ""` and
       re-ran the same script — **zero** requests on either click.
-- [ ] Owner completes ntfy setup and supplies the topic name
-- [ ] Topic pasted into `site.config.json`
-- [ ] `skills/qa-check.md` green on the branch
+- [x] Random topic generated and set in `site.config.json` (nothing to
+      reserve — free topics need no account)
+- [ ] Owner subscribes the laptop + 3 phones and confirms the `curl` test rings
 - [ ] Merge `--no-ff` into `develop`; build the merged state
 - [ ] Release PR `develop` → `main` — **opened by the agent, merged by the
       owner** (standing instruction, PROGRESS.md 2026-08-14)

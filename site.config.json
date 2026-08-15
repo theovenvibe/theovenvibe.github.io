@@ -148,7 +148,7 @@
     "umami_website_id": "a302193f-8dba-4bea-a880-2de3e09cf8d4"
   },
   "notifications": {
-    "_comment": "Order alerts. Paste the ntfy.sh topic you reserved (see skills/setup-order-alerts.md) to make every phone and the laptop ring when someone places an order from the price calculator. Leave \"\" to disable alerts. The topic MUST be reserved on your ntfy.sh account with access 'everyone can publish, only I can read' — the name is visible in the page source.",
-    "ntfy_topic": ""
+    "_comment": "Order alerts — makes every phone and the laptop ring when someone places an order from the price calculator. Leave \"\" to disable alerts entirely. THE TOPIC NAME IS THE ONLY PASSWORD: free ntfy.sh cannot restrict access, and this name is visible in the page source, so it must stay long and random. If it is ever spammed, generate a new random name here and re-subscribe the devices — see skills/setup-order-alerts.md.",
+    "ntfy_topic": "ovenvibe-myt6ecdgbgyll6ot2978iw"
   }
 }

@@ -21,45 +21,57 @@ anyone can read. That rules out anything needing a secret:
 
 | Option | Verdict |
 |---|---|
-| **ntfy.sh** | **Chosen.** Free, open source, apps for Android/iOS/web. A reserved topic can be set "everyone can publish, only I can read", so the public page needs no token at all. |
+| **ntfy.sh** | **Chosen.** Free, open source, apps for Android/iOS/web, and it accepts a plain POST with no token — the only option that works from public client-side code. |
 | Telegram bot | Rejected. The bot token would ship in the page source, and anyone reading it could spam or hijack the chat. |
 | Discord webhook | Rejected. Same exposure, and mobile alerts are easy to miss. |
 | WhatsApp Business API | Rejected. Needs a paid provider and a server. |
 | Pushover | Works, but costs per platform. ntfy does the same job free. |
+| Cloudflare Worker in front of ntfy | Considered, rejected for now. It would hide the topic name behind a server-side secret, but it puts a second service between the customer and the kitchen that can fail silently. Revisit only if the topic is actually abused. |
 
-## 1. Create the ntfy.sh account (owner, ~2 minutes)
+## The one security fact you must understand
 
-1. Go to `https://ntfy.sh/`.
-2. **Sign up** (top right) with an email and password.
-3. Log in, then open your username menu (top right) → **Account**.
+ntfy's **reserved topics with access control are a paid feature.** On the
+free tier there is no access control at all: *anyone who knows the topic
+name can both read it and post to it*, and the name is visible in the
+page source of `/price-calculator/`.
 
-## 2. Reserve the topic — this is the security step (owner, ~2 minutes)
+That is acceptable here for exactly one reason: **the alert body contains
+no customer PII.** It is the quote — items, prices, delivery slab, the
+pre-order slot. No name, no phone number, no address. The worst a snooper
+learns is how many pizzas were quoted today.
 
-An unreserved ntfy topic is readable by anyone who knows its name, and the
-name ships in the page source. Reserving it fixes that.
+Two rules follow, and they are binding:
 
-1. On the **Account** page, find **Reserved topics** → **Add**.
-2. Topic name: `ovenvibe-orders-k9m4qz` (or any name you like — it must be
-   letters, numbers, hyphens and underscores only, 64 characters max).
-3. Access: **"Everyone can publish, only I can read"** (may be shown as
-   *write-only*). Do **not** leave it public-read.
-4. Save.
+1. **The topic name is the password.** It must stay long and random. Never
+   change it to something readable like `ovenvibe-orders`.
+2. **Never add customer PII to the alert.** If the calculator ever starts
+   collecting a name, phone or address, it must not go into the ntfy body —
+   the alert would become a public leak the same day.
 
-If you ever suspect the topic is being spammed, reserve a new one with a
-different random name and repeat step 4 below — nothing else changes.
+The realistic risk is not privacy, it is **spam**: a bored person who finds
+the name could ring four phones at 3am. The fix takes one minute — see
+"If the topic gets spammed" at the bottom.
 
-## 3. Subscribe every device (owner, ~5 minutes)
+## 1. Install the app — no account needed (owner, ~5 minutes)
+
+Free ntfy topics are open, which means there is **nothing to sign up for**.
+Skip any "Sign up" prompt.
 
 **Each of the three phones:**
 1. Install **ntfy** (Play Store / App Store).
-2. Open it → account settings → log in with the account from step 1
-   (server `ntfy.sh`). Logging in is required, because only the account
-   owner can read this topic.
-3. Tap **+** → subscribe to the topic name from step 2.
+2. Open it, tap **+** (Subscribe to topic).
+3. Type the topic name exactly as it appears in `site.config.json` →
+   `notifications.ntfy_topic`. Leave the server as the default `ntfy.sh`.
+4. Subscribe. That is the whole setup for that phone.
 
 **The laptop:**
-1. Open `https://ntfy.sh/app`, log in, subscribe to the same topic.
-2. Keep the tab pinned, and allow browser notifications when prompted.
+1. Open `https://ntfy.sh/app` in the browser.
+2. Click **Subscribe to topic**, enter the same name, subscribe.
+3. Allow browser notifications when prompted, and keep the tab pinned.
+
+Copy the topic name from the config rather than typing it from memory — it
+is deliberately random, and a typo means a device that silently never
+alerts.
 
 ## 4. Make the alert loud (owner, ~2 minutes per phone)
 
@@ -75,19 +87,26 @@ treat them as an alarm rather than a quiet buzz.
   breaks through Focus.
 - **Laptop:** the browser tab plays a sound; keep the volume up.
 
-## 5. Paste the topic into the repo (owner or an agent — normal config edit)
+## 5. The topic in the repo (already set — this section is for changing it)
 
-Open `site.config.json` (repo root), find:
+`site.config.json` (repo root) already carries a random topic:
 ```json
 "notifications": {
-  "ntfy_topic": ""
+  "ntfy_topic": "ovenvibe-myt6ecdgbgyll6ot2978iw"
 }
 ```
-Paste the topic name between the quotes:
-```json
-"notifications": {
-  "ntfy_topic": "ovenvibe-orders-k9m4qz"
-}
+Nothing needs to be pasted for the initial setup — subscribe the devices to
+that exact name and you are done. This section is the flow for **changing**
+it later (rotation, or turning alerts off with `""`).
+
+Generate a replacement name that is actually random, never one you invent
+by hand:
+```bash
+python3 -c "
+import secrets, string
+a = string.ascii_lowercase + string.digits
+print('ovenvibe-' + ''.join(secrets.choice(a) for _ in range(22)))
+"
 ```
 Then the normal edit flow:
 ```bash
@@ -120,11 +139,21 @@ edit — see `skills/update-hours-or-contact.md` §9 for the tap-by-tap flow.
 4. Tap **Copy quote** instead — that fires an alert too, worded
    `Copied the quote:`.
 
-Nothing arrives? Check, in this order: the topic in `site.config.json`
-matches the reserved topic exactly; the change actually deployed
-(`gh run list --branch main --limit 1`); each device is logged into the
-ntfy account (a device that is only *subscribed*, not logged in, cannot
-read a write-only topic and will show nothing).
+Nothing arrives? Check, in this order: the topic each device subscribed to
+matches `site.config.json` **character for character** (a typo in a random
+string is the most likely fault and it fails silently); the change actually
+deployed (`gh run list --branch main --limit 1`); notifications are allowed
+for the ntfy app / browser tab at the OS level.
+
+You can also test without touching the site at all — this posts straight to
+the topic and every subscribed device should sound:
+```bash
+curl -H "Title: Test alert" -H "Priority: urgent" \
+  -d "If you can read this, the topic is wired up." \
+  https://ntfy.sh/ovenvibe-myt6ecdgbgyll6ot2978iw
+```
+If that rings but a real order does not, the fault is in the site or the
+deploy, not in ntfy.
 
 ## What the alert means — read this once
 
@@ -141,16 +170,32 @@ mind. So:
   ntfy keeps messages for a limited window on the free tier, so it is a
   live alert, not an archive. Do not treat it as the order log.
 
+## If the topic gets spammed
+
+Junk alerts at 3am mean someone found the name in the page source. This is
+the expected failure mode of a free topic, and it is a five-minute fix:
+
+1. Generate a new random name (the `python3` snippet in §5).
+2. Put it in `site.config.json`, build, commit, merge, deploy per §5.
+3. On all four devices: unsubscribe the old topic, subscribe the new one.
+
+The old topic keeps receiving the spam, but nothing is listening to it any
+more. Nothing else in the setup changes. If this ever happens repeatedly,
+that is the trigger to revisit the Cloudflare Worker option in the table at
+the top of this file — not before.
+
 ## Turning alerts back off
 
 Set `ntfy_topic` back to `""`, rebuild, commit. No request is made at all —
-the fetch is skipped entirely when the topic is empty, so the page behaves
-exactly as it did before this feature existed.
+the fetch is skipped entirely when the topic is empty (verified against the
+built output, not assumed), so the page behaves exactly as it did before
+this feature existed.
 
 ## Limits
 
-The free ntfy.sh tier allows roughly 250 messages a day and a handful of
-reserved topics — far above this kitchen's order volume. Only the price
+The free ntfy.sh tier allows roughly 250 messages a day — far above this
+kitchen's order volume. Access control and topic reservation are **paid**
+features and are not used here; see "The one security fact" above. Only the price
 calculator sends alerts; the WhatsApp buttons in the nav, the floating
 button and the other pages do not, because those are conversations, not
 orders. Wiring those in later means calling the same `notifyKitchen()` from
