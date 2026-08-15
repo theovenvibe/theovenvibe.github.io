@@ -16,6 +16,8 @@ import {
   displayName,
   displayMeta,
   displayDescription,
+  itemCartId,
+  comboCartId,
 } from '../lib/data';
 
 const codeToName = new Map<string, string>();
@@ -44,6 +46,7 @@ function comboDescription(combo: (typeof availableCombos)[number]): string {
             meta={displayMeta(c.combo_name)}
             description={comboDescription(c)}
             price={c.combo_price}
+            cartId={comboCartId(c.combo_code)}
           />
         ))}
       </div>
@@ -63,6 +66,7 @@ function comboDescription(combo: (typeof availableCombos)[number]): string {
               meta={displayMeta(item.display_name || item.item_name)}
               description={displayDescription(item)}
               price={item.price}
+              cartId={itemCartId(item.product_code)}
             />
           ))}
         </div>

@@ -168,6 +168,36 @@ Empty topic = no request is made at all. Setup: `skills/setup-order-alerts.md`.
   cancel it), and ntfy headers are latin-1, so `₹` and the en-dash in slab
   labels must be stripped from the `Title` — body text stays UTF-8.
 
+## The order form exists once, and that is load-bearing
+
+`/price-calculator/` and `/checkout/` are the same form with different baskets.
+The behaviour — slot handling, availability, the rain/prepaid interplay, the
+quote wording, the WhatsApp hand-off, the ntfy alert — lives in
+`src/lib/order-form.ts`; the markup in `components/OrderOptions.astro` and
+`OrderQuote.astro`; the arithmetic, as always, in `src/lib/pricing.ts`. A page
+supplies a `BasketRow[]` and nothing else.
+
+**Do not copy that logic into a third page.** Ten releases went into getting
+these rules right; two copies would drift, and the drift would be silent because
+each page would still look correct on its own. Full design:
+`docs/CART_AND_CHECKOUT.md`.
+
+- Styles for it are in `styles/order-form.css` and `styles/cart.css`, **global,
+  not scoped**. Astro scopes a component's styles to its own markup, so a rule
+  written in the page silently stops applying the moment the element moves into
+  a shared component. This bit once; it is why those files exist.
+- The cart stores **quantities against catalogue ids only** — never names or
+  prices. Prices come from the current build, so an overnight basket cannot
+  quote a stale price and a delisted item drops out instead of being ordered.
+- **Add-ons attach to a basket line**, with their own quantity, and nest under
+  their dish in the message. A loose "Extra Cheese" next to two pizzas is not an
+  order anyone can cook. One line per distinct item; "cheese on one of the two"
+  is the extra's quantity.
+- **Customer name and mobile go in the WhatsApp message, never in the ntfy
+  alert.** `order-form.ts` builds two texts for exactly this reason. This was a
+  live bug during development — the alert published the whole quote, which had
+  just grown a phone number. The test suite asserts it; keep it that way.
+
 ## Menu decisions
 
 - **Aug 2026 — wok station retired, menu cut from 32 SKUs to 18.** Gas price

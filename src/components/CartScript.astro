@@ -1,0 +1,64 @@
+---
+/**
+ * Wires the cart on every page: the Add buttons on menu cards, and the floating
+ * basket's visibility and count.
+ *
+ * Rendered from `Layout.astro` so any page that grows a menu card later gets
+ * this for free. The script is a module (Vite-bundled) because it imports
+ * `lib/cart.ts`; `public/scripts/site.js` cannot, being a plain file served
+ * as-is.
+ */
+import CartFab from './CartFab.astro';
+import '../styles/cart.css';
+
+interface Props {
+  /** Off on /checkout/ — a button that goes where you already are is clutter. */
+  showFab?: boolean;
+}
+const { showFab = true } = Astro.props;
+---
+
+{showFab && <CartFab />}
+
+<script>
+  import { addItem, cartCount, onCartChange } from '../lib/cart';
+
+  // Every place that shows a basket count opts in with these classes, so the
+  // nav badge and the floating button can never disagree about what is in the
+  // basket — and a third one added later needs no change here.
+  const counts = Array.from(document.querySelectorAll<HTMLElement>('.js-cart-count'));
+  const hideWhenEmpty = Array.from(document.querySelectorAll<HTMLElement>('.js-cart-hide-empty'));
+
+  function paintCount(n: number) {
+    for (const el of counts) el.textContent = String(n);
+    // An empty basket shows nothing rather than a "0" the customer has to
+    // interpret. The nav's cart icon is exempt: it stays put so people learn
+    // where the basket lives before they have put anything in it.
+    for (const el of hideWhenEmpty) el.hidden = n === 0;
+  }
+
+  paintCount(cartCount());
+  onCartChange((cart) => paintCount(cartCount(cart)));
+
+  // Delegated, so cards inside a collapsed accordion (or added later) work
+  // without re-binding.
+  document.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement | null)?.closest<HTMLElement>('.add-to-cart');
+    if (!btn) return;
+    const id = btn.dataset.cartId;
+    if (!id) return;
+
+    addItem(id, 1);
+
+    // Say so on the button. Without this the only feedback is a badge in the
+    // far corner, which is easy to miss — and a customer who thinks the tap
+    // missed taps again and orders two.
+    const label = btn.textContent;
+    btn.classList.add('is-added');
+    btn.textContent = 'Added';
+    window.setTimeout(() => {
+      btn.classList.remove('is-added');
+      btn.textContent = label;
+    }, 1200);
+  });
+</script>

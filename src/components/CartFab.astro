@@ -1,0 +1,40 @@
+---
+/**
+ * Floating basket button — appears only once something is in the cart, and
+ * takes the customer to /checkout/.
+ *
+ * Deliberately NOT a nav item. `Nav.astro` is v1's markup ported pixel-for-pixel
+ * (PRD §8), and threading a badge through it risks the desktop nav wrapping —
+ * the same reason the "Order Now" copy was left alone in Phase 4. A FAB is
+ * additive, follows the pattern `WhatsAppFab.astro` already established, and is
+ * where a thumb already is on the phone, which is where the orders come from.
+ *
+ * It sits above the WhatsApp FAB rather than beside it, so neither covers the
+ * other, and it starts hidden: an empty cart shows nothing at all.
+ */
+---
+
+<a
+  href="/checkout/"
+  class="cart-fab js-cart-hide-empty"
+  id="cartFab"
+  hidden
+  aria-label="Review your order"
+>
+  <svg
+    width="26"
+    height="26"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <circle cx="9" cy="21" r="1"></circle>
+    <circle cx="20" cy="21" r="1"></circle>
+    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+  </svg>
+  <span class="cart-fab-count js-cart-count">0</span>
+</a>

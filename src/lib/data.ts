@@ -112,6 +112,80 @@ export const heroDish: MenuItem =
     );
   })();
 
+/* ---------- the orderable catalogue ---------- */
+
+/**
+ * One thing a customer can put in an order: a menu item, a combo, or an add-on,
+ * flattened into the shape the order form actually needs.
+ *
+ * `id` is what the cart stores in localStorage, so it must stay stable — it is
+ * built from the catalogue codes, which MEMORY.md already pins as the join keys
+ * to Zomato. Renaming a dish does not orphan a cart; changing its code does.
+ */
+export interface OrderableRow {
+  id: string;
+  name: string;
+  price: number;
+  /** Still cooked during the late-night window? The boiling stations are not. */
+  lateNight: boolean;
+  /** The heading this belongs under — a category name, "Combos" or "Add-ons". */
+  group: string;
+}
+
+const lateNightOffCategories = new Set(site.delivery.late_night.unavailable_categories);
+const lateNightOffItems = new Set(site.delivery.late_night.unavailable_items);
+
+/** Only the boiling stations shut after closing — everything else stays on. */
+function servedLateNight(category: string, itemName: string): boolean {
+  return !lateNightOffCategories.has(category) && !lateNightOffItems.has(itemName);
+}
+
+/**
+ * Every orderable thing, in menu order. Built here rather than in a page so the
+ * price calculator, the checkout page and the add-to-cart buttons cannot end up
+ * with three different ideas of what is on the menu at 1am.
+ */
+export const orderCatalog: OrderableRow[] = [
+  ...categories.flatMap(({ name, items }) =>
+    items.map((i) => ({
+      id: `item-${i.product_code}`,
+      name: displayName(i.display_name || i.item_name),
+      price: i.price,
+      lateNight: servedLateNight(name, i.item_name),
+      group: name,
+    })),
+  ),
+  ...availableCombos.map((c) => ({
+    id: `combo-${c.combo_code}`,
+    name: displayName(c.combo_name),
+    price: c.combo_price,
+    lateNight: !lateNightOffItems.has(c.combo_name),
+    group: 'Combos',
+  })),
+  ...availableAddons.map((a) => ({
+    id: `addon-${a.addon_code}`,
+    name: displayName(a.addon_name),
+    price: a.addon_price,
+    lateNight: !lateNightOffItems.has(a.addon_name),
+    group: 'Add-ons',
+  })),
+];
+
+/** The same catalogue grouped for rendering, preserving menu order. */
+export const orderCatalogGroups: { name: string; rows: OrderableRow[] }[] = (() => {
+  const map = new Map<string, OrderableRow[]>();
+  for (const row of orderCatalog) {
+    if (!map.has(row.group)) map.set(row.group, []);
+    map.get(row.group)!.push(row);
+  }
+  return [...map.entries()].map(([name, rows]) => ({ name, rows }));
+})();
+
+/** Cart id for anything in the catalogue — the one place these strings are built. */
+export const itemCartId = (productCode: string) => `item-${productCode}`;
+export const comboCartId = (comboCode: string) => `combo-${comboCode}`;
+export const addonCartId = (addonCode: string) => `addon-${addonCode}`;
+
 /* ---------- delivery copy (spec: FAQ, banner and calculator all read
    site.delivery — these helpers exist so that no page hand-formats a rupee
    or a time range on its own) ---------- */

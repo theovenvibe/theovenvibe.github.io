@@ -6,7 +6,7 @@
  */
 import AccordionItem from './AccordionItem.astro';
 import MenuCard from './MenuCard.astro';
-import { availableAddons, imageFor, displayName, displayMeta } from '../lib/data';
+import { availableAddons, imageFor, displayName, displayMeta, addonCartId } from '../lib/data';
 ---
 
 {
@@ -21,6 +21,7 @@ import { availableAddons, imageFor, displayName, displayMeta } from '../lib/data
             description="Add it to any order"
             price={addon.addon_price}
             extraClass="addon-card"
+            cartId={addonCartId(addon.addon_code)}
           />
         ))}
       </div>
