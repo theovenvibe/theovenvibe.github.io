@@ -34,7 +34,7 @@ const checkoutConfig = {
   whatsapp: site.business.whatsapp,
   businessName: site.business.name,
   hours: site.business.hours,
-  ntfyTopic: site.notifications.ntfy_topic,
+  workerUrl: site.backend.worker_url,
   // The catalogue the cart's ids resolve against. Inlined at build time: the
   // cart stores quantities only, so this is where names and prices come from.
   catalog: orderCatalog,
@@ -158,6 +158,8 @@ const checkoutConfig = {
     onCartChange,
     type CartLine,
   } from '../lib/cart';
+  import { makeOnce } from '../lib/notify';
+  import type { QuoteResult } from '../lib/pricing';
 
   interface CheckoutConfig extends OrderFormConfig {
     catalog: OrderableRow[];
@@ -528,7 +530,12 @@ const checkoutConfig = {
     return false;
   }
 
+  let lastQuote: QuoteResult | null = null;
+
   const form = initOrderForm(CFG, {
+    onUpdate: (state) => {
+      lastQuote = state.result;
+    },
     leadLines: () => {
       const phone = normalisedPhone();
       const out = [`Customer Name: ${nameInput.value.trim()}`];
@@ -616,6 +623,114 @@ const checkoutConfig = {
     saveDetails();
     form.update();
   });
+
+  // ---------------------------------------------------------------------------
+  // Order capture (Phase 0, HANDOFF.md in the-oven-vibe-backend)
+  //
+  // Every checkout POSTs to the Worker as a `pending` order before opening
+  // WhatsApp — a click is not an order, only the owner's later confirmation
+  // makes one real. This stays independent of order-form.ts (which owns
+  // pricing and the WhatsApp message) rather than growing its hook surface:
+  // it reads the same #waShareLink/#copyQuoteBtn DOM at the moment of send,
+  // gated on `copyBtn.dataset.quote` — order-form only populates that once
+  // the basket, slot and customer details are all valid.
+  //
+  // Fire-and-forget and never awaited: a backend outage must never block an
+  // order (AGENTS.md rule 5), so failures are swallowed silently.
+  // ---------------------------------------------------------------------------
+  const DEVICE_ID_KEY = 'ovenvibe.device_id.v1';
+
+  function getDeviceId(): string {
+    try {
+      let id = window.localStorage.getItem(DEVICE_ID_KEY);
+      if (!id) {
+        id = crypto.randomUUID();
+        window.localStorage.setItem(DEVICE_ID_KEY, id);
+      }
+      return id;
+    } catch {
+      // Storage unavailable — a fresh id every send is still better than none.
+      return crypto.randomUUID();
+    }
+  }
+  const deviceId = getDeviceId();
+
+  const distanceRadios = Array.from(document.querySelectorAll<HTMLInputElement>('input[name="distance"]'));
+  const orderTypeRadios = Array.from(document.querySelectorAll<HTMLInputElement>('input[name="orderType"]'));
+  const kmInput = document.getElementById('kmInput') as HTMLInputElement;
+  const preorderCheck = document.getElementById('preorderCheck') as HTMLInputElement;
+  const dateInput = document.getElementById('dateInput') as HTMLInputElement;
+  const timeInput = document.getElementById('timeInput') as HTMLInputElement;
+  const copyBtn = document.getElementById('copyQuoteBtn') as HTMLButtonElement;
+  const waLink = document.getElementById('waShareLink') as HTMLAnchorElement;
+
+  /** Comes free with the order — never asked at checkout (PRD §7.2). */
+  function distanceBand(): string | null {
+    const raw = kmInput.value.trim();
+    if (raw !== '') return `${raw} km`;
+    const checked = distanceRadios.find((r) => r.checked);
+    if (!checked) return null;
+    if (checked.value === 'under2') return '0-2 km';
+    if (checked.value === '2to4') return '2-4 km';
+    return 'beyond 4 km';
+  }
+
+  function slotAt(): string | null {
+    if (!preorderCheck.checked || !dateInput.value || !timeInput.value) return null;
+    return `${dateInput.value}T${timeInput.value}:00`;
+  }
+
+  const onceOrder = makeOnce();
+
+  function captureOrder(quoteText: string) {
+    if (!CFG.workerUrl || !lastQuote || lastQuote.kind !== 'ok') return;
+    const foodTotal = lastQuote.lines
+      .filter((l) => l.label === 'Food')
+      .reduce((sum, l) => sum + l.amount, 0);
+
+    const payload = {
+      device_id: deviceId,
+      name: nameInput.value.trim(),
+      phone: normalisedPhone(),
+      marketing_ok: offersCheck.checked,
+      order_type: orderTypeRadios.find((r) => r.checked)?.value ?? 'delivery',
+      slot_at: slotAt(),
+      distance_band: distanceBand(),
+      food_total: foodTotal,
+      delivery_fee: lastQuote.total - foodTotal,
+      total: lastQuote.total,
+      quote_text: quoteText,
+      items: lines.map((line) => ({
+        catalog_id: line.id,
+        name: line.name,
+        qty: line.qty,
+        unit_price: line.price,
+        extras: line.extras.length
+          ? line.extras.map((e) => ({
+              catalog_id: e.row.id,
+              name: e.row.name,
+              qty: e.qty,
+              unit_price: e.row.price,
+            }))
+          : undefined,
+      })),
+    };
+
+    fetch(`${CFG.workerUrl}/orders`, {
+      method: 'POST',
+      keepalive: true,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    }).catch(() => {});
+  }
+
+  function onOrderSend() {
+    const text = copyBtn.dataset.quote;
+    if (!text || !onceOrder(`order:${text}`)) return;
+    captureOrder(text);
+  }
+  waLink.addEventListener('click', onOrderSend);
+  copyBtn.addEventListener('click', onOrderSend);
 
   clearBtn.addEventListener('click', () => {
     clearCart();
