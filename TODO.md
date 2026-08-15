@@ -28,24 +28,20 @@ next. When an item ships, delete it here and write it up there.
 
 ## Next up
 
-- [ ] **Customer push notifications — the Zomato-style thing.** We want to send
-      customers notifications for order updates, offers, new items, and the odd
-      joke. **Not started — to be designed together first.**
-      - What we now have that makes it possible: `/checkout/` collects a name and
-        a mobile number, plus an explicit, unticked opt-in ("Send me offers and
-        new items on WhatsApp"). That consent is recorded in the order message.
-      - The hard parts to work through before writing any code: those details
-        currently live only in the WhatsApp message the customer sends, so there
-        is **no list anywhere** — building one means somewhere to store it.
-        Sending marketing on WhatsApp needs the WhatsApp Business API and
-        template approval; SMS needs a DLT-registered sender in India. Both cost
-        money, unlike everything else on this site. A web push notification is
-        free but only reaches people who allowed notifications in a browser,
-        which is a much smaller audience than people who have ordered.
-      - Also unresolved: who is a "customer" for this, how someone unsubscribes,
-        and where the list lives so it is not a spreadsheet on one phone.
-      - **Do not build this without agreeing the approach first** — owner's
-        explicit instruction, 2026-08-15.
+- [ ] **Customer push notifications — now a project of its own.**
+      Specced 2026-08-15 in **`../the-oven-vibe-backend`**
+      (github.com/theovenvibe/the-oven-vibe-backend, private). Read its
+      `PRD.md`; `docs/ECOSYSTEM.md` there explains how all four repos fit
+      together.
+      - **Blocked on an owner task:** `skills/setup-cloudflare.md` in that repo
+        — account, D1 database, VAPID keys, Worker secrets. Nothing can start
+        until those five values exist.
+      - **Phase 0 touches THIS repo:** `/checkout/` will POST each order to the
+        Worker, and `src/lib/notify.ts` will post to the Worker's `/alert`
+        instead of ntfy directly, so `notifications.ntfy_topic` leaves
+        `site.config.json` and becomes a Worker secret. That is what stops
+        customer phone numbers being published to a world-readable topic.
+      - Everything runs on free tiers. ₹0 is a hard requirement.
 
 ## Known gaps, deliberately left
 
