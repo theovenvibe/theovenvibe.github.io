@@ -150,5 +150,9 @@
   "backend": {
     "_comment": "The Cloudflare Worker (the-oven-vibe-backend) that stores orders and proxies the kitchen's ntfy alert. Not a secret — just a URL. Leave \"\" to disable order capture and alerts entirely.",
     "worker_url": "https://oven-vibe-backend.theovenvibe.workers.dev"
+  },
+  "push": {
+    "_comment": "VAPID public key for push subscribe (Phase 3). Safe here — it's the public half of the pair. Leave \"\" to disable the soft-ask card entirely.",
+    "vapid_public_key": "BHwN1cB31vqWm_0WYEH7SAh6DJT71nwYwEykG8qIv3GeGtpXhoeiiNG0ZPjHmNxBLkRa07BAye2pksxRtyIUbMI"
   }
 }

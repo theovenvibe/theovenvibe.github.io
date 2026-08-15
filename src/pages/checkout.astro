@@ -160,6 +160,8 @@ const checkoutConfig = {
   } from '../lib/cart';
   import { makeOnce } from '../lib/notify';
   import type { QuoteResult } from '../lib/pricing';
+  import { getDeviceId } from '../lib/device';
+  import { markOrderJustSent } from '../lib/push-signal';
 
   interface CheckoutConfig extends OrderFormConfig {
     catalog: OrderableRow[];
@@ -638,21 +640,6 @@ const checkoutConfig = {
   // Fire-and-forget and never awaited: a backend outage must never block an
   // order (AGENTS.md rule 5), so failures are swallowed silently.
   // ---------------------------------------------------------------------------
-  const DEVICE_ID_KEY = 'ovenvibe.device_id.v1';
-
-  function getDeviceId(): string {
-    try {
-      let id = window.localStorage.getItem(DEVICE_ID_KEY);
-      if (!id) {
-        id = crypto.randomUUID();
-        window.localStorage.setItem(DEVICE_ID_KEY, id);
-      }
-      return id;
-    } catch {
-      // Storage unavailable — a fresh id every send is still better than none.
-      return crypto.randomUUID();
-    }
-  }
   const deviceId = getDeviceId();
 
   const distanceRadios = Array.from(document.querySelectorAll<HTMLInputElement>('input[name="distance"]'));
@@ -728,6 +715,9 @@ const checkoutConfig = {
     const text = copyBtn.dataset.quote;
     if (!text || !onceOrder(`order:${text}`)) return;
     captureOrder(text);
+    // Marks the moment for the push soft-ask (PRD §8.2), which shows itself
+    // on return to the tab — this component doesn't own that UI at all.
+    markOrderJustSent();
   }
   waLink.addEventListener('click', onOrderSend);
   copyBtn.addEventListener('click', onOrderSend);
