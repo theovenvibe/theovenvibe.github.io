@@ -10,6 +10,7 @@
  */
 import CartFab from './CartFab.astro';
 import '../styles/cart.css';
+import { lateNightWindow } from '../lib/data';
 
 interface Props {
   /** Off on /checkout/ — a button that goes where you already are is clutter. */
@@ -18,12 +19,23 @@ interface Props {
 const { showFab = true } = Astro.props;
 ---
 
+{/*
+  The late-night window reaches the client on a data attribute, never through
+  an import. `lib/data.ts` reads menu.json with readFileSync at build time, so
+  importing it from a client <script> bundles readFileSync into the browser,
+  where it throws — which killed the whole module and with it the add-to-cart
+  handler, on every page (owner-reported at 3am, 2026-08-17).
+*/}
+<span
+  id="lateNightWindow"
+  hidden
+  data-from={lateNightWindow.from}
+  data-to={lateNightWindow.to}
+></span>
 {showFab && <CartFab />}
 
 <script>
   import { addItem, cartCount, onCartChange } from '../lib/cart';
-  import { lateNightWindow } from '../lib/data';
-  import { isTimeInRange } from '../lib/pricing';
 
   /**
    * The boiling stations shut after closing, so pasta and maggi are not cooked
@@ -37,10 +49,20 @@ const { showFab = true } = Astro.props;
    * tomorrow should not be turned away. What was missing was honesty, not a
    * lock — so the card says so, and the button says "Pre-order".
    */
+  // Inlined rather than imported from lib/pricing: this file must not pull in
+  // anything that reaches lib/data, and a minutes comparison is four lines.
   function inLateNightWindow(): boolean {
+    const el = document.getElementById('lateNightWindow');
+    const from = el?.dataset.from;
+    const to = el?.dataset.to;
+    if (!from || !to) return false;
+    const mins = (s: string) => Number(s.slice(0, 2)) * 60 + Number(s.slice(3, 5));
     const now = new Date();
-    const hhmm = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
-    return isTimeInRange(hhmm, lateNightWindow.from, lateNightWindow.to);
+    const t = now.getHours() * 60 + now.getMinutes();
+    const f = mins(from);
+    const u = mins(to);
+    // The window wraps past midnight (23:30 → 02:00).
+    return f <= u ? t >= f && t <= u : t >= f || t <= u;
   }
 
   function markLateNightItems() {
