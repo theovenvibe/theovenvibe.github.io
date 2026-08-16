@@ -60,17 +60,27 @@ self.addEventListener('push', (event) => {
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-  const url = event.notification.data?.url || '/';
+  const raw = event.notification.data?.url || '/';
+  // Payload urls are site-relative ('/checkout/'), but client.url is always
+  // absolute. Comparing the two directly never matched, so the reuse branch
+  // below was dead and every tap opened a duplicate tab.
+  const target = new URL(raw, self.location.origin).href;
+
   event.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clients) => {
-      // Focus an already-open tab on the same page rather than stacking a
-      // second one — a customer tapping a deal alert on a device that
-      // already has the site open should land where they were, not spawn
-      // a duplicate tab.
+      // Already looking at the page the notification points at: just focus it.
       for (const client of clients) {
-        if (client.url === url && 'focus' in client) return client.focus();
+        if (client.url === target && 'focus' in client) return client.focus();
       }
-      if (self.clients.openWindow) return self.clients.openWindow(url);
+      // Otherwise reuse a tab already on the site rather than stacking another
+      // one — someone tapping a cart reminder should land on their basket, not
+      // acquire a third copy of the menu.
+      for (const client of clients) {
+        if (client.url.startsWith(self.location.origin) && 'navigate' in client) {
+          return client.navigate(target).then((c) => (c && 'focus' in c ? c.focus() : undefined));
+        }
+      }
+      if (self.clients.openWindow) return self.clients.openWindow(target);
     }),
   );
 });
