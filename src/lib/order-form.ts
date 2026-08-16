@@ -706,35 +706,22 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
   /** One alert per distinct quote — a double-tap must not ring four phones twice. */
   const once = makeOnce();
 
-  /**
-   * "Someone is heading to checkout with this basket." Not an order — the
-   * matching order alert, if it comes, arrives seconds later at urgent
-   * priority. Silence after one of these is the abandonment.
-   */
-  function notifyHandoff(text: string) {
-    if (!text || !once(`handoff:${text}`)) return;
-    const total = copyBtn.dataset.total;
-    publishNtfy(CFG.workerUrl, {
-      title: total ? `Building an order - Rs ${total}` : 'Building an order',
-      body:
-        'Someone worked out a total on the price calculator and went to checkout.\n' +
-        'Nothing is ordered yet. If no order alert follows in a few minutes, they left without ordering.\n\n' +
-        text,
-      priority: 'low',
-      tags: 'thinking_face',
-    });
-  }
-
-  function notifyKitchen(text: string, via: 'whatsapp' | 'copy') {
+  function notifyKitchen(text: string, via: 'whatsapp' | 'copy' | 'checkout') {
     if (!text || !once(`${via}:${text}`)) return;
 
     const total = copyBtn.dataset.total;
     const orderType = orderTypeRadios.find((r) => r.checked)?.value ?? 'delivery';
+    const leadIn =
+      via === 'whatsapp'
+        ? 'Opened WhatsApp to send:'
+        : via === 'copy'
+          ? 'Copied the quote:'
+          : 'Heading to checkout with:';
 
     publishNtfy(CFG.workerUrl, {
       title: total ? `New order Rs ${total} (${orderType})` : `New order enquiry (${orderType})`,
       // `text` is the PII-free build — see buildQuoteText's `withCustomer`.
-      body: `${via === 'whatsapp' ? 'Opened WhatsApp to send:' : 'Copied the quote:'}\n\n${text}`,
+      body: `${leadIn}\n\n${text}`,
       tags: 'pizza',
     });
   }
@@ -756,14 +743,12 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
     }
     if (isHandoff) {
       hooks.onHandoff?.();
-      // Nothing is ordered yet — this is someone carrying a basket to the page
-      // that can take an order. It is still worth knowing: pair it with the
-      // order alert that may follow, and a handoff with no order behind it is
-      // the clearest abandonment signal this site can produce.
-      //
-      // LOW priority on purpose. It must not sound like an order — at 1am the
-      // phone should not ring for someone browsing.
-      notifyHandoff(alertText);
+      // Owner decision, 2026-08-16: "Continue to checkout" rings the kitchen
+      // exactly like a real order (urgent, same title) rather than the old
+      // low-priority "Building an order" heads-up — consistent with what
+      // "Copy quote" already sends. False alarms if the customer abandons on
+      // checkout are the accepted tradeoff.
+      notifyKitchen(alertText, 'checkout');
       return;
     }
     notifyKitchen(alertText, 'whatsapp');
