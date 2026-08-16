@@ -63,6 +63,12 @@ html {
   scroll-behavior: smooth;
   scroll-padding-top: 80px;
   font-size: 16px;
+  /* The off-canvas mobile menu is parked at translateX(100%), which still
+     counts toward scrollable overflow — every page carried ~8px of sideways
+     scroll on a phone, so the whole layout shifted under your thumb.
+     `clip` rather than `hidden`: hidden would make this a scroll container and
+     break the sticky navbar; clip just refuses to scroll. */
+  overflow-x: clip;
 }
 
 body {
