@@ -706,6 +706,14 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
   /** One alert per distinct quote — a double-tap must not ring four phones twice. */
   const once = makeOnce();
 
+  /**
+   * Owner decision, 2026-08-16: the headline must say what actually happened.
+   * On the calculator nothing is ordered yet — the customer is still building a
+   * basket — so both of its buttons say "Building an order", never "New order".
+   * Only `/checkout/`, the page that can actually take an order, sends a "New
+   * order" headline. Both stay at urgent priority: the kitchen chose to hear
+   * about a basket being built, and a false alarm is cheaper than a missed one.
+   */
   function notifyKitchen(text: string, via: 'whatsapp' | 'copy' | 'checkout') {
     if (!text || !once(`${via}:${text}`)) return;
 
@@ -718,10 +726,20 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
           ? 'Copied the quote:'
           : 'Heading to checkout with:';
 
+    const headline = isHandoff
+      ? total
+        ? `Building an order - Rs ${total} (${orderType})`
+        : `Building an order (${orderType})`
+      : total
+        ? `New order Rs ${total} (${orderType})`
+        : `New order enquiry (${orderType})`;
+
     publishNtfy(CFG.workerUrl, {
-      title: total ? `New order Rs ${total} (${orderType})` : `New order enquiry (${orderType})`,
+      title: headline,
       // `text` is the PII-free build — see buildQuoteText's `withCustomer`.
-      body: `${leadIn}\n\n${text}`,
+      body: isHandoff
+        ? `Nothing ordered yet — a basket is being built.\n\n${leadIn}\n\n${text}`
+        : `${leadIn}\n\n${text}`,
       tags: 'pizza',
     });
   }
@@ -743,11 +761,6 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
     }
     if (isHandoff) {
       hooks.onHandoff?.();
-      // Owner decision, 2026-08-16: "Continue to checkout" rings the kitchen
-      // exactly like a real order (urgent, same title) rather than the old
-      // low-priority "Building an order" heads-up — consistent with what
-      // "Copy quote" already sends. False alarms if the customer abandons on
-      // checkout are the accepted tradeoff.
       notifyKitchen(alertText, 'checkout');
       return;
     }
