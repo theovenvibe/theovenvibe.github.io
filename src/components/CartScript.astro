@@ -22,6 +22,59 @@ const { showFab = true } = Astro.props;
 
 <script>
   import { addItem, cartCount, onCartChange } from '../lib/cart';
+  import { lateNightWindow } from '../lib/data';
+  import { isTimeInRange } from '../lib/pricing';
+
+  /**
+   * The boiling stations shut after closing, so pasta and maggi are not cooked
+   * during the late-night window. The price calculator and checkout both knew
+   * that; these Add buttons did not, so a customer could fill a basket at 1am
+   * with no hint anything was wrong and only discover it at checkout
+   * (owner-reported, 2026-08-17).
+   *
+   * Adding is still allowed rather than blocked: checkout supports pre-ordering
+   * for after the kitchen reopens, and a customer awake at 1am who wants pasta
+   * tomorrow should not be turned away. What was missing was honesty, not a
+   * lock — so the card says so, and the button says "Pre-order".
+   */
+  function inLateNightWindow(): boolean {
+    const now = new Date();
+    const hhmm = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+    return isTimeInRange(hhmm, lateNightWindow.from, lateNightWindow.to);
+  }
+
+  function markLateNightItems() {
+    const late = inLateNightWindow();
+    for (const btn of Array.from(document.querySelectorAll<HTMLElement>('.add-to-cart'))) {
+      const served = btn.dataset.lateNight !== 'false';
+      const off = late && !served;
+      btn.classList.toggle('is-late-night-off', off);
+      if (off) {
+        btn.textContent = 'Pre-order';
+        btn.setAttribute(
+          'aria-label',
+          `Pre-order ${btn.dataset.cartName ?? 'this item'} — not cooked at this hour`,
+        );
+      }
+      const card = btn.closest('.menu-card');
+      if (!card) continue;
+      card.classList.toggle('is-late-night-off', off);
+      let note = card.querySelector<HTMLElement>('.late-night-note');
+      if (off && !note) {
+        note = document.createElement('p');
+        note.className = 'late-night-note';
+        note.textContent = 'Not cooked at this hour — pre-order it for later.';
+        card.querySelector('.menu-card-foot')?.before(note);
+      } else if (!off && note) {
+        note.remove();
+      }
+    }
+  }
+
+  markLateNightItems();
+  // The window opens at 23:30 while someone is already on the page, so re-check
+  // rather than trusting whatever was true at page load.
+  window.setInterval(markLateNightItems, 60000);
 
   // Every place that shows a basket count opts in with these classes, so the
   // nav badge and the floating button can never disagree about what is in the
@@ -54,11 +107,12 @@ const { showFab = true } = Astro.props;
     // far corner, which is easy to miss — and a customer who thinks the tap
     // missed taps again and orders two.
     const label = btn.textContent;
+    const preorder = btn.classList.contains('is-late-night-off');
     btn.classList.add('is-added');
-    btn.textContent = 'Added';
+    btn.textContent = preorder ? 'Added for later' : 'Added';
     window.setTimeout(() => {
       btn.classList.remove('is-added');
       btn.textContent = label;
-    }, 1200);
+    }, preorder ? 2000 : 1200);
   });
 </script>

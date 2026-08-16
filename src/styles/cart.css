@@ -384,3 +384,32 @@
 .cart-clear:hover {
   color: var(--color-primary);
 }
+
+/* --------------------------------------------------------------------------
+   Late-night: the boiling stations are shut, so pasta and maggi are not
+   cooked between 23:30 and 02:00. Applied by CartScript.astro at runtime,
+   never at build time — the page is static and cannot know the hour.
+   The item stays addable on purpose: checkout supports pre-ordering for after
+   the kitchen reopens, so this explains rather than blocks.
+   -------------------------------------------------------------------------- */
+.menu-card.is-late-night-off .menu-card-price {
+  opacity: 0.55;
+}
+
+.late-night-note {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-primary-dark);
+  background: #fdecec;
+  border-radius: var(--radius-sm);
+  padding: 0.35rem 0.55rem;
+  margin-bottom: 0.75rem;
+}
+
+/* Visibly secondary to a normal Add, without looking broken or disabled —
+   it still does something, just something different. */
+.add-to-cart.is-late-night-off {
+  background: #fff;
+  color: var(--color-primary-dark);
+  border: 1px solid #fecaca;
+}
