@@ -100,6 +100,27 @@
       "prepaid_note_quote": "Paid online — so my price is locked, no rain charge. Please send your QR so I can pay it.",
       "_note_voice_comment": "later_note / prepaid_note speak TO the customer on the page. The _quote variants are written in the CUSTOMER's voice, because the customer is the one sending them: they land in the kitchen's WhatsApp as \"please send your QR\", \"my bill\", \"when you ride out\". Same facts, spoken by the person pressing send."
     },
+    "_localities_comment": "Delivery areas the kitchen serves, owner-supplied 2026-08-17. Feeds the admin panel's locality dropdown via /site.config.json. Keep alphabetical; any locality the owner types into the admin panel is saved in the database and appears in the dropdown automatically, so this list only needs the ones known up front.",
+    "localities": [
+      "Bhitria Para",
+      "Bijaya Talkies Road",
+      "Dengibhadi",
+      "Government College Sundargarh",
+      "Government Women's College",
+      "Hariom Colony",
+      "Housing Board Colony",
+      "Jyotinagar",
+      "Kacheri Road",
+      "Mission Chowk",
+      "NTPC Medical College and Hospital",
+      "Post Office Kerai",
+      "Rajbati Chowk",
+      "Rangadhipa Chowk",
+      "RRIT Colony",
+      "Sriram Nagar",
+      "Sunaripada",
+      "Sundargarh Mini Stadium"
+    ],
     "pickup_discount": 30,
     "campus_batch": {
       "charge": 39,

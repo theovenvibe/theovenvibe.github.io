@@ -148,6 +148,16 @@ export const siteConfigSchema = z.object({
       .int()
       .nonnegative('pickup_min_order must be a rupee amount — the basket size the pickup discount needs'),
     _pickup_comment: z.string().optional(),
+    _localities_comment: z.string().optional(),
+    /**
+     * Delivery areas, for the backend admin panel's locality dropdown (read
+     * over /site.config.json). Deliberately separate from campus_batch.areas,
+     * which names the far smaller set eligible for the neighbour-batch charge.
+     */
+    localities: z
+      .array(z.string().min(1))
+      .min(1, 'delivery.localities must list at least one area')
+      .optional(),
     campus_batch: z.object({
       charge: z.number().int().nonnegative('campus_batch.charge must be 0 or more rupees'),
       window_minutes: z
