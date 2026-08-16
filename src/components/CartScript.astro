@@ -10,7 +10,7 @@
  */
 import CartFab from './CartFab.astro';
 import '../styles/cart.css';
-import { lateNightWindow } from '../lib/data';
+import { lateNightWindow, site } from '../lib/data';
 
 interface Props {
   /** Off on /checkout/ — a button that goes where you already are is clutter. */
@@ -31,6 +31,7 @@ const { showFab = true } = Astro.props;
   hidden
   data-from={lateNightWindow.from}
   data-to={lateNightWindow.to}
+  data-worker={site.backend.worker_url}
 ></span>
 {showFab && <CartFab />}
 
@@ -97,6 +98,74 @@ const { showFab = true } = Astro.props;
   // The window opens at 23:30 while someone is already on the page, so re-check
   // rather than trusting whatever was true at page load.
   window.setInterval(markLateNightItems, 60000);
+
+  /* -------------------------------------------------------------------------
+   * Sold out right now (P0-A).
+   *
+   * The menu is baked into these pages at build time, so the kitchen running
+   * out of something used to mean a commit and a rebuild. The Worker keeps a
+   * small list of what is off; this reads it and marks those cards.
+   *
+   * Fails open, always: any error, any unreachable Worker, and every item
+   * stays orderable (AGENTS.md rule 5 — never block a customer from ordering).
+   * The owner confirms every order by hand, so an over-sold item is a phone
+   * call; a site that refuses orders because a fetch failed is lost money.
+   * ---------------------------------------------------------------------- */
+  function formatBackAt(iso: string): string {
+    // 12-hour with am/pm, in IST, to match how the rest of the site writes
+    // times ("11:30pm", never "23:30").
+    const d = new Date(iso);
+    const parts = new Intl.DateTimeFormat('en-IN', {
+      hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'Asia/Kolkata',
+    }).formatToParts(d);
+    const get = (t: string) => parts.find((p) => p.type === t)?.value ?? '';
+    const time = `${get('hour')}${get('minute') !== '00' ? ':' + get('minute') : ''}${get('dayPeriod').toLowerCase().replace(/\s/g, '')}`;
+    const istToday = new Date(Date.now() + 5.5 * 3600000).toISOString().slice(0, 10);
+    const istThen = new Date(d.getTime() + 5.5 * 3600000).toISOString().slice(0, 10);
+    if (istThen === istToday) return `back at ${time}`;
+    const day = new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'short', timeZone: 'Asia/Kolkata' }).format(d);
+    return `back ${day}, ${time}`;
+  }
+
+  function applySoldOut(soldOut: Record<string, { back_at: string | null }>) {
+    for (const btn of Array.from(document.querySelectorAll<HTMLElement>('.add-to-cart'))) {
+      // Cart ids are "item-<code>" / "combo-<code>" / "addon-<code>"; the
+      // Worker keys on the bare product code.
+      const code = (btn.dataset.cartId ?? '').replace(/^(item|combo|addon)-/, '');
+      const off = Object.prototype.hasOwnProperty.call(soldOut, code);
+      const card = btn.closest('.menu-card');
+      if (!card) continue;
+
+      card.classList.toggle('is-sold-out', off);
+      btn.toggleAttribute('disabled', off);
+      if (off) {
+        btn.textContent = 'Sold out';
+        btn.setAttribute('aria-label', `${btn.dataset.cartName ?? 'This item'} is sold out`);
+      }
+
+      let note = card.querySelector<HTMLElement>('.sold-out-note');
+      if (off && !note) {
+        note = document.createElement('p');
+        note.className = 'sold-out-note';
+        const backAt = soldOut[code]?.back_at;
+        note.textContent = backAt ? `Sold out — ${formatBackAt(backAt)}.` : 'Sold out for now.';
+        card.querySelector('.menu-card-foot')?.before(note);
+      } else if (!off && note) {
+        note.remove();
+      }
+    }
+  }
+
+  (function loadAvailability() {
+    const worker = document.getElementById('lateNightWindow')?.dataset.worker;
+    if (!worker) return;
+    fetch(`${worker}/availability`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => { if (d && d.ok && d.sold_out) applySoldOut(d.sold_out); })
+      .catch(() => {
+        // Silence is correct here: everything stays available.
+      });
+  })();
 
   // Every place that shows a basket count opts in with these classes, so the
   // nav badge and the floating button can never disagree about what is in the

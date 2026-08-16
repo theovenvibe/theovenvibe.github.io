@@ -32,9 +32,25 @@ self.addEventListener('activate', (event) => {
 // page is worse than a live one. The cache only exists to keep the shell
 // reachable when there is no network at all.
 self.addEventListener('fetch', (event) => {
-  if (event.request.method !== 'GET') return;
+  const { request } = event;
+  if (request.method !== 'GET') return;
+
+  // Never touch calls to another origin — the backend Worker, above all.
+  // This used to fall through to the offline branch and answer a failed API
+  // call with the cached homepage, so JSON.parse got "<!DOCTYPE html>" and the
+  // caller saw a parse error instead of a network error it could handle.
+  if (new URL(request.url).origin !== self.location.origin) return;
+
   event.respondWith(
-    fetch(event.request).catch(() => caches.match(event.request).then((cached) => cached || caches.match('/'))),
+    fetch(request).catch(() =>
+      caches.match(request).then((cached) => {
+        if (cached) return cached;
+        // The shell is only a sensible answer for a page the customer is
+        // navigating to, never for a script, an image or a data request.
+        if (request.mode === 'navigate') return caches.match('/');
+        return Response.error();
+      }),
+    ),
   );
 });
 
