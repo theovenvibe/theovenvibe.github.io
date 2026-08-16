@@ -13,6 +13,7 @@
  * `meta`, rendered as a muted line under the title.
  */
 import type { MenuImage } from '../lib/data';
+import { lateNightOffCartIds } from '../lib/data';
 
 interface Props {
   img: MenuImage;
@@ -60,6 +61,7 @@ const { img, title, description, price, meta = [], extraClass, cartId } = Astro.
               class="add-to-cart"
               data-cart-id={cartId}
               data-cart-name={title}
+              data-late-night={String(!lateNightOffCartIds.has(cartId))}
               aria-label={`Add ${title} to your order`}
             >
               Add

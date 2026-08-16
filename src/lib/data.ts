@@ -171,6 +171,24 @@ export const orderCatalog: OrderableRow[] = [
   })),
 ];
 
+/**
+ * Cart ids the kitchen does not cook during the late-night window.
+ *
+ * Exported so the Add buttons can consult the same source as the price
+ * calculator and checkout. Without this they did not: a customer could add
+ * pasta from the menu at 1am with nothing to say it would not be cooked, and
+ * only find out at checkout (owner-reported, 2026-08-17).
+ */
+export const lateNightOffCartIds: ReadonlySet<string> = new Set(
+  orderCatalog.filter((r) => !r.lateNight).map((r) => r.id),
+);
+
+/** Raw window bounds, for the client-side "is it late night right now" check. */
+export const lateNightWindow = {
+  from: site.delivery.late_night.from,
+  to: site.delivery.late_night.to,
+} as const;
+
 /** The same catalogue grouped for rendering, preserving menu order. */
 export const orderCatalogGroups: { name: string; rows: OrderableRow[] }[] = (() => {
   const map = new Map<string, OrderableRow[]>();
