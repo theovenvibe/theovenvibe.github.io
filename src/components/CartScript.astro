@@ -86,6 +86,28 @@ const { showFab = true } = Astro.props;
   let offers: Record<string, { price: number; label: string | null; ends_at: string | null }> = {};
 
   /**
+   * Whether the kitchen is taking orders right now (P0-H).
+   *
+   * Defaults to open and stays open on any failure. Closed does NOT mean
+   * blocked: every item stays orderable as a pre-order, which is the owner's
+   * whole point — a closure should collect demand, not lose it.
+   */
+  let store: { open: boolean; reason: string | null; message: string | null; until: string | null } = {
+    open: true, reason: null, message: null, until: null,
+  };
+
+  const CLOSE_REASONS: Record<string, string> = {
+    out_of_stock: 'we have run out of a few things',
+    kitchen_full: 'the kitchen is at capacity',
+    staff: 'we are short-staffed',
+    lpg: 'our gas ran out',
+    festival: 'we are closed for a festival',
+    travel: 'we are away',
+    temporary: 'we are closed for a bit',
+    other: 'we are closed for a bit',
+  };
+
+  /**
    * Both rules that can change an Add button live here, in one pass.
    *
    * They used to be two functions that each wrote `textContent`, which was fine
@@ -109,7 +131,9 @@ const { showFab = true } = Astro.props;
       const code = (btn.dataset.cartId ?? '').replace(/^(item|combo|addon)-/, '');
       const off = Object.prototype.hasOwnProperty.call(soldOut, code);
       const served = btn.dataset.lateNight !== 'false';
-      const preorder = !off && late && !served;
+      // Closed kitchen: everything becomes a pre-order, not just the items the
+      // boiling stations cannot make. Sold out still wins over both.
+      const preorder = !off && ((late && !served) || !store.open);
 
       btn.classList.toggle('is-late-night-off', preorder);
       btn.toggleAttribute('disabled', off);
@@ -154,13 +178,82 @@ const { showFab = true } = Astro.props;
       if (preorder && !lateNote) {
         lateNote = document.createElement('p');
         lateNote.className = 'late-night-note';
-        lateNote.textContent = 'Not cooked at this hour — pre-order it for later.';
         card.querySelector('.menu-card-foot')?.before(lateNote);
       } else if (!preorder && lateNote) {
         lateNote.remove();
+        lateNote = null;
+      }
+      if (lateNote) {
+        // Two different reasons to pre-order, and saying the wrong one is worse
+        // than saying nothing: "not cooked at this hour" is nonsense at 2pm on a
+        // day the kitchen is shut for a festival.
+        lateNote.textContent = !store.open
+          ? 'Kitchen is closed — pre-order it for when we reopen.'
+          : 'Not cooked at this hour — pre-order it for later.';
       }
 
       paintPrice(card, code);
+    }
+  }
+
+  /* -------------------------------------------------------------------------
+   * The kitchen-closed banner (P0-H)
+   *
+   * Says three things, in this order: we are closed, why, and when we are back.
+   * Then it offers the one thing a customer who came here to order can still
+   * do — pre-order — and, if they would rather wait, a soft-ask to be told the
+   * moment we reopen.
+   *
+   * That soft-ask is deliberate. Somebody who arrived wanting food and found a
+   * closed kitchen is the highest-intent visitor the site ever gets, and this
+   * is the least annoying possible moment to ask for a notification
+   * permission (owner's standing instruction, 2026-08-17).
+   * ---------------------------------------------------------------------- */
+  function paintClosedBanner() {
+    let banner = document.getElementById('kitchenClosedBanner');
+
+    if (store.open) {
+      banner?.remove();
+      return;
+    }
+    if (!banner) {
+      banner = document.createElement('div');
+      banner.id = 'kitchenClosedBanner';
+      banner.className = 'kitchen-closed';
+      banner.setAttribute('role', 'status');
+      document.querySelector('main')?.prepend(banner);
+    }
+
+    const why = store.reason ? CLOSE_REASONS[store.reason] ?? 'we are closed for a bit' : 'we are closed for a bit';
+    const back = store.until ? ` We are back ${formatBackAt(store.until).replace(/^back /, '')}.` : '';
+    // The owner types this in a hurry and rarely ends it with a full stop, which
+    // ran their sentence straight into ours.
+    const note = store.message ? ` ${store.message.replace(/[.!?]?$/, '.')}` : '';
+
+    banner.innerHTML =
+      '<p class="kitchen-closed-title">The kitchen is closed right now</p>' +
+      `<p class="kitchen-closed-body">Sorry — ${why}.${back}${note} ` +
+      'You can still pre-order: build your basket as normal and we will cook it as soon as we are back.</p>';
+
+    // Only worth offering where it can actually be granted.
+    const state = pushPermission();
+    if (state === 'default' && !iosNotInstalled()) {
+      const ask = document.createElement('button');
+      ask.type = 'button';
+      ask.className = 'kitchen-closed-ask';
+      ask.textContent = 'Tell me when we are open';
+      ask.addEventListener('click', async () => {
+        const el = document.getElementById('lateNightWindow');
+        const vapid = el?.dataset.vapid ?? '';
+        const worker = el?.dataset.worker ?? '';
+        if (!vapid) return;
+        ask.disabled = true;
+        ask.textContent = 'One moment…';
+        const result = await askAndSubscribe(vapid, worker);
+        ask.textContent = result === 'granted' ? "We'll let you know" : 'Tell me when we are open';
+        ask.disabled = result === 'granted';
+      });
+      banner.appendChild(ask);
     }
   }
 
@@ -376,7 +469,11 @@ const { showFab = true } = Astro.props;
         // offers" keeps a stale deployment showing honest normal prices rather
         // than crashing the painter and freezing the sold-out list with it.
         offers = d.offers ?? {};
+        // An older Worker has no `store` key; absent means open, which is the
+        // safe direction and what the site did before this existed.
+        store = d.store ?? { open: true, reason: null, message: null, until: null };
         paintButtons();
+        paintClosedBanner();
       })
       .catch(() => {
         // Silence is correct here: everything stays as it is, which means
