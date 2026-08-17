@@ -96,6 +96,15 @@ const { showFab = true } = Astro.props;
     open: true, reason: null, message: null, until: null,
   };
 
+  /**
+   * Items the owner has marked as not cooked during the late-night window
+   * (P0-I). This is an OVERLAY on the build-time list in site.config.json, not
+   * a replacement: the config keeps the category rule, which catches a new
+   * pasta automatically, and this adds whatever the owner has changed since the
+   * last deploy. Empty on any failure, so the static list still applies.
+   */
+  let lateNightOff: string[] = [];
+
   const CLOSE_REASONS: Record<string, string> = {
     out_of_stock: 'we have run out of a few things',
     kitchen_full: 'the kitchen is at capacity',
@@ -130,7 +139,9 @@ const { showFab = true } = Astro.props;
       // Worker keys on the bare product code.
       const code = (btn.dataset.cartId ?? '').replace(/^(item|combo|addon)-/, '');
       const off = Object.prototype.hasOwnProperty.call(soldOut, code);
-      const served = btn.dataset.lateNight !== 'false';
+      // Either source can block it: the build-time config (which carries the
+      // category rule) or the owner's live list.
+      const served = btn.dataset.lateNight !== 'false' && !lateNightOff.includes(code);
       // Closed kitchen: everything becomes a pre-order, not just the items the
       // boiling stations cannot make. Sold out still wins over both.
       const preorder = !off && ((late && !served) || !store.open);
@@ -472,6 +483,7 @@ const { showFab = true } = Astro.props;
         // An older Worker has no `store` key; absent means open, which is the
         // safe direction and what the site did before this existed.
         store = d.store ?? { open: true, reason: null, message: null, until: null };
+        lateNightOff = Array.isArray(d.late_night_off) ? d.late_night_off : [];
         paintButtons();
         paintClosedBanner();
       })
