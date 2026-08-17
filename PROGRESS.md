@@ -100,6 +100,39 @@
 
 ## Session log
 
+### 2026-08-18 (App feel: the mobile menu, and the /offer page)
+
+- **The customer site had the same class of bug as the Kitchen Console**, which
+  was the owner's own insight: we converted a website into an app twice, so both
+  inherit the same problems. Audited, and one confirmed.
+- **The full-screen mobile menu was pure CSS state**, so the hardware back
+  button skipped past it and left the page — in the installed app, left the app.
+  It now takes a history entry while open: back closes it and stays put, tapping
+  X consumes the entry, and nav links consume it on the way out (otherwise the
+  next page starts with a stale entry and the first back press does nothing).
+- The overlay also gained `overflow-y: auto` with overscroll containment. It
+  fits at seven links and would stop fitting at eight, and that failure is
+  silent — anything past the fold is simply unreachable. That is exactly how the
+  Console's sheet ended up hiding its own heading.
+- **Audited and deliberately not changed:** the ordering funnel (real page
+  navigation, so browser back already walks it correctly — that IS right for a
+  funnel, unlike the Console's tabs), the soft-ask and install banners
+  (non-modal, with their own dismiss buttons), and the extras drawer on checkout
+  (a native `<details>`, which behaves as people expect).
+- **`/offer` shipped** — the ad and push landing page. Only what is discounted
+  right now, with the deadline on each card and no exits. Every card is rendered
+  at build time and hidden, then revealed by `/availability`: the site is static
+  and offers are set minutes before a push, but building cards in JavaScript
+  would mean a second card implementation drifting from `MenuCard`, and nothing
+  at all for a visitor whose script fails. `noindex`, since its content changes
+  daily. The empty state is most days, so it always offers the menu.
+- **Back-in-stock and the closed-kitchen banner shipped** (see the backend's
+  PROGRESS for the full story). Both carry a soft-ask for notification
+  permission, because someone who wants a sold-out pizza or found the kitchen
+  closed is the highest-intent visitor this site ever gets.
+- **VAPID public key rotated.** The old pair had been exposed in a chat
+  transcript; done while the only subscriber was the owner's test device.
+
 ### 2026-08-17 (Offer pricing — the customer half of P0-B)
 
 - **What it does:** the Worker's `/availability` now carries live offers beside sold-out state, so "Pizza @₹99 tonight" is a real price rather than something only a push message claims. Same one call this page already made.
