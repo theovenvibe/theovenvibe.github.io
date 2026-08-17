@@ -66,38 +66,87 @@ const { showFab = true } = Astro.props;
     return f <= u ? t >= f && t <= u : t >= f || t <= u;
   }
 
-  function markLateNightItems() {
+  /**
+   * What the Worker last said is off the menu, keyed on bare product code.
+   * Empty until the first fetch answers, and empty again on any failure — an
+   * unreachable Worker must never take an item off the menu.
+   */
+  let soldOut: Record<string, { back_at: string | null }> = {};
+
+  /**
+   * Both rules that can change an Add button live here, in one pass.
+   *
+   * They used to be two functions that each wrote `textContent`, which was fine
+   * only because each ran once and sold-out ran last. Now that both re-run on a
+   * timer, whichever fired most recently would win — so an item put back on the
+   * menu could stay reading "Sold out", or a sold-out item could quietly become
+   * "Add" again at the top of the minute. One painter, one order of precedence.
+   *
+   * Sold out beats pre-order: an item the kitchen has run out of cannot be
+   * ordered for later either.
+   */
+  function paintButtons() {
     const late = inLateNightWindow();
     for (const btn of Array.from(document.querySelectorAll<HTMLElement>('.add-to-cart'))) {
+      // The label Astro rendered, captured before anything overwrites it — this
+      // is what "back on the menu" has to restore to.
+      if (btn.dataset.baseLabel === undefined) btn.dataset.baseLabel = btn.textContent ?? 'Add';
+
+      // Cart ids are "item-<code>" / "combo-<code>" / "addon-<code>"; the
+      // Worker keys on the bare product code.
+      const code = (btn.dataset.cartId ?? '').replace(/^(item|combo|addon)-/, '');
+      const off = Object.prototype.hasOwnProperty.call(soldOut, code);
       const served = btn.dataset.lateNight !== 'false';
-      const off = late && !served;
-      btn.classList.toggle('is-late-night-off', off);
+      const preorder = !off && late && !served;
+
+      btn.classList.toggle('is-late-night-off', preorder);
+      btn.toggleAttribute('disabled', off);
       if (off) {
+        btn.textContent = 'Sold out';
+        btn.setAttribute('aria-label', `${btn.dataset.cartName ?? 'This item'} is sold out`);
+      } else if (preorder) {
         btn.textContent = 'Pre-order';
         btn.setAttribute(
           'aria-label',
           `Pre-order ${btn.dataset.cartName ?? 'this item'} — not cooked at this hour`,
         );
+      } else {
+        btn.textContent = btn.dataset.baseLabel;
+        btn.removeAttribute('aria-label');
       }
+
       const card = btn.closest('.menu-card');
       if (!card) continue;
-      card.classList.toggle('is-late-night-off', off);
-      let note = card.querySelector<HTMLElement>('.late-night-note');
-      if (off && !note) {
-        note = document.createElement('p');
-        note.className = 'late-night-note';
-        note.textContent = 'Not cooked at this hour — pre-order it for later.';
-        card.querySelector('.menu-card-foot')?.before(note);
-      } else if (!off && note) {
-        note.remove();
+      card.classList.toggle('is-sold-out', off);
+      card.classList.toggle('is-late-night-off', preorder);
+
+      let soldNote = card.querySelector<HTMLElement>('.sold-out-note');
+      if (off && !soldNote) {
+        soldNote = document.createElement('p');
+        soldNote.className = 'sold-out-note';
+        card.querySelector('.menu-card-foot')?.before(soldNote);
+      } else if (!off && soldNote) {
+        soldNote.remove();
+        soldNote = null;
+      }
+      if (soldNote) {
+        // Rewritten every pass, not just on creation: a "back at 7pm" the owner
+        // changes to 8pm has to reach a page that is already open.
+        const backAt = soldOut[code]?.back_at;
+        soldNote.textContent = backAt ? `Sold out — ${formatBackAt(backAt)}.` : 'Sold out for now.';
+      }
+
+      let lateNote = card.querySelector<HTMLElement>('.late-night-note');
+      if (preorder && !lateNote) {
+        lateNote = document.createElement('p');
+        lateNote.className = 'late-night-note';
+        lateNote.textContent = 'Not cooked at this hour — pre-order it for later.';
+        card.querySelector('.menu-card-foot')?.before(lateNote);
+      } else if (!preorder && lateNote) {
+        lateNote.remove();
       }
     }
   }
-
-  markLateNightItems();
-  // The window opens at 23:30 while someone is already on the page, so re-check
-  // rather than trusting whatever was true at page load.
-  window.setInterval(markLateNightItems, 60000);
 
   /* -------------------------------------------------------------------------
    * Sold out right now (P0-A).
@@ -127,45 +176,59 @@ const { showFab = true } = Astro.props;
     return `back ${day}, ${time}`;
   }
 
-  function applySoldOut(soldOut: Record<string, { back_at: string | null }>) {
-    for (const btn of Array.from(document.querySelectorAll<HTMLElement>('.add-to-cart'))) {
-      // Cart ids are "item-<code>" / "combo-<code>" / "addon-<code>"; the
-      // Worker keys on the bare product code.
-      const code = (btn.dataset.cartId ?? '').replace(/^(item|combo|addon)-/, '');
-      const off = Object.prototype.hasOwnProperty.call(soldOut, code);
-      const card = btn.closest('.menu-card');
-      if (!card) continue;
-
-      card.classList.toggle('is-sold-out', off);
-      btn.toggleAttribute('disabled', off);
-      if (off) {
-        btn.textContent = 'Sold out';
-        btn.setAttribute('aria-label', `${btn.dataset.cartName ?? 'This item'} is sold out`);
-      }
-
-      let note = card.querySelector<HTMLElement>('.sold-out-note');
-      if (off && !note) {
-        note = document.createElement('p');
-        note.className = 'sold-out-note';
-        const backAt = soldOut[code]?.back_at;
-        note.textContent = backAt ? `Sold out — ${formatBackAt(backAt)}.` : 'Sold out for now.';
-        card.querySelector('.menu-card-foot')?.before(note);
-      } else if (!off && note) {
-        note.remove();
-      }
-    }
-  }
-
-  (function loadAvailability() {
+  /**
+   * Ask the Worker what is off, then repaint.
+   *
+   * This ran exactly once, at page load. A customer who opened the menu before
+   * the kitchen ran out of pizza saw it in stock for as long as that tab stayed
+   * open, and could order it (owner-reported, 2026-08-17). Sold-out is a live
+   * fact about the kitchen right now, so the page has to keep asking.
+   */
+  function refreshAvailability() {
     const worker = document.getElementById('lateNightWindow')?.dataset.worker;
     if (!worker) return;
     fetch(`${worker}/availability`)
       .then((r) => (r.ok ? r.json() : null))
-      .then((d) => { if (d && d.ok && d.sold_out) applySoldOut(d.sold_out); })
+      .then((d) => {
+        if (!d || !d.ok || !d.sold_out) return;
+        soldOut = d.sold_out;
+        paintButtons();
+      })
       .catch(() => {
-        // Silence is correct here: everything stays available.
+        // Silence is correct here: everything stays as it is, which means
+        // available. AGENTS.md rule 5 — never block a customer from ordering.
       });
-  })();
+  }
+
+  paintButtons();
+  refreshAvailability();
+
+  // The late-night window opens at 23:30 while someone is already on the page,
+  // and the kitchen runs out of things mid-evening. Both need re-checking
+  // rather than trusting whatever was true at page load. The Worker caches
+  // /availability for 20s, so a minute here costs it very little.
+  window.setInterval(() => {
+    paintButtons();
+    refreshAvailability();
+  }, 60000);
+
+  // A phone that has been in a pocket runs no timers. Someone coming back to
+  // the tab is exactly the person about to tap Add, so check on the way in
+  // rather than leaving them up to a minute of stale menu.
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      paintButtons();
+      refreshAvailability();
+    }
+  });
+  // Same reasoning for the back button, which restores a frozen page from
+  // bfcache with none of its timers having fired.
+  window.addEventListener('pageshow', (e) => {
+    if ((e as PageTransitionEvent).persisted) {
+      paintButtons();
+      refreshAvailability();
+    }
+  });
 
   // Every place that shows a basket count opts in with these classes, so the
   // nav badge and the floating button can never disagree about what is in the
@@ -197,13 +260,15 @@ const { showFab = true } = Astro.props;
     // Say so on the button. Without this the only feedback is a badge in the
     // far corner, which is easy to miss — and a customer who thinks the tap
     // missed taps again and orders two.
-    const label = btn.textContent;
     const preorder = btn.classList.contains('is-late-night-off');
     btn.classList.add('is-added');
     btn.textContent = preorder ? 'Added for later' : 'Added';
     window.setTimeout(() => {
       btn.classList.remove('is-added');
-      btn.textContent = label;
+      // Repaint rather than restoring the label captured at click time: the
+      // item may have sold out in between, and putting "Add" back would invite
+      // a second tap on something the kitchen no longer has.
+      paintButtons();
     }, preorder ? 2000 : 1200);
   });
 </script>
