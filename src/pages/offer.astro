@@ -1,0 +1,240 @@
+---
+/**
+ * /offer — the page an ad or a push notification lands on (P0-K).
+ *
+ * The owner's framing, 2026-08-17: the journey we want is **ad → offer →
+ * order**. What the homepage delivers is *ad → homepage → menu → read a blog →
+ * contact → think about life → leave.* This page has one job and no exits.
+ *
+ * **Why every card is rendered and then hidden.** The site is static; which
+ * items are on offer is decided in D1 minutes before a push goes out, so the
+ * build cannot know. Rendering the whole catalogue and revealing the offered
+ * ones costs a few kilobytes of HTML and means the cards are real `MenuCard`s —
+ * same markup, same Add button, same price painting from `CartScript`, which
+ * already applies offer prices everywhere on the site. The alternative, building
+ * cards in JavaScript from the API, would be a second card implementation to
+ * keep in step with the first, and it would show nothing at all to a visitor
+ * whose script fails.
+ */
+import Layout from '../layouts/Layout.astro';
+import MenuCard from '../components/MenuCard.astro';
+import {
+  categories,
+  availableCombos,
+  availableAddons,
+  imageFor,
+  displayName,
+  displayMeta,
+  displayDescription,
+  itemCartId,
+  comboCartId,
+  addonCartId,
+  deliveryFreeAboveLine,
+} from '../lib/data';
+import { breadcrumbJsonLd } from '../lib/seo';
+
+const title = "Today's Offers | The Oven Vibe Sundargarh";
+const description =
+  'Live offers on pure veg pizza, burgers and more from The Oven Vibe, Sundargarh. Order on WhatsApp while they last.';
+
+/** Everything orderable, flattened into what a card needs. */
+const cards = [
+  ...categories.flatMap(({ items }) =>
+    items.map((i) => ({
+      code: i.product_code,
+      cartId: itemCartId(i.product_code),
+      img: imageFor(i),
+      title: displayName(i.display_name || i.item_name),
+      meta: displayMeta(i.display_name || i.item_name),
+      description: displayDescription(i),
+      price: i.price,
+    })),
+  ),
+  ...availableCombos.map((c) => ({
+    code: c.combo_code,
+    cartId: comboCartId(c.combo_code),
+    img: imageFor(c),
+    title: displayName(c.combo_name),
+    meta: displayMeta(c.combo_name),
+    description: displayDescription(c) || 'Combo deal',
+    price: c.combo_price,
+  })),
+  ...availableAddons.map((a) => ({
+    code: a.addon_code,
+    cartId: addonCartId(a.addon_code),
+    img: imageFor(a),
+    title: displayName(a.addon_name),
+    meta: displayMeta(a.addon_name),
+    description: 'Add it to any order',
+    price: a.addon_price,
+  })),
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  ogTitle="Today's Offers — The Oven Vibe"
+  noindex={true}
+  jsonLd={[breadcrumbJsonLd([{ name: 'Offers', path: '/offer/' }])]}
+>
+  <main class="main">
+    <section class="hero hero-mini">
+      <div class="hero-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+      </div>
+      <div class="hero-container">
+        <div class="hero-content">
+          <h1 class="hero-display" style="font-size: clamp(2rem, 5vw, 4rem);">
+            <span class="animate-on-scroll">TONIGHT'S</span>
+            <span class="text-gradient animate-on-scroll delay-100">OFFERS.</span>
+          </h1>
+          <p class="animate-on-scroll delay-100" style="margin-bottom: 1.5rem;">
+            <span class="veg-badge">100% Pure Veg</span>
+          </p>
+          <p class="hero-text animate-on-scroll delay-200">
+            Live prices, straight from the kitchen. Add what you want and send it on WhatsApp.
+            {' '}{deliveryFreeAboveLine}
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        {/*
+          Shown until the Worker answers. A spinner would be worse: on the
+          common path this is replaced in well under a second, and on the
+          failure path "no offers" is the honest thing to say.
+        */}
+        <p id="offerLoading" class="calc-note">Checking what's on offer…</p>
+
+        {/*
+          The empty state is not an edge case — it is most days. A push that
+          lands on a blank page is worse than no push, so this always offers
+          somewhere to go.
+        */}
+        <div id="offerEmpty" class="panel-empty" hidden>
+          <h2 style="margin-top:0">No offers running right now</h2>
+          <p class="calc-note">
+            Nothing is discounted at the moment — but everything on the menu is cooked fresh
+            to order, and we run offers most weeks.
+          </p>
+          <div class="row-actions">
+            <a href="/menu/" class="btn btn-primary">See the full menu</a>
+          </div>
+        </div>
+
+        <div id="offerGrid" class="menu-items">
+          {
+            cards.map((c) => (
+              <div class="offer-slot" data-offer-slot data-code={c.code} hidden>
+                <MenuCard
+                  img={c.img}
+                  title={c.title}
+                  meta={c.meta}
+                  description={c.description}
+                  price={c.price}
+                  cartId={c.cartId}
+                />
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
+
+<script>
+  /**
+   * Reveal the cards that actually have a live offer.
+   *
+   * Reads the same `/availability` every other page reads — one endpoint, so
+   * the offer price a customer sees here can never disagree with the menu.
+   * `CartScript` does the price painting and the Add wiring; this file only
+   * decides what is visible and adds the deadline.
+   */
+  const grid = document.getElementById('offerGrid');
+  const empty = document.getElementById('offerEmpty');
+  const loading = document.getElementById('offerLoading');
+
+  if (grid && empty && loading) {
+    const gridEl: HTMLElement = grid;
+    const emptyEl: HTMLElement = empty;
+    const loadingEl: HTMLElement = loading;
+    const worker = document.getElementById('lateNightWindow')?.dataset.worker;
+
+    /** "ends 11pm" / "ends tomorrow, 2pm" in IST — the reason to order now. */
+    function endsLabel(iso: string): string {
+      const d = new Date(iso);
+      if (Number.isNaN(d.getTime())) return '';
+      const parts = new Intl.DateTimeFormat('en-IN', {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true,
+        timeZone: 'Asia/Kolkata',
+      }).formatToParts(d);
+      const get = (t: string) => parts.find((p) => p.type === t)?.value ?? '';
+      const time = `${get('hour')}${get('minute') !== '00' ? ':' + get('minute') : ''}${get('dayPeriod').toLowerCase().replace(/\s/g, '')}`;
+      const istToday = new Date(Date.now() + 5.5 * 3600000).toISOString().slice(0, 10);
+      const istThen = new Date(d.getTime() + 5.5 * 3600000).toISOString().slice(0, 10);
+      if (istThen === istToday) return `Ends ${time}`;
+      const day = new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'short', timeZone: 'Asia/Kolkata' }).format(d);
+      return `Ends ${day}, ${time}`;
+    }
+
+    function paint(offers: Record<string, { price: number; label: string | null; ends_at: string | null }>) {
+      const slots = Array.from(document.querySelectorAll<HTMLElement>('[data-offer-slot]'));
+      let shown = 0;
+      for (const slot of slots) {
+        const offer = offers[slot.dataset.code ?? ''];
+        slot.hidden = !offer;
+        if (!offer) continue;
+        shown++;
+
+        // The deadline is what turns browsing into ordering, and the data is
+        // already in the payload — every offer carries an end time.
+        let ends = slot.querySelector<HTMLElement>('.offer-ends');
+        if (offer.ends_at) {
+          if (!ends) {
+            ends = document.createElement('p');
+            ends.className = 'offer-ends';
+            slot.querySelector('.menu-card-foot')?.after(ends);
+          }
+          ends.textContent = endsLabel(offer.ends_at);
+        } else if (ends) {
+          ends.remove();
+        }
+      }
+      loadingEl.hidden = true;
+      emptyEl.hidden = shown > 0;
+      gridEl.hidden = shown === 0;
+    }
+
+    function refresh() {
+      if (!worker) {
+        paint({});
+        return;
+      }
+      fetch(`${worker}/availability`)
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d) => paint(d && d.ok ? (d.offers ?? {}) : {}))
+        .catch(() => {
+          // No answer means no offers shown — never an invented one. The empty
+          // state still gives them the menu.
+          paint({});
+        });
+    }
+
+    refresh();
+    // An offer ending while this page is open must take the item away: it is
+    // the one page whose entire content is time-limited.
+    window.setInterval(refresh, 60000);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') refresh();
+    });
+  }
+</script>
