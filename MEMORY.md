@@ -9,6 +9,35 @@ The public site for The Oven Vibe, served from `main` via GitHub Pages.
 Prices here are the **local menu prices**, not Zomato prices. Zomato runs its own
 higher price list (roughly 1.5× on mains, at parity on sides as of Aug 2026).
 
+## The site is an installed app, not just a website
+
+People add it to their home screen, so **anything full-screen or bottom-anchored
+must behave like an app component, not a CSS class**:
+
+- A full-screen overlay takes a **history entry** while open, so the hardware
+  back button closes it instead of leaving the page. The mobile menu did not,
+  and back exited the whole app (fixed 2026-08-18).
+- Anything anchored to the bottom needs a height cap and `overflow-y: auto`.
+  Without it, content past the fold is unreachable and nobody can tell — the
+  admin's sheet hid its own heading this way for a day.
+- `overscroll-behavior: contain` on any scrollable overlay, or the page behind
+  it scrolls too.
+
+## Live data the site reads at runtime
+
+The static build no longer decides everything. `GET /availability` on the Worker
+returns, in one call: what is **sold out**, live **offer prices**, whether the
+**kitchen is open**, and the **late-night block list**. `CartScript.astro` polls
+it every 60s and on tab focus.
+
+**All of it fails open.** No answer means everything is available, at its normal
+price, with the kitchen open — the direction that never costs an order.
+
+`site.config.json` still holds the build-time defaults, and the live list is an
+overlay on top. That matters for the late-night rule: the config carries the
+*category* rule, which catches a new pasta automatically, and the admin list
+adds whatever has changed since the last deploy.
+
 ## Editing menu.json
 
 - **The file uses CRLF line endings.** Writing it with LF rewrites all 900 lines
