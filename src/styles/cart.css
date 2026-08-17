@@ -447,6 +447,41 @@
 }
 
 /* --------------------------------------------------------------------------
+   "Tell me when it's back" (P0-J).
+
+   Full width under the card foot, because it is the only thing left to do on a
+   sold-out card — the Add button beside it is disabled. Styled as a real
+   action, not a muted afterthought: this is where a push permission is won.
+   -------------------------------------------------------------------------- */
+.notify-back {
+  display: block;
+  width: 100%;
+  margin-top: 0.6rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  background: #fff;
+  border: 1px solid #fecaca;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.notify-back:hover:not([disabled]) {
+  background: #fef2f2;
+  border-color: var(--color-primary);
+}
+
+/* Already on the list: still says what it means, but is plainly not a button
+   to press again. */
+.notify-back[disabled] {
+  color: var(--color-text-muted);
+  border-color: var(--color-border);
+  cursor: default;
+}
+
+/* --------------------------------------------------------------------------
    Offer pricing (P0-B). Same runtime source as sold-out — one call to the
    Worker carries both.
 

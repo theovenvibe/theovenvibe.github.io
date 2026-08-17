@@ -32,11 +32,15 @@ const { showFab = true } = Astro.props;
   data-from={lateNightWindow.from}
   data-to={lateNightWindow.to}
   data-worker={site.backend.worker_url}
+  data-vapid={site.push.vapid_public_key}
+  data-whatsapp={site.business.whatsapp}
 ></span>
 {showFab && <CartFab />}
 
 <script>
   import { addItem, cartCount, onCartChange } from '../lib/cart';
+  import { getDeviceId } from '../lib/device';
+  import { askAndSubscribe, iosNotInstalled, pushPermission } from '../lib/push';
 
   /**
    * The boiling stations shut after closing, so pasta and maggi are not cooked
@@ -144,6 +148,8 @@ const { showFab = true } = Astro.props;
         soldNote.textContent = backAt ? `Sold out — ${formatBackAt(backAt)}.` : 'Sold out for now.';
       }
 
+      paintNotifyButton(card, code, off, btn.dataset.cartName ?? 'this item');
+
       let lateNote = card.querySelector<HTMLElement>('.late-night-note');
       if (preorder && !lateNote) {
         lateNote = document.createElement('p');
@@ -157,6 +163,128 @@ const { showFab = true } = Astro.props;
       paintPrice(card, code);
     }
   }
+
+  /* -------------------------------------------------------------------------
+   * "Tell me when it's back" (P0-J)
+   *
+   * A customer found every pizza sold out on 2026-08-17 and the site offered
+   * them nothing but a dead end. The demand walked.
+   *
+   * It is also the best moment on the whole site to win a push permission:
+   * somebody who wants THIS pizza tonight is far likelier to allow
+   * notifications than a visitor asked cold. Which is why the ask is soft —
+   * a button in the page first, the native dialog only after they tap it. A
+   * native prompt fired on load gets blocked, and a block is permanent for the
+   * whole origin, with no way back from our side.
+   *
+   * If they refuse, or already have, the button becomes a WhatsApp link with
+   * the message pre-written — one they send us. That direction matters: an
+   * unsolicited outbound message can get the business account reported, while
+   * an inbound one opens a window where replying is expected and free
+   * (owner's rule, 2026-08-17).
+   * ---------------------------------------------------------------------- */
+  function paintNotifyButton(card: Element, code: string, off: boolean, name: string) {
+    const foot = card.querySelector('.menu-card-foot');
+    let btn = card.querySelector<HTMLButtonElement>('.notify-back');
+
+    if (!off) {
+      btn?.remove();
+      return;
+    }
+    if (!foot || btn) return;
+
+    btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'notify-back';
+    btn.dataset.code = code;
+    btn.dataset.name = name;
+    btn.textContent = alreadyWaiting(code) ? "We'll tell you" : "Tell me when it's back";
+    btn.disabled = alreadyWaiting(code);
+    foot.after(btn);
+  }
+
+  /**
+   * Remembered locally so a reload does not offer to sign someone up twice.
+   * The Worker de-duplicates too — this is about what the button says, not
+   * about data integrity.
+   */
+  const WAITING_KEY = 'ovenvibe.waiting.v1';
+
+  function waitingSet(): string[] {
+    try {
+      return JSON.parse(window.localStorage.getItem(WAITING_KEY) ?? '[]') as string[];
+    } catch {
+      return [];
+    }
+  }
+  const alreadyWaiting = (code: string) => waitingSet().includes(code);
+  function rememberWaiting(code: string) {
+    try {
+      const all = waitingSet();
+      if (!all.includes(code)) window.localStorage.setItem(WAITING_KEY, JSON.stringify([...all, code]));
+    } catch {
+      // Only affects the button's wording on the next visit.
+    }
+  }
+
+  /** Tell the Worker. Fire-and-forget, like every other call this site makes. */
+  function joinWaitlist(code: string) {
+    const el = document.getElementById('lateNightWindow');
+    const worker = el?.dataset.worker;
+    if (!worker) return;
+    fetch(`${worker}/waitlist`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ device_id: getDeviceId(), product_code: code }),
+    }).catch(() => {
+      // Silent. The customer has been told we will let them know; a failed
+      // POST is not something they can act on.
+    });
+  }
+
+  /** The fallback: a message the CUSTOMER sends us, never one we send them. */
+  function whatsappFallback(name: string): string | null {
+    const number = document.getElementById('lateNightWindow')?.dataset.whatsapp;
+    if (!number) return null;
+    const text = `Hi! Please tell me when ${name} is back in stock.`;
+    return `https://wa.me/${number}?text=${encodeURIComponent(text)}`;
+  }
+
+  document.addEventListener('click', async (e) => {
+    const btn = (e.target as HTMLElement | null)?.closest<HTMLButtonElement>('.notify-back');
+    if (!btn || btn.disabled) return;
+    const code = btn.dataset.code ?? '';
+    const name = btn.dataset.name ?? 'this item';
+    const el = document.getElementById('lateNightWindow');
+    const worker = el?.dataset.worker ?? '';
+    const vapid = el?.dataset.vapid ?? '';
+
+    // No permission possible on this device or in this browser: go straight to
+    // the message they send us, rather than a prompt that cannot appear.
+    const state = pushPermission();
+    if (state === 'unsupported' || state === 'denied' || iosNotInstalled() || !vapid) {
+      const href = whatsappFallback(name);
+      if (href) window.open(href, '_blank', 'noopener');
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'One moment…';
+    const result = await askAndSubscribe(vapid, worker);
+    if (result === 'granted') {
+      joinWaitlist(code);
+      rememberWaiting(code);
+      btn.textContent = "We'll tell you";
+      return;
+    }
+
+    // They said no to the browser, or it failed. Offer the other route rather
+    // than leaving a dead button.
+    const href = whatsappFallback(name);
+    btn.disabled = false;
+    btn.textContent = href ? 'Ask us on WhatsApp' : "Tell me when it's back";
+    if (href && result === 'denied') window.open(href, '_blank', 'noopener');
+  });
 
   /**
    * The price on one card: the offer price if there is one, otherwise the price
