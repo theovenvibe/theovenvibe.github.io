@@ -100,6 +100,17 @@
 
 ## Session log
 
+### 2026-08-17 (Offer pricing — the customer half of P0-B)
+
+- **What it does:** the Worker's `/availability` now carries live offers beside sold-out state, so "Pizza @₹99 tonight" is a real price rather than something only a push message claims. Same one call this page already made.
+- **Menu cards** show the normal price struck through beside the offer price, with the owner's label under it. Replacing ₹129 with ₹99 outright would leave a customer no way to see that ₹99 is the point — and the Worker refuses to store an offer that is not lower, so the strike-through can never lie about the direction.
+- **Checkout** writes the offer price into the catalogue row and keeps the normal price beside it, rather than threading a second "which price?" argument through the line amounts, the subtotal, the WhatsApp quote and the order payload. That is exactly how one of those ends up quietly charging the wrong number.
+- **The quote carries both figures** — `Zesty Onion Feast Pizza x2 — ₹198 (offer ₹99 each, normally ₹129)` — so the owner sees what was promised when they confirm.
+- **`sold_out` is deliberately ignored at checkout.** Removing a line from a basket the customer already built, on the page they came to in order to send it, is a bigger decision than this phase should make alone. The backend's P0-E puts it in front of the owner at confirm time, where a human is already looking.
+- **A bug this found in itself, invisible to the build.** The "an offer ended while you were ordering" notice first rendered only what the *latest* poll had raised. It showed for one minute, and the next tick — which raised nothing, the price having already changed — erased it, leaving the customer with a total ₹30 higher than the one they read and no explanation on screen. Caught by watching two poll cycles rather than one; a single cycle looks perfect. The messages now accumulate for the life of the page, since there is no moment at which "that offer has ended" stops being true. Second time in one session that putting a single-pass painter on a timer broke it.
+- **Verified in a browser against the built `dist/`**, with a local stand-in for `/availability`: card showed `₹129` struck / `₹99` / "Tonight only" with `aria-label` "₹99, down from ₹129", a no-offer card untouched at ₹159; checkout charged ₹198 for two and totalled Food ₹357; the quote carried both prices; ending the offer mid-session reverted the line to ₹129 each / ₹258 and Food ₹417, showed the notice, and the notice survived the following tick; the quote dropped its offer claim. Add still works — 2 → 3 on the line, 3 → 4 on the badge.
+- **Checked and cleared:** `elementFromPoint` reports the Add button covered by `.accordion-item` while its section is collapsed. Identical on the deployed live site, so it is the accordion clipping its own content, not a regression from the new price markup.
+
 ### 2026-08-17 (Sold-out state went stale on an already-open page)
 
 - **Owner report:** "I marked all the pizza out of stock, but a customer who had the site open before that still sees it in stock and can order it."
