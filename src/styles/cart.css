@@ -445,3 +445,34 @@
   cursor: not-allowed;
   opacity: 1;
 }
+
+/* --------------------------------------------------------------------------
+   Offer pricing (P0-B). Same runtime source as sold-out — one call to the
+   Worker carries both.
+
+   The old price stays on screen struck through rather than being replaced.
+   A lone "₹99" is just a price; "₹̶1̶2̶9̶ ₹99" is the offer, and it is what
+   makes the push worth tapping.
+   -------------------------------------------------------------------------- */
+.price-was {
+  text-decoration: line-through;
+  color: var(--color-text-muted);
+  font-weight: 500;
+  margin-right: 0.35rem;
+}
+
+.price-now {
+  color: var(--color-primary-dark);
+}
+
+/* Sits under the price rather than beside it: "Tonight only" next to two
+   numbers on a 360px phone wraps into something unreadable. */
+.price-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-primary-dark);
+  margin-top: 0.1rem;
+}
