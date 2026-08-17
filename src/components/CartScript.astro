@@ -74,6 +74,14 @@ const { showFab = true } = Astro.props;
   let soldOut: Record<string, { back_at: string | null }> = {};
 
   /**
+   * Offer prices, keyed the same way (P0-B). Empty means "everything at its
+   * normal price", which is what any failure has to land on — an unreachable
+   * Worker must never invent a discount, and must never hide one it cannot
+   * confirm by leaving a stale one on screen either.
+   */
+  let offers: Record<string, { price: number; label: string | null; ends_at: string | null }> = {};
+
+  /**
    * Both rules that can change an Add button live here, in one pass.
    *
    * They used to be two functions that each wrote `textContent`, which was fine
@@ -145,7 +153,51 @@ const { showFab = true } = Astro.props;
       } else if (!preorder && lateNote) {
         lateNote.remove();
       }
+
+      paintPrice(card, code);
     }
+  }
+
+  /**
+   * The price on one card: the offer price if there is one, otherwise the price
+   * Astro rendered.
+   *
+   * The old price stays visible, struck through. Replacing ₹129 with ₹99
+   * outright would leave a customer with no way to see that ₹99 is the point —
+   * and the Worker already refuses to store an offer that is not lower, so the
+   * strike-through can never be a lie about the direction.
+   */
+  function paintPrice(card: Element, code: string) {
+    const priceEl = card.querySelector<HTMLElement>('.menu-card-price');
+    if (!priceEl) return;
+    const base = Number(priceEl.dataset.basePrice);
+    if (!Number.isFinite(base)) return;
+
+    const offer = offers[code];
+    if (!offer) {
+      priceEl.textContent = `₹${base}`;
+      priceEl.removeAttribute('aria-label');
+      return;
+    }
+
+    // Rebuilt rather than patched: the offer price and the label can both
+    // change under an open page, and three elements to keep in step is three
+    // chances to leave one showing last hour's number.
+    priceEl.textContent = '';
+    const was = document.createElement('span');
+    was.className = 'price-was';
+    was.textContent = `₹${base}`;
+    const now = document.createElement('span');
+    now.className = 'price-now';
+    now.textContent = `₹${offer.price}`;
+    priceEl.append(was, now);
+    if (offer.label) {
+      const label = document.createElement('span');
+      label.className = 'price-label';
+      label.textContent = offer.label;
+      priceEl.appendChild(label);
+    }
+    priceEl.setAttribute('aria-label', `₹${offer.price}, down from ₹${base}`);
   }
 
   /* -------------------------------------------------------------------------
@@ -192,6 +244,10 @@ const { showFab = true } = Astro.props;
       .then((d) => {
         if (!d || !d.ok || !d.sold_out) return;
         soldOut = d.sold_out;
+        // Older Workers answered without this field. Treating "absent" as "no
+        // offers" keeps a stale deployment showing honest normal prices rather
+        // than crashing the painter and freezing the sold-out list with it.
+        offers = d.offers ?? {};
         paintButtons();
       })
       .catch(() => {

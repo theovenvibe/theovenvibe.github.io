@@ -83,6 +83,12 @@ const checkoutConfig = {
 
         <h2 style="margin-bottom: 0.5rem;">Your basket</h2>
         <p id="availabilityNote" class="calc-availability" hidden></p>
+        {/*
+          Only ever filled when an offer ENDS while the basket is open (P0-B).
+          A total that moves on its own reads as a trick; the same total with a
+          sentence naming what changed reads as what it is.
+        */}
+        <p id="offerNote" class="calc-availability calc-availability--late" hidden></p>
 
         <div id="cartLines" class="cart-lines"></div>
 
@@ -182,6 +188,47 @@ const checkoutConfig = {
   const addons = CFG.catalog.filter((row) => row.group === 'Add-ons');
   const isAddon = (id: string) => id.startsWith('addon-');
 
+  /* ---------------------------------------------------------------------------
+   * Offer prices (P0-B)
+   *
+   * The catalogue is baked in at build time, so ₹99 cannot come from it. The
+   * Worker's /availability carries live offers alongside sold-out state — one
+   * call, the same one the menu page makes.
+   *
+   * The offer price is written straight into the catalogue row, and the normal
+   * price kept beside it. Everything downstream — the line amounts, the
+   * subtotal, the WhatsApp quote, the payload sent to the Worker — already
+   * reads `row.price`, and threading a second "which price?" argument through
+   * all of them is how one of them ends up quietly charging the wrong number.
+   * ------------------------------------------------------------------------ */
+  const normalPrice = new Map(CFG.catalog.map((row) => [row.id, row.price]));
+  const offerLabel = new Map<string, string | null>();
+
+  /** Cart ids are prefixed; the Worker keys on the bare catalogue code. */
+  const bareCode = (id: string) => id.replace(/^(item|combo|addon)-/, '');
+
+  /**
+   * Apply what the Worker just said, and return anything that went UP.
+   *
+   * A price rising is the one change a customer must not discover in the total.
+   * It means an offer ended between filling the basket and reading it — rare,
+   * legitimate, and indistinguishable from a bug unless it is said out loud.
+   */
+  function applyOffers(
+    live: Record<string, { price: number; label: string | null }>,
+  ): { name: string; from: number; to: number }[] {
+    const raised: { name: string; from: number; to: number }[] = [];
+    for (const row of CFG.catalog) {
+      const normal = normalPrice.get(row.id) ?? row.price;
+      const offer = live[bareCode(row.id)];
+      const next = offer && offer.price < normal ? offer.price : normal;
+      if (next > row.price) raised.push({ name: row.name, from: row.price, to: next });
+      row.price = next;
+      offerLabel.set(row.id, offer && offer.price < normal ? offer.label : null);
+    }
+    return raised;
+  }
+
   /** A basket line: what the cart says, resolved against this build's catalogue. */
   interface Line extends OrderableRow {
     qty: number;
@@ -197,6 +244,26 @@ const checkoutConfig = {
     el.className = className;
     el.textContent = text;
     return el;
+  }
+
+  /**
+   * The "₹129 each" line under a basket item, carrying the offer when there is
+   * one: the normal price struck through, then what is actually being charged.
+   *
+   * The customer saw the strike-through on the menu card; seeing only "₹99
+   * each" here would leave them checking whether the discount survived.
+   */
+  function priceLine(row: OrderableRow): HTMLElement {
+    const normal = normalPrice.get(row.id) ?? row.price;
+    if (row.price >= normal) return textEl('span', 'cart-line-price', `${rupee(row.price)} each`);
+
+    const wrap = document.createElement('span');
+    wrap.className = 'cart-line-price';
+    wrap.appendChild(textEl('span', 'price-was', rupee(normal)));
+    wrap.appendChild(textEl('span', 'price-now', `${rupee(row.price)} each`));
+    const label = offerLabel.get(row.id);
+    if (label) wrap.appendChild(textEl('span', 'price-label', label));
+    return wrap;
   }
 
   /** A −/count/+ control. Used for basket lines and for each extra. */
@@ -261,7 +328,7 @@ const checkoutConfig = {
       const info = document.createElement('div');
       info.className = 'cart-line-info';
       info.appendChild(textEl('span', 'cart-line-name', row.name));
-      info.appendChild(textEl('span', 'cart-line-price', `${rupee(row.price)} each`));
+      info.appendChild(priceLine(row));
       el.appendChild(info);
 
       const controls = document.createElement('div');
@@ -375,6 +442,81 @@ const checkoutConfig = {
 
   renderCart();
   pingCartActivity(CFG.workerUrl, deviceId, cartCount());
+
+  /**
+   * Ask the Worker for live offers, apply them, and re-render.
+   *
+   * Deliberately runs AFTER the first render rather than blocking it: the
+   * basket has to appear even if the Worker never answers (AGENTS.md rule 5 —
+   * never block a customer from ordering). Until it answers, everything is
+   * priced normally, which is the safe direction to be wrong in.
+   *
+   * `sold_out` in the same response is deliberately ignored here. Removing a
+   * line from a basket the customer already built, on a page they came to in
+   * order to send it, is a bigger decision than this phase should make on its
+   * own — P0-E puts the discrepancy in front of the owner at confirm time
+   * instead, where a human is already looking.
+   */
+  function refreshOffers() {
+    if (!CFG.workerUrl) return;
+    fetch(`${CFG.workerUrl}/availability`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (!d || !d.ok) return;
+        const raised = applyOffers(d.offers ?? {});
+        renderCart();
+        form.update();
+        showOfferChanges(raised);
+      })
+      .catch(() => {
+        // Normal prices stand. Nothing to tell the customer: they were never
+        // shown a discount this page could not honour.
+      });
+  }
+
+  /**
+   * Everything that has gone up since this page was opened.
+   *
+   * Accumulated, never recomputed from the latest poll alone. The first version
+   * of this rendered whatever the last fetch raised, so the message appeared
+   * for one minute and the next tick — which raised nothing, the price having
+   * already changed — erased it. The customer was left with a total ₹30 higher
+   * than the one they had read, and no explanation on screen.
+   */
+  const endedOffers = new Map<string, { name: string; to: number }>();
+
+  /**
+   * Say plainly that a price went up, rather than letting the total move on
+   * its own. Named item, the new price — an offer ending mid-basket is a
+   * legitimate thing to have happened, and reads as one when it is explained.
+   *
+   * Only ever grows while the page is open. There is no moment at which "that
+   * offer has ended" stops being true, so there is no moment to hide it.
+   */
+  function showOfferChanges(raised: { name: string; from: number; to: number }[]) {
+    const note = document.getElementById('offerNote') as HTMLElement | null;
+    if (!note) return;
+    for (const r of raised) endedOffers.set(r.name, { name: r.name, to: r.to });
+    if (!endedOffers.size) return;
+
+    const all = Array.from(endedOffers.values());
+    note.hidden = false;
+    note.textContent =
+      all.length === 1 && all[0]
+        ? `The offer on ${all[0].name} has ended — it is back to ${rupee(all[0].to)}.`
+        : `Some offers ended while you were ordering: ${all
+            .map((r) => `${r.name} is back to ${rupee(r.to)}`)
+            .join(', ')}.`;
+  }
+
+  refreshOffers();
+  // An offer can end while the basket sits open, and this is the page the
+  // customer sends from — the last moment the price can still be corrected
+  // honestly rather than argued about on WhatsApp.
+  window.setInterval(refreshOffers, 60000);
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') refreshOffers();
+  });
 
   // ---------------------------------------------------------------------------
   // Who is ordering
@@ -563,6 +705,7 @@ const checkoutConfig = {
       lines.map((line) => ({
         name: line.name,
         price: line.price,
+        normalPrice: normalPrice.get(line.id),
         lateNight: line.lateNight,
         // Extras ride with their dish into the subtotal and into the message.
         extras: line.extras.map((e) => ({ name: e.row.name, price: e.row.price, qty: e.qty })),

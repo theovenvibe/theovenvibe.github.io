@@ -37,6 +37,15 @@ export interface BasketExtra {
 export interface BasketRow {
   name: string;
   price: number;
+  /**
+   * What this normally costs, when `price` is an offer price (P0-B).
+   *
+   * Present only when an offer is actually running, so the quote can state both
+   * numbers. The owner reads that message when they confirm, and "₹99" alone
+   * gives them no way to tell a legitimate offer from a wrong price — which is
+   * exactly the question P0-E exists to answer.
+   */
+  normalPrice?: number;
   /** Is this item still cooked inside the late-night window? */
   lateNight: boolean;
   getQty(): number;
@@ -357,7 +366,13 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
       if (slot) lines.push(`Pre-order — I want this on ${slot}.`);
     }
     for (const it of chosenItems()) {
-      lines.push(`${it.name} x${it.getQty()} — ₹${it.price * it.getQty()}`);
+      // Both prices when one of them is an offer: the owner confirming this
+      // order needs to see that ₹99 was promised deliberately.
+      const offerNote =
+        it.normalPrice !== undefined && it.normalPrice > it.price
+          ? ` (offer ₹${it.price} each, normally ₹${it.normalPrice})`
+          : '';
+      lines.push(`${it.name} x${it.getQty()} — ₹${it.price * it.getQty()}${offerNote}`);
       // Indented under their dish, so the kitchen never has to ask which pizza
       // the extra cheese was for.
       for (const extra of it.extras ?? []) {

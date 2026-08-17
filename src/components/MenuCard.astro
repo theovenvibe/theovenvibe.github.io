@@ -53,7 +53,12 @@ const { img, title, description, price, meta = [], extraClass, cartId } = Astro.
         {description}
       </p>
       <div class="menu-card-foot">
-        <div class="menu-card-price">₹{price}</div>
+        {/*
+          data-base-price is the normal price, kept as a number so the offer
+          script (P0-B) can put it back when an offer ends without parsing
+          "₹129" out of the text it just overwrote.
+        */}
+        <div class="menu-card-price" data-base-price={price}>₹{price}</div>
         {
           cartId && (
             <button
