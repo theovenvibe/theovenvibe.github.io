@@ -43,9 +43,11 @@ const enabled = Boolean(site.push.vapid_public_key) && Boolean(site.backend.work
 }
 
 <script>
-  import { getDeviceId } from '../lib/device';
   import { consumeOrderJustSent } from '../lib/push-signal';
   import { anotherBannerVisible } from '../lib/soft-banner';
+  // Shared with the sold-out cards' own ask (P0-J) — one implementation, so
+  // the two cannot drift apart.
+  import { askAndSubscribe, iosNotInstalled, pushSupported } from '../lib/push';
 
   const bannerEl = document.getElementById('pushAskBanner');
   if (bannerEl) {
@@ -77,50 +79,6 @@ const enabled = Boolean(site.push.vapid_public_key) && Boolean(site.backend.work
       }
     }
 
-    function isStandalone(): boolean {
-      return (
-        window.matchMedia?.('(display-mode: standalone)').matches ||
-        (navigator as Navigator & { standalone?: boolean }).standalone === true
-      );
-    }
-
-    /** PRD §4.2: push on iOS works only once installed. Never ask before that. */
-    function iosNotInstalled(): boolean {
-      const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
-      return isIOS && !isStandalone();
-    }
-
-    function supported(): boolean {
-      return 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
-    }
-
-    /** VAPID key ships base64url; the Push API wants a raw Uint8Array. */
-    function urlBase64ToUint8Array(base64url: string): Uint8Array {
-      const padding = '='.repeat((4 - (base64url.length % 4)) % 4);
-      const base64 = (base64url + padding).replace(/-/g, '+').replace(/_/g, '/');
-      const raw = window.atob(base64);
-      return Uint8Array.from([...raw].map((c) => c.charCodeAt(0)));
-    }
-
-    async function subscribe() {
-      const registration = await navigator.serviceWorker.ready;
-      const subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey) as BufferSource,
-      });
-      const json = subscription.toJSON();
-      await fetch(`${workerUrl}/subscriptions`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          device_id: getDeviceId(),
-          endpoint: json.endpoint,
-          p256dh: json.keys?.p256dh,
-          auth: json.keys?.auth,
-        }),
-      });
-    }
-
     function hide() {
       banner.hidden = true;
     }
@@ -135,18 +93,12 @@ const enabled = Boolean(site.push.vapid_public_key) && Boolean(site.backend.work
     document.getElementById('pushAskYes')?.addEventListener('click', async () => {
       recordDismissal(); // either way, don't show the card again this soon
       hide();
-      try {
-        const permission = await Notification.requestPermission();
-        if (permission !== 'granted') return;
-        await subscribe();
-      } catch {
-        // Subscribing failed (offline, push service hiccup, etc.) — the
-        // customer already said yes; there is nothing useful to tell them
-        // beyond that, and no harm in trying again on a future visit.
-      }
+      // Failure is deliberately silent: the customer already said yes, there
+      // is nothing useful to tell them, and a future visit can try again.
+      await askAndSubscribe(vapidPublicKey, workerUrl);
     });
 
-    if (supported() && !iosNotInstalled() && Notification.permission === 'default') {
+    if (pushSupported() && !iosNotInstalled() && Notification.permission === 'default') {
       document.addEventListener('visibilitychange', () => {
         if (document.visibilityState !== 'visible') return;
         if (recentlyDismissed()) return;

@@ -86,6 +86,13 @@ const whyHref = home ? '#why' : '/#why';
         </ul>
       </li>
 
+      {/*
+        Offers sits second, right after Menu: it is where every push and ad
+        lands, and a customer arriving cold should see it without hunting.
+        Deliberately styled to stand out from the rest of the nav (P0-K).
+      */}
+      <li><a href="/offer/" class="nav-link nav-link-offer">Offers</a></li>
+
       <li><a href={whyHref} class="nav-link">Why Us</a></li>
 
       <li class="dropdown">
@@ -170,6 +177,7 @@ const whyHref = home ? '#why' : '/#why';
         </>
       )
     }
+    <li><a href="/offer/" class="mobile-nav-link">Offers</a></li>
     <li><a href="/blog/" class="mobile-nav-link">Blog</a></li>
     <li><a href="/price-calculator/" class="mobile-nav-link">Price Calculator</a></li>
     <li>
