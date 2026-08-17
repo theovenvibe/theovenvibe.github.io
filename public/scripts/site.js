@@ -44,22 +44,60 @@ document.addEventListener('DOMContentLoaded', function () {
   var closeMenuBtn = document.getElementById('closeMenuBtn');
   var mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
 
+  /*
+   * The overlay takes a history entry while it is open.
+   *
+   * Without it the hardware back button skips straight past the menu and leaves
+   * the page — and in the installed app, leaves the app. The same bug was found
+   * and fixed in the Kitchen Console on 2026-08-18; this is its twin on the
+   * customer side, and it is the reason a full-screen overlay on a phone must
+   * never be pure CSS state.
+   *
+   * `menuHasEntry` tracks whether the entry is ours to consume, so closing by
+   * tapping X pops it, while closing by a back press does not pop twice.
+   */
+  var menuHasEntry = false;
+
   function openMenu() {
-    if (mobileMenuOverlay) {
-      mobileMenuOverlay.classList.add('active');
-      document.body.style.overflow = 'hidden';
+    if (!mobileMenuOverlay) return;
+    mobileMenuOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    if (!menuHasEntry) {
+      history.pushState({ ovMenu: true }, '');
+      menuHasEntry = true;
     }
   }
-  function closeMenu() {
-    if (mobileMenuOverlay) {
+
+  function closeMenu(opts) {
+    if (!mobileMenuOverlay) return;
+    mobileMenuOverlay.classList.remove('active');
+    document.body.style.overflow = '';
+    var fromBack = opts && opts.fromBack;
+    if (menuHasEntry && !fromBack) {
+      menuHasEntry = false;
+      history.back();
+    } else if (fromBack) {
+      menuHasEntry = false;
+    }
+  }
+
+  window.addEventListener('popstate', function () {
+    if (mobileMenuOverlay && mobileMenuOverlay.classList.contains('active')) {
+      closeMenu({ fromBack: true });
+    }
+  });
+
+  if (mobileMenuToggle) mobileMenuToggle.addEventListener('click', openMenu);
+  if (closeMenuBtn) closeMenuBtn.addEventListener('click', function () { closeMenu(); });
+  mobileNavLinks.forEach(function (link) {
+    // A nav link navigates away, so the overlay's entry must go with it —
+    // otherwise the new page starts with a stale entry and back does nothing
+    // on the first press.
+    link.addEventListener('click', function () {
+      if (menuHasEntry) { menuHasEntry = false; history.back(); }
       mobileMenuOverlay.classList.remove('active');
       document.body.style.overflow = '';
-    }
-  }
-  if (mobileMenuToggle) mobileMenuToggle.addEventListener('click', openMenu);
-  if (closeMenuBtn) closeMenuBtn.addEventListener('click', closeMenu);
-  mobileNavLinks.forEach(function (link) {
-    link.addEventListener('click', closeMenu);
+    });
   });
 
   // ===============================

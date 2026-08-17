@@ -1510,6 +1510,11 @@ p {
   left: 0;
   width: 100%;
   height: 100vh;
+  /* A full-screen panel with no scroll makes anything past the fold
+     unreachable on a short phone. It fits today at seven links; it would stop
+     fitting the moment an eighth is added, and the failure is silent. */
+  overflow-y: auto;
+  overscroll-behavior: contain;
   background-color: white;
   z-index: 2000;
   padding: 2rem;
