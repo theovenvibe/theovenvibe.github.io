@@ -100,6 +100,19 @@
 
 ## Session log
 
+### 2026-08-17 (Sold-out state went stale on an already-open page)
+
+- **Owner report:** "I marked all the pizza out of stock, but a customer who had the site open before that still sees it in stock and can order it."
+- **Root cause:** `CartScript.astro` fetched the Worker's `/availability` exactly once, at page load, in an IIFE. Sold-out is a live fact about the kitchen; the page never asked again. A tab left open on the menu was frozen at whatever was true when it loaded.
+- **Fix:** re-check every 60s, and again on `visibilitychange` and on a bfcache restore. A phone in a pocket runs no timers, and someone coming back to the tab is exactly the person about to tap Add. The Worker caches `/availability` for 20s, so a minute here costs it very little.
+- **A second defect underneath, exposed by making it repeat.** `markLateNightItems()` and `applySoldOut()` each wrote `textContent`. That worked only because each ran once and sold-out ran last — on a timer, whichever fired most recently wins, so a sold-out item could quietly become "Add" again at the top of the minute. They are now one `paintButtons()` pass, sold-out taking precedence over pre-order (an item the kitchen has run out of cannot be pre-ordered either).
+- **And a third:** `applySoldOut` never undid itself. It set `textContent = 'Sold out'` inside `if (off)` with no else, so an item the owner put back on the menu kept the label until a full reload — polling alone would not have fixed the owner's other complaint. `paintButtons()` captures the label Astro rendered in `data-base-label` on first pass and restores it, clearing `disabled` and the `aria-label` with it.
+- The "Added" flash now repaints instead of restoring the label captured at click time — the item may have sold out during those 1200ms, and putting "Add" back invites a second tap on something the kitchen no longer has.
+- Fails open throughout: any error leaves `soldOut` as it was, which means everything stays orderable (backend AGENTS.md rule 5).
+- **Verified in a browser against the built `dist/`**, not just `npm run build`. A local stand-in served `/availability`, since the real Worker allows one fixed origin. Sold-out rendered disabled with the note "Sold out — back at 10pm." for a `back_at` of 16:30 UTC (correct IST); flipping it back on restored "Add", cleared `disabled`, removed the note and the `aria-label`, with no reload; flipping it off again applied live, again with no reload. Clicked Add on an available item: count incremented and `ovenvibe.cart.v2` gained the quantity. After deploy, the Midnight Pizza Box combo — switched off by the owner in the admin app — rendered sold out on the live menu.
+- **Left open:** an item already in a basket when it sells out still goes through checkout. Removing it silently would be worse; this belongs with the backend's P0-E, which shows the owner the discrepancy at confirm time.
+- Paired with `the-oven-vibe-backend`, which cut the `/availability` cache from 60s to 20s and added combos and add-ons to the admin toggle list. No website change was needed for combos and add-ons: their cart ids already carry the `combo-`/`addon-` prefix this file strips, and all three shapes render through `MenuCard`.
+
 ### 2026-08-15 (Hotfix — the disabled send button was untappable)
 
 - **Owner report:** on `/checkout/` with an 8-digit mobile, the field error appeared but tapping the greyed-out "Send order on WhatsApp" did not scroll to the field or focus it.
