@@ -152,6 +152,8 @@ export interface QuoteOk {
   pickupNudge?: { needed: number; threshold: number; discount: number };
   /** Conditions the total depends on, addressed to the customer on the page. */
   notes?: string[];
+  /** The minimum this order had to clear. Dough may never take it back below. */
+  minimum?: number;
   /** The same conditions written for the message the customer SENDS to the
    *  kitchen — stated as facts, since the reader there is the shop owner. */
   quoteNotes?: string[];
@@ -206,6 +208,7 @@ export function computeQuote(cfg: DeliveryConfig, input: QuoteInput): QuoteResul
       timeRule: lateNight ? 'late_night' : 'standard',
       isLateNight: lateNight,
       latenightPrepaid: lateNight && cfg.late_night.prepaid,
+      minimum: lateNight ? cfg.late_night.min_order : 0,
       pickupNudge,
       quoteNotes: [
         lateNight ? cfg.late_night.pickup_note_quote : cfg.pickup_note_quote,
@@ -339,6 +342,8 @@ export function computeQuote(cfg: DeliveryConfig, input: QuoteInput): QuoteResul
     slabLabel: slab.label,
     isLateNight,
     latenightPrepaid: isLateNight && cfg.late_night.prepaid,
+    // Carried so Dough can be stopped from taking the order back under it.
+    minimum,
     freeDeliveryNudge,
     notes,
     quoteNotes,

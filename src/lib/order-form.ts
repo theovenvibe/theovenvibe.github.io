@@ -16,7 +16,7 @@
  * The markup this drives is `components/OrderOptions.astro` — the element IDs
  * below are that component's contract, so both pages must render it.
  */
-import { computeQuote, isTimeInRange, type QuoteResult } from './pricing';
+import { computeQuote, isTimeInRange, type QuoteResult, type QuoteOk } from './pricing';
 import { publishNtfy, makeOnce } from './notify';
 import type { SiteConfig } from '../schemas/site-config';
 
@@ -75,6 +75,16 @@ export interface OrderFormHooks {
   emptyMessage?: string;
   /** Fired after every recalculation, for a page-level summary or badge. */
   onUpdate?(state: { subtotal: number; result: QuoteResult | null }): void;
+  /**
+   * A last chance to change a good quote before it is shown and before the
+   * WhatsApp message is built — checkout uses it to apply Dough.
+   *
+   * It exists so the loyalty rules live on the page that owns them rather than
+   * inside the pricing engine, which every other page shares. Whatever it
+   * returns is what the customer reads AND what the kitchen is sent, so the two
+   * can never disagree about the number.
+   */
+  adjustQuote?(result: QuoteOk): QuoteOk;
   /**
    * Lines placed at the very top of the WhatsApp message, above the items —
    * checkout puts the customer's name and number here so the kitchen can call
@@ -628,8 +638,9 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
       regular: false,
     });
 
-    renderOutput(result);
-    hooks.onUpdate?.({ subtotal: sub, result });
+    const shown = result.kind === 'ok' && hooks.adjustQuote ? hooks.adjustQuote(result) : result;
+    renderOutput(shown);
+    hooks.onUpdate?.({ subtotal: sub, result: shown });
   }
 
   /**

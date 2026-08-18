@@ -169,6 +169,7 @@ const checkoutConfig = {
   import type { QuoteResult } from '../lib/pricing';
   import { pingCartActivity } from '../lib/cart-activity';
   import { getDeviceId } from '../lib/device';
+  import { fetchDough, usableDough, shortDate, NO_DOUGH, type DoughState } from '../lib/dough';
   import { markOrderJustSent } from '../lib/push-signal';
 
   interface CheckoutConfig extends OrderFormConfig {
@@ -178,6 +179,24 @@ const checkoutConfig = {
   const configEl = document.getElementById('calc-config');
   const CFG: CheckoutConfig = JSON.parse(configEl?.textContent ?? '{}');
   const deviceId = getDeviceId();
+
+  /* ---- Dough --------------------------------------------------------------
+   * Read once the customer is identifiable, then again if they change the
+   * phone number. Everything here is display only: the Worker recomputes what
+   * may actually be spent, so a wrong number on this page cannot cost money.
+   * ---------------------------------------------------------------------- */
+  let dough: DoughState = NO_DOUGH;
+  let doughFetchedFor = '';
+  let useDough = true;
+
+  async function refreshDough() {
+    const phone = normalisedPhone() ?? '';
+    const key = deviceId + '|' + phone;
+    if (key === doughFetchedFor) return;
+    doughFetchedFor = key;
+    dough = await fetchDough(CFG.workerUrl, deviceId, phone);
+    form.update();
+  }
   const catalog = new Map(CFG.catalog.map((row) => [row.id, row]));
 
   const linesEl = document.getElementById('cartLines') as HTMLElement;
@@ -534,6 +553,9 @@ const checkoutConfig = {
   // ---------------------------------------------------------------------------
   const nameInput = document.getElementById('custName') as HTMLInputElement;
   const phoneInput = document.getElementById('custPhone') as HTMLInputElement;
+  // A returning customer on a new phone is only identifiable once they type
+  // their number, so the balance is re-read when it changes.
+  phoneInput.addEventListener('change', () => { void refreshDough(); });
   const offersCheck = document.getElementById('custOffers') as HTMLInputElement;
   const nameError = document.getElementById('custNameError') as HTMLElement;
   const phoneError = document.getElementById('custPhoneError') as HTMLElement;
@@ -680,7 +702,40 @@ const checkoutConfig = {
 
   let lastQuote: QuoteResult | null = null;
 
+  let doughApplied = 0;
+
+  void refreshDough();
+
   const form = initOrderForm(CFG, {
+    /**
+     * Apply Dough to a good quote.
+     *
+     * Two limits and the tighter wins: 10% of the food total, and never so much
+     * that the order falls under its own minimum — Dough should grow a basket,
+     * not shrink one. Whatever comes out of here is both what the customer
+     * reads and what the kitchen is sent, so they cannot disagree.
+     */
+    adjustQuote: (result) => {
+      doughApplied = 0;
+      if (!useDough || dough.balance <= 0) return result;
+      const foodTotal = result.lines
+        .filter((l) => l.label === 'Food')
+        .reduce((sum, l) => sum + l.amount, 0);
+      const usable = usableDough(dough, foodTotal, result.minimum ?? 0);
+      if (usable <= 0) return result;
+      doughApplied = usable;
+      return {
+        ...result,
+        lines: [...result.lines, { label: 'Dough applied', amount: -usable }],
+        total: result.total - usable,
+        notes: [
+          ...(result.notes ?? []),
+          usable < dough.balance
+            ? `Using ₹${usable} of your ₹${dough.balance} — up to 10% of an order.`
+            : `Your full ₹${dough.balance} of Dough is on this order.`,
+        ],
+      };
+    },
     onUpdate: (state) => {
       lastQuote = state.result;
     },
@@ -833,6 +888,10 @@ const checkoutConfig = {
       delivery_fee: lastQuote.total - foodTotal,
       total: lastQuote.total,
       quote_text: quoteText,
+      // A hint only: the Worker recomputes the cap from the stored basket and
+      // takes the smaller of the two, so a tampered page cannot spend more.
+      dough_spent: doughApplied,
+      ref_code: localStorage.getItem('ov_ref_code') ?? undefined,
       items: lines.map((line) => ({
         catalog_id: line.id,
         name: line.name,
