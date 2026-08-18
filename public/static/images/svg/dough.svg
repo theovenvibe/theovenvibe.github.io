@@ -1,23 +1,44 @@
 <!--
-  The Dough coin.
+  Dough — a ball of dough with the rupee pressed into it.
 
-  A coin, not a gem: the currency is called Dough because it is money and it is
-  bread, and the shape has to say "this is worth rupees" at 24px in a chat list
-  before it says anything clever. The rupee mark is the only detail that
-  survives at that size, so it carries the meaning; the dashed crust ring and
-  the two bubbles read as baked rather than minted when shown larger.
+  It started as a coin: a clean circle with a dashed ring. That read as a
+  generic token, which is the one thing this currency is not called.
 
-  The mark is a text glyph, not a hand-drawn path: a path traced by eye came out
-  misshapen, and a currency symbol that looks almost right is worse than a plain
-  circle.
+  What makes it read as dough rather than a biscuit: no outline (dough has no
+  edge, it has a shadow), a soft off-centre highlight where it catches the
+  light, an uneven silhouette from being rolled by hand, and the rupee pressed
+  IN — dark inside, with a pale lip below it, the way a stamp in soft dough
+  throws a tiny shadow on one side and a highlight on the other.
+
+  The mark is a text glyph, not a traced path: a rupee drawn by eye came out
+  misshapen, and a currency symbol that looks almost right is worse than none.
 -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48" role="img" aria-label="Dough">
-  <circle cx="24" cy="24" r="22" fill="#E8A33D"/>
-  <circle cx="24" cy="24" r="22" fill="none" stroke="#C67C1E" stroke-width="2"/>
-  <circle cx="24" cy="24" r="17.5" fill="none" stroke="#F3C77B" stroke-width="1.8" stroke-dasharray="3 4" stroke-linecap="round"/>
-  <circle cx="13.5" cy="15.5" r="1.9" fill="#F7DCA8"/>
-  <circle cx="34" cy="32" r="1.4" fill="#F7DCA8"/>
-  <text x="24" y="24" text-anchor="middle" dominant-baseline="central"
-        font-family="'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
-        font-size="26" font-weight="700" fill="#6B3A0B">₹</text>
+  <defs>
+    <radialGradient id="dghBall" cx="34%" cy="28%" r="82%">
+      <stop offset="0%" stop-color="#FFF6E2"/>
+      <stop offset="38%" stop-color="#F6DFAE"/>
+      <stop offset="76%" stop-color="#EFD09B"/>
+      <stop offset="100%" stop-color="#D2A25E"/>
+    </radialGradient>
+    <radialGradient id="dghShadow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#8A5A1E" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#8A5A1E" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <ellipse cx="24" cy="43" rx="15" ry="3.6" fill="url(#dghShadow)"/>
+
+  <path fill="url(#dghBall)"
+        d="M24 3c6.4 0 11.9 2.3 15.7 6.5 3.8 4.2 5.5 9.4 4.9 15.1-.6 5.5-3.3 10-8 13.2-4.5 3-9.5 4.1-14.8 3.5-5.6-.7-10.3-3.3-13.6-7.8C4.9 29 3.6 23.9 4.6 18.4 5.6 12.9 8.6 8.7 13.4 5.8 16.7 3.9 20.2 3 24 3z"/>
+
+  <ellipse cx="16.5" cy="13" rx="6" ry="4" fill="#FFFBF0" opacity="0.55" transform="rotate(-24 16.5 13)"/>
+  <circle cx="34.5" cy="15.5" r="1.4" fill="#D9AF74" opacity="0.55"/>
+  <circle cx="12.8" cy="30.5" r="1.1" fill="#D9AF74" opacity="0.5"/>
+  <circle cx="31.5" cy="34" r="0.9" fill="#D9AF74" opacity="0.45"/>
+
+  <g font-family="'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="24" font-weight="700" text-anchor="middle">
+    <text x="24" y="26.6" dominant-baseline="central" fill="#FFF3D6" opacity="0.8">₹</text>
+    <text x="24" y="25.6" dominant-baseline="central" fill="#8A5A1E">₹</text>
+  </g>
 </svg>

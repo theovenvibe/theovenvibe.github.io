@@ -1926,7 +1926,11 @@ article em {
 
 /* The floating balance, above the basket FAB so neither covers the other. */
 .dough-fab {
-  position: fixed; bottom: 11rem; right: 2rem;
+  /* Three floating buttons now stack up the right edge: WhatsApp at 2rem, the
+     basket above it, this above that. The bottoms are set so the GAPS are
+     equal (1rem) rather than the offsets being round numbers — an even rhythm
+     is what the eye reads, and the buttons are different heights. */
+  position: fixed; bottom: 11.5rem; right: 2rem;
   display: flex; align-items: center; gap: 0.4rem;
   padding: 0.5rem 0.85rem 0.5rem 0.55rem;
   background: #fff; color: #92400e; font-weight: 800;
@@ -1952,6 +1956,7 @@ article em {
 
 @media (max-width: 760px) {
   .dough-steps, .dough-rules { grid-template-columns: 1fr; }
-  .dough-fab { bottom: 10.5rem; right: 1.25rem; }
+  /* Right edge stays at 2rem on a phone too — all three must line up. */
+  .dough-fab { bottom: 11.5rem; right: 2rem; }
   .dough-promo { padding: 1.1rem; }
 }
