@@ -5,7 +5,6 @@
 // Menu/combos/add-ons render at build time from menu.json (Phase 3).
 import Layout from '../layouts/Layout.astro';
 import MenuAccordions from '../components/MenuAccordions.astro';
-import AddonsAccordion from '../components/AddonsAccordion.astro';
 import {
   site,
   deliverySlabLine,
@@ -153,10 +152,19 @@ const localPhone = site.business.phone.replace('+91', '');
       <MenuAccordions />
     </section>
 
-    <!-- ADD-ONS & SUGGESTED -->
-    <section class="menu-section" id="addonsSection">
-      <AddonsAccordion />
-    </section>
+    {/* The Add-ons & Suggested section was removed on 2026-08-18.
+
+        An add-on ordered from here became its own top-level line, and the
+        kitchen could not tell what it belonged to: a real order arrived as
+        "Herb Paneer Pizza, Cheesy Garlic Bread, Extra Paneer, Peri Peri Dip"
+        with no way to know which dish the paneer was for — and with two pizzas
+        on the ticket it would have been a guess.
+
+        Add-ons now attach to a dish only, through the "Add extras" drawer under
+        each line in the basket, so they print indented under their parent like
+        a Zomato KOT. Nothing was deleted: the add-ons themselves still live in
+        menu.json and AddonsAccordion.astro is still here if the section is ever
+        wanted back. */}
 
     <!-- WHY US -->
     <section class="section" id="why" style="background-color: white;">
