@@ -48,6 +48,33 @@ were deliberately left alone:
 The commented block in `index.astro` carries the same two lines verbatim, so the
 fastest restore is to uncomment them there.
 
+## Where they live now: out-of-range checkout only
+
+Added 2026-08-18, same day, owner's idea — and it is the sharper version of the
+same principle.
+
+Beyond `maxDeliveryKm` the quote cannot be sent at all: `pricing.ts` returns
+`kind: 'beyond'` and `order-form.ts` leaves **Copy quote** and **Send order on
+WhatsApp** inert. That left a dead end at the exact moment someone was ready to
+order. **Order on Zomato** and **Order on Swiggy** now take their place there.
+
+Same buttons, opposite meaning. On the homepage the customer was already ours
+and the buttons gave them away. Out of range they were never ours to lose — we
+cannot cook for that address — so the platforms are a service, not a leak.
+
+- Markup: `src/components/OrderQuote.astro`, `#beyondActions`, `hidden` by
+  default. Shared by `/checkout/` and `/price-calculator/`.
+- Toggle: `showBeyondActions()` in `src/lib/order-form.ts`. It **replaces** the
+  send pair rather than sitting beside it — two greyed buttons next to two live
+  ones is a puzzle, not a choice.
+- Every path that kills the send buttons also puts the platform pair away,
+  including the ones that never reach `renderOutput` (empty basket, closed
+  kitchen). Otherwise emptying the basket after an out-of-range quote left
+  "Order on Zomato" sitting under "Add items above to see your total".
+- The partner-click alert covers these automatically: it matches on hostname,
+  not on a CSS class. Alerts from here are the *good* kind — they mean the
+  handoff we chose is working.
+
 ## Where these links still appear, on purpose
 
 Removing every mention would be the wrong call — some of these serve a customer
