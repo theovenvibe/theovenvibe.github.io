@@ -100,6 +100,35 @@
 
 ## Session log
 
+### 2026-08-19 (Dough & Referrals: the customer side)
+
+- **Dough is live.** Balance read at checkout, spent under a 10% cap, and the
+  quote the kitchen receives shows `Dough applied −₹40` so the page and the
+  WhatsApp message cannot disagree. The Worker recomputes the cap from the
+  stored basket, so a tampered page cannot spend more — a forged request asking
+  ₹999 against a ₹60 balance took ₹40.
+- **`/dough` and `/refer`**, the coin icon, a balance bubble above the basket
+  FAB, a homepage card, and both pages in the nav on every page. The pages say
+  nothing about food cost, margin or redemption assumptions — a customer needs
+  four facts, and the rest is our business.
+- **The pickup discount is retired**, commented not deleted. On a 0–2 km
+  delivery we collect ₹29 and burn ~₹11 of petrol, so delivering is **₹18
+  better for us** than the same order collected; below ₹499 we were paying ₹30
+  for the privilege of losing ₹18. `docs/PICKUP_DISCOUNT.md` has the maths and
+  the three files to edit to switch it back on.
+- **Beverages** added with the owner's own bottle photos, add-ons now attach to
+  a dish (KOT-style), and live offers show in the Combos & Offers section.
+- **Three bugs worth remembering**, all found by driving the built site rather
+  than reading it: keying the white out of a bottle photo also erased the clear
+  plastic neck; the Thums Up source carried transparency that flattened onto
+  black; and the Dough promo buttons carried `row-tight`, an **admin** class
+  that does not exist here, so they overlapped on a phone. A class name that
+  silently does nothing is worse than no class.
+- **SEO:** `/offer/` was `noindex` and still in the sitemap — the same
+  contradictory signal Phase 4 removed from the v1 stubs, reintroduced by a
+  later page. Now filtered alongside `/checkout/`.
+
+
 ### 2026-08-18 (Platform buttons moved to where they help: out-of-range checkout)
 
 - **The owner's idea, and the sharper half of the same principle.** Beyond
