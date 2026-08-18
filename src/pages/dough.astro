@@ -1,0 +1,138 @@
+---
+/**
+ * /dough — what the currency is, in the customer's terms.
+ *
+ * Deliberately says nothing about food cost, margin, redemption rates or how
+ * the reward is funded. That is our business and it is in the backend's docs;
+ * a customer needs four facts — you earn it, you spend it, here is the limit,
+ * here is when it goes.
+ *
+ * The honest bits are stated plainly rather than buried, because a loyalty
+ * scheme that hides its rules is one people stop trusting the first time a
+ * number surprises them: the 10% cap and the 45-day expiry are both above the
+ * fold, in the same size as everything else.
+ */
+import Layout from '../layouts/Layout.astro';
+import { site } from '../lib/data';
+import { restaurantJsonLd } from '../lib/seo';
+
+const title = 'Dough — earn ₹ back on every order | The Oven Vibe';
+const description =
+  'Dough is money in your name at The Oven Vibe. Earn 5% back on every order, spend it on the next one. 100 Dough = ₹100.';
+---
+
+<Layout title={title} description={description} jsonLd={[restaurantJsonLd({ withMenu: false })]}>
+  <main class="main">
+    <section class="section">
+      <div class="container narrow-container">
+        <div class="dough-hero">
+          <img src="/static/images/svg/dough.svg" alt="" width="72" height="72" />
+          <h1>Dough</h1>
+          <p class="lead">
+            Money in your name at The Oven Vibe. <strong>100 Dough = ₹100.</strong>{' '}
+            You earn it by ordering, and you spend it on what you order next.
+          </p>
+        </div>
+
+        <div class="dough-steps">
+          <div class="dough-step">
+            <span class="dough-step-n">1</span>
+            <h2>Order</h2>
+            <p>Anything on the menu, delivery or pickup. Nothing to sign up for.</p>
+          </div>
+          <div class="dough-step">
+            <span class="dough-step-n">2</span>
+            <h2>Earn 5%</h2>
+            <p>
+              A ₹400 order gives you <strong>20 Dough</strong>. It lands when we hand over your
+              food — that is when the order is really done.
+            </p>
+          </div>
+          <div class="dough-step">
+            <span class="dough-step-n">3</span>
+            <h2>Spend it</h2>
+            <p>
+              Your balance comes off your next bill automatically. Nothing to type, no code to
+              remember.
+            </p>
+          </div>
+        </div>
+
+        <h2 class="dough-h2">The two rules worth knowing</h2>
+        <div class="dough-rules">
+          <div class="dough-rule">
+            <h3>Up to 10% of an order</h3>
+            <p>
+              On a ₹400 order you can use ₹40 of Dough. The rest stays in your name for next
+              time — so a big balance lasts across a few orders instead of vanishing into one.
+            </p>
+          </div>
+          <div class="dough-rule">
+            <h3>45 days, and every order resets it</h3>
+            <p>
+              Your Dough stays as long as you order at least once every 45 days. Order today and
+              the clock starts again from today. We will remind you before anything runs out.
+            </p>
+          </div>
+        </div>
+
+        <h2 class="dough-h2">Questions</h2>
+        <div class="dough-faq">
+          <details>
+            <summary>Do I need an account?</summary>
+            <p>
+              No. Your phone number is your account. Order with the same number and your Dough
+              is there.
+            </p>
+          </details>
+          <details>
+            <summary>How do I know how much I have?</summary>
+            <p>
+              It shows at checkout before you pay, and on the coin at the corner of this site.
+              Allow notifications and we will also tell you when you earn and before anything
+              expires.
+            </p>
+          </details>
+          <details>
+            <summary>Can I use Dough on an item that is already discounted?</summary>
+            <p>
+              One at a time — either the offer price or your Dough, whichever saves you more.
+              You still earn Dough on a discounted order.
+            </p>
+          </details>
+          <details>
+            <summary>What if I cancel, or the order does not happen?</summary>
+            <p>
+              Any Dough you used comes straight back, and nothing is earned on an order that was
+              not delivered.
+            </p>
+          </details>
+          <details>
+            <summary>Does it work on Zomato or Swiggy?</summary>
+            <p>
+              No — only when you order directly from us. Those apps never tell us who ordered, so
+              there is no name to put the Dough against.
+            </p>
+          </details>
+          <details>
+            <summary>Can I give my Dough to someone else?</summary>
+            <p>
+              Not directly, but you can invite them: you both get ₹40 when they order.
+              <a href="/refer/">See how that works</a>.
+            </p>
+          </details>
+        </div>
+
+        <div class="dough-cta">
+          <a href="/#menu" class="btn btn-primary btn-lg">Start earning — see the menu</a>
+          <a href="/refer/" class="btn btn-secondary btn-lg">Invite a friend</a>
+        </div>
+
+        <p class="dough-small">
+          Dough has no cash value and cannot be exchanged for money. It works only on orders
+          placed directly with The Oven Vibe, {site.business.address.locality}.
+        </p>
+      </div>
+    </section>
+  </main>
+</Layout>
