@@ -100,6 +100,28 @@
 
 ## Session log
 
+### 2026-08-18 (Platform buttons moved to where they help: out-of-range checkout)
+
+- **The owner's idea, and the sharper half of the same principle.** Beyond
+  `maxDeliveryKm` the quote cannot be sent — `pricing.ts` returns
+  `kind: 'beyond'`, and both **Copy quote** and **Send order on WhatsApp** go
+  inert. That was a dead end at the exact moment someone was ready to order.
+- **Order on Zomato / Order on Swiggy now take their place there** (PR #52).
+  Same buttons, opposite meaning: on the homepage the customer was already ours
+  and the buttons gave them away; out of range they were never ours to lose,
+  because we cannot cook for that address.
+- `#beyondActions` in `OrderQuote.astro`, hidden by default, shared by
+  `/checkout/` and `/price-calculator/`; toggled by `showBeyondActions()` in
+  `order-form.ts`. It **replaces** the send pair — two greyed buttons beside two
+  live ones is a puzzle, not a choice.
+- **The bug that was designed out:** every path that disables or re-enables the
+  send buttons also clears the platform pair, including the ones that never
+  reach `renderOutput`. Without that, emptying the basket after an out-of-range
+  quote left "Order on Zomato" sitting under "Add items above to see your
+  total".
+- Verified at 390px with a real basket: hidden initially, shown on **More than
+  4 km**, hidden again on **Under 2 km**, live on the deployed site.
+
 ### 2026-08-18 (Zomato and Swiggy hero CTAs retired)
 
 - **The homepage was sending its own customers to a competitor's checkout.** The
