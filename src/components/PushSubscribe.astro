@@ -23,7 +23,7 @@ const enabled = Boolean(site.push.vapid_public_key) && Boolean(site.backend.work
 {
   enabled && (
     <div id="pushAskBanner" class="soft-banner" hidden>
-      <p>Want our flash deals and new-item alerts on this device?</p>
+      <p id="pushAskText">Want our flash deals and new-item alerts on this device?</p>
       <div class="soft-banner-actions">
         <button type="button" id="pushAskYes" class="btn btn-primary">
           Yes, notify me
@@ -104,6 +104,19 @@ const enabled = Boolean(site.push.vapid_public_key) && Boolean(site.backend.work
         if (recentlyDismissed()) return;
         if (!consumeOrderJustSent()) return;
         if (anotherBannerVisible()) return;
+        // This banner only ever appears just after an order was sent, so it
+        // asks about THAT order rather than about our marketing. "Did the
+        // kitchen see it?" is the question the customer already has, and a
+        // notification that answers a question they are asking is the only
+        // kind people say yes to. A permission refused here is refused for the
+        // whole site, permanently, so the ask has to be worth it.
+        const text = document.getElementById('pushAskText');
+        if (text) {
+          text.textContent =
+            'Want to know the moment we accept your order? We will send one notification when the kitchen confirms it.';
+        }
+        const yes = document.getElementById('pushAskYes');
+        if (yes) yes.textContent = 'Yes, tell me';
         banner.hidden = false;
       });
     }
