@@ -1819,3 +1819,51 @@ article em {
   gap: 0.5rem;
   justify-content: flex-end;
 }
+
+/* ---------------------------------------------------------------------------
+   "On offer right now" — the live-offer strip at the top of Combos & Offers.
+
+   Deliberately a list rather than a row of cards: a customer scanning for a
+   deal wants to compare prices down a column, and the dish's own card (with
+   its picture and its Add button) is one tap away.
+   ------------------------------------------------------------------------ */
+.offer-strip {
+  grid-column: 1 / -1;
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-md);
+  background: #fff5f5;
+  padding: 0.9rem 1rem;
+  margin-bottom: 0.25rem;
+}
+.offer-strip-title {
+  margin: 0 0 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+}
+.offer-strip-row {
+  display: flex;
+  flex-wrap: wrap;          /* the label drops to its own line instead of
+                               squeezing the name into one word per line */
+  align-items: baseline;
+  gap: 0.35rem 0.6rem;
+  width: 100%;
+  padding: 0.5rem 0;
+  border: 0;
+  border-top: 1px solid rgba(198, 40, 40, 0.15);
+  background: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.offer-strip-row:first-of-type { border-top: 0; }
+.offer-strip-name { flex: 1; font-weight: 600; font-size: 0.92rem; line-height: 1.3; }
+.offer-strip-price { white-space: nowrap; font-weight: 700; }
+.offer-strip-label {
+  flex-basis: 100%;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+}
+.offer-strip-row:hover .offer-strip-name { text-decoration: underline; }
