@@ -1,0 +1,71 @@
+---
+/**
+ * Floating Dough balance.
+ *
+ * Sits above the basket FAB, and only appears once a customer actually has
+ * Dough. Zero is not shown: a currency you have none of is an advertisement,
+ * and the customer did not ask for one — the /dough page is where the pitch
+ * lives.
+ *
+ * The balance is read once per session and cached, because this loads on every
+ * page and a loyalty read must never be the reason a page feels slow. If the
+ * Worker is unreachable the bubble simply never appears (AGENTS.md rule 5).
+ */
+import { site } from '../lib/data';
+
+const enabled = Boolean(site.backend.worker_url);
+---
+
+{
+  enabled && (
+    <a href="/dough/" class="dough-fab" id="doughFab" hidden aria-label="Your Dough balance">
+      <img src="/static/images/svg/dough.svg" alt="" width="30" height="30" />
+      <span class="dough-fab-amount" id="doughFabAmount">₹0</span>
+    </a>
+  )
+}
+
+{
+  enabled && (
+    <script
+      type="application/json"
+      id="dough-fab-config"
+      is:inline
+      set:html={JSON.stringify({ workerUrl: site.backend.worker_url })}
+    />
+  )
+}
+
+<script>
+  import { getDeviceId } from '../lib/device';
+  import { fetchDough } from '../lib/dough';
+
+  const fab = document.getElementById('doughFab');
+  const amountEl = document.getElementById('doughFabAmount');
+  const cfgEl = document.getElementById('dough-fab-config');
+
+  if (fab && amountEl && cfgEl) {
+    const { workerUrl } = JSON.parse(cfgEl.textContent ?? '{}') as { workerUrl?: string };
+
+    const show = (balance: number) => {
+      if (balance <= 0) return;
+      amountEl.textContent = `₹${balance}`;
+      fab.hidden = false;
+    };
+
+    // One read per session. The cached value paints immediately on the next
+    // page so the bubble does not blink in and out as the customer browses.
+    const cached = sessionStorage.getItem('ov_dough_balance');
+    if (cached) show(Number(cached) || 0);
+
+    if (workerUrl && !cached) {
+      void (async () => {
+        // The phone is only known after an order, so most first-time visitors
+        // resolve to nothing here — which is correct: they have no Dough yet.
+        const { balance } = await fetchDough(workerUrl, getDeviceId(), '');
+        sessionStorage.setItem('ov_dough_balance', String(balance));
+        show(balance);
+      })();
+    }
+  }
+</script>

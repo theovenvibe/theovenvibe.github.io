@@ -40,6 +40,27 @@ const { showFab = true } = Astro.props;
 <script>
   import { addItem, cartCount, onCartChange } from '../lib/cart';
   import { getDeviceId } from '../lib/device';
+
+  /* A friend's link lands as ?r=OV4F2K. Stored rather than read at checkout,
+   * because the customer will browse, leave and come back before they order —
+   * and the code has to survive that. Kept for 30 days: long enough for a real
+   * decision, short enough that a link shared in March is not still claiming
+   * credit in June. */
+  try {
+    const ref = new URLSearchParams(location.search).get('r');
+    if (ref && /^[A-Za-z0-9]{4,12}$/.test(ref)) {
+      localStorage.setItem('ov_ref_code', ref.toUpperCase());
+      localStorage.setItem('ov_ref_code_at', String(Date.now()));
+    }
+    const at = Number(localStorage.getItem('ov_ref_code_at') ?? 0);
+    if (at && Date.now() - at > 30 * 86400_000) {
+      localStorage.removeItem('ov_ref_code');
+      localStorage.removeItem('ov_ref_code_at');
+    }
+  } catch {
+    // Private mode with storage blocked: the referral is simply not tracked,
+    // which must never stop the page working.
+  }
   import { askAndSubscribe, iosNotInstalled, pushPermission } from '../lib/push';
 
   /**

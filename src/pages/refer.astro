@@ -1,0 +1,152 @@
+---
+/**
+ * /refer — invite a friend, both get ₹40.
+ *
+ * The share button opens WhatsApp with the message already written and sends it
+ * FROM the customer TO their friend. That direction matters: an unsolicited
+ * message from our business number can get the account reported, while one
+ * person telling a friend about a pizza is just a conversation.
+ *
+ * The code only exists after someone has ordered, so this page has two states
+ * and both are honest — a visitor with no code is told plainly that ordering
+ * once is what unlocks it, rather than being shown a dead button.
+ */
+import Layout from '../layouts/Layout.astro';
+import { site } from '../lib/data';
+import { restaurantJsonLd } from '../lib/seo';
+
+const title = 'Refer a friend — you both get ₹40 | The Oven Vibe';
+const description =
+  'Share your code. When your friend places their first order, you both get ₹40 of Dough at The Oven Vibe, Sundargarh.';
+---
+
+<Layout title={title} description={description} jsonLd={[restaurantJsonLd({ withMenu: false })]}>
+  <main class="main">
+    <section class="section">
+      <div class="container narrow-container">
+        <div class="dough-hero">
+          <img src="/static/images/svg/dough.svg" alt="" width="72" height="72" />
+          <h1>Invite a friend</h1>
+          <p class="lead">
+            <strong>You both get ₹40.</strong> They get ₹40 off their first order, and you get
+            ₹40 of Dough the moment it is delivered.
+          </p>
+        </div>
+
+        <div class="refer-card" id="referCard" hidden>
+          <p class="refer-label">Your code</p>
+          <p class="refer-code" id="referCode">—</p>
+          <button type="button" class="btn btn-primary btn-lg" id="referShare">
+            Share on WhatsApp
+          </button>
+          <button type="button" class="btn btn-secondary" id="referCopy">Copy the link</button>
+          <p class="refer-link" id="referLink"></p>
+        </div>
+
+        <div class="refer-card refer-locked" id="referLocked">
+          <p>
+            Your code appears here after your first order — it is tied to your phone number, so
+            there is nothing to sign up for.
+          </p>
+          <a href="/#menu" class="btn btn-primary btn-lg">See the menu</a>
+        </div>
+
+        <div class="dough-steps">
+          <div class="dough-step">
+            <span class="dough-step-n">1</span>
+            <h2>Send your link</h2>
+            <p>One tap opens WhatsApp with the message ready. Send it to whoever you like.</p>
+          </div>
+          <div class="dough-step">
+            <span class="dough-step-n">2</span>
+            <h2>They order</h2>
+            <p>₹40 comes off their first order of ₹399 or more. They do not need a code — the link does it.</p>
+          </div>
+          <div class="dough-step">
+            <span class="dough-step-n">3</span>
+            <h2>You both get ₹40</h2>
+            <p>
+              Yours lands as Dough when their food is delivered — a real order, not a click.
+            </p>
+          </div>
+        </div>
+
+        <h2 class="dough-h2">Questions</h2>
+        <div class="dough-faq">
+          <details>
+            <summary>How many friends can I invite?</summary>
+            <p>As many as you like. Each one earns you ₹40 on their first order.</p>
+          </details>
+          <details>
+            <summary>When exactly do I get my ₹40?</summary>
+            <p>
+              When their order is delivered and paid for — not when they click the link. If their
+              order is cancelled, the reward goes with it.
+            </p>
+          </details>
+          <details>
+            <summary>Can I invite someone who has ordered before?</summary>
+            <p>
+              The reward is for bringing someone new, so it only works for a number that has not
+              ordered from us before.
+            </p>
+          </details>
+          <details>
+            <summary>How do I spend the ₹40?</summary>
+            <p>
+              It becomes Dough, which comes off your next bill automatically — up to 10% of an
+              order. <a href="/dough/">How Dough works</a>.
+            </p>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
+
+<script>
+  import { getDeviceId } from '../lib/device';
+
+  const card = document.getElementById('referCard');
+  const locked = document.getElementById('referLocked');
+  const codeEl = document.getElementById('referCode');
+  const linkEl = document.getElementById('referLink');
+  const shareBtn = document.getElementById('referShare');
+  const copyBtn = document.getElementById('referCopy');
+
+  /**
+   * The code is written here by checkout after an order, so the page needs no
+   * request of its own — and a visitor who has never ordered sees the honest
+   * "order once first" state rather than a spinner that resolves to nothing.
+   */
+  const code = localStorage.getItem('ov_my_referral_code');
+
+  if (code && card && locked && codeEl && linkEl) {
+    const url = `${location.origin}/?r=${code}`;
+    codeEl.textContent = code;
+    linkEl.textContent = url;
+    card.hidden = false;
+    locked.hidden = true;
+
+    const message = `I order from The Oven Vibe in Sundargarh — proper oven-baked pizza 🍕\n\nUse my link and you get ₹40 off your first order: ${url}`;
+
+    shareBtn?.addEventListener('click', () => {
+      // wa.me with no number opens the contact picker, so the customer chooses
+      // who to send it to — the message travels between two friends, which is
+      // the only direction that does not risk our business number.
+      window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank', 'noopener');
+    });
+
+    copyBtn?.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(url);
+        copyBtn.textContent = 'Copied';
+        window.setTimeout(() => (copyBtn.textContent = 'Copy the link'), 2000);
+      } catch {
+        // Clipboard is blocked in some in-app browsers; the link is on screen
+        // to select by hand, so this is not worth an error message.
+      }
+    });
+  }
+  void getDeviceId();
+</script>
