@@ -100,6 +100,30 @@
 
 ## Session log
 
+### 2026-08-18 (Zomato and Swiggy hero CTAs retired)
+
+- **The homepage was sending its own customers to a competitor's checkout.** The
+  kitchen's partner-click alert fired twice in eleven minutes: visitors arriving
+  on our site and tapping the hero's **Order on Zomato** / **Order on Swiggy**
+  buttons — the same food, minus the commission, at a slower ticket, and a
+  customer the platform then owns.
+- **Both buttons removed from the hero** (PR #51). `See the Menu` deliberately
+  stays `btn-secondary`: the hero already has one red primary just above it
+  (*Check your exact total & Order Now*), and two stacked reds compete instead
+  of leading.
+- **Commented in place, not deleted** — the owner's call, so it is one
+  uncomment to put them back. `LINKS`, `.btn-zomato`/`.btn-swiggy` and
+  `PartnerClickAlerts` are all untouched.
+- **`docs/PLATFORM_LINKS.md` is new**: the decision, the exact markup, the
+  restore steps, and the mentions that stayed on purpose — the beyond-radius
+  line (a customer we genuinely cannot serve), the footer links, the sundargarh
+  page, and the `sameAs` structured data, which is SEO and never rendered.
+- Verified live: no `btn-zomato` or `btn-swiggy` in the deployed homepage, hero
+  down to one button. The `pages-build-deployment` check fails as it has since
+  #50; the real `deploy` workflow is green and the change is live.
+- **Watch next:** `stock_moves.channel` in the admin's Stock tab is now the
+  honest measure of whether this moved anything.
+
 ### 2026-08-18 (App feel: the mobile menu, and the /offer page)
 
 - **The customer site had the same class of bug as the Kitchen Console**, which
