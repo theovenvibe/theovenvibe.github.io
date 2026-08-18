@@ -276,3 +276,21 @@ each page would still look correct on its own. Full design:
 `menu.json` prices, the printed menu, the Zomato catalogue and
 `../the-oven-vibe-dashboard/data/menu.csv` are four copies of the same facts.
 Change one, change all four.
+
+## The pickup discount is retired (2026-08-19)
+
+₹30 off pickup over ₹299 — **commented out, not deleted**. Full reasoning and
+the restore steps: `docs/PICKUP_DISCOUNT.md`.
+
+The maths that killed it: on a 0–2 km delivery we collect ₹29 and burn ~₹11 of
+petrol, so **delivering is ₹18 better for us than the same order collected**.
+Below ₹499 the discount meant paying ₹30 for the privilege of losing ₹18. Only
+above ₹499 — where delivery is already free — does a pickup save us anything,
+and that is ₹11.
+
+Stacked with Dough, a ₹299 pickup landed at 50% food cost, the thinnest thing on
+the menu. Dough replaces it: 5% back is ₹15 on that order, costs nothing today,
+and brings them back instead of just being cheaper once.
+
+**Do not re-add it without redoing this arithmetic.** If it returns, ₹10 above
+₹499 is the only band where the saving is real.

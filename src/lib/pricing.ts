@@ -16,8 +16,8 @@
  *      regulars.free_above instead) — never during the late-night window.
  *   6. Add surcharges: late night, rain (when the caller says it is
  *      raining, defaulting to the rain.active flag).
- *   7. Subtract the pickup discount outside the late-night window (a pickup
- *      still reopens the kitchen), and only from pickup_min_order upwards.
+ *   7. (Retired 2026-08-19 — the pickup discount. See the block in the pickup
+ *      branch below; the config keys are still there to switch it back on.)
  *   8. Cap the SUM of delivery charges (fee + surcharges) at
  *      max_delivery_charge — the banner's promise covers surcharges too.
  *   9. Regulars: surcharges waived entirely (shown as a $0 waived line, not
@@ -180,25 +180,48 @@ export function computeQuote(cfg: DeliveryConfig, input: QuoteInput): QuoteResul
     const lines: QuoteLine[] = [{ label: 'Food', amount: subtotal }];
     // Below the threshold, tell them what the discount would take to reach —
     // the same courtesy the delivery side gets with its free-delivery nudge.
-    let pickupNudge: { needed: number; threshold: number; discount: number } | undefined;
-    if (!lateNight && subtotal < cfg.pickup_min_order) {
-      pickupNudge = {
-        needed: cfg.pickup_min_order - subtotal,
-        threshold: cfg.pickup_min_order,
-        discount: cfg.pickup_discount,
-      };
-    }
+    /* The pickup discount is RETIRED (owner, 2026-08-19), not deleted.
+     *
+     * It was Rs30 off orders over Rs299, on the theory that a pickup saves us
+     * the ride. The arithmetic says otherwise: on a 0-2km delivery we collect a
+     * Rs29 fee and burn about Rs11 of petrol, so delivering is Rs18 BETTER for
+     * us than the same order collected. Below Rs499 we were paying Rs30 for the
+     * privilege of losing Rs18 — and stacked with Dough it took a Rs299 order to
+     * 50% food cost, the thinnest thing on the menu.
+     *
+     * Only above Rs499, where delivery is already free, does a pickup genuinely
+     * save us anything, and that is Rs11 — too small to change behaviour.
+     *
+     * Dough replaces it: a pickup customer already earns 5% back, which costs
+     * nothing today and brings them back rather than just being cheaper once.
+     *
+     * To restore: uncomment the two blocks below. `pickup_discount` and
+     * `pickup_min_order` are still in site.config.json.
+     *
+     * let pickupNudge: { needed: number; threshold: number; discount: number } | undefined;
+     * if (!lateNight && subtotal < cfg.pickup_min_order) {
+     *   pickupNudge = {
+     *     needed: cfg.pickup_min_order - subtotal,
+     *     threshold: cfg.pickup_min_order,
+     *     discount: cfg.pickup_discount,
+     *   };
+     * }
+     */
+    const pickupNudge: { needed: number; threshold: number; discount: number } | undefined = undefined;
     if (lateNight) {
       lines.push({
         label: `Late-night kitchen (prepaid, min ₹${cfg.late_night.min_order})`,
         amount: input.regular ? 0 : cfg.late_night.kitchen_charge,
       });
-    } else if (subtotal >= cfg.pickup_min_order) {
-      lines.push({
-        label: `Pickup discount (orders over ₹${cfg.pickup_min_order})`,
-        amount: -cfg.pickup_discount,
-      });
     }
+    /* Retired with the nudge above — the discount line itself:
+     * } else if (subtotal >= cfg.pickup_min_order) {
+     *   lines.push({
+     *     label: `Pickup discount (orders over ₹${cfg.pickup_min_order})`,
+     *     amount: -cfg.pickup_discount,
+     *   });
+     * }
+     */
     // Below the threshold there is simply no discount line: ₹30 off a ₹100
     // order is a loss, since the food itself only contributes about ₹15.
     return {
