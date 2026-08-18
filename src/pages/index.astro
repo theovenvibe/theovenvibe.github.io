@@ -111,9 +111,22 @@ const localPhone = site.business.phone.replace('+91', '');
           in a 100% pure vegetarian kitchen and sent out hot across Sundargarh.
         </p>
 
+        {/* The Zomato and Swiggy buttons stood here until 2026-08-18, and the
+            owner removed them: the kitchen was watching customers arrive on its
+            own site and tap straight out to a platform that takes a commission
+            on the same food. The partner-click alert fired twice in eleven
+            minutes on 18/08 and that was the decision.
+
+            They are not deleted, only retired — put them back by restoring the
+            two lines below, with no other change needed (LINKS, .btn-zomato and
+            .btn-swiggy are all still in place). Full context, including the
+            other places these links still appear on purpose, is in
+            docs/PLATFORM_LINKS.md.
+
+            <a href={LINKS.zomato} target="_blank" class="btn btn-zomato btn-lg">Order on Zomato</a>
+            <a href={LINKS.swiggy} target="_blank" class="btn btn-swiggy btn-lg">Order on Swiggy</a>
+        */}
         <div class="hero-actions animate-on-scroll delay-500">
-          <a href={LINKS.zomato} target="_blank" class="btn btn-zomato btn-lg">Order on Zomato</a>
-          <a href={LINKS.swiggy} target="_blank" class="btn btn-swiggy btn-lg">Order on Swiggy</a>
           <a href="#menu" class="btn btn-secondary btn-lg">See the Menu</a>
         </div>
 
