@@ -110,6 +110,7 @@ const { showFab = true } = Astro.props;
     kitchen_full: 'the kitchen is at capacity',
     staff: 'we are short-staffed',
     lpg: 'our gas ran out',
+    power_cut: 'the power is out',
     festival: 'we are closed for a festival',
     travel: 'we are away',
     temporary: 'we are closed for a bit',
@@ -236,7 +237,13 @@ const { showFab = true } = Astro.props;
     }
 
     const why = store.reason ? CLOSE_REASONS[store.reason] ?? 'we are closed for a bit' : 'we are closed for a bit';
-    const back = store.until ? ` We are back ${formatBackAt(store.until).replace(/^back /, '')}.` : '';
+    // No `until` means the owner chose "until I turn it back on" — a power cut,
+    // usually. Saying "back soon" is the honest answer; the old code showed the
+    // safety-net date instead and promised a customer we would be back next
+    // week (owner-reported, 2026-08-18).
+    const back = store.until
+      ? ` We are back ${formatBackAt(store.until).replace(/^back /, '')}.`
+      : ' We will be back as soon as we can.';
     // The owner types this in a hurry and rarely ends it with a full stop, which
     // ran their sentence straight into ours.
     const note = store.message ? ` ${store.message.replace(/[.!?]?$/, '.')}` : '';
@@ -246,23 +253,60 @@ const { showFab = true } = Astro.props;
       `<p class="kitchen-closed-body">Sorry — ${why}.${back}${note} ` +
       'You can still pre-order: build your basket as normal and we will cook it as soon as we are back.</p>';
 
-    // Only worth offering where it can actually be granted.
-    const state = pushPermission();
-    if (state === 'default' && !iosNotInstalled()) {
+    /* The ask, and the half that was missing.
+     *
+     * Until 2026-08-18 this button asked for notification permission and then
+     * did nothing with it: permission granted, nobody recorded, no push ever
+     * sent. Now the tap also joins a list, and reopening the kitchen sends to
+     * everyone on it.
+     *
+     * It shows whether or not permission has already been granted. Somebody who
+     * allowed notifications last week still has to tell us they are waiting
+     * tonight — and for them it is one tap with no dialog at all.
+     */
+    if (!banner.querySelector('.kitchen-closed-ask') && !iosNotInstalled()) {
       const ask = document.createElement('button');
       ask.type = 'button';
       ask.className = 'kitchen-closed-ask';
-      ask.textContent = 'Tell me when we are open';
+      ask.textContent = 'Tell me when we are back';
       ask.addEventListener('click', async () => {
         const el = document.getElementById('lateNightWindow');
         const vapid = el?.dataset.vapid ?? '';
         const worker = el?.dataset.worker ?? '';
-        if (!vapid) return;
         ask.disabled = true;
         ask.textContent = 'One moment…';
-        const result = await askAndSubscribe(vapid, worker);
-        ask.textContent = result === 'granted' ? "We'll let you know" : 'Tell me when we are open';
-        ask.disabled = result === 'granted';
+
+        // Already allowed? Then there is no dialog to show — just make sure the
+        // subscription exists and register the wait.
+        let ok = pushPermission() === 'granted';
+        if (!ok && vapid) ok = (await askAndSubscribe(vapid, worker)) === 'granted';
+
+        if (!ok) {
+          // Refused, or no permission possible. Fall back to WhatsApp with the
+          // message pre-written — one they send us, which is the direction that
+          // keeps the business account safe (owner's rule, 2026-08-17).
+          ask.textContent = 'Ask us on WhatsApp';
+          ask.disabled = false;
+          ask.onclick = () => {
+            const phone = el?.dataset.whatsapp ?? '';
+            const text = encodeURIComponent('Hi! Please message me when the kitchen is open again.');
+            window.open(`https://wa.me/${phone}?text=${text}`, '_blank', 'noopener');
+          };
+          return;
+        }
+
+        try {
+          await fetch(`${worker}/reopen-notify`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ device_id: getDeviceId() }),
+          });
+          ask.textContent = "We'll notify you the moment we're back";
+        } catch {
+          // Fire-and-forget, like everything else the site sends here. A failed
+          // registration must never look like a broken page.
+          ask.textContent = "We'll try to let you know";
+        }
       });
       banner.appendChild(ask);
     }
