@@ -158,7 +158,9 @@
 
 .cart-fab {
   position: fixed;
-  bottom: 6.5rem; /* clear of the WhatsApp FAB at bottom: 2rem */
+  /* 2rem + the 60px WhatsApp button + a 1rem gap. Same rhythm as the Dough
+     bubble above this one. */
+  bottom: 6.75rem;
   right: 2rem;
   width: 60px;
   height: 60px;
