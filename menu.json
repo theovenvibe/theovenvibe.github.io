@@ -202,6 +202,28 @@
       "description": "[veg preparation] Tossed in peri peri spice.",
       "status": "available",
       "image_code": "745802351"
+    },
+    {
+      "product_code": "900000001",
+      "item_id": 34,
+      "category": "Beverages",
+      "subcategory": "Cold Drinks",
+      "item_name": "Coca-Cola [250 ml]",
+      "display_name": "Coca-Cola [250 ml]",
+      "price": 20,
+      "description": "[veg preparation] Chilled 250 ml bottle. The classic with a hot pizza.",
+      "status": "available"
+    },
+    {
+      "product_code": "900000002",
+      "item_id": 35,
+      "category": "Beverages",
+      "subcategory": "Cold Drinks",
+      "item_name": "Thums Up [250 ml]",
+      "display_name": "Thums Up [250 ml]",
+      "price": 20,
+      "description": "[veg preparation] Chilled 250 ml bottle. Strong fizz, for the spicy orders.",
+      "status": "available"
     }
   ],
   "Combos": [
@@ -209,7 +231,7 @@
       "combo_code": "745802348",
       "combo_name": "Fiesta Pizza Combo",
       "combo_price": 339,
-      "description": "Our signature Herb Paneer Delight Pizza with crispy Peri Peri Fries and a chilled Coke. A complete meal for pizza lovers.",
+      "description": "Our signature Herb Paneer Delight Pizza with crispy Peri Peri Fries and a chilled 250 ml Coca-Cola or Thums Up — whichever is in the fridge. A complete meal for pizza lovers.",
       "items_included": [
         "745802364",
         "997492919"
