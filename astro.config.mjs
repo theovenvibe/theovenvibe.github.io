@@ -20,7 +20,11 @@ export default defineConfig({
       // carries noindex, and a URL that is both noindex and in the sitemap is
       // a contradictory signal — Phase 4 removed exactly that pattern from the
       // v1 stubs, so don't reintroduce it here.
-      filter: (page) => !page.includes('/checkout'),
+      // /offer/ joined /checkout/ in carrying noindex (it is a landing page for
+      // an ad, not something to rank), and it was still being listed here —
+      // the same contradictory signal, reintroduced by a later page. Keep this
+      // list and the noindex props in step: a URL should never be both.
+      filter: (page) => !page.includes('/checkout') && !page.includes('/offer'),
       // lastmod = build time: pages are regenerated wholesale each deploy,
       // so the build date is the honest per-URL modification signal here.
       serialize: (item) => ({ ...item, lastmod: new Date().toISOString() }),
