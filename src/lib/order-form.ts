@@ -162,6 +162,10 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
   const output = document.getElementById('quoteOutput') as HTMLElement;
   const copyBtn = document.getElementById('copyQuoteBtn') as HTMLButtonElement;
   const waLink = document.getElementById('waShareLink') as HTMLAnchorElement;
+  // Out-of-range only: the Zomato/Swiggy pair that replaces the inert send
+  // buttons when we cannot deliver this far ourselves. See OrderQuote.astro.
+  const sendActions = document.getElementById('sendActions') as HTMLElement | null;
+  const beyondActions = document.getElementById('beyondActions') as HTMLElement | null;
 
   /** After closing the only thing left in "Other" is rain, which a pickup never pays. */
   const rainOffForLate = (orderType: string) => orderType === 'pickup';
@@ -414,6 +418,11 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
   let alertText = '';
 
   function disableActions() {
+    // Every path that kills the send buttons also clears the platform pair —
+    // including the ones that never reach renderOutput (empty basket, closed
+    // kitchen). Without this, emptying the basket after an out-of-range quote
+    // left "Order on Zomato" sitting under "Add items above to see your total".
+    showBeyondActions(false);
     copyBtn.disabled = true;
     delete copyBtn.dataset.quote;
     delete copyBtn.dataset.total;
@@ -422,12 +431,26 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
     waLink.setAttribute('aria-disabled', 'true');
   }
 
+  /**
+   * Swap the send buttons for the platform ones, or back.
+   *
+   * Guarded on both elements existing so a page that renders its own quote
+   * actions without this block still works — the behaviour degrades to what it
+   * was before, an inert pair, rather than throwing on the order path.
+   */
+  function showBeyondActions(on: boolean) {
+    if (!sendActions || !beyondActions) return;
+    sendActions.hidden = on;
+    beyondActions.hidden = !on;
+  }
+
   function renderOutput(result: QuoteResult) {
     clear(output);
 
     if (result.kind === 'beyond') {
       output.appendChild(textEl('p', 'calc-note calc-note--warn', result.note));
       disableActions();
+      showBeyondActions(true);
       return;
     }
 
@@ -496,6 +519,7 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
       return;
     }
 
+    showBeyondActions(false);
     copyBtn.disabled = false;
     const text = buildQuoteText(result, true);
     copyBtn.dataset.quote = text;

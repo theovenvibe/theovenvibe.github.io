@@ -10,6 +10,8 @@
  *
  * Styles: `styles/order-form.css` (global — see OrderOptions.astro).
  */
+import { LINKS } from '../lib/seo';
+
 interface Props {
   /** Heading above the quote. Checkout says "Your order"; the calculator "Your total". */
   heading?: string;
@@ -30,7 +32,7 @@ const { heading = 'Your total', sendLabel = 'Send on WhatsApp', newTab = true } 
 <div class="calc-output-wrap">
   <h2 style="margin-bottom: 1rem;">{heading}</h2>
   <div id="quoteOutput" class="calc-output" aria-live="polite"></div>
-  <div class="calc-actions">
+  <div class="calc-actions" id="sendActions">
     <button type="button" id="copyQuoteBtn" class="btn btn-secondary" disabled>Copy quote</button>
     <a
       id="waShareLink"
@@ -39,5 +41,24 @@ const { heading = 'Your total', sendLabel = 'Send on WhatsApp', newTab = true } 
       rel={newTab ? 'noopener noreferrer' : undefined}
       aria-disabled="true">{sendLabel}</a
     >
+  </div>
+
+  {/*
+    The one place platform links belong (owner's call, 2026-08-18).
+
+    Beyond the delivery radius we cannot cook for this customer at all, and the
+    buttons above go inert — a dead end at the exact moment someone is ready to
+    order. Zomato and Swiggy cover that distance, so here they are a service,
+    not a leak: this customer was never ours to lose. That is precisely why the
+    same buttons were taken off the homepage, where the customer was already
+    ours (see `docs/PLATFORM_LINKS.md`).
+
+    Hidden by default and revealed by order-form.ts only on an out-of-range
+    quote. It replaces the dead pair rather than sitting beside it — two greyed
+    buttons next to two live ones is a puzzle, not a choice.
+  */}
+  <div class="calc-actions" id="beyondActions" hidden>
+    <a href={LINKS.zomato} target="_blank" rel="noopener noreferrer" class="btn btn-zomato">Order on Zomato</a>
+    <a href={LINKS.swiggy} target="_blank" rel="noopener noreferrer" class="btn btn-swiggy">Order on Swiggy</a>
   </div>
 </div>
