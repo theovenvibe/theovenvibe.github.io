@@ -1969,6 +1969,61 @@ article em {
    holding the link. Reads as a receipt rather than a dashboard: the number
    first, then what moved it, because the question being answered is always
    "where did my money go". */
+/* "Check your Dough" — a number in, a balance out. Sits above the pitch,
+   because somebody who came here to find their balance should not have to read
+   an explanation of the scheme first. */
+.dough-check {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  margin-bottom: 2rem;
+  background: var(--surface);
+}
+
+.dough-check-title {
+  margin: 0 0 0.35rem;
+  font-size: 1.1rem;
+}
+
+.dough-check-lede {
+  margin: 0 0 0.9rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.dough-check-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.dough-check-form input {
+  flex: 1 1 12rem;
+  min-width: 0;
+  padding: 0.7rem 0.85rem;
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  color: inherit;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.dough-check-form .btn {
+  flex: 0 0 auto;
+}
+
+.dough-check-result {
+  margin: 0.9rem 0 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.dough-check-result.is-bad {
+  color: var(--danger, #a32a1e);
+}
+
 .dough-statement {
   border: 1px solid var(--line);
   border-radius: var(--radius);

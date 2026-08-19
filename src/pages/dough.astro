@@ -44,7 +44,110 @@ const description =
           </p>
         </div>
       </div>
+      {/*
+        Check a balance by phone number.
+
+        This is the plain answer to "how much Dough do I have?", and it exists
+        because the clever answers all failed someone: the floating button only
+        knows a browser it has seen order before, and the private link has to be
+        asked for. Anuj Agarwal had ₹40 he could not see on a phone that had
+        already ordered.
+
+        It shows a balance and a first name and nothing else — no address, no
+        order history, nothing that would let one neighbour read another's
+        account. The full statement stays behind the private link.
+      */}
+      <div class="wrap dough-check" id="doughCheck">
+        <h2 class="dough-check-title">Check your Dough</h2>
+        <p class="dough-check-lede">
+          Enter the mobile number you ordered with and we'll show you what's in your wallet.
+        </p>
+        <form class="dough-check-form" id="doughCheckForm">
+          <label class="sr-only" for="doughCheckPhone">Your mobile number</label>
+          <input
+            id="doughCheckPhone"
+            name="phone"
+            type="tel"
+            inputmode="numeric"
+            autocomplete="tel"
+            maxlength="15"
+            placeholder="10-digit mobile number"
+            required
+          />
+          <button type="submit" class="btn btn-primary" id="doughCheckBtn">Check</button>
+        </form>
+        <p class="dough-check-result" id="doughCheckResult" hidden></p>
+      </div>
+
       <script is:inline define:vars={{ workerUrl }}>
+        // Check a balance by number. Deliberately its own endpoint: /dough/balance
+        // is polled by the floating button on every page, and the kitchen only
+        // wants to hear about someone who actually asked.
+        (() => {
+          const form = document.getElementById('doughCheckForm');
+          const input = document.getElementById('doughCheckPhone');
+          const btn = document.getElementById('doughCheckBtn');
+          const out = document.getElementById('doughCheckResult');
+          if (!form || !workerUrl) return;
+
+          const saved = (() => { try { return localStorage.getItem('ov_phone') || ''; } catch { return ''; } })();
+          if (saved) input.value = saved;
+
+          const say = (text, bad) => {
+            out.textContent = text;
+            out.hidden = false;
+            out.classList.toggle('is-bad', Boolean(bad));
+          };
+
+          form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const digits = (input.value || '').replace(/\D/g, '').slice(-10);
+            if (!/^[6-9]\d{9}$/.test(digits)) {
+              say('That does not look like a 10-digit mobile number.', true);
+              return;
+            }
+            btn.disabled = true;
+            btn.textContent = 'Checking…';
+            try {
+              const res = await fetch(`${workerUrl}/dough/lookup`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone: digits }),
+              });
+              const data = await res.json();
+              if (!data.ok) {
+                say(data.error || 'Something went wrong. Try again in a moment.', true);
+                return;
+              }
+              if (!data.found) {
+                say('No Dough on that number yet. It starts with your first order.', false);
+                return;
+              }
+              // Remember it, so the floating button recognises this browser from
+              // now on — that button is how people find their balance later.
+              try { localStorage.setItem('ov_phone', digits); } catch {}
+              try { sessionStorage.setItem('ov_dough_balance', String(data.balance)); } catch {}
+              window.dispatchEvent(new CustomEvent('ov:dough', { detail: { balance: data.balance } }));
+
+              const name = data.name ? `${data.name}, you` : 'You';
+              const expiry = data.expires_at
+                ? ` It is good until ${new Date(data.expires_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}.`
+                : '';
+              say(
+                data.balance > 0
+                  ? `${name} have ₹${data.balance} of Dough.${expiry} It comes off your next bill automatically.`
+                  : `${name} have no Dough right now. You earn 5% back on your next order.`,
+                false,
+              );
+            } catch {
+              say('Could not reach us just now. Check your connection and try again.', true);
+            } finally {
+              btn.disabled = false;
+              btn.textContent = 'Check';
+            }
+          });
+        })();
+
         (async () => {
           const token = new URLSearchParams(location.search).get('t');
           if (!token || !workerUrl) return;
