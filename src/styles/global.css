@@ -2285,3 +2285,37 @@ body:has(.dough-hero) .dough-fab { display: none !important; }
   font-weight: 700;
   color: var(--color-primary-dark);
 }
+
+
+/* Asked once, in the one moment it is not nosy: right after we have said we
+   cannot reach them. Quiet enough not to compete with the partner buttons above
+   it, which are the thing that actually feeds them tonight. */
+.area-ask {
+  margin-top: 1rem;
+  padding: 0.9rem 1rem;
+  background: #fff8ec;
+  border: 1px solid #f0d9ac;
+  border-radius: var(--radius-md);
+}
+
+.area-ask-title { margin: 0 0 0.2rem; font-size: 0.95rem; font-weight: 700; }
+.area-ask-body { margin: 0 0 0.7rem; font-size: 0.87rem; line-height: 1.5; color: var(--color-text-muted); }
+
+.area-ask-form { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+
+.area-ask-form input {
+  flex: 1 1 11rem;
+  min-width: 0;
+  padding: 0.65rem 0.8rem;
+  font: inherit;
+  font-size: 0.95rem;
+  color: inherit;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.area-ask-form .btn { flex: 0 0 auto; min-height: 44px; }
+
+.area-ask-result { margin: 0.7rem 0 0; font-size: 0.88rem; line-height: 1.5; color: var(--color-text-muted); }
+.area-ask-result.is-bad { color: var(--color-primary-dark); }

@@ -60,4 +60,91 @@ const { heading = 'Your total', sendLabel = 'Send on WhatsApp', newTab = true } 
     <a href={LINKS.zomato} target="_blank" rel="noopener noreferrer" class="btn btn-zomato">Order on Zomato</a>
     <a href={LINKS.swiggy} target="_blank" rel="noopener noreferrer" class="btn btn-swiggy">Order on Swiggy</a>
   </div>
+
+  {/*
+    Ask where they live, instead of watching them leave.
+
+    Shown with the partner buttons above, and only then. A long ride costs the
+    kitchen a rider for 45 minutes at dinner time, so the question of whether to
+    deliver 4-8 km is worth answering with a list of real areas rather than a
+    guess. This is how that list gets made.
+  */}
+  <div class="area-ask" id="areaAsk" hidden>
+    <p class="area-ask-title">We don't deliver that far yet</p>
+    <p class="area-ask-body">
+      Tell us your area and we'll message you the day we start. It costs you nothing and it
+      genuinely decides where we go next.
+    </p>
+    <form class="area-ask-form" id="areaAskForm">
+      <label class="sr-only" for="areaAskInput">Your area</label>
+      <input
+        id="areaAskInput"
+        name="area"
+        type="text"
+        maxlength="60"
+        placeholder="Which area do you live in?"
+        required
+      />
+      <button type="submit" class="btn btn-primary" id="areaAskBtn">Tell us</button>
+    </form>
+    <p class="area-ask-result" id="areaAskResult" role="status" hidden></p>
+  </div>
 </div>
+
+<script>
+  /**
+   * "Where do you live?" — asked once, at the only moment it is not nosy: right
+   * after being told we do not deliver that far.
+   *
+   * This is the number that decides whether a 4-8 km band is worth opening. Two
+   * partner clicks were not evidence; a fortnight of named areas is.
+   */
+  import { getDeviceId } from '../lib/device';
+
+  const cfgEl = document.getElementById('dough-fab-config');
+  const workerUrl = cfgEl?.dataset.worker ?? '';
+  const form = document.getElementById('areaAskForm') as HTMLFormElement | null;
+  const input = document.getElementById('areaAskInput') as HTMLInputElement | null;
+  const btn = document.getElementById('areaAskBtn') as HTMLButtonElement | null;
+  const out = document.getElementById('areaAskResult') as HTMLElement | null;
+
+  if (form && input && btn && out && workerUrl) {
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const area = input.value.trim();
+      if (!area) return;
+      btn.disabled = true;
+      btn.textContent = 'Sending…';
+      const nameEl = document.getElementById('nameInput') as HTMLInputElement | null;
+      const phoneEl = document.getElementById('phoneInput') as HTMLInputElement | null;
+      const kmEl = document.getElementById('kmInput') as HTMLInputElement | null;
+      try {
+        const res = await fetch(`${workerUrl}/demand-signal`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            kind: 'area_request',
+            source: 'beyond',
+            page: window.location.pathname,
+            area,
+            name: nameEl?.value?.trim() || undefined,
+            phone: phoneEl?.value?.trim() || undefined,
+            km: kmEl?.value ? Number(kmEl.value) : undefined,
+            device_id: getDeviceId(),
+          }),
+        });
+        if (!res.ok) throw new Error('failed');
+        out.hidden = false;
+        out.classList.remove('is-bad');
+        out.textContent = `Thank you — ${area} is on our list. We'll message you the day we reach you.`;
+        form.hidden = true;
+      } catch {
+        out.hidden = false;
+        out.classList.add('is-bad');
+        out.textContent = 'That did not send. Check your connection and try once more.';
+        btn.disabled = false;
+        btn.textContent = 'Tell us';
+      }
+    });
+  }
+</script>
