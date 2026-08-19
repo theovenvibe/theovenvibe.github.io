@@ -479,11 +479,16 @@ const checkoutConfig = {
    * never block a customer from ordering). Until it answers, everything is
    * priced normally, which is the safe direction to be wrong in.
    *
-   * `sold_out` in the same response is deliberately ignored here. Removing a
-   * line from a basket the customer already built, on a page they came to in
-   * order to send it, is a bigger decision than this phase should make on its
-   * own — P0-E puts the discrepancy in front of the owner at confirm time
-   * instead, where a human is already looking.
+   * `sold_out` is honoured here now. It used to be ignored, on the reasoning
+   * that removing a line from a basket somebody came here to send was too big
+   * a decision to make automatically — but the alternative turned out to be
+   * worse: on 2026-08-20 a Coca-Cola marked sold out in the admin was ordered
+   * through this page, and the kitchen found out when it came to pack it.
+   *
+   * Nothing is deleted. The line is marked unavailable, exactly as the
+   * late-night rules mark one, so it leaves the total and the message while
+   * staying visible and explained. The customer sees what happened rather than
+   * watching their basket quietly change.
    */
   function refreshOffers() {
     if (!CFG.workerUrl) return;
@@ -492,6 +497,7 @@ const checkoutConfig = {
       .then((d) => {
         if (!d || !d.ok) return;
         const raised = applyOffers(d.offers ?? {});
+        form.setSoldOut(Object.keys(d.sold_out ?? {}));
         renderCart();
         form.update();
         showOfferChanges(raised);
@@ -783,6 +789,7 @@ const checkoutConfig = {
     beforeSend: validateDetails,
     rows: (): BasketRow[] =>
       lines.map((line) => ({
+        id: line.id,
         name: line.name,
         price: line.price,
         normalPrice: normalPrice.get(line.id),
@@ -803,15 +810,21 @@ const checkoutConfig = {
             amount.textContent = rupee(line.price * line.qty);
           }
         },
-        setUnavailable(off: boolean) {
+        setUnavailable(off: boolean, reason?: 'time' | 'sold-out') {
           line.el.classList.toggle('cart-line--unavailable', off);
           (line.el.querySelector('.qty-plus') as HTMLButtonElement).disabled = off;
-          if (off && !line.el.querySelector('.cart-line-note')) {
-            line.el
-              .querySelector('.cart-line-info')
-              ?.appendChild(textEl('span', 'cart-line-note', 'Not cooked at this time'));
-          } else if (!off) {
-            line.el.querySelector('.cart-line-note')?.remove();
+          // Rewritten every pass, not only on creation: an item that sells out
+          // while this page is open must stop saying "not cooked at this time",
+          // which would send the customer back at 11:30 for a drink we do not
+          // have.
+          const label = reason === 'sold-out' ? 'Sold out right now' : 'Not cooked at this time';
+          const existing = line.el.querySelector('.cart-line-note');
+          if (off && existing) {
+            existing.textContent = label;
+          } else if (off) {
+            line.el.querySelector('.cart-line-info')?.appendChild(textEl('span', 'cart-line-note', label));
+          } else {
+            existing?.remove();
           }
         },
       })),
