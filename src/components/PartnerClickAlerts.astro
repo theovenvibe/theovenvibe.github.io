@@ -84,8 +84,8 @@ const partnerConfig = { workerUrl: site.backend.worker_url };
        */
       const inFooter = Boolean(link.closest('footer'));
       const inBeyond = Boolean(link.closest('#beyondActions'));
-      const nameEl = document.getElementById('nameInput') as HTMLInputElement | null;
-      const phoneEl = document.getElementById('phoneInput') as HTMLInputElement | null;
+      const nameEl = document.getElementById('custName') as HTMLInputElement | null;
+      const phoneEl = document.getElementById('custPhone') as HTMLInputElement | null;
       const kmEl = document.getElementById('kmInput') as HTMLInputElement | null;
 
       fetch(`${workerUrl}/demand-signal`, {
