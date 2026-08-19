@@ -11,6 +11,7 @@
  * Styles: `styles/order-form.css` (global — see OrderOptions.astro).
  */
 import { LINKS } from '../lib/seo';
+import { site } from '../lib/data';
 
 interface Props {
   /** Heading above the quote. Checkout says "Your order"; the calculator "Your total". */
@@ -91,7 +92,7 @@ const { heading = 'Your total', sendLabel = 'Send on WhatsApp', newTab = true } 
   </div>
 </div>
 
-<script>
+<script define:vars={{ workerUrl: site.backend.worker_url ?? '' }}>
   /**
    * "Where do you live?" — asked once, at the only moment it is not nosy: right
    * after being told we do not deliver that far.
@@ -99,10 +100,15 @@ const { heading = 'Your total', sendLabel = 'Send on WhatsApp', newTab = true } 
    * This is the number that decides whether a 4-8 km band is worth opening. Two
    * partner clicks were not evidence; a fortnight of named areas is.
    */
-  import { getDeviceId } from '../lib/device';
+  const deviceId = (() => {
+    try {
+      const k = 'ovenvibe.device_id.v1';
+      let v = localStorage.getItem(k);
+      if (!v) { v = crypto.randomUUID(); localStorage.setItem(k, v); }
+      return v;
+    } catch { return ''; }
+  })();
 
-  const cfgEl = document.getElementById('dough-fab-config');
-  const workerUrl = cfgEl?.dataset.worker ?? '';
   const form = document.getElementById('areaAskForm') as HTMLFormElement | null;
   const input = document.getElementById('areaAskInput') as HTMLInputElement | null;
   const btn = document.getElementById('areaAskBtn') as HTMLButtonElement | null;
@@ -130,7 +136,7 @@ const { heading = 'Your total', sendLabel = 'Send on WhatsApp', newTab = true } 
             name: nameEl?.value?.trim() || undefined,
             phone: phoneEl?.value?.trim() || undefined,
             km: kmEl?.value ? Number(kmEl.value) : undefined,
-            device_id: getDeviceId(),
+            device_id: deviceId,
           }),
         });
         if (!res.ok) throw new Error('failed');
