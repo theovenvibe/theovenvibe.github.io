@@ -17,6 +17,27 @@ export interface DoughState {
 
 export const NO_DOUGH: DoughState = { balance: 0, expires_at: null, capPct: 0.1 };
 
+/**
+ * One cache, one owner.
+ *
+ * The floating bubble resolves a customer by device; checkout resolves them by
+ * the phone number they just typed. On a shared handset those are two different
+ * people, and whichever painted last used to win. Anything that learns a fresh
+ * balance publishes it here, and everything showing one listens - so the number
+ * on screen can never disagree with itself.
+ */
+export const DOUGH_CACHE_KEY = 'ov_dough_balance';
+export const DOUGH_EVENT = 'ov:dough';
+
+export function publishDough(balance: number): void {
+  try {
+    sessionStorage.setItem(DOUGH_CACHE_KEY, String(balance));
+  } catch {
+    // Private browsing refuses storage; the event still fires, which is enough.
+  }
+  window.dispatchEvent(new CustomEvent(DOUGH_EVENT, { detail: { balance } }));
+}
+
 export async function fetchDough(worker: string, deviceId: string, phone: string): Promise<DoughState> {
   if (!worker) return NO_DOUGH;
   try {

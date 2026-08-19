@@ -7,9 +7,11 @@
  * and the customer did not ask for one — the /dough page is where the pitch
  * lives.
  *
- * The balance is read once per session and cached, because this loads on every
- * page and a loyalty read must never be the reason a page feels slow. If the
- * Worker is unreachable the bubble simply never appears (AGENTS.md rule 5).
+ * The cached value paints first so the bubble does not blink as the customer
+ * browses, but it is always revalidated behind that - a balance that only
+ * refreshes when the tab is closed will happily advertise money that has
+ * already been spent. If the Worker is unreachable the cached number stands
+ * and nothing blocks (AGENTS.md rule 5).
  */
 import { site } from '../lib/data';
 
@@ -38,7 +40,7 @@ const enabled = Boolean(site.backend.worker_url);
 
 <script>
   import { getDeviceId } from '../lib/device';
-  import { fetchDough } from '../lib/dough';
+  import { fetchDough, publishDough, DOUGH_CACHE_KEY, DOUGH_EVENT } from '../lib/dough';
 
   const fab = document.getElementById('doughFab');
   const amountEl = document.getElementById('doughFabAmount');
@@ -47,25 +49,36 @@ const enabled = Boolean(site.backend.worker_url);
   if (fab && amountEl && cfgEl) {
     const { workerUrl } = JSON.parse(cfgEl.textContent ?? '{}') as { workerUrl?: string };
 
+    // Zero hides it. Showing a balance of nothing is an advertisement the
+    // customer did not ask for, and leaving a stale number on screen after the
+    // money is gone is worse than never showing one.
     const show = (balance: number) => {
-      if (balance <= 0) return;
       amountEl.textContent = `₹${balance}`;
-      fab.hidden = false;
+      fab.hidden = balance <= 0;
     };
 
-    // One read per session. The cached value paints immediately on the next
-    // page so the bubble does not blink in and out as the customer browses.
-    const cached = sessionStorage.getItem('ov_dough_balance');
+    const cached = sessionStorage.getItem(DOUGH_CACHE_KEY);
     if (cached) show(Number(cached) || 0);
 
-    if (workerUrl && !cached) {
-      void (async () => {
-        // The phone is only known after an order, so most first-time visitors
-        // resolve to nothing here — which is correct: they have no Dough yet.
+    if (workerUrl) {
+      // The phone is only known after an order, so most first-time visitors
+      // resolve to nothing here — which is correct: they have no Dough yet.
+      const refresh = async () => {
         const { balance } = await fetchDough(workerUrl, getDeviceId(), '');
-        sessionStorage.setItem('ov_dough_balance', String(balance));
-        show(balance);
-      })();
+        publishDough(balance);
+      };
+
+      // Checkout knows the customer by the phone they typed, which beats a
+      // device guess - so whatever it learns wins here too.
+      window.addEventListener(DOUGH_EVENT, (e) => show((e as CustomEvent).detail.balance));
+
+      void refresh();
+
+      // Coming back to the tab is the moment a stale number is most likely:
+      // the customer has just ordered, or spent it somewhere else.
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') void refresh();
+      });
     }
   }
 </script>
