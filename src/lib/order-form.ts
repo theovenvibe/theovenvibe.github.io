@@ -35,6 +35,14 @@ export interface BasketExtra {
 
 /** One line of the basket, however the page happens to store it. */
 export interface BasketRow {
+  /**
+   * The catalog id (`item-745802365`), when the page has one.
+   *
+   * Only needed to match against what the kitchen has run out of. A page that
+   * cannot supply it still works — its rows are simply never marked sold out,
+   * which is the safe direction to be wrong in.
+   */
+  id?: string;
   name: string;
   price: number;
   /**
@@ -51,10 +59,15 @@ export interface BasketRow {
   getQty(): number;
   setQty(n: number): void;
   /**
-   * The kitchen cannot make this at the chosen slot. The page decides what
-   * that looks like — greying a stepper, or striking out a cart line.
+   * The kitchen cannot make this. The page decides what that looks like —
+   * greying a stepper, or striking out a cart line.
+   *
+   * `reason` matters to the customer even though the effect is identical:
+   * "not cooked at this time" is a thing that fixes itself at 11:30, "sold
+   * out" is not, and telling somebody the wrong one sends them back at the
+   * wrong hour.
    */
-  setUnavailable(off: boolean): void;
+  setUnavailable(off: boolean, reason?: 'time' | 'sold-out'): void;
   /** Extras ordered on this line. The calculator has none; checkout may. */
   extras?: BasketExtra[];
 }
@@ -154,6 +167,14 @@ export interface OrderForm {
    * until there is a sendable quote.
    */
   currentQuote(): { text: string; total: number | null };
+  /**
+   * Tell the form what the kitchen has run out of, as bare product codes.
+   *
+   * Called from a live poll rather than set once: sold-out is a fact about the
+   * kitchen right now, and a tab left open through the evening would otherwise
+   * keep offering a drink that ran out an hour ago.
+   */
+  setSoldOut(codes: string[]): void;
 }
 
 export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): OrderForm {
@@ -272,12 +293,33 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
    */
   const unavailableNames = new Set<string>();
 
+  /**
+   * What the kitchen has run out of, by bare product code.
+   *
+   * Kept apart from the time-of-day rules above because it changes for a
+   * different reason: the clock is predictable, a tray of Coke running out is
+   * not. The menu has honoured this since 2026-08-17; the price calculator did
+   * not ask at all, so a sold-out item could be added there and carried
+   * through to checkout (owner-reported, 2026-08-20).
+   */
+  const soldOutCodes = new Set<string>();
+  const bareCode = (id: string | undefined) => (id ?? '').replace(/^(item|combo|addon)-/, '');
+  const soldOutNames = new Set<string>();
+
   function applyAvailability(state: KitchenState) {
     unavailableNames.clear();
+    soldOutNames.clear();
     hooks.rows().forEach((row) => {
-      const off = state === 'closed' || (state === 'late_night' && !row.lateNight);
-      row.setUnavailable(off);
+      const isSoldOut = soldOutCodes.size > 0 && soldOutCodes.has(bareCode(row.id));
+      const off = state === 'closed' || (state === 'late_night' && !row.lateNight) || isSoldOut;
+      row.setUnavailable(off, isSoldOut ? 'sold-out' : 'time');
       if (off) unavailableNames.add(row.name);
+      // Marked, never deleted - the same treatment the time-of-day rules get.
+      // Zeroing the quantity here DID remove the line from the basket on
+      // checkout, because that page's setQty writes straight to the cart: the
+      // drink disappeared with nothing on screen to say why. An excluded line
+      // that is still visible and explained is the honest version.
+      if (isSoldOut) soldOutNames.add(row.name);
     });
 
     if (state === 'closed') {
@@ -290,6 +332,14 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
       availabilityNote.hidden = false;
       availabilityNote.className = 'calc-availability calc-availability--late';
       availabilityNote.textContent = delivery.late_night.menu_note;
+    } else if (soldOutNames.size) {
+      availabilityNote.hidden = false;
+      availabilityNote.className = 'calc-availability calc-availability--late';
+      const names = Array.from(soldOutNames);
+      availabilityNote.textContent =
+        names.length === 1
+          ? `${names[0]} is sold out right now — everything else is on.`
+          : `Sold out right now: ${names.join(', ')}. Everything else is on.`;
     } else {
       availabilityNote.hidden = true;
       availabilityNote.textContent = '';
@@ -831,5 +881,13 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
 
   update();
 
-  return { update, currentQuote: () => ({ text: quoteText, total: quoteTotal }) };
+  return {
+    update,
+    currentQuote: () => ({ text: quoteText, total: quoteTotal }),
+    setSoldOut(codes: string[]) {
+      soldOutCodes.clear();
+      for (const code of codes) soldOutCodes.add(code.replace(/^(item|combo|addon)-/, ''));
+      update();
+    },
+  };
 }

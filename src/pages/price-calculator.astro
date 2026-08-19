@@ -229,6 +229,7 @@ const calcConfig = {
   const plusOf = (row: HTMLElement) => row.querySelector('.qty-plus') as HTMLButtonElement;
 
   const rows: BasketRow[] = itemRows.map((row) => ({
+    id: row.dataset.id,
     name: row.dataset.name as string,
     price: Number(row.dataset.price),
     lateNight: row.dataset.lateNight === 'true',
@@ -270,6 +271,38 @@ const calcConfig = {
       }
       for (const [id, qty] of chosen) setItemQty(id, qty);
     },
+  });
+
+  /**
+   * Ask the Worker what the kitchen has run out of, and keep asking.
+   *
+   * This page had no idea about stock at all: Coca-Cola was marked sold out in
+   * the admin, the menu crossed it out, and the calculator went on selling it
+   * straight through to checkout (owner-reported, 2026-08-20). Same cadence as
+   * the menu's own poll - a minute, plus whenever someone comes back to the tab
+   * - because a sold-out tray is a fact about right now, not about page load.
+   */
+  function refreshSoldOut() {
+    if (!CFG.workerUrl) return;
+    fetch(`${CFG.workerUrl}/availability`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (!d || !d.ok) return;
+        form.setSoldOut(Object.keys(d.sold_out ?? {}));
+      })
+      .catch(() => {
+        // Everything stays orderable. AGENTS.md rule 5 - a backend that cannot
+        // be reached must never stop somebody ordering.
+      });
+  }
+
+  refreshSoldOut();
+  window.setInterval(refreshSoldOut, 60000);
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') refreshSoldOut();
+  });
+  window.addEventListener('pageshow', (e) => {
+    if ((e as PageTransitionEvent).persisted) refreshSoldOut();
   });
 
   rows.forEach((r, i) => {
