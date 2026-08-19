@@ -721,8 +721,24 @@ const checkoutConfig = {
       const foodTotal = result.lines
         .filter((l) => l.label === 'Food')
         .reduce((sum, l) => sum + l.amount, 0);
-      const usable = usableDough(dough, foodTotal, result.minimum ?? 0);
-      if (usable <= 0) return result;
+      const minimum = result.minimum ?? 0;
+      const usable = usableDough(dough, foodTotal, minimum);
+      if (usable <= 0) {
+        // Silence here reads as a broken promise: they were told they have Rs40,
+        // they asked to spend it, and the total did not move. Say why, and say
+        // what unlocks it - a basket at exactly the delivery minimum has no
+        // headroom at all, which is the case this hits most often.
+        const needed = Math.max(minimum + dough.balance, dough.balance * 10) - foodTotal;
+        return needed > 0
+          ? {
+              ...result,
+              notes: [
+                ...(result.notes ?? []),
+                `Your ₹${dough.balance} of Dough needs a slightly bigger basket — add ₹${needed} more and all of it comes off.`,
+              ],
+            }
+          : result;
+      }
       doughApplied = usable;
       return {
         ...result,
