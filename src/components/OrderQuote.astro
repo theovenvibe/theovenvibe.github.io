@@ -109,10 +109,10 @@ const { heading = 'Your total', sendLabel = 'Send on WhatsApp', newTab = true } 
     } catch { return ''; }
   })();
 
-  const form = document.getElementById('areaAskForm') as HTMLFormElement | null;
-  const input = document.getElementById('areaAskInput') as HTMLInputElement | null;
-  const btn = document.getElementById('areaAskBtn') as HTMLButtonElement | null;
-  const out = document.getElementById('areaAskResult') as HTMLElement | null;
+  const form = document.getElementById('areaAskForm');
+  const input = document.getElementById('areaAskInput');
+  const btn = document.getElementById('areaAskBtn');
+  const out = document.getElementById('areaAskResult');
 
   if (form && input && btn && out && workerUrl) {
     form.addEventListener('submit', async (event) => {
@@ -121,9 +121,9 @@ const { heading = 'Your total', sendLabel = 'Send on WhatsApp', newTab = true } 
       if (!area) return;
       btn.disabled = true;
       btn.textContent = 'Sending…';
-      const nameEl = document.getElementById('custName') as HTMLInputElement | null;
-      const phoneEl = document.getElementById('custPhone') as HTMLInputElement | null;
-      const kmEl = document.getElementById('kmInput') as HTMLInputElement | null;
+      const nameEl = document.getElementById('custName');
+      const phoneEl = document.getElementById('custPhone');
+      const kmEl = document.getElementById('kmInput');
       try {
         const res = await fetch(`${workerUrl}/demand-signal`, {
           method: 'POST',
