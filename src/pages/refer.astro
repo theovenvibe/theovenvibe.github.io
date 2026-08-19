@@ -122,6 +122,11 @@ const description =
    * device — that covers everyone who ordered before checkout started reading
    * the reply, which was every customer up to 2026-08-19.
    */
+  // A private link the owner sent them: /refer/?t=<token>, the same token that
+  // opens their Dough statement. It wins over the cache, because it is an
+  // explicit "show me MY code" — and it is the only route for someone whose
+  // browser we have never seen, which is anyone whose order we failed to file.
+  const token = new URLSearchParams(location.search).get('t');
   const cached = localStorage.getItem('ov_my_referral_code');
 
   function show(code) {
@@ -153,12 +158,15 @@ const description =
     });
   }
 
-  if (cached) {
+  if (cached && !token) {
     show(cached);
   } else {
     // Silent on failure: the honest "order once first" state is already on
     // screen, and it is the right thing to show someone we cannot identify.
-    fetch(`${workerUrl}/referral/mine?device_id=${encodeURIComponent(getDeviceId())}`)
+    fetch(
+      `${workerUrl}/referral/mine?` +
+        (token ? `t=${encodeURIComponent(token)}` : `device_id=${encodeURIComponent(getDeviceId())}`),
+    )
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (!data?.referral_code) return;
