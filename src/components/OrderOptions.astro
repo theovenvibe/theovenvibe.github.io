@@ -40,6 +40,27 @@ const d = site.delivery;
         Or enter exact distance (km) — owner precision
         <input type="number" id="kmInput" min="0" step="0.1" inputmode="decimal" placeholder="e.g. 3.2" />
       </label>
+
+      {/*
+        Nobody knows how far they live from a kitchen in kilometres, and a guess
+        here is the difference between two delivery bands. The link does the
+        work: Google Maps opens with us as the destination and their own
+        location as the start, so the number is on screen in one tap.
+
+        Lives in this shared component on purpose — checkout and the price
+        calculator both render it, so the two cannot drift apart.
+      */}
+      <aside class="distance-help">
+        <p class="distance-help-title">Not sure how far you are?</p>
+        <p class="distance-help-body">
+          <a
+            href="https://www.google.com/maps/dir/?api=1&destination=The+Oven+Vibe+Sundargarh"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Open in Google Maps</a
+          > — it shows the distance from where you are to The Oven Vibe. Type that number above.
+        </p>
+      </aside>
     </fieldset>
 
     <fieldset class="calc-group">

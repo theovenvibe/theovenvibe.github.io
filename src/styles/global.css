@@ -1873,12 +1873,200 @@ article em {
    ------------------------------------------------------------------------ */
 .narrow-container { max-width: 760px; }
 
-.dough-hero { text-align: center; margin-bottom: 2.5rem; }
-/* Global CSS makes images block-level, which pinned the coin to the left of a
+/* ---------------------------------------------------------------------------
+   The Dough hero
+
+   The page answers one question — how much Dough do I have — so the mark, the
+   number and the one control that fills it are the whole of the first screen.
+   Everything else waits below.
+
+   The mark is the ball of dough with a rupee already pressed into it, so the
+   balance sits UNDER it rather than over it: stacking a number on that glyph
+   would cover the one piece of the brand this page exists for.
+   ------------------------------------------------------------------------ */
+.dough-hero {
+  text-align: center;
+  max-width: 33rem;
+  margin: 0 auto 3.5rem;
+  padding-top: 0.5rem;
+}
+
+.dough-mark {
+  display: inline-flex;
+  position: relative;
+  margin-bottom: 1.1rem;
+}
+
+/* Global CSS makes images block-level, which pinned the mark to the left of a
    centred hero. */
-.dough-hero img { display: inline-block; }
-.dough-hero h1 { margin: 0.6rem 0 0.5rem; }
-.dough-hero .lead { margin: 0 auto; max-width: 34rem; }
+.dough-mark img {
+  display: block;
+  width: clamp(88px, 22vw, 120px);
+  height: auto;
+  transition: transform var(--transition-base);
+}
+
+/* A ball of dough that has just been set down, not a coin that spins. One
+   settle, 480ms, and never for anyone who asked for less motion. */
+.dough-mark[data-state='full'] img {
+  animation: dough-settle 480ms cubic-bezier(0.34, 1.3, 0.64, 1) both;
+}
+
+@keyframes dough-settle {
+  0% { transform: translateY(-6px) scale(0.94); }
+  60% { transform: translateY(1px) scale(1.02); }
+  100% { transform: none; }
+}
+
+/* The glow only exists when there is something to celebrate. */
+.dough-mark[data-state='full']::after {
+  content: '';
+  position: absolute;
+  inset: -14%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(244, 162, 97, 0.32), transparent 68%);
+  z-index: -1;
+}
+
+.dough-eyebrow {
+  margin: 0 0 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.dough-title {
+  margin: 0 0 0.75rem;
+  font-size: clamp(1.6rem, 5.2vw, 2.3rem);
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.dough-lede {
+  margin: 0 auto;
+  max-width: 30rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+/* The answer. Shown only once we actually know it — an empty balance panel
+   sitting there before anyone has asked reads as a broken page. */
+.dough-balance {
+  margin: 1.75rem auto 0;
+  max-width: 22rem;
+  padding: 1.35rem 1.25rem;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.dough-balance-amount {
+  margin: 0;
+  font-size: clamp(2.6rem, 11vw, 3.6rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.035em;
+  /* The digits change one by one as it counts — without this the whole line
+     jitters on every frame. */
+  font-variant-numeric: tabular-nums;
+  color: var(--color-secondary);
+}
+
+.dough-balance-note {
+  margin: 0.45rem 0 0;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+/* The control that fills the number above. Input and button are one object,
+   not two things that happen to be near each other. */
+.dough-check {
+  margin: 2rem auto 0;
+  max-width: 24rem;
+}
+
+.dough-check-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.dough-check-control {
+  display: flex;
+  align-items: stretch;
+  gap: 0.35rem;
+  padding: 0.35rem;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-sm);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.dough-check-control:focus-within {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(244, 162, 97, 0.22);
+}
+
+.dough-check-control input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0.6rem 0.5rem 0.6rem 0.95rem;
+  font: inherit;
+  font-size: 1rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-main);
+  background: none;
+  border: 0;
+  border-radius: var(--radius-full);
+}
+
+.dough-check-control input:focus { outline: none; }
+
+.dough-check-btn {
+  flex: 0 0 auto;
+  /* 44px minimum: this is the one thing on the page a thumb has to hit. */
+  min-height: 44px;
+  padding: 0 1.4rem;
+  font: inherit;
+  font-weight: 700;
+  color: #fff;
+  background: var(--color-primary);
+  border: 0;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.dough-check-btn:hover:not(:disabled) { background: var(--color-primary-dark); }
+.dough-check-btn:active:not(:disabled) { transform: scale(0.97); }
+.dough-check-btn:disabled { opacity: 0.65; cursor: progress; }
+
+/* Busy state says what is happening rather than replacing the label with a
+   spinner nobody can read. */
+.dough-check-btn[data-busy] .dough-check-btn-text::after {
+  content: '…';
+}
+
+.dough-check-result {
+  margin: 0.7rem 0 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+.dough-check-result.is-bad { color: var(--color-primary-dark); }
+
+@media (prefers-reduced-motion: reduce) {
+  .dough-mark[data-state='full'] img { animation: none; }
+  .dough-check-btn:active:not(:disabled) { transform: none; }
+}
 
 .dough-steps { display: grid; gap: 1rem; grid-template-columns: repeat(3, 1fr); margin-bottom: 2.5rem; }
 .dough-step {
@@ -1943,87 +2131,63 @@ article em {
 .dough-fab[hidden] { display: none !important; }
 
 /* The homepage invitation. */
-.dough-promo {
-  display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
-  background: linear-gradient(135deg, #fff8ec 0%, #fdf0d9 100%);
-  border: 1px solid #f0d9ac; border-radius: var(--radius-md);
-  padding: 1.25rem 1.4rem; margin: 0 auto 2rem; max-width: 900px;
+/* The two rewards, on the way to the menu. Each card carries one idea, so a
+   customer skimming past takes one away rather than parsing a compound offer. */
+.reward-pair {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  max-width: 900px;
+  margin: 0 auto 2rem;
 }
-.dough-promo img { flex-shrink: 0; }
-/* The buttons had `row-tight`, which is an ADMIN class and does not exist on
-   this site — so they were unstyled blocks and overlapped each other on a
-   phone. A class that silently does nothing is worse than no class. */
-.dough-promo-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; }
-.dough-promo-text { flex: 1; min-width: 220px; }
-.dough-promo-text h2 { margin: 0 0 0.25rem; font-size: 1.15rem; }
-.dough-promo-text p { margin: 0; font-size: 0.92rem; color: var(--color-text-muted); }
+
+.reward-card {
+  display: block;
+  padding: 1.5rem 1.4rem;
+  background: linear-gradient(135deg, #fff8ec 0%, #fdf0d9 100%);
+  border: 1px solid #f0d9ac;
+  border-radius: var(--radius-lg);
+  color: inherit;
+  text-decoration: none;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.reward-card:hover,
+.reward-card:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.reward-card img { display: block; margin-bottom: 0.75rem; }
+.reward-card h2 { margin: 0 0 0.4rem; font-size: 1.2rem; }
+.reward-card p { margin: 0 0 0.9rem; font-size: 0.94rem; line-height: 1.55; color: var(--color-text-muted); }
+
+.reward-card-link {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+}
+
+.reward-card:hover .reward-card-link { text-decoration: underline; }
+
+@media (max-width: 760px) {
+  .reward-pair { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reward-card:hover, .reward-card:focus-visible { transform: none; }
+}
 
 @media (max-width: 760px) {
   .dough-steps, .dough-rules { grid-template-columns: 1fr; }
   /* Right edge stays at 2rem on a phone too — all three must line up. */
   .dough-fab { bottom: 11.5rem; right: 2rem; }
-  .dough-promo { padding: 1.1rem; }
 }
 
 /* The customer's own Dough statement on /dough/?t=…, shown only to someone
    holding the link. Reads as a receipt rather than a dashboard: the number
    first, then what moved it, because the question being answered is always
    "where did my money go". */
-/* "Check your Dough" — a number in, a balance out. Sits above the pitch,
-   because somebody who came here to find their balance should not have to read
-   an explanation of the scheme first. */
-.dough-check {
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 1.25rem;
-  margin-bottom: 2rem;
-  background: var(--surface);
-}
-
-.dough-check-title {
-  margin: 0 0 0.35rem;
-  font-size: 1.1rem;
-}
-
-.dough-check-lede {
-  margin: 0 0 0.9rem;
-  color: var(--muted);
-  font-size: 0.95rem;
-}
-
-.dough-check-form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-  align-items: center;
-}
-
-.dough-check-form input {
-  flex: 1 1 12rem;
-  min-width: 0;
-  padding: 0.7rem 0.85rem;
-  font: inherit;
-  font-variant-numeric: tabular-nums;
-  color: inherit;
-  background: var(--bg);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-}
-
-.dough-check-form .btn {
-  flex: 0 0 auto;
-}
-
-.dough-check-result {
-  margin: 0.9rem 0 0;
-  font-size: 0.95rem;
-  line-height: 1.5;
-}
-
-.dough-check-result.is-bad {
-  color: var(--danger, #a32a1e);
-}
-
 .dough-statement {
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -2070,3 +2234,33 @@ article em {
 .dough-statement-amount.is-out { opacity: 0.6; }
 .dough-statement-what { display: flex; flex-direction: column; }
 .dough-statement-when { font-size: 0.85rem; opacity: 0.7; }
+
+
+/* A hand, not a headline. Sits under the distance field on both checkout and
+   the price calculator, quiet enough that it never competes with the control
+   it is helping with. */
+.distance-help {
+  margin-top: 0.75rem;
+  padding: 0.7rem 0.85rem;
+  background: #fff8ec;
+  border: 1px solid #f0d9ac;
+  border-radius: var(--radius-md);
+}
+
+.distance-help-title {
+  margin: 0 0 0.15rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.distance-help-body {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+.distance-help-body a {
+  font-weight: 700;
+  color: var(--color-primary-dark);
+}

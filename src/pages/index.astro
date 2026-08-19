@@ -171,19 +171,31 @@ const localPhone = site.business.phone.replace('+91', '');
         order tonight. Two links, no explanation: the pages do that. */}
     <section class="section" style="padding-top:0">
       <div class="container">
-        <div class="dough-promo">
-          <img src="/static/images/svg/dough.svg" alt="" width="56" height="56" />
-          <div class="dough-promo-text">
-            <h2>Earn Dough on every order — 100 Dough = ₹100</h2>
+        {/*
+          Two rewards, two cards. They were one card with both offers crammed
+          into a sentence, which made neither of them land — a customer skims
+          this on the way to the menu and has to be able to take one idea from
+          it, not parse a compound one.
+        */}
+        <div class="reward-pair">
+          <a class="reward-card" href="/dough/">
+            <img src="/static/images/svg/dough.svg" alt="" width="56" height="56" />
+            <h2>Dough</h2>
             <p>
-              Get 5% back on what you spend and use it on your next order. Invite a friend and
-              you both get ₹40.
+              Order from The Oven Vibe and earn <strong>5% back in Dough</strong> to use on a
+              future order.
             </p>
-          </div>
-          <div class="dough-promo-actions">
-            <a href="/dough/" class="btn btn-primary">How Dough works</a>
-            <a href="/refer/" class="btn btn-secondary">Refer &amp; earn</a>
-          </div>
+            <span class="reward-card-link">How Dough works</span>
+          </a>
+          <a class="reward-card" href="/refer/">
+            <img src="/static/images/svg/dough.svg" alt="" width="56" height="56" />
+            <h2>Refer &amp; Earn</h2>
+            <p>
+              Know someone who loves pizza? Refer them and earn <strong>₹40 in Dough</strong>{' '}
+              when they place their first order.
+            </p>
+            <span class="reward-card-link">Get your link</span>
+          </a>
         </div>
       </div>
     </section>
