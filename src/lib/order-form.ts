@@ -146,6 +146,14 @@ export interface OrderFormHooks {
 export interface OrderForm {
   /** Recalculate now — call after the page mutates the basket. */
   update(): void;
+  /**
+   * The quote as it stands, for a page that needs to file the order.
+   *
+   * `text` is the WhatsApp message and carries the customer's details, so it
+   * belongs in a request to our own Worker and nowhere else. `total` is null
+   * until there is a sendable quote.
+   */
+  currentQuote(): { text: string; total: number | null };
 }
 
 export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): OrderForm {
@@ -170,7 +178,6 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
   const rainLabel = document.getElementById('rainLabel') as HTMLLabelElement;
   const rainHint = document.getElementById('rainHint') as HTMLElement;
   const output = document.getElementById('quoteOutput') as HTMLElement;
-  const copyBtn = document.getElementById('copyQuoteBtn') as HTMLButtonElement;
   const waLink = document.getElementById('waShareLink') as HTMLAnchorElement;
   // Out-of-range only: the Zomato/Swiggy pair that replaces the inert send
   // buttons when we cannot deliver this far ourselves. See OrderQuote.astro.
@@ -421,10 +428,17 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
   }
 
   /**
-   * The order text WITHOUT the customer's name or number — the only thing that
-   * may be published to the ntfy topic. Never read `copyBtn.dataset.quote` for
-   * an alert: that one is the private WhatsApp message and carries PII.
+   * The current quote, in the two forms it exists in.
+   *
+   * `quoteText` carries the customer's name and number and goes to WhatsApp and
+   * nowhere else. `alertText` is the same order built WITHOUT those details and
+   * is the only one that may be published to the ntfy topic, which has no
+   * access control. Keeping them as separate variables rather than one string
+   * with a flag is deliberate: there is then no way to publish the wrong one by
+   * passing the wrong argument.
    */
+  let quoteText = '';
+  let quoteTotal: number | null = null;
   let alertText = '';
 
   function disableActions() {
@@ -433,9 +447,8 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
     // kitchen). Without this, emptying the basket after an out-of-range quote
     // left "Order on Zomato" sitting under "Add items above to see your total".
     showBeyondActions(false);
-    copyBtn.disabled = true;
-    delete copyBtn.dataset.quote;
-    delete copyBtn.dataset.total;
+    quoteText = '';
+    quoteTotal = null;
     alertText = '';
     waLink.removeAttribute('href');
     waLink.setAttribute('aria-disabled', 'true');
@@ -530,10 +543,9 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
     }
 
     showBeyondActions(false);
-    copyBtn.disabled = false;
     const text = buildQuoteText(result, true);
-    copyBtn.dataset.quote = text;
-    copyBtn.dataset.total = String(result.total);
+    quoteText = text;
+    quoteTotal = result.total;
     // Kept apart from the message on purpose: this is what gets published to a
     // world-readable topic, so it is built without the customer's details.
     alertText = buildQuoteText(result, hooks.alertIncludesCustomer === true);
@@ -767,7 +779,7 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
   function notifyKitchen(text: string, via: 'whatsapp' | 'copy' | 'checkout') {
     if (!text || !once(`${via}:${text}`)) return;
 
-    const total = copyBtn.dataset.total;
+    const total = quoteTotal === null ? '' : String(quoteTotal);
     const orderType = orderTypeRadios.find((r) => r.checked)?.value ?? 'delivery';
     const leadIn =
       via === 'whatsapp'
@@ -817,25 +829,7 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
     notifyKitchen(alertText, 'whatsapp');
   });
 
-  copyBtn.addEventListener('click', async () => {
-    const text = copyBtn.dataset.quote ?? '';
-    if (!text) return;
-    // A copied quote is pasted into WhatsApp by hand, so it needs the same
-    // details as a sent one — otherwise the kitchen gets an anonymous order.
-    if (hooks.beforeSend && !hooks.beforeSend()) return;
-    notifyKitchen(alertText, 'copy');
-    try {
-      await navigator.clipboard.writeText(text);
-      const original = copyBtn.textContent;
-      copyBtn.textContent = 'Copied!';
-      setTimeout(() => (copyBtn.textContent = original), 1500);
-    } catch {
-      // Clipboard API unavailable (older browser / no permission) — the
-      // WhatsApp link still works as a fallback.
-    }
-  });
-
   update();
 
-  return { update };
+  return { update, currentQuote: () => ({ text: quoteText, total: quoteTotal }) };
 }
