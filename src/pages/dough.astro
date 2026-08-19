@@ -17,9 +17,9 @@ import { site } from '../lib/data';
 import { restaurantJsonLd } from '../lib/seo';
 const workerUrl = site.backend.worker_url ?? '';
 
-const title = 'Dough — earn ₹ back on every order | The Oven Vibe';
+const title = 'Dough — earn 5% back on every order | The Oven Vibe';
 const description =
-  'Dough is money in your name at The Oven Vibe. Earn 5% back on every order, spend it on the next one. 100 Dough = ₹100.';
+  'Order from The Oven Vibe and earn 5% back in Dough. It comes off your next bill automatically — nothing to type, no code to remember.';
 ---
 
 <Layout title={title} description={description} jsonLd={[restaurantJsonLd({ withMenu: false })]}>
@@ -45,38 +45,56 @@ const description =
         </div>
       </div>
       {/*
-        Check a balance by phone number.
+        The hero.
 
-        This is the plain answer to "how much Dough do I have?", and it exists
-        because the clever answers all failed someone: the floating button only
-        knows a browser it has seen order before, and the private link has to be
-        asked for. Anuj Agarwal had ₹40 he could not see on a phone that had
-        already ordered.
+        Everything above the fold answers one question - "how much Dough do I
+        have?" - and the mark answers it. The ball of dough already carries a
+        rupee pressed into it, so the balance sits UNDER the mark rather than
+        on top of it; stacking a number over that glyph collides with the one
+        piece of the brand this page is about.
 
-        It shows a balance and a first name and nothing else — no address, no
-        order history, nothing that would let one neighbour read another's
-        account. The full statement stays behind the private link.
+        The number is the only thing that animates, and only when it arrives.
       */}
-      <div class="wrap dough-check" id="doughCheck">
-        <h2 class="dough-check-title">Check your Dough</h2>
-        <p class="dough-check-lede">
-          Enter the mobile number you ordered with and we'll show you what's in your wallet.
-        </p>
-        <form class="dough-check-form" id="doughCheckForm">
-          <label class="sr-only" for="doughCheckPhone">Your mobile number</label>
-          <input
-            id="doughCheckPhone"
-            name="phone"
-            type="tel"
-            inputmode="numeric"
-            autocomplete="tel"
-            maxlength="15"
-            placeholder="10-digit mobile number"
-            required
-          />
-          <button type="submit" class="btn btn-primary" id="doughCheckBtn">Check</button>
-        </form>
-        <p class="dough-check-result" id="doughCheckResult" hidden></p>
+      <div class="container narrow-container">
+        <header class="dough-hero">
+          <div class="dough-mark" id="doughMark" data-state="idle">
+            <img src="/static/images/svg/dough.svg" alt="" width="120" height="120" />
+          </div>
+
+          <p class="dough-eyebrow">Dough</p>
+          <h1 class="dough-title">Order. Earn Dough.<br />Use it on your next order.</h1>
+          <p class="dough-lede">
+            Every order you place earns you <strong>5% back in Dough</strong>. It comes off your
+            next bill on its own — nothing to type, no code to remember.
+          </p>
+
+          <div class="dough-balance" id="doughBalance" hidden>
+            <p class="dough-balance-amount"><span id="doughBalanceValue">₹0</span></p>
+            <p class="dough-balance-note" id="doughBalanceNote"></p>
+          </div>
+
+          <form class="dough-check" id="doughCheckForm">
+            <label class="dough-check-label" for="doughCheckPhone">
+              Already ordered? See your Dough
+            </label>
+            <div class="dough-check-control">
+              <input
+                id="doughCheckPhone"
+                name="phone"
+                type="tel"
+                inputmode="numeric"
+                autocomplete="tel"
+                maxlength="15"
+                placeholder="Your mobile number"
+                required
+              />
+              <button type="submit" class="dough-check-btn" id="doughCheckBtn">
+                <span class="dough-check-btn-text">Check</span>
+              </button>
+            </div>
+            <p class="dough-check-result" id="doughCheckResult" role="status" hidden></p>
+          </form>
+        </header>
       </div>
 
       <script is:inline define:vars={{ workerUrl }}>
@@ -87,7 +105,12 @@ const description =
           const form = document.getElementById('doughCheckForm');
           const input = document.getElementById('doughCheckPhone');
           const btn = document.getElementById('doughCheckBtn');
+          const btnText = btn.querySelector('.dough-check-btn-text');
           const out = document.getElementById('doughCheckResult');
+          const mark = document.getElementById('doughMark');
+          const panel = document.getElementById('doughBalance');
+          const value = document.getElementById('doughBalanceValue');
+          const note = document.getElementById('doughBalanceNote');
           if (!form || !workerUrl) return;
 
           const saved = (() => { try { return localStorage.getItem('ov_phone') || ''; } catch { return ''; } })();
@@ -95,8 +118,44 @@ const description =
 
           const say = (text, bad) => {
             out.textContent = text;
-            out.hidden = false;
+            out.hidden = !text;
             out.classList.toggle('is-bad', Boolean(bad));
+          };
+
+          const stillMoment = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+          /* The balance counts up rather than appearing, because the number IS
+             the answer and a number that lands has more weight than one that
+             was always there. Short - 600ms - and skipped entirely for anyone
+             who has asked for less motion. */
+          const countTo = (target) => {
+            if (stillMoment || target <= 0) {
+              value.textContent = '₹' + target;
+              return;
+            }
+            const started = performance.now();
+            const tick = (now) => {
+              const t = Math.min(1, (now - started) / 600);
+              const eased = 1 - Math.pow(1 - t, 3);
+              value.textContent = '₹' + Math.round(target * eased);
+              if (t < 1) requestAnimationFrame(tick);
+            };
+            requestAnimationFrame(tick);
+          };
+
+          const reveal = (balance, name, expiresAt) => {
+            panel.hidden = false;
+            mark.dataset.state = balance > 0 ? 'full' : 'empty';
+            countTo(balance);
+            note.textContent =
+              balance > 0
+                ? 'Ready to use on your next order' +
+                  (expiresAt
+                    ? ' · good until ' +
+                      new Date(expiresAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
+                    : '')
+                : 'You earn 5% back on your next order';
+            say(name ? name + ', this is your Dough.' : '', false);
           };
 
           form.addEventListener('submit', async (event) => {
@@ -104,10 +163,13 @@ const description =
             const digits = (input.value || '').replace(/\D/g, '').slice(-10);
             if (!/^[6-9]\d{9}$/.test(digits)) {
               say('That does not look like a 10-digit mobile number.', true);
+              input.focus();
               return;
             }
             btn.disabled = true;
-            btn.textContent = 'Checking…';
+            btn.dataset.busy = 'true';
+            btnText.textContent = 'Checking';
+            say('', false);
             try {
               const res = await fetch(`${workerUrl}/dough/lookup`, {
                 method: 'POST',
@@ -120,30 +182,23 @@ const description =
                 return;
               }
               if (!data.found) {
+                panel.hidden = true;
+                mark.dataset.state = 'idle';
                 say('No Dough on that number yet. It starts with your first order.', false);
                 return;
               }
-              // Remember it, so the floating button recognises this browser from
-              // now on — that button is how people find their balance later.
+              // Remember it, so the Dough button recognises this browser from
+              // now on - that button is how people find their balance later.
               try { localStorage.setItem('ov_phone', digits); } catch {}
               try { sessionStorage.setItem('ov_dough_balance', String(data.balance)); } catch {}
               window.dispatchEvent(new CustomEvent('ov:dough', { detail: { balance: data.balance } }));
-
-              const name = data.name ? `${data.name}, you` : 'You';
-              const expiry = data.expires_at
-                ? ` It is good until ${new Date(data.expires_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}.`
-                : '';
-              say(
-                data.balance > 0
-                  ? `${name} have ₹${data.balance} of Dough.${expiry} It comes off your next bill automatically.`
-                  : `${name} have no Dough right now. You earn 5% back on your next order.`,
-                false,
-              );
+              reveal(data.balance, data.name, data.expires_at);
             } catch {
               say('Could not reach us just now. Check your connection and try again.', true);
             } finally {
               btn.disabled = false;
-              btn.textContent = 'Check';
+              delete btn.dataset.busy;
+              btnText.textContent = 'Check';
             }
           });
         })();
@@ -198,15 +253,7 @@ const description =
         })();
       </script>
       <div class="container narrow-container">
-        <div class="dough-hero">
-          <img src="/static/images/svg/dough.svg" alt="" width="72" height="72" />
-          <h1>Dough</h1>
-          <p class="lead">
-            Money in your name at The Oven Vibe. <strong>100 Dough = ₹100.</strong>{' '}
-            You earn it by ordering, and you spend it on what you order next.
-          </p>
-        </div>
-
+        <h2 class="dough-h2">How Dough works</h2>
         <div class="dough-steps">
           <div class="dough-step">
             <span class="dough-step-n">1</span>
