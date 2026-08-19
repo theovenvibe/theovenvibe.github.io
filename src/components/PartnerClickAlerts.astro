@@ -28,7 +28,8 @@ const partnerConfig = { workerUrl: site.backend.worker_url };
 />
 
 <script>
-  import { publishNtfy, makeOnce } from '../lib/notify';
+  import { makeOnce } from '../lib/notify';
+  import { getDeviceId } from '../lib/device';
 
   const el = document.getElementById('partner-alert-config');
   const { workerUrl } = JSON.parse(el?.textContent ?? '{}') as { workerUrl?: string };
@@ -69,25 +70,41 @@ const partnerConfig = { workerUrl: site.backend.worker_url };
        * opposite events. One is a problem to fix, the other is the system
        * working.
        */
+      /*
+       * WHERE they left from, and WHO they were, decide whether this is a
+       * problem or the system working (owner, 2026-08-20).
+       *
+       * Footer: a customer we could have served, walking out.
+       * Out-of-range box at checkout: the only thing we can offer somebody eight
+       * kilometres away.
+       *
+       * The name and number ride along when checkout already has them, so the
+       * owner can ring someone who was about to order and did not. Recorded as
+       * well as alerted — two clicks is not evidence, a fortnight of them is.
+       */
       const inFooter = Boolean(link.closest('footer'));
       const inBeyond = Boolean(link.closest('#beyondActions'));
-      const page = window.location.pathname;
-      const where = inBeyond
-        ? 'from the "too far to deliver" box at checkout — this one is us doing the right thing'
-        : inFooter
-          ? `from the FOOTER on ${page} — they could have ordered from us`
-          : `from a link on ${page}`;
+      const nameEl = document.getElementById('nameInput') as HTMLInputElement | null;
+      const phoneEl = document.getElementById('phoneInput') as HTMLInputElement | null;
+      const kmEl = document.getElementById('kmInput') as HTMLInputElement | null;
 
-      publishNtfy(workerUrl, {
-        title: `Heads up - ${partner.name}`,
-        body:
-          `Someone just left the website for ${partner.name},\n${where}.\n\n` +
-          `An order may land on your ${partner.name} tablet shortly — worth a look.\n` +
-          `(They tapped through from the site; they may still change their mind.)`,
-        // Deliberately below the order alert. A maybe-order on a partner app
-        // should not sound the same as a customer messaging you directly.
-        priority: 'high',
-        tags: partner.tags,
+      fetch(`${workerUrl}/demand-signal`, {
+        method: 'POST',
+        keepalive: true,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          kind: 'partner_click',
+          partner: partner.name,
+          source: inBeyond ? 'beyond' : inFooter ? 'footer' : 'page',
+          page: window.location.pathname,
+          name: nameEl?.value?.trim() || undefined,
+          phone: phoneEl?.value?.trim() || undefined,
+          km: kmEl?.value ? Number(kmEl.value) : undefined,
+          device_id: getDeviceId(),
+        }),
+      }).catch(() => {
+        // The customer is already on their way to another app. Nothing to do
+        // and nothing to show them.
       });
     });
   }

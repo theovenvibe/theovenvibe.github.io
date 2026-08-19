@@ -515,6 +515,10 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
     if (!sendActions || !beyondActions) return;
     sendActions.hidden = on;
     beyondActions.hidden = !on;
+    // Asking where somebody lives only makes sense in the one moment we have
+    // just told them we cannot reach them.
+    const areaAsk = document.getElementById('areaAsk');
+    if (areaAsk) areaAsk.hidden = !on;
   }
 
   function renderOutput(result: QuoteResult) {
