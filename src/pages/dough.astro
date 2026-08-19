@@ -15,6 +15,7 @@
 import Layout from '../layouts/Layout.astro';
 import { site } from '../lib/data';
 import { restaurantJsonLd } from '../lib/seo';
+const workerUrl = site.backend.worker_url ?? '';
 
 const title = 'Dough — earn ₹ back on every order | The Oven Vibe';
 const description =
@@ -24,6 +25,75 @@ const description =
 <Layout title={title} description={description} jsonLd={[restaurantJsonLd({ withMenu: false })]}>
   <main class="main">
     <section class="section">
+      {/*
+        The customer's own statement, shown only when they arrive with the link
+        the owner pasted into their chat. Without a token this is invisible and
+        the page reads exactly as before - the pitch, not an account.
+
+        It is gated on a token rather than a phone number on purpose: a bare
+        number would let anyone read what a neighbour ordered.
+      */}
+      <div class="wrap" id="myDough" hidden>
+        <div class="dough-statement">
+          <p class="dough-statement-label">Your Dough</p>
+          <p class="dough-statement-balance" id="myDoughBalance">—</p>
+          <p class="dough-statement-note" id="myDoughNote"></p>
+          <ol class="dough-statement-list" id="myDoughList"></ol>
+          <p class="dough-small" id="myDoughEmpty" hidden>
+            Nothing yet. Your first order will show up here.
+          </p>
+        </div>
+      </div>
+      <script is:inline define:vars={{ workerUrl }}>
+        (async () => {
+          const token = new URLSearchParams(location.search).get('t');
+          if (!token || !workerUrl) return;
+          const box = document.getElementById('myDough');
+          let data;
+          try {
+            const res = await fetch(workerUrl + '/dough/mine?t=' + encodeURIComponent(token));
+            data = await res.json();
+          } catch (e) {
+            return; // A statement that will not load must never break the page.
+          }
+          if (!data || !data.ok) return;
+
+          const rupees = (n) => '₹' + Math.abs(n);
+          const day = (iso) =>
+            new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', timeZone: 'Asia/Kolkata' });
+
+          document.getElementById('myDoughBalance').textContent = rupees(data.balance);
+          document.getElementById('myDoughNote').textContent =
+            (data.name ? data.name + ' · ' : '') +
+            (data.balance > 0 && data.expires_at
+              ? 'use it before ' + day(data.expires_at)
+              : 'earn 5% back on your next order');
+
+          const list = document.getElementById('myDoughList');
+          const label = {
+            earn: 'Earned from your order',
+            spend: 'Used on your order',
+            gift: 'A gift from us',
+            referral: 'Friend referral',
+            expire: 'Expired',
+            reversal: 'Taken back',
+          };
+          for (const e of data.entries) {
+            const li = document.createElement('li');
+            const what = label[e.kind] || e.kind;
+            const order = e.order_id ? ' · order #' + String(e.order_id).padStart(4, '0') : '';
+            li.innerHTML =
+              '<span class="dough-statement-amount' + (e.delta < 0 ? ' is-out' : '') + '">' +
+              (e.delta > 0 ? '+' : '−') + rupees(e.delta) + '</span>' +
+              '<span class="dough-statement-what">' + what +
+              '<span class="dough-statement-when">' + day(e.at) + order +
+              (e.order_total ? ' · ' + rupees(e.order_total) + ' order' : '') + '</span></span>';
+            list.appendChild(li);
+          }
+          if (!data.entries.length) document.getElementById('myDoughEmpty').hidden = false;
+          box.hidden = false;
+        })();
+      </script>
       <div class="container narrow-container">
         <div class="dough-hero">
           <img src="/static/images/svg/dough.svg" alt="" width="72" height="72" />
