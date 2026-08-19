@@ -169,7 +169,7 @@ const checkoutConfig = {
   import type { QuoteResult } from '../lib/pricing';
   import { pingCartActivity } from '../lib/cart-activity';
   import { getDeviceId } from '../lib/device';
-  import { fetchDough, usableDough, publishDough, NO_DOUGH, type DoughState } from '../lib/dough';
+  import { fetchDough, usableDough, publishDough, rememberPhone, NO_DOUGH, type DoughState } from '../lib/dough';
   import { queueOrder, watchOutbox } from '../lib/order-outbox';
   import { markOrderJustSent } from '../lib/push-signal';
 
@@ -200,6 +200,10 @@ const checkoutConfig = {
     doughFetchedFor = key;
     dough = await fetchDough(CFG.workerUrl, deviceId, phone);
     publishDough(dough.balance);
+    // The number they just typed is the best identity this browser will ever
+    // have — keep it, so the floating button recognises them on every other
+    // page instead of only inside checkout.
+    rememberPhone(phone);
     form.update();
   }
   const catalog = new Map(CFG.catalog.map((row) => [row.id, row]));

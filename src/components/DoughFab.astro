@@ -40,7 +40,7 @@ const enabled = Boolean(site.backend.worker_url);
 
 <script>
   import { getDeviceId } from '../lib/device';
-  import { fetchDough, publishDough, DOUGH_CACHE_KEY, DOUGH_EVENT } from '../lib/dough';
+  import { fetchDough, publishDough, rememberedPhone, DOUGH_CACHE_KEY, DOUGH_EVENT } from '../lib/dough';
 
   const fab = document.getElementById('doughFab');
   const amountEl = document.getElementById('doughFabAmount');
@@ -61,10 +61,13 @@ const enabled = Boolean(site.backend.worker_url);
     if (cached) show(Number(cached) || 0);
 
     if (workerUrl) {
-      // The phone is only known after an order, so most first-time visitors
-      // resolve to nothing here — which is correct: they have no Dough yet.
+      // The number is remembered by checkout and by the "Check your Dough"
+      // form, so a customer who has told us once is recognised on every page
+      // afterwards. Without it this could only identify a device that had
+      // allowed notifications — almost nobody — and someone with a real
+      // balance saw no button and assumed their Dough had gone.
       const refresh = async () => {
-        const { balance } = await fetchDough(workerUrl, getDeviceId(), '');
+        const { balance } = await fetchDough(workerUrl, getDeviceId(), rememberedPhone());
         publishDough(balance);
       };
 

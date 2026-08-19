@@ -27,6 +27,33 @@ export const NO_DOUGH: DoughState = { balance: 0, expires_at: null, capPct: 0.1 
  * on screen can never disagree with itself.
  */
 export const DOUGH_CACHE_KEY = 'ov_dough_balance';
+/**
+ * The number this browser's owner orders with.
+ *
+ * Written by checkout and by the "Check your Dough" form, read by the floating
+ * button. Without it the button can only recognise a device that has allowed
+ * notifications, which is almost nobody — so a customer with a real balance saw
+ * no button at all and concluded their Dough had vanished.
+ */
+export const DOUGH_PHONE_KEY = 'ov_phone';
+
+export function rememberPhone(phone: string): void {
+  const digits = String(phone || '').replace(/\D/g, '').slice(-10);
+  if (!/^[6-9]\d{9}$/.test(digits)) return;
+  try {
+    localStorage.setItem(DOUGH_PHONE_KEY, digits);
+  } catch {
+    // Private mode. The balance still resolves for as long as this page lives.
+  }
+}
+
+export function rememberedPhone(): string {
+  try {
+    return localStorage.getItem(DOUGH_PHONE_KEY) ?? '';
+  } catch {
+    return '';
+  }
+}
 export const DOUGH_EVENT = 'ov:dough';
 
 export function publishDough(balance: number): void {
