@@ -1982,6 +1982,15 @@ article em {
   color: var(--color-text-muted);
 }
 
+/* The deadline is its own line. Joined to the line above with a dot it read as
+   a footnote, when it is the part that makes somebody order this week. */
+.dough-balance-expiry {
+  margin: 0.2rem 0 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-accent);
+}
+
 /* The control that fills the number above. Input and button are one object,
    not two things that happen to be near each other. */
 .dough-check {
@@ -2127,6 +2136,15 @@ article em {
   text-decoration: none; z-index: 9999;
   transition: transform var(--transition-base, 0.2s ease);
 }
+/* The stack has to collapse when a slot is empty. The basket hides itself when
+   nothing is in it, which left this bubble floating with a hole underneath and
+   sitting high enough to land on top of mid-page headings. */
+body:has(.cart-fab[hidden]) .dough-fab { bottom: 6.75rem; }
+
+/* On the Dough page the balance is already the hero. A bubble repeating it,
+   over the text explaining it, is noise. */
+body:has(.dough-hero) .dough-fab { display: none !important; }
+
 .dough-fab:hover { transform: scale(1.06); }
 .dough-fab[hidden] { display: none !important; }
 
@@ -2181,7 +2199,10 @@ article em {
 @media (max-width: 760px) {
   .dough-steps, .dough-rules { grid-template-columns: 1fr; }
   /* Right edge stays at 2rem on a phone too — all three must line up. */
-  .dough-fab { bottom: 11.5rem; right: 2rem; }
+  /* Tighter to the edge on a phone: 2rem of gutter on a 360px screen is
+     content width given away to a button. */
+  .dough-fab { right: 1.25rem; }
+  .cart-fab { right: 1.25rem; }
 }
 
 /* The customer's own Dough statement on /dough/?t=…, shown only to someone

@@ -71,6 +71,7 @@ const description =
           <div class="dough-balance" id="doughBalance" hidden>
             <p class="dough-balance-amount"><span id="doughBalanceValue">₹0</span></p>
             <p class="dough-balance-note" id="doughBalanceNote"></p>
+            <p class="dough-balance-expiry" id="doughBalanceExpiry" hidden></p>
           </div>
 
           <form class="dough-check" id="doughCheckForm">
@@ -147,14 +148,20 @@ const description =
             panel.hidden = false;
             mark.dataset.state = balance > 0 ? 'full' : 'empty';
             countTo(balance);
+            // Two lines, not one joined by a dot: the first is what they can do
+            // with it, the second is a deadline. Running them together made the
+            // deadline read as a footnote to the permission.
             note.textContent =
-              balance > 0
-                ? 'Ready to use on your next order' +
-                  (expiresAt
-                    ? ' · good until ' +
-                      new Date(expiresAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
-                    : '')
-                : 'You earn 5% back on your next order';
+              balance > 0 ? 'Ready to use on your next order' : 'You earn 5% back on your next order';
+            const expiry = document.getElementById('doughBalanceExpiry');
+            if (balance > 0 && expiresAt) {
+              expiry.textContent =
+                'Good until ' +
+                new Date(expiresAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+              expiry.hidden = false;
+            } else {
+              expiry.hidden = true;
+            }
             say(name ? name + ', this is your Dough.' : '', false);
           };
 
