@@ -22,7 +22,6 @@ interface Props {
 }
 const { home = false, activeContact = false } = Astro.props;
 const menuHref = home ? '#menu' : '/#menu';
-const combosHref = home ? '#sec-combos' : '/#sec-combos';
 const partyHref = home ? '#party' : '/#party';
 const whyHref = home ? '#why' : '/#why';
 ---
@@ -59,32 +58,16 @@ const whyHref = home ? '#why' : '/#why';
     </div>
 
     <ul class="nav-links" id="siteNav">
-      <li class="dropdown">
-        <div class="dropdown-trigger">
-          <a href={menuHref} class="nav-link">Menu</a>
-          <svg
-            class="dropdown-arrow"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <polyline points="6 9 12 15 18 9"></polyline>
-          </svg>
-        </div>
-        <ul class="dropdown-menu">
-          <li><a href={menuHref} class="dropdown-item">All Items</a></li>
-          <li><a href={combosHref} class="dropdown-item">Combos & Offers</a></li>
-          <li><a href="/dough/" class="dropdown-item">Dough</a></li>
-          <li><a href="/refer/" class="dropdown-item">Refer</a></li>
-          <li><a href={partyHref} class="dropdown-item">Party Orders</a></li>
-          <li><a href="/price-calculator/" class="dropdown-item">Price Calculator</a></li>
-        </ul>
-      </li>
+      {/*
+        Flat, no dropdowns (owner, 2026-08-20). Menu used to hide Dough, Refer,
+        Party Orders and the calculator behind a hover — four things a customer
+        has no reason to look for under "Menu", so they were effectively
+        invisible. Every destination is now one tap.
+
+        Blog and Contact came out to make room. Both are in the footer, which is
+        where people already look for them.
+      */}
+      <li><a href={menuHref} class="nav-link">Menu</a></li>
 
       {/*
         Offers sits second, right after Menu: it is where every push and ad
@@ -93,33 +76,11 @@ const whyHref = home ? '#why' : '/#why';
       */}
       <li><a href="/offer/" class="nav-link nav-link-offer">Offers</a></li>
 
+      <li><a href="/dough/" class="nav-link">Dough</a></li>
+      <li><a href="/refer/" class="nav-link">Refer</a></li>
+      <li><a href={partyHref} class="nav-link">Party Orders</a></li>
+      <li><a href="/price-calculator/" class="nav-link">Price Calculator</a></li>
       <li><a href={whyHref} class="nav-link">Why Us</a></li>
-
-      <li class="dropdown">
-        <div class="dropdown-trigger">
-          <a href="/blog/" class="nav-link">Blog</a>
-          <svg
-            class="dropdown-arrow"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <polyline points="6 9 12 15 18 9"></polyline>
-          </svg>
-        </div>
-        <ul class="dropdown-menu">
-          <li><a href="/blog/" class="dropdown-item">Latest Articles</a></li>
-          <li><a href="/blog/affordable-pizza/" class="dropdown-item">Affordable Pizza</a></li>
-          <li><a href="/blog/cloud-kitchen-future/" class="dropdown-item">Cloud Kitchens</a></li>
-        </ul>
-      </li>
-
-      <li><a href="/contact/" class:list={['nav-link', { active: activeContact }]}>Contact</a></li>
 
       {/* The basket IS the nav's call to action, owner decision 2026-08-15.
           It replaced an "Order Now" button that pointed at a bare wa.me link:
@@ -169,18 +130,15 @@ const whyHref = home ? '#why' : '/#why';
   <ul class="mobile-nav-links">
     <li><a href="/" class="mobile-nav-link">Home</a></li>
     <li><a href={menuHref} class="mobile-nav-link">Menu</a></li>
-    {
-      home && (
-        <>
-          <li><a href={combosHref} class="mobile-nav-link">Combos & Offers</a></li>
-        </>
-      )
-    }
     <li><a href="/offer/" class="mobile-nav-link">Offers</a></li>
     <li><a href="/dough/" class="mobile-nav-link">Dough</a></li>
     <li><a href="/refer/" class="mobile-nav-link">Refer</a></li>
-    <li><a href="/blog/" class="mobile-nav-link">Blog</a></li>
+    <li><a href={partyHref} class="mobile-nav-link">Party Orders</a></li>
     <li><a href="/price-calculator/" class="mobile-nav-link">Price Calculator</a></li>
+    <li><a href={whyHref} class="mobile-nav-link">Why Us</a></li>
+    {/* A full-screen overlay has room the navbar does not, so Blog and Contact
+        stay here even though they came out of the desktop bar. */}
+    <li><a href="/blog/" class="mobile-nav-link">Blog</a></li>
     <li>
       <a href="/checkout/" class="mobile-nav-link">
         Your order <span class="nav-cart-count js-cart-count js-cart-hide-empty" hidden>0</span>
