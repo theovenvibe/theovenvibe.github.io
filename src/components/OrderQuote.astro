@@ -115,8 +115,8 @@ const { heading = 'Your total', sendLabel = 'Send on WhatsApp', newTab = true } 
       if (!area) return;
       btn.disabled = true;
       btn.textContent = 'Sending…';
-      const nameEl = document.getElementById('nameInput') as HTMLInputElement | null;
-      const phoneEl = document.getElementById('phoneInput') as HTMLInputElement | null;
+      const nameEl = document.getElementById('custName') as HTMLInputElement | null;
+      const phoneEl = document.getElementById('custPhone') as HTMLInputElement | null;
       const kmEl = document.getElementById('kmInput') as HTMLInputElement | null;
       try {
         const res = await fetch(`${workerUrl}/demand-signal`, {
