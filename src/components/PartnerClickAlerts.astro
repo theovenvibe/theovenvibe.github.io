@@ -59,10 +59,29 @@ const partnerConfig = { workerUrl: site.backend.worker_url };
       // Same partner twice in a row is one customer, not two.
       if (!once(partner.name)) return;
 
+      /*
+       * WHERE they left from is the whole point of this alert (owner, 2026-08-20).
+       *
+       * "Someone left for Swiggy" on its own is just bad news. Whether they left
+       * from the footer — where the link is a leak, a customer we could have
+       * served walking out — or from the out-of-range block at checkout, where
+       * it is the only thing we can offer someone eight kilometres away, are
+       * opposite events. One is a problem to fix, the other is the system
+       * working.
+       */
+      const inFooter = Boolean(link.closest('footer'));
+      const inBeyond = Boolean(link.closest('#beyondActions'));
+      const page = window.location.pathname;
+      const where = inBeyond
+        ? 'from the "too far to deliver" box at checkout — this one is us doing the right thing'
+        : inFooter
+          ? `from the FOOTER on ${page} — they could have ordered from us`
+          : `from a link on ${page}`;
+
       publishNtfy(workerUrl, {
         title: `Heads up - ${partner.name}`,
         body:
-          `Someone just left the website for ${partner.name}.\n\n` +
+          `Someone just left the website for ${partner.name},\n${where}.\n\n` +
           `An order may land on your ${partner.name} tablet shortly — worth a look.\n` +
           `(They tapped through from the site; they may still change their mind.)`,
         // Deliberately below the order alert. A maybe-order on a partner app
