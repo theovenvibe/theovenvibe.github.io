@@ -10,7 +10,8 @@
     "dev": "astro dev",
     "build": "astro check && astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "selectors": "node scripts/dump-selectors.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
