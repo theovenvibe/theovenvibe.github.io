@@ -40,6 +40,9 @@ interface Props {
   home?: boolean;
   activeContact?: boolean;
   showWaFab?: boolean;
+  /** The floating Dough pill. Off on /claim/, where it lands on the form it is
+   *  advertising and competes with the one button that page exists for. */
+  showDoughFab?: boolean;
   /** The floating basket. Off on /checkout/, which is where it would lead. */
   showCartFab?: boolean;
   ogTitle?: string;
@@ -54,6 +57,7 @@ const {
   home = false,
   activeContact = false,
   showWaFab = true,
+  showDoughFab = true,
   showCartFab = true,
   ogTitle,
   ogType,
@@ -112,7 +116,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
 
     {showWaFab && <WhatsAppFab />}
 
-    <DoughFab />
+    {showDoughFab && <DoughFab />}
 
     {/* Cart chrome on every page: the Add buttons only do something once this
         is present, and the floating basket stays hidden until it has contents. */}

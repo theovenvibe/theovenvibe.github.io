@@ -1,0 +1,283 @@
+---
+/**
+ * /claim/ — where an Instagram comment turns into ₹40 of Dough.
+ *
+ * Reached only from an auto-DM (docs/campaign/PRD.md in the backend repo).
+ * Someone commented on a post, followed the account, got a link, and tapped it
+ * on a phone, probably at night, probably impatient. By the time they arrive
+ * they have already done everything we asked, so this page has exactly one job:
+ * **do not lose them.** Three fields, one tick, one button.
+ *
+ * Nothing here decides anything. The Worker owns eligibility, the amount, the
+ * window and the daily fuse — this is a public URL that will be forwarded
+ * around Sundargarh, and anything the page could assert would eventually be
+ * asserted by somebody with the console open.
+ *
+ * `noindex`, like /offer/: a campaign landing page has no business in search
+ * results, where it would be found months after the campaign closed.
+ */
+import Layout from '../layouts/Layout.astro';
+import { site } from '../lib/data';
+const workerUrl = site.backend.worker_url ?? '';
+const localities = site.delivery.localities ?? [];
+
+const title = 'Claim your Dough | The Oven Vibe';
+const description = 'Claim the Dough from our Instagram post and spend it on your first order.';
+---
+
+{/* Every floating button is off. This page has one job and one button; a
+    WhatsApp bubble sitting on top of "Claim my ₹40", and a Dough pill landing
+    on the form that is offering Dough, are both competing with it. Seen in a
+    real 360px screenshot, not reasoned about. */}
+<Layout
+  title={title}
+  description={description}
+  noindex={true}
+  showCartFab={false}
+  showWaFab={false}
+  showDoughFab={false}
+>
+  <main class="main">
+    <section class="section">
+      <div class="wrap claim-wrap">
+
+        {/* One of these four is visible at a time. Everything starts hidden and
+            the script decides, because until GET /campaign answers we do not
+            know whether this campaign is real, open, or worth anything — and
+            guessing would mean showing "₹40" to somebody we then refuse. */}
+
+        <div id="claimLoading" class="claim-card claim-card--quiet">
+          <p>Checking your offer…</p>
+        </div>
+
+        <div id="claimClosed" class="claim-card claim-card--quiet" hidden>
+          <h1>This offer has finished</h1>
+          <p id="claimClosedNote">
+            You have just missed it — but the kitchen is still on, and every order
+            earns you 5% back in Dough.
+          </p>
+          <a class="btn btn-primary" href="/menu/">See the menu</a>
+        </div>
+
+        <div id="claimForm" hidden>
+          <header class="claim-head">
+            <p class="claim-eyebrow">From our Instagram</p>
+            <h1 class="claim-amount">₹<span id="claimAmount">40</span> Dough</h1>
+            <p class="claim-sub">
+              Yours to spend on your first order with us. Just tell us where to put it.
+            </p>
+          </header>
+
+          <form class="claim-form" id="claimFormEl" novalidate>
+            <label class="claim-label" for="claimName">Your name</label>
+            <input
+              class="claim-input"
+              id="claimName"
+              name="name"
+              type="text"
+              autocomplete="name"
+              maxlength="60"
+              placeholder="What should we call you?"
+              required
+            />
+
+            <label class="claim-label" for="claimPhone">Mobile number</label>
+            <input
+              class="claim-input"
+              id="claimPhone"
+              name="phone"
+              type="tel"
+              inputmode="numeric"
+              autocomplete="tel"
+              maxlength="15"
+              placeholder="10-digit mobile number"
+              required
+            />
+            <p class="claim-hint">
+              Your Dough lives on this number — it is how we know it is yours when you order.
+            </p>
+
+            <label class="claim-label" for="claimArea">Your area <span class="claim-optional">(optional)</span></label>
+            {/* A list rather than free text: it keeps the delivery data usable,
+                and it is faster to tap than to type on a phone. Free text is
+                still allowed, because somebody will live somewhere we have not
+                listed and must not be stuck. */}
+            <input
+              class="claim-input"
+              id="claimArea"
+              name="area"
+              type="text"
+              list="claimAreaList"
+              maxlength="60"
+              placeholder="Where in Sundargarh?"
+            />
+            <datalist id="claimAreaList">
+              {localities.map((l: string) => <option value={l}></option>)}
+            </datalist>
+
+            {/* Explicit, and unticked. This list gets messaged later; a
+                permission we inferred from somebody filling in a form is not a
+                permission. */}
+            <label class="claim-consent">
+              <input type="checkbox" id="claimConsent" />
+              <span>
+                Send me offers and order updates on WhatsApp. We will not spam you, and
+                you can tell us to stop any time.
+              </span>
+            </label>
+
+            <button class="btn btn-primary claim-submit" type="submit" id="claimSubmit">
+              Claim my ₹<span class="claim-amount-inline">40</span>
+            </button>
+            <p class="claim-error" id="claimError" role="alert" hidden></p>
+          </form>
+        </div>
+
+        <div id="claimDone" class="claim-card" hidden>
+          <p class="claim-eyebrow">Done</p>
+          <h1 class="claim-amount">₹<span id="claimDoneAmount">40</span> added</h1>
+          <p class="claim-sub" id="claimDoneExpiry"></p>
+          <p class="claim-done-note">
+            It comes off your bill automatically when you order — nothing to type,
+            no code to remember. You can spend up to 10% of an order in Dough.
+          </p>
+          <a class="btn btn-primary claim-submit" href="/menu/">Order now</a>
+        </div>
+
+        {/* Refusal is not a dead end. Somebody who is already a customer is
+            standing here with their phone out, and their balance is the most
+            useful thing we can put in front of them. */}
+        <div id="claimKnown" class="claim-card" hidden>
+          <p class="claim-eyebrow">You are already with us</p>
+          <h1 class="claim-known-title" id="claimKnownTitle">This one is for new customers</h1>
+          <p class="claim-sub" id="claimKnownBalance"></p>
+          <a class="btn btn-primary claim-submit" href="/menu/">Order now</a>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
+
+<script is:inline define:vars={{ workerUrl }}>
+  (() => {
+    const $ = (id) => document.getElementById(id);
+    const show = (id) => {
+      for (const p of ['claimLoading', 'claimClosed', 'claimForm', 'claimDone', 'claimKnown']) {
+        $(p).hidden = p !== id;
+      }
+    };
+    const code = new URLSearchParams(location.search).get('c') || '';
+    if (!workerUrl || !code) { show('claimClosed'); return; }
+
+    const rupees = (n) => '₹' + Number(n || 0);
+    // "6 October" — a date somebody reads, not an ISO string.
+    const asDate = (iso) => {
+      if (!iso) return '';
+      const d = new Date(iso);
+      return isNaN(d) ? '' : d.toLocaleDateString('en-IN', { day: 'numeric', month: 'long' });
+    };
+
+    let amount = 40;
+
+    // Ask first, show second. Until this answers we do not know the amount or
+    // whether the campaign is open, and promising "₹40" to somebody the Worker
+    // then refuses is the one thing this page must never do.
+    fetch(workerUrl + '/campaign?c=' + encodeURIComponent(code))
+      .then((r) => r.json())
+      .then((d) => {
+        if (!d || !d.ok || !d.open) {
+          if (d && d.ok && !d.open) {
+            $('claimClosedNote').textContent =
+              'This offer has closed — but the kitchen is still on, and every order earns you 5% back in Dough.';
+          }
+          show('claimClosed');
+          return;
+        }
+        amount = d.amount;
+        $('claimAmount').textContent = String(amount);
+        $('claimDoneAmount').textContent = String(amount);
+        for (const el of document.querySelectorAll('.claim-amount-inline')) el.textContent = String(amount);
+        show('claimForm');
+      })
+      .catch(() => show('claimClosed'));
+
+    const form = $('claimFormEl');
+    const err = $('claimError');
+    const btn = $('claimSubmit');
+
+    const fail = (msg) => {
+      err.textContent = msg;
+      err.hidden = false;
+      btn.disabled = false;
+      btn.textContent = 'Try again';
+    };
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      err.hidden = true;
+
+      const name = $('claimName').value.trim();
+      const phone = $('claimPhone').value.trim();
+      const digits = phone.replace(/\D/g, '').slice(-10);
+
+      // Checked here as a courtesy, not as a control - the Worker checks all of
+      // it again and does not trust any of this.
+      if (!name) return fail('Please tell us your name.');
+      if (!/^[6-9]\d{9}$/.test(digits)) return fail('That does not look like a 10-digit mobile number.');
+      if (!$('claimConsent').checked) return fail('Please tick the box so we know we may message you.');
+
+      btn.disabled = true;
+      btn.textContent = 'Claiming…';
+
+      let d;
+      try {
+        const res = await fetch(workerUrl + '/campaign/claim', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            campaign: code,
+            name,
+            phone: digits,
+            area: $('claimArea').value.trim() || null,
+            consent: true,
+          }),
+        });
+        d = await res.json();
+      } catch {
+        // A claim lost to a dropped connection is a person who did everything
+        // we asked and got nothing, so say so plainly rather than silently
+        // failing. Their claim is not consumed - they can simply try again.
+        return fail('We could not reach the kitchen. Check your connection and try again.');
+      }
+
+      if (d && d.ok) {
+        try { localStorage.setItem('ov_phone', digits); } catch {}
+        $('claimDoneExpiry').textContent = d.expires_at
+          ? 'Spend it before ' + asDate(d.expires_at) + '.'
+          : '';
+        show('claimDone');
+        return;
+      }
+
+      const r = d && d.refusal;
+      if (r === 'already_claimed' || r === 'existing_customer') {
+        $('claimKnownTitle').textContent =
+          r === 'already_claimed' ? 'This number has already claimed' : 'This one is for new customers';
+        $('claimKnownBalance').textContent = d.balance
+          ? 'You have ' + rupees(d.balance) + ' Dough waiting' +
+            (d.expires_at ? ', expiring ' + asDate(d.expires_at) + '.' : '.')
+          : 'Order today and you start earning 5% back straight away.';
+        show('claimKnown');
+        return;
+      }
+      if (r === 'campaign_closed' || r === 'unknown_campaign') return show('claimClosed');
+      if (r === 'daily_limit') {
+        return fail('We have had a rush on this offer today. Please try again tomorrow — it will still be here.');
+      }
+      if (r === 'bad_phone') return fail('That does not look like a 10-digit mobile number.');
+      if (r === 'bad_name') return fail('Please tell us your name.');
+      if (r === 'no_consent') return fail('Please tick the box so we know we may message you.');
+      fail('Something went wrong at our end. Please try again in a moment.');
+    });
+  })();
+</script>
