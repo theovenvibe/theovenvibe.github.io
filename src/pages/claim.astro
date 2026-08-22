@@ -13,6 +13,12 @@
  * around Sundargarh, and anything the page could assert would eventually be
  * asserted by somebody with the console open.
  *
+ * It wears the same clothes as the rest of the site — hero-mini, floating
+ * shapes, the gradient display type — because the first version did not, and
+ * a page that looks like it belongs to somebody else is a bad place to ask for
+ * a phone number. The headline is rewritten by the script for each state, so a
+ * closed campaign never sits under a hero promising ₹40.
+ *
  * `noindex`, like /offer/: a campaign landing page has no business in search
  * results, where it would be found months after the campaign closed.
  */
@@ -28,8 +34,7 @@ const description = 'Claim the Dough from our Instagram post and spend it on you
 
 {/* Every floating button is off. This page has one job and one button; a
     WhatsApp bubble sitting on top of "Claim my ₹40", and a Dough pill landing
-    on the form that is offering Dough, are both competing with it. Seen in a
-    real 360px screenshot, not reasoned about. */}
+    on the form that is offering Dough, are both competing with it. */}
 <Layout
   title={title}
   description={description}
@@ -39,36 +44,59 @@ const description = 'Claim the Dough from our Instagram post and spend it on you
   showDoughFab={false}
 >
   <main class="main">
-    <section class="section">
-      <div class="wrap claim-wrap">
+    <section class="hero hero-mini">
+      <div class="hero-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+      </div>
+      <div class="hero-container">
+        <div class="hero-content" style="text-align: center; margin: 0 auto;">
+          <div class="hero-badge" id="claimBadge">
+            <span class="pulse-dot"></span>
+            From our Instagram
+          </div>
+          {/* Three spans, rewritten per state by the script. Written here with
+              the open-campaign words so the page reads correctly for the split
+              second before the Worker answers. */}
+          <h1 class="hero-display" style="font-size: clamp(2.4rem, 9vw, 4rem)">
+            <span class="animate-on-scroll" id="claimH1">CLAIM</span>
+            {/* `line-3` as well as `text-gradient`: the gradient rule is written
+                  as `.line-3.text-gradient` and needs BOTH classes, so the
+                  three inner pages that use `text-gradient` alone silently
+                  render flat. The amount is the thing to emphasise here, so it
+                  gets the real one. */}
+            <span class="line-3 text-gradient animate-on-scroll delay-100" id="claimH2">₹40</span>
+            <span class="animate-on-scroll delay-200" id="claimH3">DOUGH.</span>
+          </h1>
+          <p class="hero-text animate-on-scroll delay-300" id="claimIntro">
+            Yours to spend on your first order with us.
+          </p>
+        </div>
+      </div>
+    </section>
 
-        {/* One of these four is visible at a time. Everything starts hidden and
-            the script decides, because until GET /campaign answers we do not
-            know whether this campaign is real, open, or worth anything — and
+    <div class="section" style="padding-top: 0">
+      <div class="claim-wrap">
+
+        {/* One of these is visible at a time. Everything starts hidden and the
+            script decides, because until GET /campaign answers we do not know
+            whether this campaign is real, open, or worth anything — and
             guessing would mean showing "₹40" to somebody we then refuse. */}
 
         <div id="claimLoading" class="claim-card claim-card--quiet">
           <p>Checking your offer…</p>
         </div>
 
-        <div id="claimClosed" class="claim-card claim-card--quiet" hidden>
-          <h1>This offer has finished</h1>
+        <div id="claimClosed" class="claim-card" hidden>
           <p id="claimClosedNote">
-            You have just missed it — but the kitchen is still on, and every order
-            earns you 5% back in Dough.
+            You have just missed this one — but the kitchen is still on, and every
+            order earns you 5% back in Dough.
           </p>
-          <a class="btn btn-primary" href="/menu/">See the menu</a>
+          <a class="btn btn-primary claim-submit" href="/menu/">See the menu</a>
         </div>
 
-        <div id="claimForm" hidden>
-          <header class="claim-head">
-            <p class="claim-eyebrow">From our Instagram</p>
-            <h1 class="claim-amount">₹<span id="claimAmount">40</span> Dough</h1>
-            <p class="claim-sub">
-              Yours to spend on your first order with us. Just tell us where to put it.
-            </p>
-          </header>
-
+        <div id="claimForm" class="claim-card claim-card--form" hidden>
           <form class="claim-form" id="claimFormEl" novalidate>
             <label class="claim-label" for="claimName">Your name</label>
             <input
@@ -135,20 +163,16 @@ const description = 'Claim the Dough from our Instagram post and spend it on you
         </div>
 
         <div id="claimDone" class="claim-card" hidden>
-          <p class="claim-eyebrow">Done</p>
-          <h1 class="claim-amount">₹<span id="claimDoneAmount">40</span> added</h1>
           <p class="claim-sub" id="claimDoneExpiry"></p>
           <p class="claim-done-note">
             It comes off your bill automatically when you order — nothing to type,
             no code to remember. You can spend up to 10% of an order in Dough.
           </p>
 
-          {/* The one moment worth asking for a notification.
-              They have just been given ₹40 for free, on their phone, on our
-              site — goodwill will not be higher than this again. And the ask is
-              in THEIR interest: "don't let your money vanish", not "let us
-              market to you". That is the difference between a yes and a
-              permanently denied origin.
+          {/* The one moment worth asking for a notification. They have just been
+              given ₹40 for free, on their phone, on our site — goodwill will not
+              be higher than this again. And the ask is in THEIR interest: "don't
+              let your money vanish", not "let us market to you".
 
               Hidden until the script decides. It stays hidden where push is
               unsupported, on an uninstalled iPhone, or where permission was
@@ -158,9 +182,7 @@ const description = 'Claim the Dough from our Instagram post and spend it on you
             <p class="claim-remind-q" id="claimRemindQ">Want a reminder before it expires?</p>
             {/* Deliberately NOT btn-primary. "Order now" below is the one red
                 button on this screen; two identical primaries stacked made it
-                impossible to tell which was the real action — seen in a
-                screenshot, not reasoned about. The ask still reads clearly
-                because it has its own question above it. */}
+                impossible to tell which was the real action. */}
             <div class="claim-remind-actions">
               <button type="button" class="btn btn-secondary" id="claimRemindYes">Yes, remind me</button>
               <button type="button" class="claim-remind-no" id="claimRemindNo">No thanks</button>
@@ -177,13 +199,11 @@ const description = 'Claim the Dough from our Instagram post and spend it on you
             standing here with their phone out, and their balance is the most
             useful thing we can put in front of them. */}
         <div id="claimKnown" class="claim-card" hidden>
-          <p class="claim-eyebrow">You are already with us</p>
-          <h1 class="claim-known-title" id="claimKnownTitle">This one is for new customers</h1>
           <p class="claim-sub" id="claimKnownBalance"></p>
           <a class="btn btn-primary claim-submit" href="/menu/">Order now</a>
         </div>
       </div>
-    </section>
+    </div>
   </main>
 </Layout>
 
@@ -211,14 +231,41 @@ const description = 'Claim the Dough from our Instagram post and spend it on you
     const $ = (id: string) => document.getElementById(id) as HTMLElement;
     /** Same lookup, typed for the elements we read a value out of. */
     const inp = (id: string) => document.getElementById(id) as HTMLInputElement;
+    /**
+     * The hero headline belongs to the state, not to the page.
+     *
+     * The first version had one fixed headline and swapped only the card
+     * underneath, which meant a closed campaign sat under three-inch letters
+     * promising ₹40. Each state now owns its three display words, so the top of
+     * the screen and the bottom can never disagree.
+     */
+    const HEADLINES: Record<string, [string, string, string, string]> = {
+      claimLoading: ['CHECKING', 'YOUR', 'OFFER.', 'One moment.'],
+      claimForm: ['CLAIM', '₹40', 'DOUGH.', 'Yours to spend on your first order with us.'],
+      claimClosed: ['THIS', 'OFFER', 'HAS ENDED.', 'The kitchen is still on, though.'],
+      claimDone: ['₹40', 'IS', 'YOURS.', 'It is on your number now.'],
+      claimKnown: ["YOU'RE", 'ALREADY', 'WITH US.', 'This one is for new customers.'],
+    };
+
     const show = (id: string) => {
       for (const p of ['claimLoading', 'claimClosed', 'claimForm', 'claimDone', 'claimKnown']) {
         $(p).hidden = p !== id;
       }
+      const h = HEADLINES[id];
+      if (h) {
+        // The amount is substituted rather than hardcoded: a future campaign
+        // worth ₹60 must not be announced as ₹40 by a headline nobody updated.
+        $('claimH1').textContent = h[0].replace('₹40', '₹' + amount);
+        $('claimH2').textContent = h[1].replace('₹40', '₹' + amount);
+        $('claimH3').textContent = h[2];
+        $('claimIntro').textContent = h[3];
+      }
+      $('claimBadge').hidden = id === 'claimClosed';
     };
     const code = new URLSearchParams(location.search).get('c') || '';
     if (!workerUrl || !code) { show('claimClosed'); return; }
 
+    let amount = 40;
     const rupees = (n: number) => '₹' + Number(n || 0);
     // "6 October" — a date somebody reads, not an ISO string.
     const asDate = (iso: string) => {
@@ -227,8 +274,6 @@ const description = 'Claim the Dough from our Instagram post and spend it on you
       return isNaN(d.getTime()) ? '' : d.toLocaleDateString('en-IN', { day: 'numeric', month: 'long' });
     };
 
-    let amount = 40;
-
     // Ask first, show second. Until this answers we do not know the amount or
     // whether the campaign is open, and promising "₹40" to somebody the Worker
     // then refuses is the one thing this page must never do.
@@ -236,20 +281,21 @@ const description = 'Claim the Dough from our Instagram post and spend it on you
       .then((r) => r.json())
       .then((d: any) => {
         if (!d || !d.ok || !d.open) {
-          if (d && d.ok && !d.open) {
-            $('claimClosedNote').textContent =
-              'This offer has closed — but the kitchen is still on, and every order earns you 5% back in Dough.';
-          }
           show('claimClosed');
           return;
         }
         amount = d.amount;
-        $('claimAmount').textContent = String(amount);
-        $('claimDoneAmount').textContent = String(amount);
         for (const el of document.querySelectorAll('.claim-amount-inline')) el.textContent = String(amount);
         show('claimForm');
       })
-      .catch(() => show('claimClosed'));
+      .catch((err) => {
+        // Log it. A bare `.catch(() => show('claimClosed'))` here once swallowed
+        // a real ReferenceError - the redesign removed two elements the handler
+        // still wrote to - and presented a LIVE campaign as finished. Anyone
+        // debugging that from the outside sees a closed offer and no reason.
+        console.error('claim: could not read the campaign', err);
+        show('claimClosed');
+      });
 
     const form = $('claimFormEl');
     const err = $('claimError');
@@ -304,7 +350,7 @@ const description = 'Claim the Dough from our Instagram post and spend it on you
         try { localStorage.setItem('ov_phone', digits); } catch {}
         $('claimDoneExpiry').textContent = d.expires_at
           ? 'Spend it before ' + asDate(d.expires_at) + '.'
-          : '';
+          : 'It is on your number now.';
         offerReminder();
         show('claimDone');
         return;
@@ -312,13 +358,15 @@ const description = 'Claim the Dough from our Instagram post and spend it on you
 
       const r = d && d.refusal;
       if (r === 'already_claimed' || r === 'existing_customer') {
-        $('claimKnownTitle').textContent =
-          r === 'already_claimed' ? 'This number has already claimed' : 'This one is for new customers';
+        show('claimKnown');
+        $('claimIntro').textContent =
+          r === 'already_claimed'
+            ? 'This number has already claimed.'
+            : 'This one is for new customers.';
         $('claimKnownBalance').textContent = d.balance
           ? 'You have ' + rupees(d.balance) + ' Dough waiting' +
             (d.expires_at ? ', expiring ' + asDate(d.expires_at) + '.' : '.')
           : 'Order today and you start earning 5% back straight away.';
-        show('claimKnown');
         return;
       }
       if (r === 'campaign_closed' || r === 'unknown_campaign') return show('claimClosed');

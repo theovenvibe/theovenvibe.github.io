@@ -2335,26 +2335,6 @@ body:has(.dough-hero) .dough-fab { display: none !important; }
      into the edge of the screen. Caught in a screenshot, not by a test. */
   padding: 0 1.1rem;
 }
-.claim-head {
-  text-align: center;
-  margin-bottom: 1.5rem;
-}
-.claim-eyebrow {
-  margin: 0 0 0.35rem;
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-text-muted);
-}
-/* The number is the headline. Someone skimming should learn what they get
-   before reading a single sentence. */
-.claim-amount {
-  margin: 0 0 0.4rem;
-  font-size: clamp(2.4rem, 12vw, 3.2rem);
-  line-height: 1.05;
-  color: var(--color-primary);
-}
 .claim-sub {
   margin: 0;
   color: var(--color-text-muted);
@@ -2431,12 +2411,23 @@ body:has(.dough-hero) .dough-fab { display: none !important; }
 .claim-card {
   text-align: center;
   padding: 1.75rem 1.35rem;
-  border: 1px solid var(--color-border);
   border-radius: var(--radius-lg, 12px);
-  background: #fff;
+  /* The same frosted panel the navbar and the hero badge use, so this page
+     reads as part of the site rather than as a form somebody bolted on. */
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
 }
 .claim-card--quiet {
   color: var(--color-text-muted);
+}
+/* MUST come after .claim-card: that rule sets text-align:center for the
+   message states, and with equal specificity source order decides. Declared
+   earlier, this lost, and every form label sat centred over a left-aligned
+   input — which looked like a mistake because it was one. */
+.claim-card--form {
+  text-align: left;
 }
 .claim-known-title {
   margin: 0 0 0.5rem;
