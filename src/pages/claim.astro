@@ -19,6 +19,7 @@
 import Layout from '../layouts/Layout.astro';
 import { site } from '../lib/data';
 const workerUrl = site.backend.worker_url ?? '';
+const vapidPublicKey = site.push.vapid_public_key ?? '';
 const localities = site.delivery.localities ?? [];
 
 const title = 'Claim your Dough | The Oven Vibe';
@@ -141,6 +142,34 @@ const description = 'Claim the Dough from our Instagram post and spend it on you
             It comes off your bill automatically when you order — nothing to type,
             no code to remember. You can spend up to 10% of an order in Dough.
           </p>
+
+          {/* The one moment worth asking for a notification.
+              They have just been given ₹40 for free, on their phone, on our
+              site — goodwill will not be higher than this again. And the ask is
+              in THEIR interest: "don't let your money vanish", not "let us
+              market to you". That is the difference between a yes and a
+              permanently denied origin.
+
+              Hidden until the script decides. It stays hidden where push is
+              unsupported, on an uninstalled iPhone, or where permission was
+              already answered — a button that quietly does nothing is worse
+              than no button. */}
+          <div class="claim-remind" id="claimRemind" hidden>
+            <p class="claim-remind-q" id="claimRemindQ">Want a reminder before it expires?</p>
+            {/* Deliberately NOT btn-primary. "Order now" below is the one red
+                button on this screen; two identical primaries stacked made it
+                impossible to tell which was the real action — seen in a
+                screenshot, not reasoned about. The ask still reads clearly
+                because it has its own question above it. */}
+            <div class="claim-remind-actions">
+              <button type="button" class="btn btn-secondary" id="claimRemindYes">Yes, remind me</button>
+              <button type="button" class="claim-remind-no" id="claimRemindNo">No thanks</button>
+            </div>
+            <p class="claim-remind-done" id="claimRemindDone" hidden>
+              Done — we will nudge you before it goes.
+            </p>
+          </div>
+
           <a class="btn btn-primary claim-submit" href="/menu/">Order now</a>
         </div>
 
@@ -158,10 +187,31 @@ const description = 'Claim the Dough from our Instagram post and spend it on you
   </main>
 </Layout>
 
-<script is:inline define:vars={{ workerUrl }}>
+<script
+  type="application/json"
+  id="claim-config"
+  is:inline
+  set:html={JSON.stringify({ workerUrl, vapidPublicKey })}
+/>
+
+{/* A bundled module, not `is:inline`, so it can import lib/push and reuse the
+    ONE subscribe implementation. Two copies would drift, and the copy that
+    drifts is the one that silently stops registering subscribers - a failure
+    nobody notices, because the symptom is an absence. Config arrives through
+    the JSON element above, the same way /checkout/ does it. */}
+<script>
+  import { askAndSubscribe, iosNotInstalled, pushSupported } from '../lib/push';
+
   (() => {
-    const $ = (id) => document.getElementById(id);
-    const show = (id) => {
+    const cfgEl = document.getElementById('claim-config');
+    const { workerUrl, vapidPublicKey } = JSON.parse(cfgEl?.textContent ?? '{}') as {
+      workerUrl: string;
+      vapidPublicKey: string;
+    };
+    const $ = (id: string) => document.getElementById(id) as HTMLElement;
+    /** Same lookup, typed for the elements we read a value out of. */
+    const inp = (id: string) => document.getElementById(id) as HTMLInputElement;
+    const show = (id: string) => {
       for (const p of ['claimLoading', 'claimClosed', 'claimForm', 'claimDone', 'claimKnown']) {
         $(p).hidden = p !== id;
       }
@@ -169,12 +219,12 @@ const description = 'Claim the Dough from our Instagram post and spend it on you
     const code = new URLSearchParams(location.search).get('c') || '';
     if (!workerUrl || !code) { show('claimClosed'); return; }
 
-    const rupees = (n) => '₹' + Number(n || 0);
+    const rupees = (n: number) => '₹' + Number(n || 0);
     // "6 October" — a date somebody reads, not an ISO string.
-    const asDate = (iso) => {
+    const asDate = (iso: string) => {
       if (!iso) return '';
       const d = new Date(iso);
-      return isNaN(d) ? '' : d.toLocaleDateString('en-IN', { day: 'numeric', month: 'long' });
+      return isNaN(d.getTime()) ? '' : d.toLocaleDateString('en-IN', { day: 'numeric', month: 'long' });
     };
 
     let amount = 40;
@@ -184,7 +234,7 @@ const description = 'Claim the Dough from our Instagram post and spend it on you
     // then refuses is the one thing this page must never do.
     fetch(workerUrl + '/campaign?c=' + encodeURIComponent(code))
       .then((r) => r.json())
-      .then((d) => {
+      .then((d: any) => {
         if (!d || !d.ok || !d.open) {
           if (d && d.ok && !d.open) {
             $('claimClosedNote').textContent =
@@ -203,9 +253,9 @@ const description = 'Claim the Dough from our Instagram post and spend it on you
 
     const form = $('claimFormEl');
     const err = $('claimError');
-    const btn = $('claimSubmit');
+    const btn = $('claimSubmit') as HTMLButtonElement;
 
-    const fail = (msg) => {
+    const fail = (msg: string) => {
       err.textContent = msg;
       err.hidden = false;
       btn.disabled = false;
@@ -216,20 +266,20 @@ const description = 'Claim the Dough from our Instagram post and spend it on you
       e.preventDefault();
       err.hidden = true;
 
-      const name = $('claimName').value.trim();
-      const phone = $('claimPhone').value.trim();
+      const name = inp('claimName').value.trim();
+      const phone = inp('claimPhone').value.trim();
       const digits = phone.replace(/\D/g, '').slice(-10);
 
       // Checked here as a courtesy, not as a control - the Worker checks all of
       // it again and does not trust any of this.
       if (!name) return fail('Please tell us your name.');
       if (!/^[6-9]\d{9}$/.test(digits)) return fail('That does not look like a 10-digit mobile number.');
-      if (!$('claimConsent').checked) return fail('Please tick the box so we know we may message you.');
+      if (!inp('claimConsent').checked) return fail('Please tick the box so we know we may message you.');
 
       btn.disabled = true;
       btn.textContent = 'Claiming…';
 
-      let d;
+      let d: any;
       try {
         const res = await fetch(workerUrl + '/campaign/claim', {
           method: 'POST',
@@ -238,7 +288,7 @@ const description = 'Claim the Dough from our Instagram post and spend it on you
             campaign: code,
             name,
             phone: digits,
-            area: $('claimArea').value.trim() || null,
+            area: inp('claimArea').value.trim() || null,
             consent: true,
           }),
         });
@@ -255,6 +305,7 @@ const description = 'Claim the Dough from our Instagram post and spend it on you
         $('claimDoneExpiry').textContent = d.expires_at
           ? 'Spend it before ' + asDate(d.expires_at) + '.'
           : '';
+        offerReminder();
         show('claimDone');
         return;
       }
@@ -278,6 +329,47 @@ const description = 'Claim the Dough from our Instagram post and spend it on you
       if (r === 'bad_name') return fail('Please tell us your name.');
       if (r === 'no_consent') return fail('Please tick the box so we know we may message you.');
       fail('Something went wrong at our end. Please try again in a moment.');
+    });
+
+    /**
+     * Offer the expiry reminder — but only where saying yes can actually work.
+     *
+     * Never calls Notification.requestPermission() on its own. A native prompt
+     * fired without being asked for is refused far more often, and a refusal
+     * is PERMANENT for the whole origin: one careless prompt here and this
+     * customer can never be sent a push again, from any page. So the card is
+     * the ask, and the native prompt only follows an explicit yes.
+     */
+    function offerReminder() {
+      if (!vapidPublicKey || !workerUrl) return;
+      if (!pushSupported() || iosNotInstalled()) return;
+      // 'granted' means they already subscribed somewhere; 'denied' means the
+      // browser will never ask again. Both make this card a lie.
+      if (Notification.permission !== 'default') return;
+      $('claimRemind').hidden = false;
+    }
+
+    $('claimRemindNo')?.addEventListener('click', () => {
+      // No requestPermission call on this path, so the native prompt is
+      // untouched and they can still be asked another day.
+      $('claimRemind').hidden = true;
+    });
+
+    $('claimRemindYes')?.addEventListener('click', async () => {
+      const yes = $('claimRemindYes') as HTMLButtonElement;
+      yes.disabled = true;
+      yes.textContent = 'Just a moment…';
+      const result = await askAndSubscribe(vapidPublicKey, workerUrl);
+      $('claimRemindQ')?.remove();
+      ($('claimRemind').querySelector('.claim-remind-actions') as HTMLElement).hidden = true;
+      const done = $('claimRemindDone');
+      // Told plainly either way. They did something and deserve to know
+      // whether it worked - and if it did not, the Dough is still theirs.
+      done.textContent =
+        result === 'granted'
+          ? 'Done — we will nudge you before it goes.'
+          : 'No reminder then — your ₹' + String(amount) + ' is still yours either way.';
+      done.hidden = false;
     });
   })();
 </script>
