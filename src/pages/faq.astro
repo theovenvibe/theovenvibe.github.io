@@ -21,6 +21,8 @@ import {
   deliveryFreeAboveLineAll,
   quietHoursTimeRange,
   lateNightTimeRange,
+  lateNightDeliveryLine,
+  lateNightReasons,
   maxDeliveryKm,
 } from '../lib/data';
 import { formatTime } from '../lib/pricing';
@@ -46,7 +48,7 @@ const faqs: Qa[] = [
   },
   {
     q: 'What does delivery cost?',
-    a: `${deliverySlabLine}, depending on how far you are. ${deliveryMinimumLine}. ${deliveryFreeAboveLineAll}. We deliver up to ${maxDeliveryKm} km ourselves — beyond that, order through Zomato or Swiggy. You can work out your exact total on our price calculator.`,
+    a: `${deliverySlabLine}, depending on how far you are. ${deliveryMinimumLine}. ${deliveryFreeAboveLineAll} — during normal hours; free delivery does not apply in the late-night window. We deliver up to ${maxDeliveryKm} km ourselves — beyond that, order through Zomato or Swiggy. You can work out your exact total on our price calculator.`,
   },
   {
     q: 'Is there a minimum order?',
@@ -58,7 +60,22 @@ const faqs: Qa[] = [
   },
   {
     q: 'Do you deliver late at night?',
-    a: `Yes, after we close. ${d.late_night.note} ${d.late_night.menu_note} Between ${lateNightTimeRange} there's a ₹${d.late_night.kitchen_charge} kitchen charge on every order, and ₹${d.late_night.delivery_premium} more if we ride out to you — so collecting it yourself saves ₹${d.late_night.delivery_premium}. The normal pickup discount doesn't apply after closing, because the oven has to be fired either way. Minimum ₹${d.late_night.min_order}, paid online in advance — and if it rains when we ride out, ₹${d.rain.surcharge} is added on delivery.`,
+    a: `Yes, after we close. ${d.late_night.note} ${d.late_night.menu_note} The window runs ${lateNightTimeRange}, minimum ₹${d.late_night.min_order}, paid online in advance. There are two extra charges — the next answer explains exactly what each one pays for.`,
+  },
+  {
+    // Added 22 Aug 2026. A real customer asked the owner why his bill had two
+    // delivery charges on it; the bill now shows one, and this is where the
+    // reasoning lives. Everybody wants to order late and nobody is thinking
+    // about what it costs to have an oven and a person running at 1am — so
+    // the answer states the costs plainly rather than asking for trust.
+    //
+    // Rider safety is one of the owner's real reasons and is deliberately
+    // written as what it costs US, not as a danger. Telling a customer the
+    // road is risky at that hour plants a worry they did not have. Safety
+    // belongs in policy — a cutoff hour, a distance limit — not in a price
+    // list.
+    q: 'Why does a late-night order cost more?',
+    a: `Because the kitchen has already closed for the night, and opening it again is not free: ${lateNightReasons.join('; ')}. So there are two charges, and they pay for different things. First, ₹${d.late_night.kitchen_charge} for reopening the kitchen — every late order carries it, including one you collect yourself, because the oven has to be fired either way. Second, the ride: ${lateNightDeliveryLine}. That is the normal distance charge with the late-night part already included, shown as one number instead of two, so collecting it yourself saves the whole ride charge. Free delivery on bigger orders does not apply after closing — the ride costs more at that hour, not less. Minimum ₹${d.late_night.min_order}, paid online in advance — we need to know the order is real before we light the oven — and if it rains when we ride out, ₹${d.rain.surcharge} is added on delivery.`,
   },
   {
     q: 'What time does the kitchen close?',
@@ -69,10 +86,6 @@ const faqs: Qa[] = [
     a: d.rain.active
       ? `Right now, yes — a ₹${d.rain.surcharge} rain surcharge is active. ${d.rain.note}`
       : `Only when it's actually raining, and it's off right now. ${d.rain.note}`,
-  },
-  {
-    q: 'Do you deliver to NTPC Hospital or Sriram Nagar?',
-    a: `Only while it's actually raining, and only on deliveries — a pickup has no ride to pay for. It adds ₹${d.rain.surcharge}, and we switch it off the moment the rain stops. If you're ordering for later we can't know the weather yet, so it would be added on delivery — unless you pay online when you order, which locks your price whatever the sky does.`,
   },
   {
     q: 'What if I am further than 4 km away?',

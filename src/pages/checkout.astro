@@ -146,6 +146,36 @@ const checkoutConfig = {
         </form>
 
         <OrderQuote heading="Your total" sendLabel="Send order on WhatsApp" />
+
+        {/* Sits AFTER the total, not before it.
+            Every question a customer has starts with a number they just read
+            - why a late order costs more, what the two charges are for, when
+            delivery is free. Putting this above the quote asks them to read a
+            FAQ about a bill they have not seen yet; putting it here catches
+            them at the moment the question actually forms.
+
+            Added 22 Aug 2026 after a customer messaged the owner mid-order
+            about his bill. Answering that on WhatsApp is fine once. The point
+            of a FAQ is that it scales and a phone call does not - so the FAQ
+            leads, and the phone is offered second, without making anyone feel
+            they are being fobbed off. */}
+        <aside class="checkout-help">
+          <h2>Questions about your total?</h2>
+          <p>
+            The FAQ answers almost all of them — what each charge is for, why late-night
+            orders cost more, when delivery is free, and how Dough works.
+          </p>
+          <div class="checkout-help__actions">
+            <a class="btn btn-primary" href="/faq/">Read the FAQ</a>
+            <a class="btn btn-secondary" href={`tel:${site.business.phone}`}>
+              Call {site.business.phone_display}
+            </a>
+          </div>
+          <p class="checkout-help__note">
+            Still stuck after reading it? Call us — we would rather sort it out now than have
+            you guess.
+          </p>
+        </aside>
       </div>
     </div>
   </main>

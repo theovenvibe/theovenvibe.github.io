@@ -242,8 +242,49 @@ export const deliveryMinimumLine =
 /** "Afternoons 12–4pm, Mon–Fri: ₹19 delivery, minimum order ₹199" — the ₹19 claim never appears without its unlocking minimum. */
 export const quietHoursLine = `Afternoons ${formatTimeRange(site.delivery.quiet_hours.from, site.delivery.quiet_hours.to)}, ${site.delivery.quiet_hours.days}: ₹${site.delivery.quiet_hours.charge} delivery, minimum order ₹${site.delivery.slabs[0].min_order_quiet}`;
 
-/** "Late night (11:30pm–1am): +₹79, ₹399 minimum, paid online in advance." */
-export const lateNightLine = `Late night (${formatTimeRange(site.delivery.late_night.from, site.delivery.late_night.to)}): +₹${site.delivery.late_night.kitchen_charge} kitchen charge on every order, +₹${site.delivery.late_night.delivery_premium} more if we deliver, ₹${site.delivery.late_night.min_order} minimum, paid online in advance. Collecting it yourself saves the ₹${site.delivery.late_night.delivery_premium} — the usual pickup discount does not apply after closing`;
+/* ---------- late night ----------
+ *
+ * The late-night rule used to be written out by hand in six places - the bill
+ * labels, two banner lines, the FAQ, the calculator and the homepage - each in
+ * its own words. That is how two pages end up disagreeing about the same
+ * charge, which is exactly the bug that produced the Dough/delivery-fee
+ * mismatch in August. Everything below is derived from site.config.json, so a
+ * new band or a changed premium updates every surface at once.
+ *
+ * The customer is shown ONE delivery number per band, not the distance charge
+ * and the late premium separately. They read two lines containing the word
+ * "delivery" as being charged twice for delivery, and they said so
+ * (owner, 22 Aug 2026, after a real customer asked). The split still exists in
+ * the config and in what the kitchen earns - it just is not the customer's
+ * problem.
+ */
+
+/** What a late-night delivery costs per band: the distance charge with the premium already in it. */
+export const lateNightDeliveryBands = site.delivery.slabs.map((slab) => ({
+  label: slab.label,
+  amount: slab.charge + site.delivery.late_night.delivery_premium,
+}));
+
+/** "₹59 within 2 km, ₹99 for 2–4 km" — reads as prose however many bands exist. */
+export const lateNightDeliveryLine = lateNightDeliveryBands
+  .map((b, i) => (i === 0 ? `₹${b.amount} within ${b.label.split('–')[1]}` : `₹${b.amount} for ${b.label}`))
+  .join(', ');
+
+/**
+ * Why it costs more, in the owner's own reasons (22 Aug 2026).
+ *
+ * Rider safety is deliberately phrased as what it costs US rather than as a
+ * risk to worry about. It is the honest reason either way, but telling a
+ * customer the road is dangerous at 1am plants a question nobody asked and
+ * implies we accepted a risk on their behalf. Safety belongs in the policy -
+ * a cutoff hour, a distance limit - not in the price list.
+ */
+export const lateNightReasons = [
+  'the oven has to come back up to temperature from cold, which takes time and a real amount of electricity',
+  'someone who has already finished their shift has to come back and work it',
+  'and if we deliver, we pay more for a ride at that hour',
+];
+
 
 /**
  * Banner disclosure lines (owner rule, 2026-08-14): a surcharge is never
@@ -251,7 +292,7 @@ export const lateNightLine = `Late night (${formatTimeRange(site.delivery.late_n
  * of these are always paired with the calculator link wherever they render.
  * "Late night after 11:30pm: +₹79, minimum ₹399, prepaid"
  */
-export const lateNightBannerLine = `Late night after ${formatTime(site.delivery.late_night.from)}: +₹${site.delivery.late_night.kitchen_charge} kitchen, +₹${site.delivery.late_night.delivery_premium} to deliver, minimum ₹${site.delivery.late_night.min_order}, prepaid`;
+export const lateNightBannerLine = `Late night after ${formatTime(site.delivery.late_night.from)}: ₹${site.delivery.late_night.kitchen_charge} kitchen reopen, delivery from ₹${lateNightDeliveryBands[0].amount}, minimum ₹${site.delivery.late_night.min_order}, prepaid`;
 
 /**
  * Rain is a standing POLICY disclosure — it stays on the banner regardless
