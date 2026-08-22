@@ -562,9 +562,10 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
     dl.appendChild(textEl('dd', 'calc-total-amount', rupee(result.total)));
     output.appendChild(dl);
 
-    if (result.latenightPrepaid) {
-      output.appendChild(textEl('p', 'calc-note', 'Late-night orders are paid online in advance.'));
-    }
+    // The prepaid fact used to be printed here AND again inside notes, which
+    // computeQuote pushes as late_night.advance_note - so a late-night quote
+    // said "paid online in advance" twice, one line apart. The notes version
+    // is the fuller one (it also carries the rain condition), so this one goes.
     for (const note of result.notes ?? []) {
       output.appendChild(textEl('p', 'calc-note', note));
     }

@@ -26,6 +26,7 @@ import {
   orderCatalogGroups,
   quietHoursTimeRange,
   lateNightTimeRange,
+  lateNightDeliveryBands,
   maxDeliveryKm,
 } from '../lib/data';
 import { breadcrumbJsonLd } from '../lib/seo';
@@ -124,12 +125,12 @@ const calcConfig = {
             for {d.quiet_hours.applies_to_slab}, minimum order ₹{d.slabs[0].min_order_quiet}. {d.quiet_hours.note}
           </li>
           <li>
-            Late night ({lateNightTimeRange}): +₹{d.late_night.kitchen_charge} kitchen charge on every
-            order, +₹{d.late_night.delivery_premium} more if we deliver (so picking up saves ₹
-            {d.late_night.delivery_premium}, and the usual pickup discount does not apply), ₹
-            {d.late_night.min_order} minimum, paid online in advance — and if it rains when we ride out,
-            ₹{d.rain.surcharge} is added on delivery.{' '}
-            minimum, paid online in advance. {d.late_night.note}
+            The <strong>Free above</strong> column applies during normal hours only — free
+            delivery does not apply in the late-night window.
+          </li>
+          <li>
+            Late night ({lateNightTimeRange}) costs more, and the two charges are explained in
+            plain words just below this list.
           </li>
           {d.rain.active && <li>Rain surcharge active right now: +₹{d.rain.surcharge}. {d.rain.note}</li>}
           <li>
@@ -142,6 +143,63 @@ const calcConfig = {
           </li>
           <li>{d.beyond_note}</li>
         </ul>
+
+        {/* Late night, explained.
+            A customer asked the owner on 21 August why his bill had two
+            delivery charges on it. He was reading "Delivery" and "Late-night
+            delivery" as being charged twice for the same thing. The bill now
+            shows one delivery number, and this block says what each of the
+            two remaining charges actually pays for — because a charge people
+            understand is one they accept, and everybody wants to order late. */}
+        <div class="latenight-why">
+          <h3>Ordering late? Here's what the extra charges are for</h3>
+          <p class="latenight-why__intro">
+            We close at {site.business.hours.close === '23:30' ? '11:30 PM' : site.business.hours.close}.
+            An order after that means opening the kitchen again, and that costs us real money —
+            so it costs you a bit more. There are only two extra charges, and this is what each
+            one pays for.
+          </p>
+
+          <div class="latenight-why__item">
+            <p class="latenight-why__head">
+              <span>Kitchen reopen</span>
+              <strong>₹{d.late_night.kitchen_charge}</strong>
+            </p>
+            <p class="latenight-why__note">
+              On every late order — <strong>including one you collect yourself</strong>.
+              The oven has to be heated back up from cold, which takes time and electricity,
+              and someone who has already finished their shift has to come back and cook it.
+            </p>
+          </div>
+
+          <div class="latenight-why__item">
+            <p class="latenight-why__head">
+              <span>The ride</span>
+              <strong>
+                {lateNightDeliveryBands.map((b, i) => (
+                  <>{i > 0 && ' / '}₹{b.amount} <small>({b.label})</small></>
+                ))}
+              </strong>
+            </p>
+            <p class="latenight-why__note">
+              Only if we deliver. This is the normal distance charge with the late-night part
+              already added in, so you see one number instead of two. Riding out at that hour
+              costs us more.{' '}
+              <strong>Collect it yourself and you don't pay this at all.</strong>
+            </p>
+            <p class="latenight-why__note">
+              Free delivery on bigger orders does not apply after closing — the ride costs more
+              at that hour, not less, which is also why the window has its own ₹{d.late_night.min_order}{' '}
+              minimum.
+            </p>
+          </div>
+
+          <p class="latenight-why__foot">
+            Minimum order ₹{d.late_night.min_order}, paid online in advance — we need to know the
+            order is real before we light the oven. If it rains when we ride out,{' '}
+            ₹{d.rain.surcharge} is added on delivery. {d.late_night.menu_note}
+          </p>
+        </div>
       </div>
     </div>
 

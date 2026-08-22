@@ -85,7 +85,10 @@
       "advance_note": "Late-night orders are paid online in advance. If it rains when we ride out, ₹{surcharge} is added on delivery.",
       "advance_note_quote": "Late-night order — Needs to be paid online in advance. So please send your QR so I can pay it. I understand that if it rains when you ride out, ₹{surcharge} is added in my bill and will be paid on delivery.",
       "_advance_comment": "Late night is prepaid AND still carries the rain charge - paying up front is the condition of cooking at that hour, not a waiver. That is why the prepaid tick box is hidden inside the window: it is not a choice there. Outside the window prepaying DOES waive rain, which is the only thing it buys.",
-      "pickup_note_quote": "Late-night pickup — Needs to be paid online in advance. So please send your QR so I can pay it. I will collect it myself."
+      "pickup_note_quote": "Late-night pickup — Needs to be paid online in advance. So please send your QR so I can pay it. I will collect it myself.",
+      "explain_note": "The kitchen has already closed for the night, so a late order means firing the oven again and someone coming back to work it. Collecting it yourself saves the ₹{ride} ride.",
+      "explain_note_quote": "I understand the late-night charges cover reopening the kitchen after closing and the ride at that hour.",
+      "_explain_comment": "Added 2026-08-22 after a real customer asked why there were two delivery charges. The bill now shows ONE delivery number per band (distance charge + delivery_premium) and this line says why it is higher, with the pickup saving named. {ride} is replaced with the band's merged delivery charge."
     },
     "rain": {
       "active": false,

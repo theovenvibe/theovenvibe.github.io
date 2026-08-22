@@ -14,14 +14,21 @@
  *      ONLY for the slab named in quiet_hours.applies_to_slab.
  *   5. Free delivery at/above the slab's free_above (regulars use
  *      regulars.free_above instead) — never during the late-night window.
- *   6. Add surcharges: late night, rain (when the caller says it is
- *      raining, defaulting to the rain.active flag).
+ *   6. Add surcharges. Late night REPLACES the delivery line rather than
+ *      adding to it: the customer sees one number per band (distance charge +
+ *      delivery_premium) plus a separate kitchen-reopen line, because two
+ *      lines both saying "delivery" read as being charged twice. Rain still
+ *      adds a line (when the caller says it is raining, defaulting to the
+ *      rain.active flag).
  *   7. (Retired 2026-08-19 — the pickup discount. See the block in the pickup
  *      branch below; the config keys are still there to switch it back on.)
  *   8. Cap the SUM of delivery charges (fee + surcharges) at
  *      max_delivery_charge — the banner's promise covers surcharges too.
- *   9. Regulars: surcharges waived entirely (shown as a $0 waived line, not
- *      dropped, so the breakdown still explains itself).
+ *   9. Regulars: rain is waived (shown as a Rs.0 waived line, not dropped, so
+ *      the breakdown still explains itself). Late-night charges are NOT
+ *      waived any more - the oven and the ride cost the same at 1am whoever
+ *      ordered, and Dough rewards repeat customers instead (owner,
+ *      2026-08-22).
  */
 import type { SiteConfig } from '../schemas/site-config';
 
@@ -210,8 +217,9 @@ export function computeQuote(cfg: DeliveryConfig, input: QuoteInput): QuoteResul
     const pickupNudge: { needed: number; threshold: number; discount: number } | undefined = undefined;
     if (lateNight) {
       lines.push({
-        label: `Late-night kitchen (prepaid, min ₹${cfg.late_night.min_order})`,
-        amount: input.regular ? 0 : cfg.late_night.kitchen_charge,
+        // Same words as the delivery bill: one charge, described once.
+        label: `Late-night kitchen reopen (prepaid, min ₹${cfg.late_night.min_order})`,
+        amount: cfg.late_night.kitchen_charge,
       });
     }
     /* Retired with the nudge above — the discount line itself:
@@ -233,6 +241,7 @@ export function computeQuote(cfg: DeliveryConfig, input: QuoteInput): QuoteResul
       latenightPrepaid: lateNight && cfg.late_night.prepaid,
       minimum: lateNight ? cfg.late_night.min_order : 0,
       pickupNudge,
+      notes: lateNight ? [cfg.late_night.explain_note.replace(' Collecting it yourself saves the ₹{ride} ride.', '')] : undefined,
       quoteNotes: [
         lateNight ? cfg.late_night.pickup_note_quote : cfg.pickup_note_quote,
       ],
@@ -275,30 +284,47 @@ export function computeQuote(cfg: DeliveryConfig, input: QuoteInput): QuoteResul
   const isFree = subtotal >= freeAbove && !isLateNight;
   if (isFree) fee = 0;
 
-  // Every price claim carries its unlocking condition in the same line
-  // (owner rule, 2026-08-14) — "₹19 delivery" alone is misleading without
-  // the minimum order that makes it reachable, same for the free line.
-  lines.push({
-    label: isFree
-      ? `Delivery (${slab.label}) — free above ₹${freeAbove}`
-      : quietFeeApplies
-        ? `Delivery (${slab.label}, afternoon rate, min ₹${slab.min_order_quiet})`
-        : `Delivery (${slab.label})`,
-    amount: fee,
-  });
-
   if (isLateNight) {
-    // Split so the reader can see what picking up would save: the kitchen
-    // charge stays either way, the delivery premium is the part that goes.
+    // ONE delivery line, not two.
+    //
+    // This used to print the distance charge and the late-night premium
+    // separately, on the reasoning that a reader could then see what picking
+    // up would save. What a real customer saw was two lines containing the
+    // word "delivery" and concluded he was being charged for it twice - he
+    // asked the owner on 21 August, and everyone ordering late will ask the
+    // same thing. Merged, it is one number for one thing: getting the food to
+    // your door at that hour.
+    //
+    // The kitchen reopen stays its own line, because it is genuinely a
+    // different charge and it does NOT go away on pickup - the oven has to be
+    // fired either way. Keeping it separate is what still lets the bill show
+    // that collecting your own order saves the entire ride.
+    //
+    // Regulars no longer have these waived. The cost is real at 1am whoever
+    // ordered - the oven burns the same electricity and someone still rides -
+    // and merged lines cannot express half a waiver without the clumsy
+    // "late-night part waived" label that would reopen the very question this
+    // change closes. Repeat customers are rewarded with Dough instead, which
+    // costs nothing at the worst hour of the day. (Owner, 22 Aug 2026.)
     lines.push({
-      label: input.regular
-        ? 'Late-night kitchen — waived for regulars'
-        : `Late-night kitchen (prepaid, min ₹${cfg.late_night.min_order})`,
-      amount: input.regular ? 0 : cfg.late_night.kitchen_charge,
+      label: `Late-night delivery (${slab.label})`,
+      amount: fee + cfg.late_night.delivery_premium,
     });
     lines.push({
-      label: input.regular ? 'Late-night delivery — waived for regulars' : 'Late-night delivery',
-      amount: input.regular ? 0 : cfg.late_night.delivery_premium,
+      label: `Late-night kitchen reopen (prepaid, min ₹${cfg.late_night.min_order})`,
+      amount: cfg.late_night.kitchen_charge,
+    });
+  } else {
+    // Every price claim carries its unlocking condition in the same line
+    // (owner rule, 2026-08-14) — "₹19 delivery" alone is misleading without
+    // the minimum order that makes it reachable, same for the free line.
+    lines.push({
+      label: isFree
+        ? `Delivery (${slab.label}) — free above ₹${freeAbove}`
+        : quietFeeApplies
+          ? `Delivery (${slab.label}, afternoon rate, min ₹${slab.min_order_quiet})`
+          : `Delivery (${slab.label})`,
+      amount: fee,
     });
   }
   // A prepaid order cannot take a doorstep surcharge, so rain never applies to
@@ -338,6 +364,14 @@ export function computeQuote(cfg: DeliveryConfig, input: QuoteInput): QuoteResul
   const notes: string[] = [];
   const quoteNotes: string[] = [];
   const rupees = String(cfg.rain.surcharge);
+  if (isLateNight) {
+    // Why it is higher, said before they have to ask. The pickup saving is
+    // named in the same breath because at 1am it is the option we would
+    // rather they took anyway.
+    const ride = String(slab.charge + cfg.late_night.delivery_premium);
+    notes.push(cfg.late_night.explain_note.replace('{ride}', ride));
+    quoteNotes.push(cfg.late_night.explain_note_quote);
+  }
   if (isLateNight && cfg.late_night.prepaid) {
     // One line, both facts: paid up front, and rain still applies on the ride.
     notes.push(cfg.late_night.advance_note.replace('{surcharge}', rupees));

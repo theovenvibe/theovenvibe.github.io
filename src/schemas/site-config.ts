@@ -93,6 +93,12 @@ export const siteConfigSchema = z.object({
         .nonnegative('late_night.delivery_premium must be 0 or more rupees — the extra cost of riding out late'),
       _charge_comment: z.string().optional(),
       min_order: z.number().int().positive('late_night.min_order must be a positive rupee amount'),
+      explain_note: z
+        .string()
+        .min(1, 'late_night.explain_note is shown on the bill — say why a late order costs more'),
+      explain_note_quote: z
+        .string()
+        .min(1, 'late_night.explain_note_quote is what the customer sends — write it in their voice'),
       prepaid: z.boolean(),
       note: z.string().min(1),
       /* One line covering both facts of a late order: paid up front, and rain
