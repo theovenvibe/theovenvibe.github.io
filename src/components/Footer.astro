@@ -9,9 +9,12 @@
  */
 import { site } from '../lib/data';
 import { LINKS } from '../lib/seo';
-const utm = 'utm_source=site&utm_medium=footer&utm_campaign=delivery';
-const zomato = `${LINKS.zomato}&${utm}`;
-const swiggy = `${LINKS.swiggy}&${utm}`;
+// The Zomato/Swiggy links that used to sit in this footer are GONE on purpose.
+// Somebody already on our own site who taps them costs us the platform's cut on
+// an order we had won, and we lose the phone number, the Dough balance and the
+// repeat. The platforms stay for DISCOVERY - people who search inside those
+// apps still find us there - but our own pages do not hand traffic to them.
+// LINKS.zomato / LINKS.swiggy still exist in seo.ts for structured data.
 // Phase 4: the © year came from a hard-coded "2025" that was already stale.
 const year = new Date().getFullYear();
 ---
@@ -32,12 +35,6 @@ const year = new Date().getFullYear();
 
     <!-- Secondary/Right Content -->
     <div class="footer-right">
-      <div class="footer-order-links">
-        <a href={zomato} target="_blank" rel="noopener noreferrer" aria-label="Order on Zomato">Zomato</a>
-        <span style="opacity: 0.3">|</span>
-        <a href={swiggy} target="_blank" rel="noopener noreferrer" aria-label="Order on Swiggy">Swiggy</a>
-      </div>
-
       <div class="footer-social-links">
         <a href={site.business.instagram} target="_blank" rel="noopener noreferrer" aria-label="Follow on Instagram">Instagram</a>
         <span style="opacity: 0.3">|</span>

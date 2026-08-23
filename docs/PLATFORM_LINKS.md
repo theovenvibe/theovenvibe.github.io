@@ -99,3 +99,73 @@ tapped; if it becomes worth knowing, add the source to the beacon in
 pizza base went to our own order, Zomato or Swiggy. That is the honest measure
 of whether this change moved anything: watch the split in the admin's Stock tab
 over the next few weeks.
+
+---
+
+## The second decision, 2026-08-23 — the footer links
+
+Same fault, second location. During the `IG100` Instagram campaign the kitchen's
+partner-click alert fired **four times in four minutes** (16:31–16:35), every
+one of them labelled *"from the footer"*. Because the alert de-duplicates only
+consecutive clicks on the same partner, that is at least two separate people and
+possibly four — during a campaign we were paying for in Dough to bring them
+here.
+
+The owner's call: remove them from the footer.
+
+### What was removed
+
+From `src/components/Footer.astro`:
+
+```astro
+<div class="footer-order-links">
+  <a href={zomato} target="_blank" rel="noopener noreferrer" aria-label="Order on Zomato">Zomato</a>
+  <span style="opacity: 0.3">|</span>
+  <a href={swiggy} target="_blank" rel="noopener noreferrer" aria-label="Order on Swiggy">Swiggy</a>
+</div>
+```
+
+and its now-dead rules `.footer-order-links`, `.footer-order-links a` and
+`.footer-order-links a:hover` from `src/styles/global.css`, plus the
+`footer-order-links` selector in the footer media query. The `utm`, `zomato` and
+`swiggy` consts at the top of the component went with them.
+
+### Does this cost us SEO? No — and here is the proof
+
+The owner's fallback instruction was: if removal hurts advanced SEO, keep the
+links in the markup but make them unclickable and black so they merge into the
+footer. **That fallback was not needed, and must not be used.** Two reasons:
+
+1. **The SEO does not come from those anchors.** Zomato and Swiggy are declared
+   to search engines through JSON-LD, in `restaurantJsonLd()` in
+   `src/lib/seo.ts`:
+
+   ```ts
+   sameAs: [LINKS.instagram, LINKS.gbp, LINKS.zomato, LINKS.swiggy],
+   ```
+
+   `sameAs` is the machine-readable statement that these profiles are the same
+   business — it is what Google actually reads for entity reconciliation, and it
+   is emitted on the home page, `/menu/`, `/sundargarh/` and `/refer/`
+   regardless of what any footer contains. Verified in `dist/` after the
+   removal: zero partner anchors in the footer, `sameAs` still carrying both.
+   `LINKS.zomato` and `LINKS.swiggy` therefore stay in `seo.ts` and must not be
+   deleted.
+
+2. **Hidden text is a spam signal, not an SEO technique.** Text coloured to
+   match its background, or a link made unclickable while still in the markup,
+   is the textbook example in Google's own spam policies. It risks a manual
+   action against the whole domain to preserve a signal we already have in a
+   supported format. The safe version of that idea is exactly what we already
+   do: `sameAs`.
+
+### What is still linked
+
+The platforms remain reachable from the home page buttons and from
+`/sundargarh/`. Only the footer — the link that sits on *every* page, including
+the checkout — was removed. If the alert keeps firing, those are the next two
+places to look, and the alert body names the source so it will say which.
+
+The platforms keep working for **discovery**: someone searching inside the
+Swiggy app still finds us. What stopped is our own site handing away traffic we
+had already won.
