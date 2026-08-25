@@ -290,10 +290,24 @@ const calcConfig = {
   const minusOf = (row: HTMLElement) => row.querySelector('.qty-minus') as HTMLButtonElement;
   const plusOf = (row: HTMLElement) => row.querySelector('.qty-plus') as HTMLButtonElement;
 
+  /**
+   * What each line costs at full price, captured before any offer is applied.
+   *
+   * `row.price` gets overwritten with the offer price when one is running, so
+   * without this there is nothing left to strike through — and no way to tell
+   * an offer ending from a price rise.
+   */
+  const normalPrice = new Map<string, number>(
+    itemRows.map((row) => [row.dataset.id as string, Number(row.dataset.price)]),
+  );
+  const priceEl = (row: HTMLElement) => row.querySelector('.item-row-price') as HTMLElement;
+  const bareCode = (id: string) => id.replace(/^(item|combo|addon)-/, '');
+
   const rows: BasketRow[] = itemRows.map((row) => ({
     id: row.dataset.id,
     name: row.dataset.name as string,
     price: Number(row.dataset.price),
+    normalPrice: undefined as number | undefined,
     lateNight: row.dataset.lateNight === 'true',
     getQty: () => Number(qtyEl(row).textContent) || 0,
     setQty(n: number) {
@@ -344,6 +358,45 @@ const calcConfig = {
    * the menu's own poll - a minute, plus whenever someone comes back to the tab
    * - because a sold-out tray is a fact about right now, not about page load.
    */
+  /**
+   * Put live offer prices on the calculator.
+   *
+   * This page quoted the full price while an offer was running — ₹189 for a
+   * pizza actually selling at ₹139 (owner, 2026-08-25). It over-quoted, which
+   * is the safe direction to be wrong in, but it hid the offer from the one
+   * screen built for comparing prices.
+   *
+   * The strike-through matters as much as the number: "₹139" alone gives a
+   * customer no way to tell a deliberate offer from a wrong price, which is the
+   * same reasoning checkout uses.
+   */
+  function applyOffers(live: Record<string, { price: number; label: string | null }>) {
+    itemRows.forEach((el, i) => {
+      const id = el.dataset.id as string;
+      const normal = normalPrice.get(id) ?? Number(el.dataset.price);
+      const offer = live[bareCode(id)];
+      const onOffer = offer !== undefined && offer.price < normal;
+      const next = onOffer ? offer.price : normal;
+
+      rows[i].price = next;
+      // Only set when an offer is actually running — order-form.ts reads this
+      // to decide what is discounted, and a value that is always present would
+      // make every line look like an offer.
+      rows[i].normalPrice = onOffer ? normal : undefined;
+
+      const cell = priceEl(el);
+      if (!cell) return;
+      cell.textContent = '';
+      if (onOffer) {
+        const was = document.createElement('span');
+        was.className = 'price-was';
+        was.textContent = `₹${normal}`;
+        cell.appendChild(was);
+      }
+      cell.appendChild(document.createTextNode(`₹${next}`));
+    });
+  }
+
   function refreshSoldOut() {
     if (!CFG.workerUrl) return;
     fetch(`${CFG.workerUrl}/availability`)
@@ -351,6 +404,8 @@ const calcConfig = {
       .then((d) => {
         if (!d || !d.ok) return;
         form.setSoldOut(Object.keys(d.sold_out ?? {}));
+        applyOffers(d.offers ?? {});
+        form.update();
       })
       .catch(() => {
         // Everything stays orderable. AGENTS.md rule 5 - a backend that cannot
