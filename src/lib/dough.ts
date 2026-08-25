@@ -92,10 +92,46 @@ export async function fetchDough(worker: string, deviceId: string, phone: string
  * that the order falls under its own delivery minimum. The second is what stops
  * Dough shrinking a basket the kitchen would rather grow.
  */
-export function usableDough(state: DoughState, foodTotal: number, minimum: number): number {
-  const cap = Math.floor(foodTotal * state.capPct);
-  const headroom = Math.max(0, foodTotal - minimum);
+export function usableDough(state: DoughState, spendableTotal: number, minimum: number): number {
+  const cap = Math.floor(spendableTotal * state.capPct);
+  const headroom = Math.max(0, spendableTotal - minimum);
   return Math.max(0, Math.min(state.balance, cap, headroom));
+}
+
+/**
+ * The one sentence explaining why Dough can be smaller than expected.
+ *
+ * Exported from here so checkout, the Dough page, the FAQ and the price
+ * calculator all say the same thing. Four copies of a rule is four chances for
+ * one of them to be quietly wrong after the next change.
+ */
+export const DOUGH_OFFER_RULE =
+  'Dough works on full-price items. Items already on offer, and drinks, are not included — one discount at a time.';
+
+/** Catalogue codes Dough never touches: drinks sell at MRP. Mirrors the Worker. */
+export const MRP_CODES = new Set(['900000001', '900000002']);
+
+/** Strips the `item-` / `combo-` / `addon-` prefix the cart puts on a code. */
+export const bareCode = (id: string): string => id.replace(/^(item|combo|addon)-/, '');
+
+/**
+ * The part of the basket Dough may come off — full-price food only.
+ *
+ * The Worker recomputes this from the stored order and takes the smaller of the
+ * two, so this exists to keep the number on screen honest rather than to be
+ * trusted. Showing a cap the Worker will refuse is worse than showing none.
+ */
+export function spendableTotal(
+  lines: readonly { id: string; price: number; qty: number }[],
+  offerCodes: ReadonlySet<string>,
+): number {
+  let total = 0;
+  for (const l of lines) {
+    const code = bareCode(l.id);
+    if (offerCodes.has(code) || MRP_CODES.has(code)) continue;
+    total += l.price * l.qty;
+  }
+  return Math.max(0, total);
 }
 
 /** "3 Oct" — short, because it sits inside a sentence. */
