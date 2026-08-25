@@ -91,6 +91,41 @@ npx wrangler d1 execute oven-vibe --remote --command "SELECT oi.name, SUM(oi.qty
 Cross that against margin in `the-oven-vibe-backend/docs/COSTING.md`. The best
 candidates sell **zero** and carry **60%+ margin**.
 
+### ⚠️ That query alone will mislead you
+
+D1 holds **website orders only** — seven of them as of 25 Aug. Against that
+sample every item looks dead, including the best-selling dish in town.
+
+**Always check Zomato history too**, where the real customers are:
+`marketing/findings/data/zomato-orders-2026-03-to-2026-08.json` (260 delivered
+orders), summarised in `findings/2026-08-13-menu-demand-and-quality.md`.
+
+Four pizzas are **65% of all units ever sold**. Herb Paneer Delight alone is
+**25% of units and 30% of item revenue**. Nine items have never sold once.
+
+### Two kinds of offer — label which one you are running
+
+They look identical in the table and must be reviewed by opposite rules.
+
+| | **Revival offer** | **Acquisition offer** |
+|---|---|---|
+| Goes on | a genuinely dead item | a proven best seller |
+| Purpose | wake up a dish nobody orders | pull a Zomato customer to direct |
+| Working if | it starts selling | direct orders rise; app orders fall |
+| At review | **stop it once it sells** | **keep it while it converts** |
+
+An acquisition offer is not a gift **as long as the local price still earns more
+than the app does.** Check it every time:
+
+```
+Local  ₹149 × 95%    = ₹141.6   ← keep this larger
+Zomato ₹229 × 60.1%  = ₹137.6
+```
+
+Herb Paneer Delight at ₹149 is an **acquisition** offer. It was originally
+picked as a revival offer on website data, which was wrong — the reasoning was
+corrected on 25 Aug, the offer was not.
+
 ## Pricing an offer
 
 Local sales keep about **95%** (5% Dough earn; spending is blocked on offer
@@ -120,6 +155,23 @@ npx wrangler d1 execute oven-vibe --remote --command "DELETE FROM item_offers WH
 ```
 
 Leave the rest running to their end date.
+
+⚠️ **Judge each item against its own history, not against the others.** The rule
+above assumes a top-of-list item got there *because of* the discount. Herb Paneer
+Delight has topped every month since March, offer or no offer — it will top this
+query too, and deleting it would remove the offer that is doing the most work.
+
+Ask of each item: **did this sell before the offer?**
+
+- **No** → the revival worked. Stop the offer.
+- **Yes, it was already number one** → acquisition offer. Keep it, and check
+  instead that direct orders rose while app orders fell.
+
+Also check **prep time** at this review. Orders over 25 minutes rate **2.17★**
+against **4.16★** under. A successful offer pushes volume onto the busiest hours,
+and Herb Paneer is the dish most often present in slow orders. If the rating is
+sliding, the offer is working too well for the kitchen — that is a sequencing
+problem, not a pricing one.
 
 ## Currently live
 
