@@ -771,27 +771,38 @@ const checkoutConfig = {
     adjustQuote: (result, basket) => {
       doughApplied = 0;
       if (!useDough || dough.balance <= 0) return result;
-      // Dough comes off full-price food only — never an item already on offer,
-      // never a drink. `basket.spendable` is that figure, and the Worker
-      // recomputes it from the stored order and takes the smaller of the two.
-      // Capping on the whole basket here would show a number the kitchen then
-      // refuses, which is worse than showing a smaller one now.
-      const foodTotal = basket.spendable;
+      // Two different totals, and mixing them up is a real bug that shipped.
+      //
+      // `spendable` is the full-price food — what the 10% cap is taken on,
+      // since Dough may not touch an offer item or a drink. `foodTotal` is the
+      // whole order, and it is what the minimum-order check must use: the
+      // minimum applies to the order being placed, not to the slice Dough is
+      // allowed to touch.
+      const foodTotal = result.lines
+        .filter((l) => l.label === 'Food')
+        .reduce((sum, l) => sum + l.amount, 0);
+      const spendable = basket.spendable;
       const minimum = result.minimum ?? 0;
       // A basket that is entirely offer items has nothing for Dough to touch.
       // Silence there reads as a bug, so say the rule rather than show ₹0.
-      if (foodTotal <= 0) {
+      if (spendable <= 0) {
         return {
           ...result,
           notes: [...(result.notes ?? []), DOUGH_OFFER_RULE],
         };
       }
-      const usable = usableDough(dough, foodTotal, minimum);
+      const usable = usableDough(dough, spendable, minimum, foodTotal);
       if (usable <= 0) {
         // Silence here reads as a broken promise: they were told they have Rs40,
         // they asked to spend it, and the total did not move. Say why, and say
         // what unlocks it - a basket at exactly the delivery minimum has no
         // headroom at all, which is the case this hits most often.
+        // Two different reasons for zero, and they need different advice.
+        // If the cap is what bit, the basket is big enough — it is just mostly
+        // offer items, and telling them to add more would be wrong.
+        if (Math.floor(spendable * dough.capPct) <= 0) {
+          return { ...result, notes: [...(result.notes ?? []), DOUGH_OFFER_RULE] };
+        }
         const needed = Math.max(minimum + dough.balance, dough.balance * 10) - foodTotal;
         return needed > 0
           ? {
