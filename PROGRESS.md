@@ -1,6 +1,48 @@
 # PROGRESS
 
 ## Status: 🚀 **v3.0.0 LIVE** (2026-07-30). All phases complete. theovenvibe.github.io serves the v2 rebuild. Day-to-day ops: bootstrap-session.md + skills/. Remaining items are owner actions (see final session log).
+
+## 2026-08-25 — Dough offer rules, five local offers, five bugs
+
+**Shipped (PRs #86–#89, all live).**
+
+Dough can no longer be **spent** on an item running an offer, or on a drink. It
+is still **earned** on everything except drinks — deliberate: ₹3,335 of Dough has
+been credited and ₹183 ever spent, so the promise costs about 33 paise in
+practice and it is the only thing that brings a customer back. Mixed baskets
+split correctly — three offer items at ₹300 plus one full-price item at ₹200
+releases ₹20, not ₹50.
+
+**Five local offers live to 15 Sept**, labelled "Chef Special": Herb Paneer ₹149,
+Creamy Alfredo ₹149, Crunchy Capsicum ₹139, Red Sauce Pasta ₹129, Korean Maggi
+₹119. Chosen on one rule — **not selling AND good margin**. All five had sold
+zero units and carry 61–68% margin. Discounting a proven seller is a gift, not a
+lever. **Review 8 Sept and stop the offer on whichever one has become a best
+seller.**
+
+**Five bugs, all recorded with root causes in `docs/DOUGH-RULES.md`.** The owner
+found three of them:
+
+- **A** Dough stacked on offers — a rule written in a doc with no code and no test is not a rule
+- **B** "You need a bigger basket" on a ₹586 order — a variable's meaning changed but its name did not
+- **C** Offers invisible — SQLite `datetime()` vs ISO; `' '` sorts before `'T'`
+- **D** Chased a phantom ₹0 — a failing INSERT was silenced with `/dev/null`
+- **E** The price calculator hid every offer — I verified the path I built and never asked what else shows a price
+
+**Guardrails added.** `npm run test:dough` — 37 assertions plus 120,000
+randomised baskets on five invariants, including *never drags an order under its
+minimum*, which is the exact shape of bug B. One shared `DOUGH_OFFER_RULE` string
+across checkout, the Dough page, the FAQ and the calculator. New skill
+`skills/manage-offers.md`.
+
+**Learned the hard way:** anything depending on the Worker **cannot be tested on
+localhost** — CORS allows only the production origin and the failure is silent.
+
+**Left open.** The Dough earn on drinks is unverified (needs `ADMIN_TOKEN`, not
+requested). Grow Max charges an unknown percentage of net sales; every price
+reserves 8% for it. `CLAUDE.md`'s branching line is stale — `develop` is 111
+commits behind and the freeze ended at v3.0.0 on 30 July.
+
 ##
 ## Design lock history: owner rejected all 3 mockup directions (2026-07-30) → v2 = v1 pixel-for-pixel (Phase 3, verified). The lock has since been **amended twice, both times by the owner**: Phase 3.5 (approved visual polish, now live) and Phase 4 (approved copy/CTA/pure-veg/local-page changes). Parity is the floor, not the ceiling; any *further* visible change still needs the owner's sign-off first.
 
