@@ -199,7 +199,15 @@ const checkoutConfig = {
   import type { QuoteResult } from '../lib/pricing';
   import { pingCartActivity } from '../lib/cart-activity';
   import { getDeviceId } from '../lib/device';
-  import { fetchDough, usableDough, publishDough, rememberPhone, NO_DOUGH, type DoughState } from '../lib/dough';
+  import {
+    fetchDough,
+    usableDough,
+    publishDough,
+    rememberPhone,
+    NO_DOUGH,
+    DOUGH_OFFER_RULE,
+    type DoughState,
+  } from '../lib/dough';
   import { queueOrder, watchOutbox } from '../lib/order-outbox';
   import { markOrderJustSent } from '../lib/push-signal';
 
@@ -760,13 +768,24 @@ const checkoutConfig = {
      * not shrink one. Whatever comes out of here is both what the customer
      * reads and what the kitchen is sent, so they cannot disagree.
      */
-    adjustQuote: (result) => {
+    adjustQuote: (result, basket) => {
       doughApplied = 0;
       if (!useDough || dough.balance <= 0) return result;
-      const foodTotal = result.lines
-        .filter((l) => l.label === 'Food')
-        .reduce((sum, l) => sum + l.amount, 0);
+      // Dough comes off full-price food only — never an item already on offer,
+      // never a drink. `basket.spendable` is that figure, and the Worker
+      // recomputes it from the stored order and takes the smaller of the two.
+      // Capping on the whole basket here would show a number the kitchen then
+      // refuses, which is worse than showing a smaller one now.
+      const foodTotal = basket.spendable;
       const minimum = result.minimum ?? 0;
+      // A basket that is entirely offer items has nothing for Dough to touch.
+      // Silence there reads as a bug, so say the rule rather than show ₹0.
+      if (foodTotal <= 0) {
+        return {
+          ...result,
+          notes: [...(result.notes ?? []), DOUGH_OFFER_RULE],
+        };
+      }
       const usable = usableDough(dough, foodTotal, minimum);
       if (usable <= 0) {
         // Silence here reads as a broken promise: they were told they have Rs40,
@@ -794,6 +813,9 @@ const checkoutConfig = {
           usable < dough.balance
             ? `Using ₹${usable} of your ₹${dough.balance} — up to 10% of an order.`
             : `Your full ₹${dough.balance} of Dough is on this order.`,
+          // Only when something was actually left out, so a normal order does
+          // not carry a rule it never hit.
+          ...(basket.hasExcluded ? [DOUGH_OFFER_RULE] : []),
         ],
       };
     },

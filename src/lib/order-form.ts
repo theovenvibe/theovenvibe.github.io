@@ -18,6 +18,7 @@
  */
 import { computeQuote, isTimeInRange, type QuoteResult, type QuoteOk } from './pricing';
 import { publishNtfy, makeOnce } from './notify';
+import { MRP_CODES } from './dough';
 import type { SiteConfig } from '../schemas/site-config';
 
 /**
@@ -27,6 +28,22 @@ import type { SiteConfig } from '../schemas/site-config';
  * with two pizzas and a loose "Extra Cheese" is not an order anyone can cook.
  * Its price counts toward the subtotal, and the message nests it under the dish.
  */
+/**
+ * What `adjustQuote` needs to apply Dough correctly.
+ *
+ * `spendable` is the food Dough may actually come off: full-price items only.
+ * Anything running an offer, and anything sold at MRP, is excluded — one
+ * discount at a time (owner, 2026-08-25). The Worker recomputes the same figure
+ * from the stored order and takes the smaller of the two, so this exists to keep
+ * the number on screen honest rather than to be trusted.
+ */
+export interface SpendableBasket {
+  /** Every full-price rupee of food in the basket. */
+  spendable: number;
+  /** True when at least one line was left out, so the page can say why. */
+  hasExcluded: boolean;
+}
+
 export interface BasketExtra {
   name: string;
   price: number;
@@ -97,7 +114,7 @@ export interface OrderFormHooks {
    * returns is what the customer reads AND what the kitchen is sent, so the two
    * can never disagree about the number.
    */
-  adjustQuote?(result: QuoteOk): QuoteOk;
+  adjustQuote?(result: QuoteOk, basket: SpendableBasket): QuoteOk;
   /**
    * Lines placed at the very top of the WhatsApp message, above the items —
    * checkout puts the customer's name and number here so the kitchen can call
@@ -364,6 +381,35 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
       .rows()
       .filter((row) => !unavailableNames.has(row.name))
       .reduce((sum, row) => sum + row.getQty() * row.price + extrasTotal(row), 0);
+  }
+
+  /**
+   * The part of the basket Dough is allowed to come off.
+   *
+   * An item is excluded when it carries a `normalPrice` — which is set only
+   * while an offer is actually running — or when it is a drink, sold at MRP for
+   * about a rupee of margin. Add-ons ride on their own merit: they cannot be put
+   * on offer, so they count.
+   */
+  function spendableBasket(): SpendableBasket {
+    let spendable = 0;
+    let hasExcluded = false;
+    for (const it of chosenItems()) {
+      const onOffer = it.normalPrice !== undefined && it.normalPrice > it.price;
+      const isDrink = MRP_CODES.has((it.id ?? '').replace(/^(item|combo|addon)-/, ''));
+      if (onOffer || isDrink) {
+        hasExcluded = true;
+      } else {
+        spendable += it.price * it.getQty();
+      }
+      for (const extra of it.extras ?? []) {
+        // An extra is never on offer, but it is excluded when the dish it sits
+        // on is — the discount already covers the plate it arrives on.
+        if (onOffer) hasExcluded = true;
+        else spendable += extra.price * extra.qty;
+      }
+    }
+    return { spendable, hasExcluded };
   }
 
   function chosenItems(): BasketRow[] {
@@ -705,7 +751,8 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
       regular: false,
     });
 
-    const shown = result.kind === 'ok' && hooks.adjustQuote ? hooks.adjustQuote(result) : result;
+    const shown =
+      result.kind === 'ok' && hooks.adjustQuote ? hooks.adjustQuote(result, spendableBasket()) : result;
     renderOutput(shown);
     hooks.onUpdate?.({ subtotal: sub, result: shown });
   }
