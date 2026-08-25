@@ -111,6 +111,30 @@ the wrong question.
 **Root cause.** **Never silence the output of a write you are about to depend on.**
 A green-looking test on data that was never created proves nothing.
 
+### E · The price calculator hid every offer
+
+**Symptom.** The calculator quoted ₹189 for a pizza selling at ₹139, on the day
+five offers went live. Checkout was correct.
+
+**Cause.** The page fetched `/availability` and used only `sold_out`. The
+`offers` field was in the same response, unread.
+
+**Fix.** Offers applied the same way checkout does, strike-through included.
+
+**Root cause.** I verified the path I had built and never asked **"what else on
+this site shows a price?"** A fix is not finished until every surface that
+displays the same fact has been checked.
+
+### F · Nothing that touches the Worker can be tested on localhost
+
+Not a bug, a trap that cost time twice. The Worker's CORS allows only the
+production origin, so on `localhost` the `/availability` fetch fails **silently** —
+offers simply never load and the page looks like it is ignoring them.
+
+To test a built page against the real Worker, serve it *at* the production
+origin with a Playwright route intercept. `marketing/zomato-scraper/calc4.mjs`
+is a working example.
+
 ---
 
 ## Guardrails now in place
