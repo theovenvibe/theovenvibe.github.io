@@ -530,8 +530,10 @@ const { showFab = true } = Astro.props;
       info.className = 'offer-strip-info';
       info.innerHTML =
         `<span class="offer-strip-name">${r.name}</span>` +
+        `<span class="offer-strip-meta">` +
         `<span class="offer-strip-price"><span class="price-was">₹${r.was}</span> <span class="price-now">₹${r.now}</span></span>` +
-        (r.label ? `<span class="offer-strip-label">${r.label}</span>` : '');
+        (r.label ? `<span class="offer-strip-label">${r.label}</span>` : '') +
+        `</span>`;
       info.addEventListener('click', () => {
         const section = r.card.closest('.accordion-item');
         const header = section?.querySelector<HTMLElement>('.accordion-header');
