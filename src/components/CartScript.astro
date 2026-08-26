@@ -487,17 +487,18 @@ const { showFab = true } = Astro.props;
 
     document.getElementById('offerStrip')?.remove();
     const codes = Object.keys(offers);
-    const rows: { name: string; was: number; now: number; label: string | null; card: Element }[] = [];
+    const rows: { name: string; was: number; now: number; label: string | null; card: Element; cartId: string }[] = [];
 
     for (const code of codes) {
-      const btn = document.querySelector(`[data-cart-id="item-${code}"], [data-cart-id="combo-${code}"]`);
+      const btn = document.querySelector<HTMLElement>(`[data-cart-id="item-${code}"], [data-cart-id="combo-${code}"]`);
       const card = btn?.closest('.menu-card');
-      const name = (btn as HTMLElement | null)?.dataset.cartName;
+      const name = btn?.dataset.cartName;
+      const cartId = btn?.dataset.cartId;
       const base = Number(card?.querySelector<HTMLElement>('.menu-card-price')?.dataset.basePrice);
       // Sold out beats an offer everywhere else on the site; it has to here
       // too, or the deals list advertises a pizza we cannot make.
-      if (!card || !name || !Number.isFinite(base) || soldOut[code]) continue;
-      rows.push({ name, was: base, now: offers[code].price, label: offers[code].label, card });
+      if (!card || !name || !cartId || !Number.isFinite(base) || soldOut[code]) continue;
+      rows.push({ name, was: base, now: offers[code].price, label: offers[code].label, card, cartId });
     }
 
     const subtitle = document.querySelector('#sec-combos .accordion-subtitle')
@@ -516,22 +517,40 @@ const { showFab = true } = Astro.props;
     strip.innerHTML = '<p class="offer-strip-title">On offer right now</p>';
 
     for (const r of rows) {
-      const row = document.createElement('button');
-      row.type = 'button';
+      const row = document.createElement('div');
       row.className = 'offer-strip-row';
-      row.innerHTML =
+
+      // Tapping the name/price still jumps to the full card (picture,
+      // description) — but a customer who only ever sees this strip must be
+      // able to order without finding that card first (owner-reported
+      // 2026-08-26: a customer left because the strip itself had no way to
+      // add to cart).
+      const info = document.createElement('button');
+      info.type = 'button';
+      info.className = 'offer-strip-info';
+      info.innerHTML =
         `<span class="offer-strip-name">${r.name}</span>` +
         `<span class="offer-strip-price"><span class="price-was">₹${r.was}</span> <span class="price-now">₹${r.now}</span></span>` +
         (r.label ? `<span class="offer-strip-label">${r.label}</span>` : '');
-      // Takes you to the dish itself, opening its section on the way — a deal
-      // you cannot get to is an advertisement, not an offer.
-      row.addEventListener('click', () => {
+      info.addEventListener('click', () => {
         const section = r.card.closest('.accordion-item');
         const header = section?.querySelector<HTMLElement>('.accordion-header');
         // 'active' is this site's open class (see public/scripts/site.js).
         if (section && !section.classList.contains('active')) header?.click();
         setTimeout(() => r.card.scrollIntoView({ behavior: 'smooth', block: 'center' }), 120);
       });
+
+      // Same delegated `.add-to-cart` handler every other Add button uses, so
+      // this one gets the identical "Added" feedback and stock/late-night
+      // rules for free.
+      const add = document.createElement('button');
+      add.type = 'button';
+      add.className = 'add-to-cart offer-strip-add';
+      add.dataset.cartId = r.cartId;
+      add.dataset.cartName = r.name;
+      add.textContent = 'Add';
+
+      row.append(info, add);
       strip.appendChild(row);
     }
     list.prepend(strip);
