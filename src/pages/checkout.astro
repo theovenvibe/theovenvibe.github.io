@@ -185,6 +185,7 @@ const checkoutConfig = {
 
 <script>
   import { initOrderForm, type BasketRow, type OrderFormConfig } from '../lib/order-form';
+  import { rememberedSource } from '../lib/source';
   import type { OrderableRow } from '../lib/data';
   import {
     getCart,
@@ -998,6 +999,10 @@ const checkoutConfig = {
       // takes the smaller of the two, so a tampered page cannot spend more.
       dough_spent: doughApplied,
       ref_code: localStorage.getItem('ov_ref_code') ?? undefined,
+      // What brought them here, captured on their first ever page view. The
+      // Worker only writes it for a customer who has none yet, so this cannot
+      // rewrite somebody's origin on a later order.
+      source: rememberedSource() ?? undefined,
       items: lines.map((line) => ({
         catalog_id: line.id,
         name: line.name,

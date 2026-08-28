@@ -1,0 +1,19 @@
+---
+/**
+ * Records where this browser first arrived from, once, on its first page view.
+ *
+ * Its own component rather than a line in Layout.astro so the reason survives:
+ * the owner asked on 2026-08-28 which customers came from Instagram, and the
+ * honest answer was 4 of 74 — because nothing recorded it, not because the
+ * rest came from elsewhere. See lib/source.ts for why first touch wins.
+ *
+ * Nothing renders. No cookie, no third party, no network call — it reads the
+ * referrer the browser already sent and keeps one string in this browser's own
+ * storage until the customer places an order.
+ */
+---
+
+<script>
+  import { rememberSource } from '../lib/source';
+  rememberSource();
+</script>

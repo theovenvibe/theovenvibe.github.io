@@ -1,19 +1,34 @@
 ---
 /**
- * The push soft-ask (Phase 3, PRD §8.2 — read that section before touching
- * this file, the sequencing is the entire point of it):
+ * The push soft-ask (PRD §8.2 — read that section before touching this file,
+ * the sequencing is the entire point of it).
  *
- *   customer taps "Send order on WhatsApp"
- *           ↓ (on return to the tab)
- *   our own card, styled like the site
- *      [ Yes, notify me ]   [ Not now ]
- *           ↓                    ↓
- *     native prompt fires   nothing fires — the browser's one-shot
- *                            permission is NOT spent, askable again later
+ * Rebuilt 2026-08-28. It used to be a small card fixed to the bottom of the
+ * screen, and in production it won 2 subscriptions — both of them the owner's
+ * own test devices. Two things were wrong, and only fixing both helps:
  *
- * Never on page load. Never before an order. `Notification.requestPermission()`
- * is called from exactly one place below — inside the "Yes" click handler —
- * so a "Not now" can never accidentally burn it.
+ *   POSITION. A bottom-fixed strip is the exact shape of a cookie bar, and
+ *   people have spent a decade training themselves to swipe past that shape
+ *   without reading it. They were not saying no; they never saw it.
+ *
+ *   TIMING. It only appeared when somebody came BACK to the tab after tapping
+ *   "Send order on WhatsApp". Almost nobody switches back. The trigger barely
+ *   ever fired, so a better-looking card in the same slot would still have
+ *   been shown to nobody.
+ *
+ * So: a centred dialog, and three moments instead of one, each with a pitch
+ * that answers a question that person is already asking —
+ *
+ *   order   back from WhatsApp, on /checkout/ — "did the kitchen see it?"
+ *   dough   on /dough/, once a balance is on screen — "when does mine land?"
+ *   offers  on /, once the offer strip is in view  — "tell me about new deals"
+ *
+ * `/offer/` is deliberately NOT a trigger: it had zero visits in the traffic
+ * we have. The deal-hunting happens in the offers strip on the home page.
+ *
+ * Still never a native prompt on load. `Notification.requestPermission()` is
+ * reached from exactly one place — the "Yes" handler in lib/push.ts — so a
+ * "Not now" can never burn the browser's one-shot permission.
  */
 import { site } from '../lib/data';
 
@@ -22,15 +37,38 @@ const enabled = Boolean(site.push.vapid_public_key) && Boolean(site.backend.work
 
 {
   enabled && (
-    <div id="pushAskBanner" class="soft-banner" hidden>
-      <p id="pushAskText">Want our flash deals and new-item alerts on this device?</p>
-      <div class="soft-banner-actions">
-        <button type="button" id="pushAskYes" class="btn btn-primary">
-          Yes, notify me
-        </button>
-        <button type="button" id="pushAskNo" class="btn btn-secondary">
-          Not now
-        </button>
+    <div id="pushAskOverlay" class="push-ask-overlay" hidden>
+      {/*
+        A real dialog: labelled, focus-trapped by the browser's own inert
+        handling of ::backdrop-less overlays is NOT free, so the script below
+        moves focus in and restores it on close. role="dialog" + aria-modal
+        is what tells a screen reader the rest of the page is inert.
+      */}
+      <div
+        class="push-ask-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="pushAskTitle"
+        aria-describedby="pushAskText"
+      >
+        <h2 class="push-ask-title" id="pushAskTitle">Want a heads-up?</h2>
+        <p class="push-ask-text" id="pushAskText">
+          Want our flash deals and new-item alerts on this device?
+        </p>
+        <div class="push-ask-actions">
+          <button type="button" id="pushAskYes" class="btn btn-primary push-ask-btn">
+            Yes, notify me
+          </button>
+          {/*
+            Same size and weight as Yes on purpose. A greyed-out ghost button
+            next to a big coloured one is a fake choice, and a fake choice is
+            what makes a site feel like it is trying something on you.
+          */}
+          <button type="button" id="pushAskNo" class="btn btn-secondary push-ask-btn">
+            Not now
+          </button>
+        </div>
+        <p class="push-ask-fine" id="pushAskFine">One notification. No spam, ever.</p>
       </div>
     </div>
     <script
@@ -44,22 +82,55 @@ const enabled = Boolean(site.push.vapid_public_key) && Boolean(site.backend.work
 
 <script>
   import { consumeOrderJustSent } from '../lib/push-signal';
-  import { anotherBannerVisible } from '../lib/soft-banner';
-  // Shared with the sold-out cards' own ask (P0-J) — one implementation, so
-  // the two cannot drift apart.
   import { askAndSubscribe, iosNotInstalled, pushSupported } from '../lib/push';
+  import { DOUGH_PHONE_KEY } from '../lib/dough';
+  import { reportAsk } from '../lib/ask-report';
+  import { hideOtherBanners } from '../lib/soft-banner';
 
-  const bannerEl = document.getElementById('pushAskBanner');
-  if (bannerEl) {
-    const banner: HTMLElement = bannerEl;
+  const overlayEl = document.getElementById('pushAskOverlay');
+  if (overlayEl) {
+    const overlay: HTMLElement = overlayEl;
     const configEl = document.getElementById('push-config');
     const { vapidPublicKey, workerUrl } = JSON.parse(configEl?.textContent ?? '{}') as {
       vapidPublicKey: string;
       workerUrl: string;
     };
 
+    // ONE key for all three triggers. Per-trigger keys would let somebody be
+    // asked on the home page, then again on /dough/, then again at checkout —
+    // three asks in one evening, which is how a soft-ask becomes a nuisance.
     const DISMISS_KEY = 'ovenvibe.push_ask_dismissed_at';
     const DISMISS_DAYS = 30;
+    // Proof they are a customer, used to keep the home-page ask off cold
+    // traffic (see shouldAskOnHome below). `ov_phone` is written by checkout
+    // and by the "Check your Dough" form; `ovenvibe.customer.v1` is the
+    // saved delivery details. Both are real keys read out of the code, not
+    // guessed — a wrong key here fails silently and the home ask would
+    // simply never fire.
+    const WARM_KEYS = [DOUGH_PHONE_KEY, 'ovenvibe.customer.v1'];
+
+    type Trigger = 'order' | 'dough' | 'offers';
+
+    const PITCH: Record<Trigger, { title: string; text: string; yes: string }> = {
+      order: {
+        title: 'Know when we start cooking',
+        text: 'We will send one notification the moment the kitchen accepts your order.',
+        yes: 'Yes, tell me',
+      },
+      dough: {
+        title: 'Know when your Dough lands',
+        text: 'We will tell you when Dough is added to your number, and before it expires.',
+        yes: 'Yes, tell me',
+      },
+      offers: {
+        title: 'Know when a new deal drops',
+        text: 'We will send a notification when a new offer goes live. Only when there is one.',
+        yes: 'Yes, notify me',
+      },
+    };
+
+    let shown = false;
+    let lastFocused: Element | null = null;
 
     function recentlyDismissed(): boolean {
       try {
@@ -79,46 +150,150 @@ const enabled = Boolean(site.push.vapid_public_key) && Boolean(site.backend.work
       }
     }
 
-    function hide() {
-      banner.hidden = true;
+    /** Both dialogs report through one helper, so the two cannot drift apart. */
+    function report(outcome: 'shown' | 'yes_granted' | 'yes_denied' | 'no' | 'dismissed', trigger: Trigger | null) {
+      reportAsk(workerUrl, 'push', outcome, trigger);
     }
 
-    document.getElementById('pushAskNo')?.addEventListener('click', () => {
-      // No requestPermission call on this path — the native prompt is
-      // untouched, so this customer can be asked again after DISMISS_DAYS.
+    function close(outcome: 'no' | 'dismissed', trigger: Trigger) {
+      overlay.hidden = true;
+      document.body.style.removeProperty('overflow');
+      report(outcome, trigger);
+      // A backdrop tap or Escape is "not now", not a refusal — but it still
+      // sets the 30-day key, because showing the same dialog again on the
+      // next page view is exactly the behaviour people hate.
       recordDismissal();
-      hide();
-    });
+      if (lastFocused instanceof HTMLElement) lastFocused.focus();
+    }
 
-    document.getElementById('pushAskYes')?.addEventListener('click', async () => {
-      recordDismissal(); // either way, don't show the card again this soon
-      hide();
-      // Failure is deliberately silent: the customer already said yes, there
-      // is nothing useful to tell them, and a future visit can try again.
-      await askAndSubscribe(vapidPublicKey, workerUrl);
-    });
+    function open(trigger: Trigger) {
+      if (shown || recentlyDismissed()) return;
+      shown = true;
 
-    if (pushSupported() && !iosNotInstalled() && Notification.permission === 'default') {
+      const pitch = PITCH[trigger];
+      const titleEl = document.getElementById('pushAskTitle');
+      const textEl = document.getElementById('pushAskText');
+      const yesEl = document.getElementById('pushAskYes');
+      if (titleEl) titleEl.textContent = pitch.title;
+      if (textEl) textEl.textContent = pitch.text;
+      if (yesEl) yesEl.textContent = pitch.yes;
+
+      lastFocused = document.activeElement;
+      // The install banner and this dialog must never be up together: two
+      // different asks in the same breath is how a site starts feeling like
+      // it wants something from you. The dialog wins, because a notification
+      // permission is one-shot and permanent while an install prompt can be
+      // offered again any time.
+      hideOtherBanners();
+      overlay.hidden = false;
+      // The page behind must not scroll under a modal — on a phone that
+      // reads as the dialog being stuck to a moving background.
+      document.body.style.overflow = 'hidden';
+      (yesEl as HTMLElement | null)?.focus();
+      report('shown', trigger);
+
+      // Escape and a backdrop tap both close it. A modal you cannot get out
+      // of is what makes people distrust a site — and distrust is a no.
+      overlay.addEventListener(
+        'click',
+        (e) => {
+          if (e.target === overlay) close('dismissed', trigger);
+        },
+        { once: false },
+      );
+      document.addEventListener('keydown', function onKey(e) {
+        if (e.key !== 'Escape' || overlay.hidden) return;
+        document.removeEventListener('keydown', onKey);
+        close('dismissed', trigger);
+      });
+
+      document.getElementById('pushAskNo')?.addEventListener(
+        'click',
+        () => {
+          // No requestPermission on this path — the native prompt is
+          // untouched, so this person can be asked again after 30 days.
+          close('no', trigger);
+        },
+        { once: true },
+      );
+
+      document.getElementById('pushAskYes')?.addEventListener(
+        'click',
+        async () => {
+          recordDismissal();
+          overlay.hidden = true;
+          document.body.style.removeProperty('overflow');
+          const result = await askAndSubscribe(vapidPublicKey, workerUrl);
+          // 'failed' is a network or service-worker problem, not a decision —
+          // recording it as a denial would make the pitch look worse than it is.
+          report(result === 'granted' ? 'yes_granted' : result === 'denied' ? 'yes_denied' : 'shown', trigger);
+          if (lastFocused instanceof HTMLElement) lastFocused.focus();
+        },
+        { once: true },
+      );
+    }
+
+    /**
+     * Home page only: has this person ever been a customer?
+     *
+     * A permission refused is refused for the whole origin, permanently. An
+     * Instagram visitor who has never tasted the food is both the likeliest
+     * to say no and the least valuable yes — spending the one shot on them
+     * is the worst trade available. /checkout/ and /dough/ need no such gate:
+     * being there already means they are a customer.
+     */
+    function shouldAskOnHome(): boolean {
+      try {
+        return WARM_KEYS.some((k) => window.localStorage.getItem(k));
+      } catch {
+        return false;
+      }
+    }
+
+    /** Fire `cb` the first time `el` is at least half on screen. */
+    function onceInView(el: Element, cb: () => void) {
+      if (!('IntersectionObserver' in window)) return;
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            io.disconnect();
+            cb();
+          }
+        },
+        { threshold: 0.5 },
+      );
+      io.observe(el);
+    }
+
+    // A person on iOS who has not installed cannot receive push at all
+    // (Apple's rule), and `denied` means the browser will never ask again —
+    // in both cases the dialog would be a pure annoyance.
+    if (pushSupported() && !iosNotInstalled() && Notification.permission === 'default' && !recentlyDismissed()) {
+      const path = location.pathname;
+
+      // 1. Back from WhatsApp. Kept from the original: /checkout/ is 38% of
+      //    page views, so this moment does have an audience — it was the
+      //    bottom-of-screen position losing it, not the timing.
       document.addEventListener('visibilitychange', () => {
         if (document.visibilityState !== 'visible') return;
-        if (recentlyDismissed()) return;
         if (!consumeOrderJustSent()) return;
-        if (anotherBannerVisible()) return;
-        // This banner only ever appears just after an order was sent, so it
-        // asks about THAT order rather than about our marketing. "Did the
-        // kitchen see it?" is the question the customer already has, and a
-        // notification that answers a question they are asking is the only
-        // kind people say yes to. A permission refused here is refused for the
-        // whole site, permanently, so the ask has to be worth it.
-        const text = document.getElementById('pushAskText');
-        if (text) {
-          text.textContent =
-            'Want to know the moment we accept your order? We will send one notification when the kitchen confirms it.';
-        }
-        const yes = document.getElementById('pushAskYes');
-        if (yes) yes.textContent = 'Yes, tell me';
-        banner.hidden = false;
+        open('order');
       });
+
+      // 2. Dough, once the balance is actually on screen — after they have
+      //    seen what they came for, never instead of it.
+      if (path.startsWith('/dough')) {
+        const balance = document.getElementById('doughBalance');
+        if (balance) onceInView(balance, () => open('dough'));
+      }
+
+      // 3. Home, once the offers strip is in view, and only for somebody we
+      //    already know.
+      if ((path === '/' || path === '') && shouldAskOnHome()) {
+        const combos = document.getElementById('sec-combos');
+        if (combos) onceInView(combos, () => open('offers'));
+      }
     }
   }
 </script>
