@@ -822,9 +822,27 @@ const checkoutConfig = {
         total: result.total - usable,
         notes: [
           ...(result.notes ?? []),
-          usable < dough.balance
-            ? `Using ₹${usable} of your ₹${dough.balance} — up to 10% of an order.`
-            : `Your full ₹${dough.balance} of Dough is on this order.`,
+          // Say which limit actually bit, not just that one did.
+          //
+          // This used to blame the 10% cap for every partial spend. On a ₹412
+          // basket at the 2–4 km minimum of ₹399 only ₹13 can come off — the
+          // minimum is the binding limit, not the cap — but the page said
+          // "up to 10% of an order", and 10% of ₹412 is ₹41. The customer does
+          // that arithmetic and concludes they were short-changed. The zero
+          // case already explained itself properly; this is the same courtesy
+          // for the non-zero one.
+          usable >= dough.balance
+            ? `Your full ₹${dough.balance} of Dough is on this order.`
+            : usable < Math.floor(spendable * dough.capPct)
+              ? `Using ₹${usable} of your ₹${dough.balance} — an order cannot drop below its ₹${minimum} minimum. ` +
+                // Same formula as the zero case below, and for the same
+                // reason: clearing the minimum alone is not enough, because
+                // the 10% cap then becomes the binding limit. Both have to be
+                // satisfied for the whole balance to come off, so this is the
+                // larger of the two requirements — quoting only the minimum
+                // would send them back for a second disappointment.
+                `Add ₹${Math.max(minimum + dough.balance, dough.balance * 10) - foodTotal} more and the rest comes off.`
+              : `Using ₹${usable} of your ₹${dough.balance} — up to 10% of an order.`,
           // Only when something was actually left out, so a normal order does
           // not carry a rule it never hit.
           ...(basket.hasExcluded ? [DOUGH_OFFER_RULE] : []),
