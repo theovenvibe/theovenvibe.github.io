@@ -1031,6 +1031,13 @@ const checkoutConfig = {
     // Marks the moment for the push soft-ask (PRD §8.2), which shows itself
     // on return to the tab — this component doesn't own that UI at all.
     markOrderJustSent();
+    // The balance we are holding was just spent. refreshDough() fetches once
+    // per device+phone and then short-circuits forever, so without this a
+    // customer ordering twice in the same session applies Dough they no longer
+    // have: they see a discount, the Worker refuses it, and the total they were
+    // shown is not the total they owe. Clearing the key forces one more fetch.
+    doughFetchedFor = '';
+    void refreshDough();
   }
   waLink.addEventListener('click', onOrderSend);
 
