@@ -33,6 +33,24 @@ export const LINKS = {
   zomato: 'https://link.zomato.com/xqzv/rshare?id=11990877930563aa9',
   swiggy: 'https://www.swiggy.com/direct/brand/710285?source=swiggy-direct&subSource=generic',
   maps: 'https://maps.app.goo.gl/t8u7p3cfaYEkj5JP8',
+  /**
+   * Opens Google's "write a review" box for this listing directly — one tap,
+   * no searching, no Maps detour.
+   *
+   * Built from the listing's own identifiers (CID 6431211316722722426, feature
+   * id 0x3a20edbf4ded81a5:0x5940409e58bae67a), NOT from a Place ID: the
+   * documented `search.google.com/local/writereview?placeid=` form 404s for
+   * this listing, and the `#lrd=...,3,,,` fragment is what actually opens the
+   * dialog. Verified by hand on 2026-08-28.
+   *
+   * It identifies the PLACE, not a reviewer, so it is safe to send to anyone —
+   * each person gets their own empty form. Google still requires them to be
+   * signed in.
+   *
+   * Long and ugly on purpose; /r/ exists so nobody has to see it.
+   */
+  reviewWrite:
+    'https://www.google.com/search?q=The+Oven+Vibe+Sundargarh&ludocid=6431211316722722426#lrd=0x3a20edbf4ded81a5:0x5940409e58bae67a,3,,,',
   instagram: site.business.instagram,
   whatsapp: `https://wa.me/${site.business.whatsapp}`,
   gbp: site.business.google_business_url,

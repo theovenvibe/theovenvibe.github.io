@@ -1,0 +1,53 @@
+---
+/**
+ * /r/ — the short link we put in the WhatsApp bill.
+ *
+ * It exists for one reason: the real Google review URL is 150-odd characters
+ * of ludocid and hex, and a link that long in a WhatsApp message reads as
+ * spam. This page forwards to it.
+ *
+ * The second reason it earns its keep: if Google ever changes that URL shape,
+ * every bill already sent still works — we change one constant here instead
+ * of the messages we cannot reach.
+ *
+ * A JS redirect rather than meta-refresh: the target's `#lrd=...` fragment is
+ * the part that opens the review dialog, and it must survive the hop.
+ * `location.replace` keeps it and leaves no back-button trap. The visible
+ * link is the noscript path, and the page is styled so a slow forward doesn't
+ * flash raw text at a customer.
+ */
+import { LINKS } from '../lib/seo';
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Rate The Oven Vibe</title>
+    <style>
+      body {
+        margin: 0;
+        min-height: 100dvh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+        text-align: center;
+        font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+        background: #1a1210;
+        color: #f6efe9;
+      }
+      a { color: #ffb347; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p>Taking you to Google…</p>
+      <p><a id="go" href={LINKS.reviewWrite}>Tap here if nothing happens</a></p>
+    </main>
+    <script is:inline define:vars={{ target: LINKS.reviewWrite }}>
+      location.replace(target);
+    </script>
+  </body>
+</html>
