@@ -29,6 +29,7 @@ import WhatsAppFab from '../components/WhatsAppFab.astro';
 import DoughFab from '../components/DoughFab.astro';
 import CartScript from '../components/CartScript.astro';
 import PartnerClickAlerts from '../components/PartnerClickAlerts.astro';
+import SourceCapture from '../components/SourceCapture.astro';
 import PwaInstall from '../components/PwaInstall.astro';
 import PushSubscribe from '../components/PushSubscribe.astro';
 import Seo, { type OgImage } from '../components/Seo.astro';
@@ -126,6 +127,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
         orders land in an app nobody is necessarily watching either. */}
     <PartnerClickAlerts />
 
+    <SourceCapture />
     <PwaInstall />
 
     <PushSubscribe />
