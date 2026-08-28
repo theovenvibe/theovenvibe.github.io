@@ -23,6 +23,11 @@ Why frozen main: Pages serves main, deploys are slow, and the timeline is
 1–2 days — we deploy ONCE, at the end, not per-feature. Customers keep
 seeing the working v1 site the whole time.
 
+> **Stacked PRs are mandatory for multi-part work** (owner, 2026-08-28). If a
+> task has more than one logical part, use `skills/stacked-prs.md` instead of
+> the single branch in §2 — every gate below still applies unchanged. A genuine
+> one-part change stays a plain `feature/<slug>`.
+
 ## 2. Cut the branch (always from the fresh remote ref)
 
 ```bash
