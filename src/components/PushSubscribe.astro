@@ -83,8 +83,9 @@ const enabled = Boolean(site.push.vapid_public_key) && Boolean(site.backend.work
 <script>
   import { consumeOrderJustSent } from '../lib/push-signal';
   import { askAndSubscribe, iosNotInstalled, pushSupported } from '../lib/push';
-  import { getDeviceId } from '../lib/device';
   import { DOUGH_PHONE_KEY } from '../lib/dough';
+  import { reportAsk } from '../lib/ask-report';
+  import { hideOtherBanners } from '../lib/soft-banner';
 
   const overlayEl = document.getElementById('pushAskOverlay');
   if (overlayEl) {
@@ -149,38 +150,9 @@ const enabled = Boolean(site.push.vapid_public_key) && Boolean(site.backend.work
       }
     }
 
-    function platform(): string {
-      const ua = navigator.userAgent;
-      if (/iPhone|iPad|iPod/.test(ua)) return 'ios';
-      if (/Android/.test(ua)) return 'android';
-      return 'other';
-    }
-
-    /**
-     * Tell the Worker what happened. Fire-and-forget by design: this is the
-     * owner's analytics, and it must never be the reason a customer's tap
-     * feels slow or an error reaches their screen.
-     */
-    function report(outcome: string, trigger: Trigger | null) {
-      if (!workerUrl) return;
-      const body = JSON.stringify({
-        outcome,
-        trigger,
-        page: location.pathname,
-        platform: platform(),
-        device_id: getDeviceId(),
-      });
-      try {
-        // keepalive so the row still lands if the tap navigates away.
-        void fetch(`${workerUrl}/push-ask-event`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body,
-          keepalive: true,
-        }).catch(() => {});
-      } catch {
-        // Never worth surfacing.
-      }
+    /** Both dialogs report through one helper, so the two cannot drift apart. */
+    function report(outcome: 'shown' | 'yes_granted' | 'yes_denied' | 'no' | 'dismissed', trigger: Trigger | null) {
+      reportAsk(workerUrl, 'push', outcome, trigger);
     }
 
     function close(outcome: 'no' | 'dismissed', trigger: Trigger) {
@@ -207,6 +179,12 @@ const enabled = Boolean(site.push.vapid_public_key) && Boolean(site.backend.work
       if (yesEl) yesEl.textContent = pitch.yes;
 
       lastFocused = document.activeElement;
+      // The install banner and this dialog must never be up together: two
+      // different asks in the same breath is how a site starts feeling like
+      // it wants something from you. The dialog wins, because a notification
+      // permission is one-shot and permanent while an install prompt can be
+      // offered again any time.
+      hideOtherBanners();
       overlay.hidden = false;
       // The page behind must not scroll under a modal — on a phone that
       // reads as the dialog being stuck to a moving background.
