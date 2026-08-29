@@ -5,7 +5,7 @@ import sitemap from '@astrojs/sitemap';
 
 // Single source of truth for the canonical origin (PRD §9 "domain-ready"):
 // when a custom domain arrives, change ONLY this line (+ DNS/CNAME).
-export const SITE_URL = 'https://theovenvibe.github.io';
+export const SITE_URL = 'https://theovenvibe.com';
 
 // https://astro.build/config
 export default defineConfig({
