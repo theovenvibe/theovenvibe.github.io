@@ -125,16 +125,6 @@
       "Sundargarh Mini Stadium"
     ],
     "pickup_discount": 30,
-    "campus_batch": {
-      "charge": 39,
-      "window_minutes": 20,
-      "min_orders": 2,
-      "areas": [
-        "NTPC Hospital",
-        "Sriram Nagar"
-      ],
-      "note": "Order together with a neighbour and you both pay ₹39."
-    },
     "bulk": {
       "min_pizzas": 4,
       "discount_pct": 10,
