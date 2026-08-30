@@ -27,8 +27,17 @@ export default defineConfig({
       // /r/ is the third: it is a redirect to Google's review box that exists
       // only to shorten a link inside a WhatsApp bill. It carries noindex, so
       // by the rule above it must not be listed here either.
+      // /claim/ is the fourth, found 31 Aug 2026 while chasing the domain
+      // move: it carries noindex and was still listed here. It must stay out
+      // of the index for a business reason, not just a technical one -- the
+      // page grants Rs 100 of Dough, and the campaign only works because the
+      // link is handed out deliberately. Indexed, anyone could search for it
+      // and claim.
       filter: (page) =>
-        !page.includes('/checkout') && !page.includes('/offer') && !page.endsWith('/r/'),
+        !page.includes('/checkout') &&
+        !page.includes('/offer') &&
+        !page.includes('/claim') &&
+        !page.endsWith('/r/'),
       // lastmod = build time: pages are regenerated wholesale each deploy,
       // so the build date is the honest per-URL modification signal here.
       serialize: (item) => ({ ...item, lastmod: new Date().toISOString() }),
