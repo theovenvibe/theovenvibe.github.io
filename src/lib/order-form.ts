@@ -890,21 +890,29 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
           ? 'Copied the quote:'
           : 'Heading to checkout with:';
 
-    const headline = isHandoff
-      ? total
-        ? `Building an order - Rs ${total} (${orderType})`
-        : `Building an order (${orderType})`
-      : total
-        ? `New order Rs ${total} (${orderType})`
-        : `New order enquiry (${orderType})`;
+    // Only the handoff still alerts from here.
+    //
+    // A real order is announced by the Worker now, when POST /orders actually
+    // succeeds. It used to be announced from this browser, un-awaited, at the
+    // exact moment the tab was navigating away to WhatsApp -- and if that
+    // request lost the race the order was saved and nobody was told. The Worker
+    // gets retries, a web-push fallback and a delivery log, and it knows things
+    // this page does not: whether this is their first order, what Dough they
+    // hold.
+    //
+    // Leaving both in place would ring the kitchen twice for one order, which
+    // is the fastest way to teach somebody to ignore the sound.
+    //
+    // The price calculator keeps its alert because nothing else ever fires:
+    // there is no order, only a basket being built, and the Worker never hears
+    // about it.
+    if (!isHandoff) return;
 
     publishNtfy(CFG.workerUrl, {
-      title: headline,
+      title: total ? `Building an order - Rs ${total} (${orderType})` : `Building an order (${orderType})`,
       // `text` is the PII-free build — see buildQuoteText's `withCustomer`.
-      body: isHandoff
-        ? `Nothing ordered yet — a basket is being built.\n\n${leadIn}\n\n${text}`
-        : `${leadIn}\n\n${text}`,
-      tags: 'pizza',
+      body: `Nothing ordered yet — a basket is being built.\n\n${leadIn}\n\n${text}`,
+      tags: 'thinking_face',
     });
   }
 
