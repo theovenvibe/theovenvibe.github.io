@@ -44,6 +44,31 @@ and that recrawl was only requested today.
 
 ## Status: 🚀 **v3.0.0 LIVE** (2026-07-30). All phases complete. theovenvibe.github.io serves the v2 rebuild. Day-to-day ops: bootstrap-session.md + skills/. Remaining items are owner actions (see final session log).
 
+## 2026-09-03 (released) — the distance hint is live
+
+Released `develop` → `main` (PR #102, 5bcfc3f). QA gate per
+`skills/release-manager.md` §8.1 run on `develop`: build 0 errors, JSON-LD 0
+failures, rating 4.9/16 matching `site.config.json`, no non-veg wording. Two
+pre-existing, unrelated things not treated as blockers — the pizza emoji inside
+`/refer`'s WhatsApp share message string (not rendered UI), and the legacy
+`pages-build-deployment` job, which has failed on every push to `main` since at
+least 30 August. The real deploy is the `deploy` workflow.
+
+Verified on production, not on a build: typing a known customer's number on
+theovenvibe.com/checkout/ moved the band from `under2` to `2to4` and filled the
+km box with 3. The chip row correctly stayed hidden — he has only ordered from
+one band, so there is no alternative to offer.
+
+**The backend half shipped broken first and was fixed the same day.**
+`/distance-hint` filtered `status = 'confirmed'`, which no order has said since
+the Worker's migration 0012, so it returned `[]` for every customer. Every test
+passed because they all seeded 'confirmed' rows. Details and the rule that came
+out of it are in the backend repo: PROGRESS.md and AGENTS.md rule 14.
+
+**CLAUDE.md corrected.** Its branching line still said `main` was FROZEN from
+the v2-rebuild window; that ended at the v3.0.0 launch on 30 July, and the stale
+line stopped this release until `skills/release-manager.md` §8 was read.
+
 ## 2026-09-03 — Checkout remembers how far a customer lives
 
 Owner: a returning customer should not be asked their distance again. Akash
