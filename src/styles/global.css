@@ -2316,6 +2316,39 @@ body:has(.dough-hero) .dough-fab { display: none !important; }
 /* A hand, not a headline. Sits under the distance field on both checkout and
    the price calculator, quiet enough that it never competes with the control
    it is helping with. */
+/* The distances a returning customer already orders from.
+
+   Deliberately quieter than .distance-help beside it: that box is advice for
+   somebody who does not know their distance, this is a shortcut for somebody
+   we have already asked. It renders nothing at all for a customer with one
+   known distance — that one is filled into the radios above, and a row saying
+   "you also order from" with nothing after it is worse than no row. */
+.distance-hint {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.6rem;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.distance-hint button {
+  padding: 0.3rem 0.7rem;
+  font: inherit;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  background: #fff;
+  border: 1px solid #f0d9ac;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.distance-hint button:hover,
+.distance-hint button:focus-visible {
+  background: #fff8ec;
+}
+
 .distance-help {
   margin-top: 0.75rem;
   padding: 0.7rem 0.85rem;

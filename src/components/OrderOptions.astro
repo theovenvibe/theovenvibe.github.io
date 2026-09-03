@@ -42,6 +42,20 @@ const d = site.delivery;
       </label>
 
       {/*
+        Where a returning customer's own distances appear, once they type their
+        number. Starts hidden and empty: the page must look and behave exactly
+        as it does today for everybody it knows nothing about, which is most
+        people and every first-time customer.
+
+        The band they last ordered from is filled in above rather than shown
+        here; this row is the OTHER places they order from. Somebody who orders
+        from home and from work gets both, one tap apart, because the page
+        cannot know which one they are standing in today and guessing is how a
+        bill goes wrong at the door.
+      */}
+      <div id="distanceHint" class="distance-hint" hidden></div>
+
+      {/*
         Nobody knows how far they live from a kitchen in kilometres, and a guess
         here is the difference between two delivery bands. The link does the
         work: Google Maps opens with us as the destination and their own
