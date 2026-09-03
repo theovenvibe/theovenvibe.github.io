@@ -1,19 +1,30 @@
 ---
 // /blog/late-night-food/ — AGENTS.md-bound slug (v1 URL stub points here).
 //
-// Hours corrected by owner 2026-07-30: the kitchen is open till 11:30 PM
-// (config is the source of truth), and AFTER close it still takes BIG orders
-// by phone — higher charges, limited late menu (mostly pizza, sandwiches,
-// fries). That makes this post a genuine "latest kitchen in town" claim
-// instead of the earlier plan-around-9-PM framing.
+// Hours corrected by owner 2026-08-31: the kitchen now cooks until 2 AM, and
+// 11:30 PM – 2 AM is a named late-night window with its own charges, not an
+// off-menu favour arranged by phone. Pasta and Maggi are OFF in that window —
+// those are boiling stations and they stay shut.
+//
+// Every number here comes from site.config.json via lib/data (PRD §6): the
+// window, the kitchen charge, the delivery bands, the minimum and what is
+// unavailable. Do not hardcode any of them — the previous version of this post
+// said "till 11:30 PM" long after the config said otherwise, and a stale blog
+// post is a promise the kitchen has to keep.
 import Layout from '../../layouts/Layout.astro';
 import BlogPostLayout from '../../components/BlogPostLayout.astro';
-import { site, deliveryFreeAboveLine } from '../../lib/data';
+import {
+  site,
+  deliveryFreeAboveLine,
+  lateNightTimeRange,
+  lateNightDeliveryBands,
+} from '../../lib/data';
 import { LINKS, abs, blogPostingJsonLd, breadcrumbJsonLd } from '../../lib/seo';
 
-const headline = 'Late-Night Food in Sundargarh: We Cook Till 11:30 PM';
+const lateNight = site.delivery.late_night;
+const headline = 'Late-Night Food in Sundargarh: We Cook Till 2 AM';
 const description =
-  'Most Sundargarh kitchens shut by 9. The Oven Vibe takes orders till 11:30 PM every day — and arranges big late-night orders by phone even after that.';
+  'Most Sundargarh kitchens shut by 9. The Oven Vibe cooks till 2 AM every day — pizzas, sandwiches and fries, with a late-night charge that pays for reopening the oven.';
 const image = {
   url: abs('/static/images/og/blog_3.jpg'),
   width: 1200,
@@ -68,16 +79,36 @@ const path = '/blog/late-night-food/';
     <p>
       Anyone who has been hungry in Sundargarh at half past nine knows the problem: the hunger is at
       full strength and the options are not. Shutters are down, kitchens are cleaned — and this is
-      exactly the hour our ovens are still on.
+      exactly the hour our ovens are still on. We now cook until <strong>2 AM</strong>.
     </p>
 
     <h2>First, the honest part about our timings</h2>
     <p>
-      The Oven Vibe is open {site.business.hours.display} — one of the latest-running kitchens in
-      town. Place your order by about 11 PM and you are comfortably inside the window for a hot
-      delivery. And if the party runs past closing: we take <strong>big orders even after 11:30
-      PM</strong> — call to arrange it. Late-night charges are higher and the late menu is limited
-      (mostly pizzas, grilled sandwiches and fries), but the oven is genuinely still on.
+      Normal hours are {site.business.hours.display}. After that the
+      <strong>late-night window</strong> runs {lateNightTimeRange} — the oven is genuinely still on,
+      and it is one of the few kitchens in town you can order from at 1 AM.
+    </p>
+    <p>
+      It costs more, and here is exactly why rather than a vague "surcharge". Closing time means the
+      oven goes cold and the kitchen goes home. A late order means firing it again and someone coming
+      back to work it, so there is a <strong>₹{lateNight.kitchen_charge} kitchen charge</strong> —
+      and it applies to pickup too, because collecting it yourself still reopens the kitchen. If we
+      deliver, riding out at that hour costs more, so delivery starts at
+      <strong>₹{lateNightDeliveryBands[0].amount}</strong> instead of the usual rate. The minimum
+      order is <strong>₹{lateNight.min_order}</strong> and late-night orders are
+      <strong>paid online in advance</strong>.
+    </p>
+
+    <h2>What is off the menu in the late-night window</h2>
+    <p>
+      <strong>No pasta and no Maggi.</strong> Those are boiling stations and they shut with the rest
+      of the kitchen — reopening them for one order is not something we can do well at that hour, and
+      we would rather say so than send out something reheated.
+    </p>
+    <p>
+      Everything else is on: every pizza, the grilled sandwiches, garlic bread and fries. The
+      <a href="/menu/">menu</a> marks anything unavailable late, so you will not get as far as
+      checkout on something we cannot cook.
     </p>
 
     <h2>Who orders late, and why planning helps</h2>
@@ -115,11 +146,12 @@ const path = '/blog/late-night-food/';
     <div class="highlight-box">
       <h2>Ordering late, done right</h2>
       <ul>
-        <li>Call or message by 11 PM for a comfortable same-night delivery.</li>
+        <li>Order before {site.business.hours.display.split('–')[1].trim()} and it is a normal order at normal prices.</li>
         <li>
-          After 11:30 PM: big orders only, arranged by phone — higher charges, limited menu (pizzas,
-          sandwiches, fries).
+          {lateNightTimeRange}: ₹{lateNight.kitchen_charge} kitchen charge, delivery from ₹{lateNightDeliveryBands[0].amount},
+          minimum ₹{lateNight.min_order}, paid online in advance.
         </li>
+        <li><strong>No pasta or Maggi late</strong> — everything else is on.</li>
         <li>
           A group order that clears the {deliveryFreeAboveLine.toLowerCase()} threshold pays no delivery
           charge, which is usually the cheapest way to feed four people.
@@ -135,8 +167,9 @@ const path = '/blog/late-night-food/';
     <p>
       Late hunger in Sundargarh finally has an answer that isn't biscuits. Keep the
       <a href="/menu/">menu</a> handy, know
-      <a href="/sundargarh/">the delivery charge for your area</a>, and remember the two numbers that
-      matter: regular orders till 11:30 PM, big orders by phone after.
+      <a href="/sundargarh/">the delivery charge for your area</a>, and check the exact total on the
+      <a href="/price-calculator/">price calculator</a> before you order — it shows the late-night
+      charges in full, so nothing on the bill is a surprise.
     </p>
 
     <a href={`tel:${site.business.phone}`} class="cta">

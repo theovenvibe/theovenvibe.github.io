@@ -157,23 +157,12 @@ export const siteConfigSchema = z.object({
     _localities_comment: z.string().optional(),
     /**
      * Delivery areas, for the backend admin panel's locality dropdown (read
-     * over /site.config.json). Deliberately separate from campus_batch.areas,
-     * which names the far smaller set eligible for the neighbour-batch charge.
+     * over /site.config.json).
      */
     localities: z
       .array(z.string().min(1))
       .min(1, 'delivery.localities must list at least one area')
       .optional(),
-    campus_batch: z.object({
-      charge: z.number().int().nonnegative('campus_batch.charge must be 0 or more rupees'),
-      window_minutes: z
-        .number()
-        .int()
-        .positive('campus_batch.window_minutes must be a whole number of minutes'),
-      min_orders: z.number().int().min(2, 'campus_batch.min_orders must be 2 or more'),
-      areas: z.array(z.string().min(1)).min(1, 'campus_batch.areas must list at least one area'),
-      note: z.string().min(1),
-    }),
     bulk: z.object({
       min_pizzas: z.number().int().positive('bulk.min_pizzas must be a positive whole number'),
       discount_pct: z

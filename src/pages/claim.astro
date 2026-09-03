@@ -52,9 +52,15 @@ const description = 'Claim the Dough from our Instagram post and spend it on you
       </div>
       <div class="hero-container">
         <div class="hero-content" style="text-align: center; margin: 0 auto;">
+          {/* Channel-neutral on purpose. This page is reached from Instagram
+              AND from the QR sticker on the pizza box (campaign BOX100), and
+              telling a Zomato customer holding a pizza box that they came from
+              Instagram is the sort of small wrongness that makes an offer feel
+              like a scam. The campaign code in the link is what records where
+              they actually came from. */}
           <div class="hero-badge" id="claimBadge">
             <span class="pulse-dot"></span>
-            From our Instagram
+            A gift from The Oven Vibe
           </div>
           {/* Three spans, rewritten per state by the script. Written here with
               the open-campaign words so the page reads correctly for the split
@@ -122,8 +128,15 @@ const description = 'Claim the Dough from our Instagram post and spend it on you
               placeholder="10-digit mobile number"
               required
             />
+            {/* The second sentence exists because the first one did not close
+                the loop: the owner pointed out that a customer can read "your
+                Dough lives on this number", order from a different number, and
+                quietly lose the Rs 100 they were just given. Nothing in the
+                code can fix that -- the balance really is keyed to the phone
+                number -- so the page has to say it plainly, before they type. */}
             <p class="claim-hint">
               Your Dough lives on this number — it is how we know it is yours when you order.
+              <strong>Use this same number when you order, or the ₹100 will not come off your bill.</strong>
             </p>
 
             <label class="claim-label" for="claimArea">Your area <span class="claim-optional">(optional)</span></label>

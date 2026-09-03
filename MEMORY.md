@@ -55,9 +55,11 @@ Set from demand data in the analytics dashboard — units, menu quadrant and
 attach rate over Mar–Aug 2026. Full reasoning lives in
 `../the-oven-vibe-dashboard/docs/PRICING_STRATEGY.md`.
 
-- **Three anchor prices never move**: Zesty Onion Feast Pizza ₹129, Classic
-  French Fries ₹99, Tangy Green Chutney Sandwich ₹89. They are 7% of volume and
-  they set price perception for the whole menu.
+- **Two anchor prices never move**: Classic French Fries ₹99, Tangy Green
+  Chutney Sandwich ₹89. They set price perception for the whole menu.
+  **Zesty Onion Feast was the third anchor at ₹129 until 30 Aug 2026**, when the
+  owner raised it to ₹159 — it sold 2 units in March against Herb Paneer's 33,
+  so it was anchoring perception without earning volume.
 - **Tiers**: bestsellers +₹10 (four pizzas = 65% of units, so small steps only),
   mid-tail +₹10–20, impulse/add-ons +₹20, dormant +₹20.
 - **Combos price at ~10% off the sum of their parts**, ₹9-ending, and must sit

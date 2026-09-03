@@ -40,8 +40,17 @@ function detect(): string | null {
     } catch {
       return null;
     }
-    // Our own pages are not a source — they are navigation.
-    if (host.endsWith('theovenvibe.github.io') || host === location.hostname) return null;
+    // Our own pages are not a source — they are navigation. Both names are
+    // listed because the old host keeps redirecting here for a while after the
+    // move, and a referrer from it is still our own navigation, not a visit
+    // from somewhere else.
+    if (
+      host === 'theovenvibe.com' ||
+      host.endsWith('.theovenvibe.com') ||
+      host.endsWith('theovenvibe.github.io') ||
+      host === location.hostname
+    )
+      return null;
 
     // In-app browsers report the app's own domain, which is the signal we
     // actually want: Instagram's browser is where a lot of this traffic lands,

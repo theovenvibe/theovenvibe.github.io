@@ -1,6 +1,73 @@
+## 2026-08-31 — Late-night is till 2 AM, a pure-veg post, and favicon.ico
+
+**The kitchen now cooks until 2 AM.** `site.config.json` already said so
+(`late_night` 23:30–02:00, no Pasta or Maggi, ₹49 kitchen charge, ₹30 delivery
+premium, ₹399 minimum, prepaid) — **the pages had not caught up**.
+
+Three places still claimed "till 11:30 PM": the late-night blog post, its card
+on the blog index, and **the homepage**. All corrected, and every number now
+reads from config via `lib/data` rather than being typed in. That is the actual
+lesson: the config was right for weeks while three pages promised something the
+kitchen no longer did, and a stale page is a promise the kitchen has to keep.
+
+The post now explains WHY the late window costs more — the oven comes back up
+from cold, someone returns to work it, a ride at that hour costs more — and
+states plainly that **pasta and Maggi are off**, because those are boiling
+stations that shut with the rest of the kitchen.
+
+### New post: `/blog/pure-veg-no-egg/`
+
+Owner's ask: people search "pure veg" and "eggless" before they search for a
+dish, and nothing on the site answered that head-on.
+
+Follows the existing post template exactly — same `Layout` + `BlogPostLayout`,
+same `<picture>` block, same JSON-LD pair, same highlight box and CTA. Added to
+the blog index with a matching card; the sitemap picked it up (15 URLs).
+
+**It deliberately does NOT claim Jain.** Onion and garlic are in most of what we
+cook, and both are root vegetables — the same trap that ruled out the Jain tag
+on Zomato. Claiming it would send someone food they cannot eat.
+
+### favicon
+
+`/favicon.ico` was 404ing. Google falls back to it when it cannot use the
+declared PNG, so it now exists (48/32/16 multi-size, generated from the 96px
+PNG that replaced the off-spec 64px one earlier today).
+
+Organization JSON-LD already carries a `logo`, so nothing to do there.
+
+**The logo will not appear in search results until the homepage is
+re-indexed** — Google attaches a favicon per domain, taken from the homepage,
+and that recrawl was only requested today.
+
 # PROGRESS
 
 ## Status: 🚀 **v3.0.0 LIVE** (2026-07-30). All phases complete. theovenvibe.github.io serves the v2 rebuild. Day-to-day ops: bootstrap-session.md + skills/. Remaining items are owner actions (see final session log).
+
+## 2026-09-03 (released) — the distance hint is live
+
+Released `develop` → `main` (PR #102, 5bcfc3f). QA gate per
+`skills/release-manager.md` §8.1 run on `develop`: build 0 errors, JSON-LD 0
+failures, rating 4.9/16 matching `site.config.json`, no non-veg wording. Two
+pre-existing, unrelated things not treated as blockers — the pizza emoji inside
+`/refer`'s WhatsApp share message string (not rendered UI), and the legacy
+`pages-build-deployment` job, which has failed on every push to `main` since at
+least 30 August. The real deploy is the `deploy` workflow.
+
+Verified on production, not on a build: typing a known customer's number on
+theovenvibe.com/checkout/ moved the band from `under2` to `2to4` and filled the
+km box with 3. The chip row correctly stayed hidden — he has only ordered from
+one band, so there is no alternative to offer.
+
+**The backend half shipped broken first and was fixed the same day.**
+`/distance-hint` filtered `status = 'confirmed'`, which no order has said since
+the Worker's migration 0012, so it returned `[]` for every customer. Every test
+passed because they all seeded 'confirmed' rows. Details and the rule that came
+out of it are in the backend repo: PROGRESS.md and AGENTS.md rule 14.
+
+**CLAUDE.md corrected.** Its branching line still said `main` was FROZEN from
+the v2-rebuild window; that ended at the v3.0.0 launch on 30 July, and the stale
+line stopped this release until `skills/release-manager.md` §8 was read.
 
 ## 2026-09-03 — Checkout remembers how far a customer lives
 

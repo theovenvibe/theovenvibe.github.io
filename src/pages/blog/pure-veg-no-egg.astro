@@ -1,0 +1,150 @@
+---
+// /blog/pure-veg-no-egg/ — added 2026-08-31 on the owner's ask: people search
+// for "pure veg" and "eggless" before they search for a dish, and nothing on
+// the site answered that question head-on.
+//
+// The claim is strong, so it has to be exactly true and nothing more: no egg
+// in any item, no non-veg ever cooked here, one kitchen with nothing to keep
+// separate. That is all defensible. It deliberately does NOT claim Jain --
+// onion and garlic are in almost everything we make, and root vegetables at
+// that. Saying "Jain" would send someone the wrong food.
+//
+// Every fact comes from site.config.json / menu.json via lib/data (PRD §6).
+import Layout from '../../layouts/Layout.astro';
+import BlogPostLayout from '../../components/BlogPostLayout.astro';
+import { site, categories } from '../../lib/data';
+import { LINKS, abs, blogPostingJsonLd, breadcrumbJsonLd } from '../../lib/seo';
+
+const headline = 'Is It Really Pure Veg? No Egg, No Shared Kitchen';
+const description =
+  'Every item at The Oven Vibe is 100% pure vegetarian and completely eggless — no egg in the base, the sauce or the mayo, and no non-veg has ever been cooked in this kitchen.';
+const image = {
+  url: abs('/static/images/og/blog_5.jpg'),
+  width: 1200,
+  height: 630,
+  alt: 'Pure veg eggless pizza in Sundargarh',
+};
+const path = '/blog/pure-veg-no-egg/';
+const itemCount = categories.reduce((n, c) => n + c.items.length, 0);
+---
+
+<Layout
+  title={headline}
+  description={description}
+  ogType="article"
+  image={image}
+  jsonLd={[
+    blogPostingJsonLd({
+      headline,
+      description,
+      path,
+      image: image.url,
+      datePublished: '2026-08-31',
+    }),
+    breadcrumbJsonLd([
+      { name: 'Blog', path: '/blog/' },
+      { name: 'Pure Veg, No Egg', path },
+    ]),
+  ]}
+>
+  <BlogPostLayout
+    line1="PURE VEG,"
+    lineGradient="NO EGG."
+    subtitle="The question people actually ask before they order — answered properly."
+  >
+    <p class="subtitle" style="font-weight: 600; color: #555; margin-top: -10px">
+      Sach mein pure veg hai na?
+    </p>
+
+    <picture>
+      <source type="image/avif" srcset="/static/images/blog_images/blog_5.avif" />
+      <source type="image/webp" srcset="/static/images/blog_images/blog_5.webp" />
+      <img
+        src="/static/images/blog_images/blog_5.webp"
+        alt="Pure veg eggless pizza in Sundargarh"
+        class="blog-img"
+        loading="lazy"
+        width="1024"
+        height="1024"
+        style="background: #eee"
+      />
+    </picture>
+
+    <p>
+      It is the first thing a lot of people in Sundargarh ask, and usually the last thing a menu
+      answers. So here it is plainly: <strong>every single item we make is 100% pure vegetarian,
+      and every single item is eggless.</strong> All {itemCount} of them. There is no asterisk.
+    </p>
+
+    <h2>What "eggless" means here</h2>
+    <p>
+      Egg hides in more places than people expect, which is why "veg" on its own is not an answer.
+      Three of them matter on a pizza menu:
+    </p>
+    <ul>
+      <li><strong>The base.</strong> Ours has no egg in it. Nothing is brushed with egg wash.</li>
+      <li>
+        <strong>The mayo and the dips.</strong> Ordinary mayonnaise is made with egg. Ours is
+        eggless — that is the only kind that comes into this kitchen.
+      </li>
+      <li>
+        <strong>The sauces.</strong> No egg in the pizza sauce, the white sauce or the chutney.
+      </li>
+    </ul>
+
+    <h2>Not "veg-friendly" — actually a veg-only kitchen</h2>
+    <p>
+      Plenty of places serve a veg menu out of a kitchen that also cooks meat. Same pans, same oven,
+      same hands. For a lot of families that is the whole problem, and it is not something a label
+      on the menu fixes.
+    </p>
+    <p>
+      <strong>Nothing non-veg has ever been cooked here.</strong> Not on a different shelf, not on a
+      different day, not for a special order. There is one kitchen and one set of pans, so there is
+      nothing to keep separate and nothing to get wrong on a busy night.
+    </p>
+
+    <div class="highlight-box">
+      <h2>The short version</h2>
+      <ul>
+        <li>100% pure vegetarian — every item, always</li>
+        <li>Completely <strong>eggless</strong> — base, mayo, dips and sauces</li>
+        <li>No non-veg has ever been cooked in this kitchen</li>
+        <li>Nothing shared, so nothing to cross-contaminate</li>
+      </ul>
+      <p style="margin-top: 10px; font-weight: 700; color: #ad210a">
+        Order at any hour without asking the question first.
+      </p>
+    </div>
+
+    <h2>One thing we will not claim</h2>
+    <p>
+      We are not a Jain kitchen. Onion and garlic go into most of what we cook, and both are root
+      vegetables. We would rather say that here than have someone order in good faith and get food
+      they cannot eat. If you avoid onion and garlic, call us before ordering and we will tell you
+      honestly what is possible.
+    </p>
+
+    <h2>Why this is on the menu card too</h2>
+    <p>
+      The green mark next to every item is not decoration — it is the same fact, in the place you
+      are looking when you decide. Have a look at the <a href="/menu/">full menu</a>: the pizzas,
+      the grilled sandwiches, the pastas, the Maggi and the sides are all in the same one category.
+    </p>
+
+    <h2>The last bite</h2>
+    <p>
+      A pure veg kitchen should not be a thing you have to investigate. Ours is the whole business,
+      not a section of it — so order the paneer pizza at 1 AM and think about nothing else.
+    </p>
+
+    <a href={`tel:${site.business.phone}`} class="cta">
+      Call the Kitchen: {site.business.phone_display}
+    </a>
+    <p>
+      Prefer to type? <a href={LINKS.whatsapp} target="_blank" rel="noopener noreferrer"
+        >Order on WhatsApp</a
+      >.
+    </p>
+  </BlogPostLayout>
+</Layout>
