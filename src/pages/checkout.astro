@@ -200,6 +200,7 @@ const checkoutConfig = {
   import type { QuoteResult } from '../lib/pricing';
   import { pingCartActivity } from '../lib/cart-activity';
   import { getDeviceId } from '../lib/device';
+  import { fetchDistanceHint } from '../lib/distance-hint';
   import {
     fetchDough,
     usableDough,
@@ -609,7 +610,32 @@ const checkoutConfig = {
   const phoneInput = document.getElementById('custPhone') as HTMLInputElement;
   // A returning customer on a new phone is only identifiable once they type
   // their number, so the balance is re-read when it changes.
-  phoneInput.addEventListener('change', () => { void refreshDough(); });
+  phoneInput.addEventListener('change', () => { void refreshDough(); void refreshDistanceHint(); });
+
+  /**
+   * Fill in the distance this number already orders from.
+   *
+   * Fire-and-forget, like everything else the page asks of the Worker: a
+   * failure, a refusal or a number we have never seen all leave the form
+   * exactly as it was, and nothing here is ever awaited on the way to placing
+   * an order (AGENTS.md rule 5).
+   *
+   * `lastHintPhone` stops a second lookup for a number already answered — the
+   * change event fires on every blur, including the ones where nothing was
+   * edited.
+   */
+  let lastHintPhone = '';
+  async function refreshDistanceHint(): Promise<void> {
+    const digits = phoneInput.value.replace(/\D/g, '').slice(-10);
+    if (digits === lastHintPhone) return;
+    lastHintPhone = digits;
+    const bands = await fetchDistanceHint(CFG.workerUrl, digits);
+    // The number may have been edited again while that was in flight; applying
+    // the old answer would fill in somebody else's distance.
+    if (phoneInput.value.replace(/\D/g, '').slice(-10) !== digits) return;
+    form.suggestDistance(bands);
+  }
+
   const offersCheck = document.getElementById('custOffers') as HTMLInputElement;
   const nameError = document.getElementById('custNameError') as HTMLElement;
   const phoneError = document.getElementById('custPhoneError') as HTMLElement;
@@ -913,6 +939,12 @@ const checkoutConfig = {
     emptyMessage: 'Your basket is empty — add something from the menu to see your total.',
   });
 
+  // A returning customer arrives with their number already filled in, from the
+  // details this page remembers on their device. They are exactly who the hint
+  // is for, so it must not wait for them to touch a field they have no reason
+  // to touch. After `form` exists, because that is what applies the answer.
+  void refreshDistanceHint();
+
   // A field that has already been marked wrong re-checks itself as the
   // customer types, so the message clears the moment they fix it. A field that
   // has never complained stays quiet until they leave it or try to send —
@@ -974,15 +1006,6 @@ const checkoutConfig = {
   const waLink = document.getElementById('waShareLink') as HTMLAnchorElement;
 
   /** Comes free with the order — never asked at checkout (PRD §7.2). */
-  function distanceBand(): string | null {
-    const raw = kmInput.value.trim();
-    if (raw !== '') return `${raw} km`;
-    const checked = distanceRadios.find((r) => r.checked);
-    if (!checked) return null;
-    if (checked.value === 'under2') return '0-2 km';
-    if (checked.value === '2to4') return '2-4 km';
-    return 'beyond 4 km';
-  }
 
   function slotAt(): string | null {
     if (!preorderCheck.checked || !dateInput.value || !timeInput.value) return null;
@@ -1004,7 +1027,13 @@ const checkoutConfig = {
       marketing_ok: offersCheck.checked,
       order_type: orderTypeRadios.find((r) => r.checked)?.value ?? 'delivery',
       slot_at: slotAt(),
-      distance_band: distanceBand(),
+      // Band and exact km travel separately. This used to send the typed number
+      // AS the band — "3.2 km" — which is not a slab label: it never matched
+      // `slabByLabel`, and `segments.ts` compares distance_band to '0-2 km'
+      // literally, so every customer who used the exact-distance box quietly
+      // fell out of the near-customers segment.
+      distance_band: form.distance().band,
+      distance_km: form.distance().km,
       food_total: foodTotal,
       // Add the Dough back before subtracting: `lastQuote.total` already has it
       // taken off, so plain `total - foodTotal` went NEGATIVE on any order that

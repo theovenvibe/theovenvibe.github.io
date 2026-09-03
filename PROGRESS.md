@@ -2,6 +2,44 @@
 
 ## Status: 🚀 **v3.0.0 LIVE** (2026-07-30). All phases complete. theovenvibe.github.io serves the v2 rebuild. Day-to-day ops: bootstrap-session.md + skills/. Remaining items are owner actions (see final session log).
 
+## 2026-09-03 — Checkout remembers how far a customer lives
+
+Owner: a returning customer should not be asked their distance again. Akash
+ordered at 3 km in the 2-4 km band; next time the page should already know.
+
+Typing a phone number now fills in the band they last ordered from, with their
+exact distance, and offers any other place they order from as a one-tap chip.
+Not the mode of their orders: somebody who orders from home twice and from work
+once has a mode of home, and it is confidently wrong the evening they order from
+work. The page does not know where they are standing. Picking a band by hand
+still wins and still clears the number, exactly as before, and a first-time
+customer sees no difference at all.
+
+Fire-and-forget (rule 5): a failed, refused or unknown lookup leaves the form
+untouched and nothing is ever awaited on the way to placing an order.
+
+**The bug underneath it.** `distanceBand()` sent the typed exact distance AS the
+band, so typing 3.2 posted `distance_band: "3.2 km"`. That is not a slab label —
+the Worker's `slabByLabel` never matched it, and `segments.ts` compares to
+'0-2 km' literally, so every customer who used the exact-km box silently fell
+out of the near-customers segment. Band and km are now two fields. The Worker
+still accepts the old shape, because a phone holds a cached page for days.
+
+Backend half is in the-oven-vibe-backend: migration 0039, `POST /distance-hint`,
+and an owner-set distance in the customers tab.
+
+**Verified in the real page**, against a local Worker and D1:
+`scripts/distance-checkout-test.mjs`, twelve checks ending in the order payload
+itself and then the D1 row — band '2-4 km', km 3.2, where the old code would
+have written the string "3.2 km" into the band column. The harness points
+site.config.json at localhost:8799 and relaxes the worker_url regex; both are
+reverted, and the script's header says how to set them up again.
+
+**Left undone:** `syncDistanceRadio` reads slab boundaries as `km <= km_to`
+while the Worker reads `[km_from, km_to)`, so a customer at exactly 2.0 km is
+quoted the 0-2 band by this page and the 2-4 band by an owner correction. Worth
+settling on its own.
+
 ## 2026-08-25 — Dough offer rules, five local offers, five bugs
 
 **Shipped (PRs #86–#89, all live).**
