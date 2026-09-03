@@ -35,7 +35,12 @@ const ctx = await b.newContext({ viewport: { width: 390, height: 900 }, deviceSc
 await ctx.addInitScript(() =>
   window.localStorage.setItem(
     'ovenvibe.cart.v2',
-    JSON.stringify([{ id: 'item-745802369', qty: 3, addons: {} }]),
+    // Five, not three. Filling in the 2-4 km band raises the order minimum
+    // from Rs 249 to Rs 399, and on a day this item is running an offer a
+    // three-pizza basket falls short of it — the send button then disables and
+    // the payload check below fails for a reason that has nothing to do with
+    // distance. Sized to clear the highest minimum at the lowest price.
+    JSON.stringify([{ id: 'item-745802369', qty: 5, addons: {} }]),
   ),
 );
 const p = await ctx.newPage();
