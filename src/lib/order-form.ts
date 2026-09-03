@@ -192,6 +192,24 @@ export interface OrderForm {
    * keep offering a drink that ran out an hour ago.
    */
   setSoldOut(codes: string[]): void;
+  /**
+   * The distance as two separate facts, for the order payload.
+   *
+   * `checkout.astro` used to build this itself and sent the typed number AS the
+   * band — `distance_band: "3.2 km"` — so every customer who used the exact-km
+   * box got a string in `customers.distance_band` that is not a slab label. It
+   * never matched, and they fell out of the near-customers segment silently.
+   * The band and the number are different facts and travel separately.
+   */
+  distance(): { band: string | null; km: number | null };
+  /**
+   * Offer a returning customer the distances they already order from.
+   *
+   * The first is filled in; the rest are rendered as one-tap chips. Nothing at
+   * all happens for an empty list, which is the case for every first-time
+   * customer and anyone we have never asked.
+   */
+  suggestDistance(bands: { band: string; km: number | null }[]): void;
 }
 
 export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): OrderForm {
@@ -431,6 +449,93 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
     if (checked.value === 'under2') return 1;
     if (checked.value === '2to4') return 3;
     return null;
+  }
+
+  /**
+   * The band a radio stands for, spelled the way the rest of the system spells
+   * it.
+   *
+   * The config labels a slab "0–2 km" with an en dash; `customers.distance_band`
+   * holds the plain-hyphen form, and `segments.ts` compares to '0-2 km'
+   * literally. Sending the config's spelling would leave the near-customers
+   * segment matching nobody — the sort of break nothing tells you about. Same
+   * normalisation as `canonicalBand` in the Worker's delivery-distance.ts.
+   */
+  function bandLabel(value: string): string | null {
+    if (value === 'beyond4') return 'beyond 4 km';
+    const slab = value === 'under2' ? delivery.slabs[0] : delivery.slabs[1];
+    return slab ? slab.label.replace(/[\u2012-\u2015]/g, '-') : null;
+  }
+
+  function currentDistance(): { band: string | null; km: number | null } {
+    const checked = distanceRadios.find((r) => r.checked);
+    const raw = kmInput.value.trim();
+    const km = raw === '' ? null : Number(raw);
+    return {
+      band: checked ? bandLabel(checked.value) : null,
+      // Only a number the customer actually typed. `distanceKm()` above answers
+      // 1 for "under 2 km" and 3 for "2–4 km" so the quote has something to
+      // price with, but writing those into the database would record a distance
+      // nobody ever gave — and this feature offers it back to them next time.
+      km: km !== null && Number.isFinite(km) && km > 0 ? km : null,
+    };
+  }
+
+  /**
+   * Fill in the distance a returning customer last ordered from, and offer the
+   * others as one tap.
+   *
+   * Not the mode of their orders, and not silently locked in either. Someone
+   * who orders from home twice and from work once has a mode of home, and it is
+   * confidently wrong the evening they order from work. The page does not know
+   * where they are standing, so it shows what it knows and lets them pick.
+   */
+  function suggestDistance(bands: { band: string; km: number | null }[]): void {
+    const row = document.getElementById('distanceHint');
+    if (!row) return;
+    row.innerHTML = '';
+    row.hidden = true;
+    if (!bands.length) return;
+
+    apply(bands[0]);
+
+    // One known distance needs no row: it is already filled in above, and a
+    // "you also order from" label with nothing after it reads as a bug.
+    const rest = bands.slice(1);
+    if (!rest.length) return;
+
+    const label = document.createElement('span');
+    label.textContent = 'You also order from:';
+    row.appendChild(label);
+    for (const other of rest) {
+      const chip = document.createElement('button');
+      chip.type = 'button';
+      chip.textContent = other.band;
+      chip.addEventListener('click', () => {
+        apply(other);
+        // Re-render so the chips become the places they are NOT set to. Leaving
+        // the tapped band in the row means offering somebody the option they
+        // are already on.
+        suggestDistance([other, ...bands.filter((x) => x.band !== other.band)]);
+      });
+      row.appendChild(chip);
+    }
+    row.hidden = false;
+  }
+
+  function apply(choice: { band: string; km: number | null }): void {
+    const value =
+      choice.band === 'beyond 4 km'
+        ? 'beyond4'
+        : bandLabel('under2') === choice.band
+          ? 'under2'
+          : '2to4';
+    for (const radio of distanceRadios) radio.checked = radio.value === value;
+    // The exact number too, when we have one — it is what the quote prices
+    // against, and it is more specific than the band. Cleared when we do not,
+    // so a number from a different visit cannot outlive the band it belonged to.
+    kmInput.value = choice.km === null ? '' : String(choice.km);
+    update();
   }
 
   function rupee(n: number): string {
@@ -944,6 +1049,8 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
   return {
     update,
     currentQuote: () => ({ text: quoteText, total: quoteTotal }),
+    distance: currentDistance,
+    suggestDistance,
     setSoldOut(codes: string[]) {
       soldOutCodes.clear();
       for (const code of codes) soldOutCodes.add(code.replace(/^(item|combo|addon)-/, ''));
