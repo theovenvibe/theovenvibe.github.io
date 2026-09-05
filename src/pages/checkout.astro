@@ -186,6 +186,7 @@ const checkoutConfig = {
 <script>
   import { initOrderForm, type BasketRow, type OrderFormConfig } from '../lib/order-form';
   import { rememberedSource } from '../lib/source';
+  import { rememberedCampaign, reportStage } from '../lib/campaign';
   import type { OrderableRow } from '../lib/data';
   import {
     getCart,
@@ -964,9 +965,32 @@ const checkoutConfig = {
     input.closest('.calc-field')?.classList.add('calc-field--error');
   }
 
+  /**
+   * The funnel's checkout step, and the alert the owner asked for on
+   * 2026-09-05: tell me when somebody gives a name and a number, even if they
+   * never order.
+   *
+   * Fired on VALIDITY, not on a keystroke — the moment both fields hold real
+   * values — so a half-typed number never rings a phone. The Worker keeps one
+   * row per device per stage and alerts only on the row it actually inserts,
+   * so this can be called on every keypress and rings once.
+   *
+   * The name and number go to the WORKER, which forwards them to its private
+   * claim topic. They never touch the public ntfy topic — that one has no
+   * access control and must stay free of customer details (AGENTS.md rule 11).
+   */
+  function reportCheckoutReached() {
+    if (!detailsValid()) return;
+    reportStage(CFG.workerUrl, 'checkout', {
+      name: nameInput.value.trim(),
+      phone: normalisedPhone() ?? undefined,
+    });
+  }
+
   function onDetailsEdited(input: HTMLInputElement, error: HTMLElement) {
     saveDetails();
     if (input.getAttribute('aria-invalid') === 'true') reviewField(input, error);
+    reportCheckoutReached();
     // Drives the send button: it turns live the moment everything is valid.
     form.update();
   }
@@ -1050,6 +1074,9 @@ const checkoutConfig = {
       // Worker only writes it for a customer who has none yet, so this cannot
       // rewrite somebody's origin on a later order.
       source: rememberedSource() ?? undefined,
+      // Which campaign produced THIS order — a different question from source,
+      // which is first-touch and answers who brought them here at all.
+      campaign_code: rememberedCampaign() ?? undefined,
       items: lines.map((line) => ({
         catalog_id: line.id,
         name: line.name,
@@ -1074,6 +1101,10 @@ const checkoutConfig = {
   function onOrderSend() {
     const text = form.currentQuote().text;
     if (!text || !onceOrder(`order:${text}`)) return;
+    // The soft confirm — they have committed enough to open WhatsApp. Recorded
+    // BEFORE captureOrder, because the order POST can still fail or be queued
+    // by the outbox, and the customer tapping through is a fact either way.
+    reportStage(CFG.workerUrl, 'handoff');
     captureOrder(text);
     // Marks the moment for the push soft-ask (PRD §8.2), which shows itself
     // on return to the tab — this component doesn't own that UI at all.
