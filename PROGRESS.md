@@ -1,3 +1,33 @@
+## 2026-09-05 — Carrying the campaign code from the link to the order
+
+The console can now show a funnel per campaign, and this repo supplies the four
+stages nothing else can see: opened the link, put something in the basket,
+reached checkout with a name and number, tapped through to WhatsApp. The order
+POST also carries `campaign_code`, which is a different question from `source` —
+source is first touch and says who brought them here at all.
+
+`lib/campaign.ts` mirrors `lib/source.ts` deliberately: first touch wins, the
+code is stored once and never overwritten, and every call is fire-and-forget
+with `keepalive` (AGENTS.md rule 5). A browser with no campaign code sends
+nothing at all, so the ordinary visitor costs nothing.
+
+**The basket step was wired to the wrong place first.** It hung on
+`pingCartActivity`, which only runs on `/checkout/` — so a customer who filled a
+basket on the menu and never reached checkout, the exact person the step exists
+to count, would never have been recorded, and everyone else would have fired it
+at the same moment as the checkout step. It now fires in the add-to-cart handler
+in `CartScript.astro`. Found by adding an item on the live menu and watching no
+row appear; the build was green either way.
+
+**The checkout stage is what raises the owner's new alert** — "somebody is at
+checkout and has not ordered". It fires on validity, not on a keystroke, and the
+name and number go to the WORKER, which forwards them to its private claim
+topic. Nothing new reaches the public ntfy topic; rule 11 is untouched.
+
+Verified end to end on the live site with a fresh device: link → basket →
+checkout → WhatsApp, every stage recorded, the alert delivered, and the test
+order, customer and event rows removed afterwards.
+
 ## 2026-08-31 — Late-night is till 2 AM, a pure-veg post, and favicon.ico
 
 **The kitchen now cooks until 2 AM.** `site.config.json` already said so
