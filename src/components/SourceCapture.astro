@@ -1,19 +1,29 @@
 ---
 /**
- * Records where this browser first arrived from, once, on its first page view.
+ * Records where this browser first arrived from, once, on its first page view,
+ * and the campaign code it arrived with when a link carried one.
  *
  * Its own component rather than a line in Layout.astro so the reason survives:
  * the owner asked on 2026-08-28 which customers came from Instagram, and the
  * honest answer was 4 of 74 — because nothing recorded it, not because the
  * rest came from elsewhere. See lib/source.ts for why first touch wins.
  *
- * Nothing renders. No cookie, no third party, no network call — it reads the
- * referrer the browser already sent and keeps one string in this browser's own
- * storage until the customer places an order.
+ * Nothing renders and no third party is involved. The source half makes no
+ * network call at all. The campaign half sends ONE small fire-and-forget
+ * request, and only for a visitor who arrived on a ?c=CODE link — that is the
+ * top of the funnel the owner asked for on 2026-09-05, and without it a
+ * campaign can never say how many people opened its link.
  */
 ---
 
 <script>
+  import site from '../../site.config.json';
   import { rememberSource } from '../lib/source';
+  import { rememberCampaign, reportStage } from '../lib/campaign';
   rememberSource();
+  rememberCampaign();
+  // Fires on every page, and the Worker keeps only the FIRST per device — so a
+  // customer who browses six pages is one person who opened the link, not six.
+  // Counting page loads would make the top of every funnel meaningless.
+  reportStage(site.backend?.worker_url ?? '', 'link_open');
 </script>
