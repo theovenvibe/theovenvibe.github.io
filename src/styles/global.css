@@ -2463,20 +2463,6 @@ body:has(.dough-hero) .dough-fab { display: none !important; }
   color: var(--color-text-muted);
   line-height: 1.5;
 }
-/* The expiry rule, said before the claim rather than after it. Given a tinted
-   panel rather than another line of grey text: it is the one thing on this
-   page a customer will otherwise be surprised by later, and surprise is what
-   turns a gift into a complaint. */
-.claim-policy {
-  margin: 1.1rem 0 0;
-  padding: 0.7rem 0.85rem;
-  border-radius: var(--radius-sm, 6px);
-  background: rgba(230, 57, 70, 0.06);
-  border-left: 3px solid var(--color-primary, #e63946);
-  font-size: 0.85rem;
-  line-height: 1.55;
-  color: var(--color-text-main, #1f2933);
-}
 .claim-consent {
   display: flex;
   gap: 0.6rem;
