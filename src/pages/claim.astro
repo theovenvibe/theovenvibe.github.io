@@ -76,7 +76,7 @@ const description = 'Claim the Dough from our Instagram post and spend it on you
             <span class="animate-on-scroll delay-200" id="claimH3">DOUGH.</span>
           </h1>
           <p class="hero-text animate-on-scroll delay-300" id="claimIntro">
-            Yours to spend on your first order with us.
+            Yours to spend on your first order — use it within 45 days.
           </p>
         </div>
       </div>
@@ -157,6 +157,22 @@ const description = 'Claim the Dough from our Instagram post and spend it on you
               {localities.map((l: string) => <option value={l}></option>)}
             </datalist>
 
+            {/* The expiry, said before they claim rather than after.
+
+                Owner, 2026-09-06: "when a customer comes he never knows his
+                Dough has an expiry, so they think it is a lifetime thing."
+                A giveaway that quietly runs out is a complaint waiting to
+                happen, and telling somebody the rule only once the money is
+                already theirs is telling them too late.
+
+                It is also the honest version of the offer: the 45 days are
+                what makes it worth doing, and a customer who knows the
+                deadline is a customer with a reason to order this week. */}
+            <p class="claim-policy">
+              <strong>Use it within 45 days.</strong> Every order you place gives you another 45,
+              so it keeps going as long as you do. Leave it 45 days with no order and it goes.
+            </p>
+
             {/* Explicit, and unticked. This list gets messaged later; a
                 permission we inferred from somebody filling in a form is not a
                 permission. */}
@@ -180,6 +196,11 @@ const description = 'Claim the Dough from our Instagram post and spend it on you
           <p class="claim-done-note">
             It comes off your bill automatically when you order — nothing to type,
             no code to remember. You can spend up to 10% of an order in Dough.
+          </p>
+          <p class="claim-done-note">
+            <strong>Every order gives you another 45 days.</strong> Order again inside that
+            window and the clock starts over, so your Dough keeps going as long as you do.
+            Leave it 45 days with no order and it expires.
           </p>
 
           {/* The one moment worth asking for a notification. They have just been
@@ -254,7 +275,7 @@ const description = 'Claim the Dough from our Instagram post and spend it on you
      */
     const HEADLINES: Record<string, [string, string, string, string]> = {
       claimLoading: ['CHECKING', 'YOUR', 'OFFER.', 'One moment.'],
-      claimForm: ['CLAIM', '₹40', 'DOUGH.', 'Yours to spend on your first order with us.'],
+      claimForm: ['CLAIM', '₹40', 'DOUGH.', 'Yours to spend on your first order — use it within 45 days.'],
       claimClosed: ['THIS', 'OFFER', 'HAS ENDED.', 'The kitchen is still on, though.'],
       claimDone: ['₹40', 'IS', 'YOURS.', 'It is on your number now.'],
       claimKnown: ["YOU'RE", 'ALREADY', 'WITH US.', 'This one is for new customers.'],
@@ -361,8 +382,11 @@ const description = 'Claim the Dough from our Instagram post and spend it on you
 
       if (d && d.ok) {
         try { localStorage.setItem('ov_phone', digits); } catch {}
+        // The date in full, and the rule that goes with it. "Spend it before
+        // the 21st" on its own reads like a threat; the second half is the
+        // part that makes it an ongoing thing rather than a countdown.
         $('claimDoneExpiry').textContent = d.expires_at
-          ? 'Spend it before ' + asDate(d.expires_at) + '.'
+          ? 'Order before ' + asDate(d.expires_at) + ' to use it.'
           : 'It is on your number now.';
         offerReminder();
         show('claimDone');
