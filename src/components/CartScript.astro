@@ -39,6 +39,7 @@ const { showFab = true } = Astro.props;
 
 <script>
   import { addItem, cartCount, onCartChange } from '../lib/cart';
+  import { reportStage } from '../lib/campaign';
   import { getDeviceId } from '../lib/device';
 
   /* A friend's link lands as ?r=OV4F2K. Stored rather than read at checkout,
@@ -708,6 +709,19 @@ const { showFab = true } = Astro.props;
     if (!id) return;
 
     addItem(id, 1);
+
+    // The funnel's basket step, recorded where a basket is actually made.
+    //
+    // It cannot ride on pingCartActivity: that is only called from /checkout/,
+    // so a customer who filled a basket on the menu and never reached checkout
+    // -- exactly the person this step exists to count -- would never be seen,
+    // and the step would fire at the same moment as the checkout step and
+    // measure nothing. Caught on 2026-09-05 by adding an item on the live
+    // menu and watching no row appear.
+    //
+    // The Worker keeps one row per device per stage, so a customer adding six
+    // things is one basket. Sends nothing for a visitor with no campaign code.
+    reportStage(document.getElementById('lateNightWindow')?.dataset.worker ?? '', 'cart');
 
     // Say so on the button. Without this the only feedback is a badge in the
     // far corner, which is easy to miss — and a customer who thinks the tap

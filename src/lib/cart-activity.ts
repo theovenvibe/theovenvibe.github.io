@@ -7,21 +7,10 @@
  *
  * Debounced so a burst of stepper clicks sends one ping, not one per click.
  */
-import { reportStage } from './campaign';
-
 let timer: ReturnType<typeof setTimeout> | undefined;
 
 export function pingCartActivity(workerUrl: string, deviceId: string, itemCount: number): void {
   if (!workerUrl) return;
-  // The funnel's basket step rides on the call that already means "a basket
-  // exists", rather than a second hook of its own next to it — one place to
-  // get wrong instead of two, and it cannot drift out of step with the nudge.
-  //
-  // Not debounced with the ping below: the Worker keeps one row per device per
-  // stage, so a burst of stepper clicks is already one basket. Sent only when
-  // something is actually in the bag, because emptying a cart is not reaching
-  // one.
-  if (itemCount > 0) reportStage(workerUrl, 'cart');
   clearTimeout(timer);
   timer = setTimeout(() => {
     fetch(`${workerUrl}/cart-activity`, {
