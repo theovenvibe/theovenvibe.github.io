@@ -219,10 +219,11 @@ const description = 'Claim the Dough from our Instagram post and spend it on you
               expecting the whole ₹100 off a ₹400 order and being handed ₹40 at
               the door is an argument the rider has, not us — and the fastest
               way to lose a customer we just paid to win. */}
-          <p class="claim-done-note">
-            It comes off your bill automatically when you order — nothing to type,
-            no code to remember.
-          </p>
+          {/* Set in the script, because it is the one line that changes
+              entirely with the moment: somebody mid-meal is told it is saved
+              for next time, somebody on their phone is told it works right
+              now. */}
+          <p class="claim-done-note" id="claimDoneFirst"></p>
           <p class="claim-done-note">
             <strong>You earn 5% back</strong> on the food in every order you place, and every
             order adds another 45 days — so your Dough keeps going as long as you do.
@@ -256,7 +257,15 @@ const description = 'Claim the Dough from our Instagram post and spend it on you
             </p>
           </div>
 
-          <a class="btn btn-primary claim-submit" href="/menu/">Order now</a>
+          {/* The button's words change with the moment too.
+
+              "Order now" to somebody who is eating a pizza right now is asking
+              for a second pizza in the same hour, and it reads as not knowing
+              who they are. They came from a QR on the box of the meal they are
+              holding. What they can usefully do is look at what we make and at
+              what it costs, so it is there next week when they are hungry —
+              which is also the moment the owner's reminder will find them. */}
+          <a class="btn btn-primary claim-submit" id="claimDoneCta" href="/menu/">Order now</a>
         </div>
 
         {/* Refusal is not a dead end. Somebody who is already a customer is
@@ -308,6 +317,9 @@ const description = 'Claim the Dough from our Instagram post and spend it on you
       claimForm: ['CLAIM', '₹40', 'DOUGH.', 'Yours to spend on your first order with us.'],
       claimClosed: ['THIS', 'OFFER', 'HAS ENDED.', 'The kitchen is still on, though.'],
       claimDone: ['₹40', 'IS', 'YOURS.', 'It is on your number now.'],
+      // Same money, different moment: nothing is being asked of somebody who
+      // is still eating.
+      claimDoneFed: ['₹40', 'IS', 'SAVED.', 'Waiting on your number for next time.'],
       claimKnown: ["YOU'RE", 'ALREADY', 'WITH US.', 'This one is for new customers.'],
     };
 
@@ -330,6 +342,19 @@ const description = 'Claim the Dough from our Instagram post and spend it on you
     if (!workerUrl || !code) { show('claimClosed'); return; }
 
     let amount = 40;
+    /**
+     * What the customer is doing when this claim reaches them.
+     *
+     * 'browsing' — on their phone, able to order now.
+     * 'just_ate' — the claim came WITH food: a QR on the pizza box.
+     *
+     * Owner, 2026-09-06: "the customer just ordered a pizza and got a QR to
+     * claim Rs100, and you are showing them Order now. Why would someone order
+     * a pizza again who just ordered? Customer will break there."
+     *
+     * Nothing on this page can work that out for itself, so the Worker says.
+     */
+    let moment = 'browsing';
     const rupees = (n: number) => '₹' + Number(n || 0);
     // "6 October" — a date somebody reads, not an ISO string.
     const asDate = (iso: string) => {
@@ -349,6 +374,7 @@ const description = 'Claim the Dough from our Instagram post and spend it on you
           return;
         }
         amount = d.amount;
+        moment = d.moment === 'just_ate' ? 'just_ate' : 'browsing';
         for (const el of document.querySelectorAll('.claim-amount-inline')) el.textContent = String(amount);
         show('claimForm');
       })
@@ -415,11 +441,32 @@ const description = 'Claim the Dough from our Instagram post and spend it on you
         // The date in full, and the rule that goes with it. "Spend it before
         // the 21st" on its own reads like a threat; the second half is the
         // part that makes it an ongoing thing rather than a countdown.
+        const eaten = moment === 'just_ate';
         $('claimDoneExpiry').textContent = d.expires_at
-          ? 'Order before ' + asDate(d.expires_at) + ' to use it.'
+          ? (eaten
+              // No urgency at somebody who has just eaten. The date is a fact
+              // they will need later, not an instruction for right now.
+              ? 'Saved on your number until ' + asDate(d.expires_at) + '.'
+              : 'Order before ' + asDate(d.expires_at) + ' to use it.')
           : 'It is on your number now.';
+        $('claimDoneFirst').innerHTML = eaten
+          ? 'Nothing to do right now — enjoy the one you have. <strong>Next time you want ' +
+            'pizza, order direct from us</strong> and this comes off the bill automatically.'
+          : 'It comes off your bill automatically when you order — nothing to type, ' +
+            'no code to remember.';
+        const cta = $('claimDoneCta');
+        cta.textContent = eaten ? 'See the menu' : 'Order now';
         offerReminder();
         show('claimDone');
+        // The headline follows the moment as well, so the top and the bottom
+        // of the screen never say two different things.
+        if (eaten) {
+          const h = HEADLINES.claimDoneFed;
+          $('claimH1').textContent = h[0].replace('₹40', '₹' + amount);
+          $('claimH2').textContent = h[1];
+          $('claimH3').textContent = h[2];
+          $('claimIntro').textContent = h[3];
+        }
         return;
       }
 
