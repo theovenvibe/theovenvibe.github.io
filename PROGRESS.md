@@ -644,3 +644,11 @@ by hand. Nine new photos were supplied (pizzas, pastas, Maggi, both fries).
   no `max-width` breakpoint could be exercised. Needs one look on a phone.
 - `npm run build` green; `npm run test:gallery` 46/46; `npm run test:dough`
   37/37.
+
+### Released 2026-09-09
+
+PR #111 merged into `develop`, release PR #112 promoted `develop` to `main`.
+`main` deploy workflow green; live on theovenvibe.com. Verified on the live
+site: 11 galleries initialised, arrow advances to photo 2 and the dot follows,
+`-2` photos serve 200. `develop` and `main` carried no other unreleased work,
+so nothing else went live with it. Phone touch-swipe check still owed.
