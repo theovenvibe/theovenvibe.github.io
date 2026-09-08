@@ -316,6 +316,8 @@ export const lateNightTimeRange = formatTimeRange(site.delivery.late_night.from,
 
 const IMAGE_DIRS = ['product_images', 'combo_images', 'add_on_images', 'brand_images'];
 const PLACEHOLDER = '/static/images/brand_images/The%20Oven%20vibe_logo.webp';
+/** Upper bound on the `-2`, `-3`, … scan — a guard against an endless loop, not a product limit. */
+const MAX_PHOTOS_PER_ITEM = 8;
 
 export interface MenuImage {
   avif: string | null;
@@ -343,4 +345,35 @@ export function imageFor(entry: MenuItem | Combo | Addon): MenuImage {
   }
   console.warn(`[menu] no image found for code ${code} — using brand placeholder`);
   return { avif: null, webp: PLACEHOLDER };
+}
+
+/**
+ * Every photo for an entry, in display order: the main image first, then any
+ * extra shots saved beside it as `<code>-2`, `<code>-3`, … in the same folder.
+ * Adding a photo is a file drop — no menu.json edit — which is how photo 1 has
+ * always worked (see `imageFor`). Numbering must not skip: the scan stops at
+ * the first missing number, so a `-4` with no `-3` is invisible.
+ *
+ * A one-photo item returns a one-element array, and `MenuCard` renders that
+ * exactly as it did before galleries existed.
+ */
+export function galleryFor(entry: MenuItem | Combo | Addon): MenuImage[] {
+  const first = imageFor(entry);
+  if (first.webp === PLACEHOLDER) return [first];
+
+  const photos = [first];
+  const stem = first.webp.replace(/\.webp$/, ''); // "/static/images/<dir>/<code>"
+  for (let n = 2; n <= MAX_PHOTOS_PER_ITEM; n++) {
+    const base = `${stem}-${n}`;
+    const disk = `public${base}`;
+    if (!existsSync(`${disk}.webp`)) break;
+    if (!existsSync(`${disk}.avif`)) {
+      // Half-converted photo: shipping it would show a broken slide to AVIF
+      // browsers only, which is the hardest kind of bug to see.
+      console.warn(`[menu] ${base}.webp has no .avif sibling — skipping this photo`);
+      break;
+    }
+    photos.push({ avif: `${base}.avif`, webp: `${base}.webp` });
+  }
+  return photos;
 }
