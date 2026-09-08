@@ -136,7 +136,9 @@ PRD.md / PROGRESS.md     ← requirements / current state — read at session st
 | Hide, disable, or bring back an item | skills/remove-or-disable-item.md |
 | Add a brand-new menu item | skills/add-menu-item.md |
 | Add/edit a combo | skills/update-combo.md |
-| Change a photo (item, combo, add-on, blog) | skills/update-item-photo.md |
+| Add / reorder / remove a menu item's photos | skills/manage-menu-photos.md |
+| Shoot a photo that will work on a card | skills/take-a-food-photo.md |
+| Change a combo, add-on or blog photo, or an OG share image | skills/update-item-photo.md |
 | Delivery charges / free-delivery threshold | skills/update-delivery-charges.md |
 | Hours / phone / WhatsApp / address / Instagram | skills/update-hours-or-contact.md |
 | Update the star rating / review count | skills/update-rating.md |

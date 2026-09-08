@@ -1,5 +1,10 @@
 # Adding a menu photo
 
+> Day to day, don't do any of this by hand — `skills/manage-menu-photos.md`
+> wraps it all in one command per job (`scripts/menu-photo.py add|promote|
+> remove|find|list`). This document is the reference for what those commands
+> do and why the conventions are what they are.
+
 The menu shows one photo per item, or a swipeable gallery when an item has
 more than one. Adding a photo is a file drop — `menu.json` never mentions
 images.
@@ -30,17 +35,25 @@ The numbering must not skip. The scan stops at the first missing number, so a
 
 ## Making the files
 
-Photos are 600x400 (3:2), the shape every card already uses:
+Photos are 600x400 (3:2), the shape every card already uses.
+
+Do NOT centre-crop a studio shot to that shape. These dishes are square or
+taller, so a centre crop takes the crust off a pizza and the ends off a tray.
+Use the fitter instead — it finds the dish, lays a portrait tray on its side,
+centres it whole, and fills the rest of the frame with the photo's own
+backdrop:
 
 ```sh
-# crop/resize a phone photo, then encode both formats
-magick input.png -resize 600x400^ -gravity center -extent 600x400 \
-  -quality 72 -define webp:method=6 745802385-2.webp
-magick input.png -resize 600x400^ -gravity center -extent 600x400 png:- \
-  | avifenc -q 48 -s 4 - 745802385-2.avif
+python3 scripts/fit-food-photo.py input.png fitted.png   # needs Pillow + numpy
+magick fitted.png -quality 72 -define webp:method=6 745802385-2.webp
+avifenc -q 48 -s 4 fitted.png 745802385-2.avif
 ```
 
-Check the crop by eye before committing — a centre crop can cut the food.
+Pass `--no-rotate` if a dish reads wrong on its side. The fitter assumes a
+near-black backdrop (`BACKDROP_LUMA` in the script); a photo shot on a light
+surface needs a hand crop.
+
+Check the result by eye before committing.
 
 ## Checking it worked
 
