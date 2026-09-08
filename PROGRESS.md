@@ -689,3 +689,19 @@ and centred, not centre-cropped.
   twice — rendered at real card sizes at two breakpoints, then geometry-checked
   (dish inside the frame and centred) — and shown to the owner on a local dev
   server before deploy.
+
+### 2026-09-09 — image weight
+
+Sweep of every image over 400KB in `product_images`, `combo_images`,
+`add_on_images` and `blog_images`: re-encoded, and scaled down only where the
+long edge was over 1200px. **No crops, no composition changes**, and
+`brand_images/` deliberately excluded — the logo is a low-res upscale that must
+be rebuilt from source, never resized.
+
+58 files, 67.8MB saved; the images folder went from ~79MB to 11.6MB. The worst
+offenders were phone-camera originals shipped raw: several 4096x3072 photos at
+2.7MB each, and one 4046x2697 Maggi photo already removed earlier today.
+
+A first attempt at this went too wide — it cropped square photos to 3:2 and
+resized the logo — and was reverted before commit. The rule that came out of
+it: shrinking bytes is safe, changing pixels is a design decision.
