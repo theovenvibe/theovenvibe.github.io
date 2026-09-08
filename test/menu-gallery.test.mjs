@@ -51,12 +51,14 @@ if (!existsSync(INDEX)) {
   const cards = html.split('<article').slice(1);
   const cardFor = (code) => cards.find((c) => c.includes(`/${code}.webp`));
 
-  // Golden Corn Classic Pizza has a second photo.
-  const withGallery = cardFor('745802385');
-  t('card with two photos exists in the build', !!withGallery);
+  // Any code that has a second photo on disk — which items those are changes
+  // as the owner swaps photos in, so the test finds one rather than naming it.
+  const galleryCode = [...extraCodes].find((c) => cardFor(c));
+  t('a card with two photos exists in the build', !!galleryCode, `codes with extras: ${[...extraCodes].join(', ')}`);
+  const withGallery = galleryCode && cardFor(galleryCode);
   if (withGallery) {
     t('renders a gallery track', withGallery.includes('menu-card-gallery'));
-    t('renders the second photo', withGallery.includes('/745802385-2.webp'));
+    t('renders the second photo', withGallery.includes(`/${galleryCode}-2.webp`));
     t('renders two slides', (withGallery.match(/menu-card-slide/g) || []).length === 2);
     // `menu-card-dots` (the container) also contains the string, so match the
     // dot class only where the class attribute ends or continues with a space.

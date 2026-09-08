@@ -359,7 +359,13 @@ p {
 /* Menu Image Fitting */
 .menu-card-img {
   width: 100%;
-  height: 160px;
+  /* One ratio at every width, instead of a fixed height that got wider (and so
+     cropped harder) on narrow screens. The 3:2 photos — every photo shot for
+     the menu since 2026-09 — now show whole at every breakpoint; the older
+     square ones are still centre-cropped by `cover`, which is what they always
+     were. See docs/MENU_PHOTOS.md. */
+  aspect-ratio: 3 / 2;
+  height: auto;
   object-fit: cover;
   border-radius: var(--radius-md);
   background-color: var(--color-border);
@@ -946,9 +952,6 @@ p {
     gap: 1.5rem;
   }
   
-  .menu-card-img {
-    height: 180px;
-  }
 }
 
 @media (max-width: 1024px) {
@@ -958,9 +961,6 @@ p {
     gap: 1.5rem;
   }
   
-  .menu-card-img {
-    height: 180px;
-  }
   
    /* a11y launch fix: accordion titles are now <h2> for correct document
    outline — these rules pin them to the exact size the old <h3> rendered,
@@ -1000,9 +1000,6 @@ p {
     gap: 1.5rem;
   }
   
-  .menu-card-img {
-    height: 180px;
-  }
 }
 
 @media (max-width: 480px) {
@@ -1016,9 +1013,6 @@ p {
     margin-bottom: 1.5rem; /* Reduced spacing for mobile */
   }
   
-  .menu-card-img {
-    height: 160px; /* Reduced for better mobile proportions */
-  }
   
   .menu-card-body {
     padding: 0.75rem; /* Tighter padding for mobile */

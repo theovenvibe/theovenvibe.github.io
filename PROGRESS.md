@@ -644,3 +644,48 @@ by hand. Nine new photos were supplied (pizzas, pastas, Maggi, both fries).
   no `max-width` breakpoint could be exercised. Needs one look on a phone.
 - `npm run build` green; `npm run test:gallery` 46/46; `npm run test:dough`
   37/37.
+
+### Released 2026-09-09
+
+PR #111 merged into `develop`, release PR #112 promoted `develop` to `main`.
+`main` deploy workflow green; live on theovenvibe.com. Verified on the live
+site: 11 galleries initialised, arrow advances to photo 2 and the dot follows,
+`-2` photos serve 200. `develop` and `main` carried no other unreleased work,
+so nothing else went live with it. Phone touch-swipe check still owed.
+
+## 2026-09-09 (later) — photo recrop, owner photo swaps, and the photo tooling
+
+Owner reviewed the shipped galleries and asked for the food to be shown whole
+and centred, not centre-cropped.
+
+- **Fitter**: `scripts/fit-food-photo.py` finds the dish (anything brighter
+  than the near-black backdrop), lays a taller-than-wide dish on its side so a
+  portrait tray shot fills the landscape frame, scales it to fit, and fills the
+  frame with a radial gradient sampled from the photo's own backdrop — no bars,
+  no seam. All nine 2026-09 photos re-cut through it.
+- **Card frame**: `.menu-card-img` was a fixed height (160–180px) with
+  `object-fit: cover`, so the wider the card the more of the photo's top and
+  bottom was thrown away — about a third of it on a single-column phone card.
+  It is now `aspect-ratio: 3/2` at every breakpoint. The 3:2 photos are shown
+  whole; the older square photos are cropped less than they were, not more.
+- **Owner photo decisions**: old Golden Corn and old Maggi photos deleted (the
+  Maggi one was a 4046x2697, 1.2MB WebP / 1.9MB AVIF being served to every
+  visitor — its removal alone takes ~1.2MB off that page); both pastas now open
+  on the new photo with the old one second.
+- **Tooling so this needs no agent next time**: `scripts/menu-photo.py` with
+  `find` / `list` / `add [--first]` / `promote` / `remove`, each one command,
+  handling naming, fitting, both encodings and gap-free renumbering.
+  Documented in `skills/manage-menu-photos.md`, with
+  `skills/take-a-food-photo.md` for the shoot itself (written because six of
+  the nine supplied photos had the dish touching the frame edge — pixels no
+  crop can recover). `skills/update-item-photo.md`, `AGENTS.md` and
+  `docs/MENU_PHOTOS.md` point at them.
+- The gallery test hardcoded Golden Corn as its two-photo example and broke the
+  moment that photo was removed; it now discovers a gallery item instead of
+  naming one.
+- Verified: `npm run build` 0 errors, `npm run test:gallery` 38/38,
+  `npm run test:dough` 37/37; every `menu-photo.py` subcommand exercised on a
+  real item and the repo left in its prior state afterwards. Crops audited
+  twice — rendered at real card sizes at two breakpoints, then geometry-checked
+  (dish inside the frame and centred) — and shown to the owner on a local dev
+  server before deploy.
