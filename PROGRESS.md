@@ -611,3 +611,36 @@ tonight's phases; fixed on `fix/preserve-basket-when-closed` off
   correct priced breakdown (₹568, food + free delivery) and a live send
   button with name/phone filled in.
 - `npm run build` green, 0 errors.
+
+## 2026-09-09 — menu photo galleries (`feature/menu-photo-gallery`)
+
+Owner asked for the Zomato behaviour: more than one photo per item, swiped
+by hand. Nine new photos were supplied (pizzas, pastas, Maggi, both fries).
+
+- **Data**: photos 2 are `<image_code>-2.avif/.webp` beside photo 1 in
+  `public/static/images/product_images/`, 600x400 like every existing photo.
+  Eleven catalogue items are covered — the two fries sizes share one
+  `image_code` each, so nine photos reach eleven items. `menu.json` is
+  untouched; discovery is on disk, exactly as photo 1 has always worked.
+  Conventions written up in `docs/MENU_PHOTOS.md`.
+- **Code**: `galleryFor()` in `src/lib/data.ts` returns every photo for an
+  entry; `MenuCard.astro` renders a scroll-snap track with dots when there is
+  more than one and the unchanged single `<picture>` when there is not.
+  `imageFor()` is unchanged, so SEO/offer/add-on callers are untouched.
+- The swipe is CSS scroll-snap — it works with JavaScript off. The script only
+  lights the active dot and adds desktop arrows, and the arrows ship `hidden`
+  so a no-JS visitor never sees a dead control.
+- **Verified in a real browser** (dev server, Chrome): 11 galleries found,
+  each with 2 dots; arrow click scrolls to photo 2, dot follows, back-arrow
+  re-enables correctly; the new photo renders. Console clean.
+  - Two things the browser check itself taught us: `requestAnimationFrame`
+    never fires in a background tab, so the first version's rAF-throttled dot
+    repaint sat frozen on photo 1 — replaced with a direct repaint plus an
+    immediate repaint on arrow click. `scrollTo({behavior:'smooth'})` stalled
+    part-way for the same reason; assigning `scrollLeft` and letting the
+    stylesheet's `scroll-behavior` animate lands on the slide either way.
+- **Not verified**: touch swipe at phone width. The automation window would
+  not change its viewport (`innerWidth` stayed 2548 through every resize), so
+  no `max-width` breakpoint could be exercised. Needs one look on a phone.
+- `npm run build` green; `npm run test:gallery` 46/46; `npm run test:dough`
+  37/37.

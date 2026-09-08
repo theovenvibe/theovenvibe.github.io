@@ -12,7 +12,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "selectors": "node scripts/dump-selectors.mjs",
-    "test:dough": "node test/dough-rules.test.mjs"
+    "test:dough": "node test/dough-rules.test.mjs",
+    "test:gallery": "node test/menu-gallery.test.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
