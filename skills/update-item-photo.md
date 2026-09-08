@@ -5,6 +5,13 @@ blog header image. Covers file placement, required formats, sizing, and
 the separate OG-image regeneration step needed when the HERO dish or a
 blog image changes.
 
+> **For menu-item photos, use `skills/manage-menu-photos.md` instead.**
+> `scripts/menu-photo.py` adds, reorders and removes item photos in one
+> command each — it handles the naming, the crop and both encodings, and it
+> supports the multi-photo swipe galleries this skill predates. Come back
+> here for the two things that script does not do: the Open Graph share
+> images (§6) and uploading from a phone through GitHub (§8).
+
 ## 1. Where each image type lives (filename = the code, EXACTLY)
 
 | What | Folder | Filename |
