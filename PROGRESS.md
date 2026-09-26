@@ -653,6 +653,30 @@ site: 11 galleries initialised, arrow advances to photo 2 and the dot follows,
 `-2` photos serve 200. `develop` and `main` carried no other unreleased work,
 so nothing else went live with it. Phone touch-swipe check still owed.
 
+## 2026-09-27 — menu catalogue refresh
+
+- Renamed the existing Pizza category to Classic Favorite Pizza and kept all
+  seven existing pizzas and product codes in that category.
+- Added Signature Pizza, three new Diet Coke combos, two shakes under the
+  existing Beverages category, two Diet Coke sizes and four grilled sandwiches;
+  preserved the existing jumbo sandwich
+  IDs while clarifying their names.
+- Permanently removed Tangy Green Chutney Sandwich as requested. Renamed the
+  first menu accordion to Combos and kept the new combo rows first.
+- Updated the pizza-under-300 derived listing to cover both pizza categories.
+- Catalog layer build: 0 errors. New-item placeholder warnings are expected
+  until the stacked image-assets layer adds the supplied product photos.
+- Added deployable 600x400 WebP and AVIF photography for all five signature
+  pizzas, both Diet Coke sizes, and both shakes. The three new combos reuse
+  their corresponding pizza images through the existing `image_code` field.
+- Replaced the initial portrait shake crops with the owner's new native 3:2
+  KitKat and Oreo compositions; both drinks now fill the card while keeping
+  the full glass and toppings visible. The four new sandwiches intentionally
+  use the existing brand placeholder because no matching source photo exists.
+- Moved both shakes into Beverages at the owner's request. Added Baby Corn
+  beside Sweet Corn in Add-ons at ₹25, with a matching high-key studio image
+  delivered through the existing ADD008 WebP/AVIF asset convention.
+
 ## 2026-09-09 (later) — photo recrop, owner photo swaps, and the photo tooling
 
 Owner reviewed the shipped galleries and asked for the food to be shown whole
