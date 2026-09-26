@@ -178,6 +178,17 @@
       "status": "available"
     },
     {
+      "product_code": "900000011",
+      "item_id": 44,
+      "category": "Grilled Sandwiches",
+      "subcategory": "Sandwiches",
+      "item_name": "Cheese Corn Grilled Jumbo Sandwich",
+      "display_name": "Cheese Corn Grilled Jumbo Sandwich",
+      "price": 129,
+      "description": "[veg preparation] A jumbo grilled sandwich loaded with sweet corn and melted cheese.",
+      "status": "available"
+    },
+    {
       "product_code": "900000008",
       "item_id": 41,
       "category": "Grilled Sandwiches",
@@ -208,17 +219,6 @@
       "display_name": "Cheese Corn Grilled Sandwich",
       "price": 99,
       "description": "[veg preparation] A regular grilled sandwich with sweet corn and melted cheese.",
-      "status": "available"
-    },
-    {
-      "product_code": "900000011",
-      "item_id": 44,
-      "category": "Grilled Sandwiches",
-      "subcategory": "Sandwiches",
-      "item_name": "Cheese Corn Grilled Jumbo Sandwich",
-      "display_name": "Cheese Corn Grilled Jumbo Sandwich",
-      "price": 129,
-      "description": "[veg preparation] A jumbo grilled sandwich loaded with sweet corn and melted cheese.",
       "status": "available"
     },
     {
@@ -338,7 +338,7 @@
     {
       "product_code": "900000012",
       "item_id": 45,
-      "category": "Shakes",
+      "category": "Beverages",
       "subcategory": "Shakes",
       "item_name": "Oreo Cream Shake",
       "display_name": "Oreo Cream Shake",
@@ -349,7 +349,7 @@
     {
       "product_code": "900000013",
       "item_id": 46,
-      "category": "Shakes",
+      "category": "Beverages",
       "subcategory": "Shakes",
       "item_name": "KitKat Chocolate Shake",
       "display_name": "KitKat Chocolate Shake",
@@ -447,6 +447,13 @@
       "addon_name": "Sweet Corn",
       "addon_price": 25,
       "image_code": "ADD002",
+      "status": "available"
+    },
+    {
+      "addon_code": "747584741",
+      "addon_name": "Baby Corn",
+      "addon_price": 25,
+      "image_code": "ADD008",
       "status": "available"
     },
     {
