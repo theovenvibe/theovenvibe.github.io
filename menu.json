@@ -4,7 +4,7 @@
     {
       "product_code": "745802369",
       "item_id": 6,
-      "category": "Pizza",
+      "category": "Classic Favorite Pizza",
       "subcategory": "Pizza",
       "item_name": "Zesty Onion Feast Pizza [Regular, 7 inches]",
       "display_name": "Zesty Onion Feast Pizza [Regular, 7 inches] 👨‍🍳",
@@ -15,7 +15,7 @@
     {
       "product_code": "745802358",
       "item_id": 7,
-      "category": "Pizza",
+      "category": "Classic Favorite Pizza",
       "subcategory": "Pizza",
       "item_name": "Ultimate Cheese Delight Pizza [Regular, 7 inches]",
       "display_name": "Ultimate Cheese Delight Pizza [Regular, 7 inches] 👨‍🍳",
@@ -26,7 +26,7 @@
     {
       "product_code": "745802385",
       "item_id": 8,
-      "category": "Pizza",
+      "category": "Classic Favorite Pizza",
       "subcategory": "Pizza",
       "item_name": "Golden Corn Classic Pizza [Regular, 7 inches]",
       "display_name": "Golden Corn Classic Pizza [Regular, 7 inches] 👨‍🍳",
@@ -37,7 +37,7 @@
     {
       "product_code": "745802381",
       "item_id": 9,
-      "category": "Pizza",
+      "category": "Classic Favorite Pizza",
       "subcategory": "Pizza",
       "item_name": "Crunchy Capsicum Pizza [Regular, 7 inches]",
       "display_name": "Crunchy Capsicum Pizza [Regular, 7 inches] 👨‍🍳",
@@ -48,7 +48,7 @@
     {
       "product_code": "745802364",
       "item_id": 10,
-      "category": "Pizza",
+      "category": "Classic Favorite Pizza",
       "subcategory": "Pizza",
       "item_name": "Herb Paneer Delight Pizza [Regular, 7 inches]",
       "display_name": "Herb Paneer Delight Pizza [Regular, 7 inches] 👨‍🍳",
@@ -59,7 +59,7 @@
     {
       "product_code": "752649876",
       "item_id": 11,
-      "category": "Pizza",
+      "category": "Classic Favorite Pizza",
       "subcategory": "Pizza",
       "item_name": "Paneer Makhni Royale Pizza [Regular, 7 inches]",
       "display_name": "Paneer Makhni Royale Pizza [Regular, 7 inches] 👨‍🍳",
@@ -70,12 +70,67 @@
     {
       "product_code": "745802365",
       "item_id": 13,
-      "category": "Pizza",
+      "category": "Classic Favorite Pizza",
       "subcategory": "Pizza",
       "item_name": "Vegie Onion Capsicum Pizza [Regular, 7 inches]",
       "display_name": "Vegie Onion Capsicum Pizza [Regular, 7 inches] 👨‍🍳",
       "price": 219,
       "description": "[veg preparation] Fresh onion and capsicum on cheesy base.",
+      "status": "available"
+    },
+    {
+      "product_code": "900000003",
+      "item_id": 36,
+      "category": "Signature Pizza",
+      "subcategory": "Pizza",
+      "item_name": "Schezwan Firecracker Pizza",
+      "display_name": "Schezwan Firecracker Pizza",
+      "price": 269,
+      "description": "[veg preparation] A bold Schezwan pizza with crisp vegetables, melting cheese and a fiery finish.",
+      "status": "available"
+    },
+    {
+      "product_code": "900000004",
+      "item_id": 37,
+      "category": "Signature Pizza",
+      "subcategory": "Pizza",
+      "item_name": "Schezwan Corn Crunch Pizza",
+      "display_name": "Schezwan Corn Crunch Pizza",
+      "price": 239,
+      "description": "[veg preparation] Sweet corn, crisp vegetables and cheese layered over a punchy Schezwan base.",
+      "status": "available"
+    },
+    {
+      "product_code": "900000005",
+      "item_id": 38,
+      "category": "Signature Pizza",
+      "subcategory": "Pizza",
+      "item_name": "Pickle Pop Pizza",
+      "display_name": "Pickle Pop Pizza",
+      "price": 269,
+      "description": "[veg preparation] A tangy pickle-spiced pizza balanced with vegetables and melted cheese.",
+      "status": "available"
+    },
+    {
+      "product_code": "900000006",
+      "item_id": 39,
+      "category": "Signature Pizza",
+      "subcategory": "Pizza",
+      "item_name": "Garlic Cheese Garden Pizza",
+      "display_name": "Garlic Cheese Garden Pizza",
+      "price": 259,
+      "description": "[veg preparation] Garden vegetables, roasted garlic and generous melted cheese on our house base.",
+      "status": "available"
+    },
+    {
+      "product_code": "900000007",
+      "item_id": 40,
+      "category": "Signature Pizza",
+      "subcategory": "Pizza",
+      "item_name": "Farmhouse Garden Pizza",
+      "display_name": "Farmhouse Garden Pizza",
+      "price": 249,
+      "description": "[veg preparation] A garden-style mix of onion, capsicum, tomato and corn with melted cheese.",
       "status": "available"
     },
     {
@@ -101,23 +156,12 @@
       "status": "available"
     },
     {
-      "product_code": "752623129",
-      "item_id": 16,
-      "category": "Grilled Sandwiches",
-      "subcategory": "Sandwiches",
-      "item_name": "Tangy Green Chutney Sandwich [2 slices]",
-      "display_name": "Tangy Green Chutney Sandwich [2 slices]",
-      "price": 89,
-      "description": "[Veg preparation] Fresh chutney with veggies.",
-      "status": "available"
-    },
-    {
       "product_code": "752623130",
       "item_id": 17,
       "category": "Grilled Sandwiches",
       "subcategory": "Sandwiches",
-      "item_name": "Fiery Cheese Chilli Sandwich [2 slices]",
-      "display_name": "Fiery Cheese Chilli Sandwich [2 slices] 🌶️ 🌶️",
+      "item_name": "Fiery Cheese Chilli Jumbo Sandwich [2 slices]",
+      "display_name": "Fiery Cheese Chilli Jumbo Sandwich [2 slices] 🌶️ 🌶️",
       "price": 129,
       "description": "[veg preparation] Spicy cheese and chilli filing.",
       "status": "available"
@@ -127,10 +171,54 @@
       "item_id": 18,
       "category": "Grilled Sandwiches",
       "subcategory": "Sandwiches",
-      "item_name": "Paneer Tikka Grilled Sandwich [2 slices]",
-      "display_name": "Paneer Tikka Grilled Sandwich [2 slices]",
+      "item_name": "Paneer Tikka Grilled Jumbo Sandwich [2 slices]",
+      "display_name": "Paneer Tikka Grilled Jumbo Sandwich [2 slices]",
       "price": 169,
       "description": "[veg preparation] Grilled sandwich stuffed with paneer.",
+      "status": "available"
+    },
+    {
+      "product_code": "900000011",
+      "item_id": 44,
+      "category": "Grilled Sandwiches",
+      "subcategory": "Sandwiches",
+      "item_name": "Cheese Corn Grilled Jumbo Sandwich",
+      "display_name": "Cheese Corn Grilled Jumbo Sandwich",
+      "price": 129,
+      "description": "[veg preparation] A jumbo grilled sandwich loaded with sweet corn and melted cheese.",
+      "status": "available"
+    },
+    {
+      "product_code": "900000008",
+      "item_id": 41,
+      "category": "Grilled Sandwiches",
+      "subcategory": "Sandwiches",
+      "item_name": "Fiery Cheese Chilli Sandwich",
+      "display_name": "Fiery Cheese Chilli Sandwich",
+      "price": 99,
+      "description": "[veg preparation] A regular grilled sandwich filled with spicy chilli and melted cheese.",
+      "status": "available"
+    },
+    {
+      "product_code": "900000009",
+      "item_id": 42,
+      "category": "Grilled Sandwiches",
+      "subcategory": "Sandwiches",
+      "item_name": "Paneer Tikka Grilled Sandwich",
+      "display_name": "Paneer Tikka Grilled Sandwich",
+      "price": 129,
+      "description": "[veg preparation] A regular grilled sandwich packed with seasoned paneer tikka filling.",
+      "status": "available"
+    },
+    {
+      "product_code": "900000010",
+      "item_id": 43,
+      "category": "Grilled Sandwiches",
+      "subcategory": "Sandwiches",
+      "item_name": "Cheese Corn Grilled Sandwich",
+      "display_name": "Cheese Corn Grilled Sandwich",
+      "price": 99,
+      "description": "[veg preparation] A regular grilled sandwich with sweet corn and melted cheese.",
       "status": "available"
     },
     {
@@ -224,9 +312,89 @@
       "price": 20,
       "description": "[veg preparation] Chilled 250 ml bottle. Strong fizz, for the spicy orders.",
       "status": "available"
+    },
+    {
+      "product_code": "900000014",
+      "item_id": 47,
+      "category": "Beverages",
+      "subcategory": "Cold Drinks",
+      "item_name": "Diet Coke 330ml",
+      "display_name": "Diet Coke 330ml",
+      "price": 50,
+      "description": "[veg preparation] Chilled 330 ml can of Diet Coke.",
+      "status": "available"
+    },
+    {
+      "product_code": "900000015",
+      "item_id": 48,
+      "category": "Beverages",
+      "subcategory": "Cold Drinks",
+      "item_name": "Diet Coke 200ml",
+      "display_name": "Diet Coke 200ml",
+      "price": 30,
+      "description": "[veg preparation] Chilled 200 ml bottle of Diet Coke.",
+      "status": "available"
+    },
+    {
+      "product_code": "900000012",
+      "item_id": 45,
+      "category": "Beverages",
+      "subcategory": "Shakes",
+      "item_name": "Oreo Cream Shake",
+      "display_name": "Oreo Cream Shake",
+      "price": 159,
+      "description": "[veg preparation] A thick and creamy Oreo shake served chilled.",
+      "status": "available"
+    },
+    {
+      "product_code": "900000013",
+      "item_id": 46,
+      "category": "Beverages",
+      "subcategory": "Shakes",
+      "item_name": "KitKat Chocolate Shake",
+      "display_name": "KitKat Chocolate Shake",
+      "price": 189,
+      "description": "[veg preparation] A rich chocolate shake blended with KitKat and served chilled.",
+      "status": "available"
     }
   ],
   "Combos": [
+    {
+      "combo_code": "900000101",
+      "combo_name": "Schezwan Firecracker Pizza + 330ml Diet Coke",
+      "combo_price": 309,
+      "description": "Schezwan Firecracker Pizza paired with a chilled 330 ml Diet Coke.",
+      "items_included": [
+        "900000003",
+        "900000014"
+      ],
+      "image_code": "900000003",
+      "status": "available"
+    },
+    {
+      "combo_code": "900000102",
+      "combo_name": "Schezwan Corn Crunch Pizza + 330ml Diet Coke",
+      "combo_price": 279,
+      "description": "Schezwan Corn Crunch Pizza paired with a chilled 330 ml Diet Coke.",
+      "items_included": [
+        "900000004",
+        "900000014"
+      ],
+      "image_code": "900000004",
+      "status": "available"
+    },
+    {
+      "combo_code": "900000103",
+      "combo_name": "Farmhouse Garden Pizza + 330ml Diet Coke",
+      "combo_price": 289,
+      "description": "Farmhouse Garden Pizza paired with a chilled 330 ml Diet Coke.",
+      "items_included": [
+        "900000007",
+        "900000014"
+      ],
+      "image_code": "900000007",
+      "status": "available"
+    },
     {
       "combo_code": "745802348",
       "combo_name": "Fiesta Pizza Combo",
@@ -279,6 +447,13 @@
       "addon_name": "Sweet Corn",
       "addon_price": 25,
       "image_code": "ADD002",
+      "status": "available"
+    },
+    {
+      "addon_code": "747584741",
+      "addon_name": "Baby Corn",
+      "addon_price": 25,
+      "image_code": "ADD008",
       "status": "available"
     },
     {

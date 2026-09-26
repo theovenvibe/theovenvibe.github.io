@@ -21,7 +21,7 @@ const path = '/blog/pizza-under-300/';
 
 /** Real pizzas under ₹300, cheapest first — straight from menu.json. */
 const pizzas = availableItems
-  .filter((i) => i.category === 'Pizza' && i.price < 300)
+  .filter((i) => ['Classic Favorite Pizza', 'Signature Pizza'].includes(i.category) && i.price < 300)
   .sort((a, b) => a.price - b.price);
 const combos = availableCombos.filter((c) => c.combo_price < 350).sort((a, b) => a.combo_price - b.combo_price);
 ---
