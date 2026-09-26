@@ -653,6 +653,19 @@ site: 11 galleries initialised, arrow advances to photo 2 and the dot follows,
 `-2` photos serve 200. `develop` and `main` carried no other unreleased work,
 so nothing else went live with it. Phone touch-swipe check still owed.
 
+## 2026-09-27 — menu catalogue refresh
+
+- Renamed the existing Pizza category to Classic Favorite Pizza and kept all
+  seven existing pizzas and product codes in that category.
+- Added Signature Pizza, three new Diet Coke combos, two shakes, two Diet Coke
+  sizes and four grilled sandwiches; preserved the existing jumbo sandwich
+  IDs while clarifying their names.
+- Permanently removed Tangy Green Chutney Sandwich as requested. Renamed the
+  first menu accordion to Combos and kept the new combo rows first.
+- Updated the pizza-under-300 derived listing to cover both pizza categories.
+- Catalog layer build: 0 errors. New-item placeholder warnings are expected
+  until the stacked image-assets layer adds the supplied product photos.
+
 ## 2026-09-09 (later) — photo recrop, owner photo swaps, and the photo tooling
 
 Owner reviewed the shipped galleries and asked for the food to be shown whole

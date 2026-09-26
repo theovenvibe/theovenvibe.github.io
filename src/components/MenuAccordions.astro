@@ -37,7 +37,7 @@ function comboDescription(combo: (typeof availableCombos)[number]): string {
 
 {
   availableCombos.length > 0 && (
-    <AccordionItem title="Combos & Offers" subtitle={`${availableCombos.length} ${availableCombos.length === 1 ? 'offer' : 'offers'}`} id="sec-combos">
+    <AccordionItem title="Combos" subtitle={`${availableCombos.length} ${availableCombos.length === 1 ? 'combo' : 'combos'}`} id="sec-combos">
       <div class="menu-items combo-list">
         {availableCombos.map((c) => (
           <MenuCard
