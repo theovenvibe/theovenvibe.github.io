@@ -1,3 +1,14 @@
+## 2026-09-27 — dedicated images for the new Diet Coke combos
+
+- Replaced the three new combos' reused pizza images with the owner's
+  matching 3:2 pizza-and-Diet-Coke compositions. Each combo now points to
+  its own `combo_code` image in `combo_images`; the pizza products retain
+  their separate original images.
+- Updated all five Signature Pizza and both shake short descriptions from
+  the owner's ingredient lists, including 8-inch/four-slice pizza servings
+  and 200 ml shakes. Removed an existing emoji from referral share copy to
+  satisfy the repository's rendered-HTML QA gate.
+
 ## 2026-09-05 — Carrying the campaign code from the link to the order
 
 The console can now show a funnel per campaign, and this repo supplies the four
