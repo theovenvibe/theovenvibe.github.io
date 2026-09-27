@@ -86,7 +86,7 @@
       "item_name": "Schezwan Firecracker Pizza",
       "display_name": "Schezwan Firecracker Pizza",
       "price": 269,
-      "description": "[veg preparation] A bold Schezwan pizza with crisp vegetables, melting cheese and a fiery finish.",
+      "description": "[veg preparation] Fiery Schezwan pizza with smoky paneer tikka, mozzarella, onion, capsicum, jalapeños, gherkins and red paprika. 8-inch, 4 slices. No egg.",
       "status": "available"
     },
     {
@@ -97,7 +97,7 @@
       "item_name": "Schezwan Corn Crunch Pizza",
       "display_name": "Schezwan Corn Crunch Pizza",
       "price": 239,
-      "description": "[veg preparation] Sweet corn, crisp vegetables and cheese layered over a punchy Schezwan base.",
+      "description": "[veg preparation] Sweet-spicy Schezwan pizza with golden corn, mozzarella, onion, capsicum, black olives and red paprika. 8-inch, 4 slices. No egg.",
       "status": "available"
     },
     {
@@ -108,7 +108,7 @@
       "item_name": "Pickle Pop Pizza",
       "display_name": "Pickle Pop Pizza",
       "price": 269,
-      "description": "[veg preparation] A tangy pickle-spiced pizza balanced with vegetables and melted cheese.",
+      "description": "[veg preparation] Tangy gherkin pizza with mozzarella, onion, capsicum, green olives, jalapeños, creamy mayo and Italian herbs. 8-inch, 4 slices. No egg.",
       "status": "available"
     },
     {
@@ -119,7 +119,7 @@
       "item_name": "Garlic Cheese Garden Pizza",
       "display_name": "Garlic Cheese Garden Pizza",
       "price": 259,
-      "description": "[veg preparation] Garden vegetables, roasted garlic and generous melted cheese on our house base.",
+      "description": "[veg preparation] Buttery garlic pizza with mozzarella, onion, capsicum, sweet corn, olives, red paprika and a gentle black pepper kick. 8-inch, 4 slices. No egg.",
       "status": "available"
     },
     {
@@ -130,7 +130,7 @@
       "item_name": "Farmhouse Garden Pizza",
       "display_name": "Farmhouse Garden Pizza",
       "price": 249,
-      "description": "[veg preparation] A garden-style mix of onion, capsicum, tomato and corn with melted cheese.",
+      "description": "[veg preparation] Loaded farmhouse pizza with baby corn, sweet corn, capsicum, onion, black olives, jalapeños, mozzarella and Italian herbs. 8-inch, 4 slices. No egg.",
       "status": "available"
     },
     {
@@ -343,7 +343,7 @@
       "item_name": "Oreo Cream Shake",
       "display_name": "Oreo Cream Shake",
       "price": 159,
-      "description": "[veg preparation] A thick and creamy Oreo shake served chilled.",
+      "description": "[veg preparation] Thick Oreo shake with crushed Oreo, milk, fresh cream, milk powder and chocolate syrup, topped with Oreo. 200 ml. No egg.",
       "status": "available"
     },
     {
@@ -354,7 +354,7 @@
       "item_name": "KitKat Chocolate Shake",
       "display_name": "KitKat Chocolate Shake",
       "price": 189,
-      "description": "[veg preparation] A rich chocolate shake blended with KitKat and served chilled.",
+      "description": "[veg preparation] Rich KitKat shake with KitKat, dark chocolate, milk and fresh cream, topped with KitKat and chocolate. 200 ml. No egg.",
       "status": "available"
     }
   ],
@@ -368,7 +368,7 @@
         "900000003",
         "900000014"
       ],
-      "image_code": "900000003",
+      "image_code": "900000101",
       "status": "available"
     },
     {
@@ -380,7 +380,7 @@
         "900000004",
         "900000014"
       ],
-      "image_code": "900000004",
+      "image_code": "900000102",
       "status": "available"
     },
     {
@@ -392,7 +392,7 @@
         "900000007",
         "900000014"
       ],
-      "image_code": "900000007",
+      "image_code": "900000103",
       "status": "available"
     },
     {
