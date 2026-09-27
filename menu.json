@@ -184,7 +184,7 @@
       "subcategory": "Sandwiches",
       "item_name": "Cheesy Corn Jumbo Melt Sandwich [2 slices]",
       "display_name": "Cheesy Corn Jumbo Melt Sandwich [2 slices]",
-      "price": 129,
+      "price": 149,
       "description": "[veg preparation] A jumbo grilled sandwich loaded with sweet corn and melted cheese.",
       "status": "available"
     },
@@ -217,7 +217,7 @@
       "subcategory": "Sandwiches",
       "item_name": "Cheesy Corn Melt Sandwich [2 slices]",
       "display_name": "Cheesy Corn Melt Sandwich [2 slices]",
-      "price": 99,
+      "price": 119,
       "description": "[veg preparation] A regular grilled sandwich with sweet corn and melted cheese.",
       "status": "available"
     },
@@ -393,6 +393,19 @@
         "900000014"
       ],
       "image_code": "900000103",
+      "status": "available"
+    },
+    {
+      "combo_code": "900000104",
+      "combo_name": "Ultimate Cheese Meal Box Combo",
+      "combo_price": 249,
+      "description": "Our Ultimate Cheese Delight Pizza served with Classic French Fries (Small) and a chilled Diet Coke (200 ml). A cheesy, crispy and satisfying meal box for one. 100% pure veg, no egg.",
+      "items_included": [
+        "745802358",
+        "997492943",
+        "900000015"
+      ],
+      "image_code": "900000104",
       "status": "available"
     },
     {
