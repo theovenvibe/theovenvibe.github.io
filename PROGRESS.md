@@ -1,3 +1,9 @@
+## 2026-09-27 — Zesty Onion Feast photo
+
+- Replaced the old Zesty Onion Feast Pizza image with the owner's supplied
+  centered 3:2 photo. Retained product code 745802369 and the existing
+  600x400 WebP/AVIF asset paths.
+
 ## 2026-09-27 — sandwich names and spice labels
 
 - Renamed the six existing grilled sandwich menu items to the owner's Melt
