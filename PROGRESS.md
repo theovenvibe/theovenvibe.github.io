@@ -1,3 +1,10 @@
+## 2026-09-27 — grilled sandwich photography
+
+- Replaced the two existing Jumbo sandwich photos and added dedicated photos
+  for the other four grilled sandwiches from the owner's six supplied images.
+  All six retain their existing product codes and use matching 600x400 WebP
+  and AVIF files; no menu names, prices, or ordering changed.
+
 ## 2026-09-27 — dedicated images for the new Diet Coke combos
 
 - Replaced the three new combos' reused pizza images with the owner's
