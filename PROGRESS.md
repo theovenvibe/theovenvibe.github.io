@@ -1,3 +1,8 @@
+## 2026-09-28 — Cheesy Corn sandwich prices
+
+- Set the existing Cheesy Corn Jumbo Melt Sandwich to Rs 149 and Cheesy Corn
+  Melt Sandwich to Rs 119; product codes and all other fields stay unchanged.
+
 ## 2026-09-27 — Zesty Onion Feast photo
 
 - Replaced the old Zesty Onion Feast Pizza image with the owner's supplied
