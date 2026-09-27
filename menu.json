@@ -84,7 +84,7 @@
       "category": "Signature Pizza",
       "subcategory": "Pizza",
       "item_name": "Schezwan Firecracker Pizza",
-      "display_name": "Schezwan Firecracker Pizza",
+      "display_name": "Schezwan Firecracker Pizza 🌶️ 🌶️",
       "price": 269,
       "description": "[veg preparation] Fiery Schezwan pizza with smoky paneer tikka, mozzarella, onion, capsicum, jalapeños, gherkins and red paprika. 8-inch, 4 slices. No egg.",
       "status": "available"
@@ -95,7 +95,7 @@
       "category": "Signature Pizza",
       "subcategory": "Pizza",
       "item_name": "Schezwan Corn Crunch Pizza",
-      "display_name": "Schezwan Corn Crunch Pizza",
+      "display_name": "Schezwan Corn Crunch Pizza 🌶️",
       "price": 239,
       "description": "[veg preparation] Sweet-spicy Schezwan pizza with golden corn, mozzarella, onion, capsicum, black olives and red paprika. 8-inch, 4 slices. No egg.",
       "status": "available"
@@ -160,8 +160,8 @@
       "item_id": 17,
       "category": "Grilled Sandwiches",
       "subcategory": "Sandwiches",
-      "item_name": "Fiery Cheese Chilli Jumbo Sandwich [2 slices]",
-      "display_name": "Fiery Cheese Chilli Jumbo Sandwich [2 slices] 🌶️ 🌶️",
+      "item_name": "Fiery Chilli Cheese Jumbo Melt Sandwich [2 slices]",
+      "display_name": "Fiery Chilli Cheese Jumbo Melt Sandwich [2 slices] 🌶️ 🌶️",
       "price": 129,
       "description": "[veg preparation] Spicy cheese and chilli filing.",
       "status": "available"
@@ -171,8 +171,8 @@
       "item_id": 18,
       "category": "Grilled Sandwiches",
       "subcategory": "Sandwiches",
-      "item_name": "Paneer Tikka Grilled Jumbo Sandwich [2 slices]",
-      "display_name": "Paneer Tikka Grilled Jumbo Sandwich [2 slices]",
+      "item_name": "Paneer Tikka Jumbo Melt Sandwich [2 slices]",
+      "display_name": "Paneer Tikka Jumbo Melt Sandwich [2 slices]",
       "price": 169,
       "description": "[veg preparation] Grilled sandwich stuffed with paneer.",
       "status": "available"
@@ -182,8 +182,8 @@
       "item_id": 44,
       "category": "Grilled Sandwiches",
       "subcategory": "Sandwiches",
-      "item_name": "Cheese Corn Grilled Jumbo Sandwich",
-      "display_name": "Cheese Corn Grilled Jumbo Sandwich",
+      "item_name": "Cheesy Corn Jumbo Melt Sandwich [2 slices]",
+      "display_name": "Cheesy Corn Jumbo Melt Sandwich [2 slices]",
       "price": 129,
       "description": "[veg preparation] A jumbo grilled sandwich loaded with sweet corn and melted cheese.",
       "status": "available"
@@ -193,8 +193,8 @@
       "item_id": 41,
       "category": "Grilled Sandwiches",
       "subcategory": "Sandwiches",
-      "item_name": "Fiery Cheese Chilli Sandwich",
-      "display_name": "Fiery Cheese Chilli Sandwich",
+      "item_name": "Fiery Chilli Cheese Melt Sandwich [2 slices]",
+      "display_name": "Fiery Chilli Cheese Melt Sandwich [2 slices] 🌶️ 🌶️",
       "price": 99,
       "description": "[veg preparation] A regular grilled sandwich filled with spicy chilli and melted cheese.",
       "status": "available"
@@ -204,8 +204,8 @@
       "item_id": 42,
       "category": "Grilled Sandwiches",
       "subcategory": "Sandwiches",
-      "item_name": "Paneer Tikka Grilled Sandwich",
-      "display_name": "Paneer Tikka Grilled Sandwich",
+      "item_name": "Paneer Tikka Melt Sandwich [2 slices]",
+      "display_name": "Paneer Tikka Melt Sandwich [2 slices]",
       "price": 129,
       "description": "[veg preparation] A regular grilled sandwich packed with seasoned paneer tikka filling.",
       "status": "available"
@@ -215,8 +215,8 @@
       "item_id": 43,
       "category": "Grilled Sandwiches",
       "subcategory": "Sandwiches",
-      "item_name": "Cheese Corn Grilled Sandwich",
-      "display_name": "Cheese Corn Grilled Sandwich",
+      "item_name": "Cheesy Corn Melt Sandwich [2 slices]",
+      "display_name": "Cheesy Corn Melt Sandwich [2 slices]",
       "price": 99,
       "description": "[veg preparation] A regular grilled sandwich with sweet corn and melted cheese.",
       "status": "available"

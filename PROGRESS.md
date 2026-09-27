@@ -1,3 +1,17 @@
+## 2026-09-27 — Zesty Onion Feast photo
+
+- Replaced the old Zesty Onion Feast Pizza image with the owner's supplied
+  centered 3:2 photo. Retained product code 745802369 and the existing
+  600x400 WebP/AVIF asset paths.
+
+## 2026-09-27 — sandwich names and spice labels
+
+- Renamed the six existing grilled sandwich menu items to the owner's Melt
+  names, retaining their product codes, prices, category, descriptions and
+  ordering. Each now shows 2 slices; both Fiery variants show Extra spicy.
+- Added Extra spicy to Schezwan Firecracker Pizza and Spicy to Schezwan Corn
+  Crunch Pizza without changing their product names or recipes.
+
 ## 2026-09-27 — grilled sandwich photography
 
 - Replaced the two existing Jumbo sandwich photos and added dedicated photos
