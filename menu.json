@@ -396,6 +396,19 @@
       "status": "available"
     },
     {
+      "combo_code": "900000104",
+      "combo_name": "Ultimate Cheese Meal Box Combo",
+      "combo_price": 249,
+      "description": "Our Ultimate Cheese Delight Pizza served with Classic French Fries (Small) and a chilled Diet Coke (200 ml). A cheesy, crispy and satisfying meal box for one. 100% pure veg, no egg.",
+      "items_included": [
+        "745802358",
+        "997492943",
+        "900000015"
+      ],
+      "image_code": "900000104",
+      "status": "available"
+    },
+    {
       "combo_code": "745802348",
       "combo_name": "Fiesta Pizza Combo",
       "combo_price": 339,

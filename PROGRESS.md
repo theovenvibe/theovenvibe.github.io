@@ -1,3 +1,9 @@
+## 2026-09-28 — Ultimate Cheese Meal Box Combo
+
+- Added the owner's Ultimate Cheese Meal Box Combo before Fiesta Pizza Combo
+  at Rs 249, containing Ultimate Cheese Delight Pizza, small Classic French
+  Fries and 200 ml Diet Coke. Used its supplied dedicated 3:2 photo.
+
 ## 2026-09-28 — Cheesy Corn sandwich prices
 
 - Set the existing Cheesy Corn Jumbo Melt Sandwich to Rs 149 and Cheesy Corn
