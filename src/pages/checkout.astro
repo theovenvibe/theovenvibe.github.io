@@ -539,11 +539,15 @@ const checkoutConfig = {
         if (!d || !d.ok) return;
         const raised = applyOffers(d.offers ?? {});
         form.setSoldOut(Object.keys(d.sold_out ?? {}));
+        form.setDeliveryAvailability(d.delivery);
+        form.setKitchenAvailability(d.store);
         renderCart();
         form.update();
         showOfferChanges(raised);
       })
       .catch(() => {
+        form.setDeliveryAvailability(null);
+        form.setKitchenAvailability(null);
         // Normal prices stand. Nothing to tell the customer: they were never
         // shown a discount this page could not honour.
       });

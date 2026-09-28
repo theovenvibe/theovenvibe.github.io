@@ -801,3 +801,17 @@ it: shrinking bytes is safe, changing pixels is a design decision.
   zero emoji. Built anchor uniqueness and initial/hash-change accordion opening
   passed with unknown/malformed hash checks. Browser UI QA unavailable because
   browser inventory failed with request-header policy error.
+## 2026-09-28 — Delivery pause website integration (phase 2)
+
+- Shared calculator/checkout form consumes live delivery availability, offers
+  Pickup only during a pause, preserves basket and explains type changes.
+- Public cart/menu banner shows reason/message and return timing; current poll
+  and focus refresh apply state to existing tabs. Expiry is evaluated locally;
+  failed availability requests fail open. No real orders, PN or production changes.
+- Feature stack keeps pending Signature Pizza link as its base. Release held
+  until both Delivery pause/Menu editor and owner QA/UAT approval are complete.
+- Manual kitchen closure reaches shared form too. Local browser saw358->319 and
+  checkout319 for one269 pizza at late night; future noon pickup269; basket kept.
+- Build/test:delivery passed, gallery38/38; rendered29 pages/19 JSON-LD/zero emoji.
+  Final mobile matrix/owner manual UAT pending (backend TODO Phase7). No customer
+  number/order/PN; local GET-only preview blocks POSTs; local controls restored.
