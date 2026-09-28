@@ -163,7 +163,7 @@
       "item_name": "Fiery Chilli Cheese Jumbo Melt Sandwich [2 slices]",
       "display_name": "Fiery Chilli Cheese Jumbo Melt Sandwich [2 slices] 🌶️ 🌶️",
       "price": 129,
-      "description": "[veg preparation] Spicy cheese and chilli filing.",
+      "description": "[veg preparation] A grilled sandwich made with jumbo bread, filled with spicy chilli and melted cheese.",
       "status": "available"
     },
     {
@@ -174,7 +174,7 @@
       "item_name": "Paneer Tikka Jumbo Melt Sandwich [2 slices]",
       "display_name": "Paneer Tikka Jumbo Melt Sandwich [2 slices]",
       "price": 169,
-      "description": "[veg preparation] Grilled sandwich stuffed with paneer.",
+      "description": "[veg preparation] A grilled sandwich made with jumbo bread, packed with seasoned paneer tikka filling.",
       "status": "available"
     },
     {
@@ -185,7 +185,7 @@
       "item_name": "Cheesy Corn Jumbo Melt Sandwich [2 slices]",
       "display_name": "Cheesy Corn Jumbo Melt Sandwich [2 slices]",
       "price": 149,
-      "description": "[veg preparation] A jumbo grilled sandwich loaded with sweet corn and melted cheese.",
+      "description": "[veg preparation] A grilled sandwich made with jumbo bread, loaded with sweet corn and melted cheese.",
       "status": "available"
     },
     {
@@ -196,7 +196,7 @@
       "item_name": "Fiery Chilli Cheese Melt Sandwich [2 slices]",
       "display_name": "Fiery Chilli Cheese Melt Sandwich [2 slices] 🌶️ 🌶️",
       "price": 99,
-      "description": "[veg preparation] A regular grilled sandwich filled with spicy chilli and melted cheese.",
+      "description": "[veg preparation] A grilled sandwich made with regular sandwich bread, filled with spicy chilli and melted cheese.",
       "status": "available"
     },
     {
@@ -207,7 +207,7 @@
       "item_name": "Paneer Tikka Melt Sandwich [2 slices]",
       "display_name": "Paneer Tikka Melt Sandwich [2 slices]",
       "price": 129,
-      "description": "[veg preparation] A regular grilled sandwich packed with seasoned paneer tikka filling.",
+      "description": "[veg preparation] A grilled sandwich made with regular sandwich bread, packed with seasoned paneer tikka filling.",
       "status": "available"
     },
     {
@@ -218,7 +218,7 @@
       "item_name": "Cheesy Corn Melt Sandwich [2 slices]",
       "display_name": "Cheesy Corn Melt Sandwich [2 slices]",
       "price": 119,
-      "description": "[veg preparation] A regular grilled sandwich with sweet corn and melted cheese.",
+      "description": "[veg preparation] A grilled sandwich made with regular sandwich bread, loaded with sweet corn and melted cheese.",
       "status": "available"
     },
     {
@@ -241,7 +241,7 @@
       "display_name": "Cheesy Garlic Bread Toast",
       "price": 129,
       "description": "[veg preparation] Garlic butter with melted cheese.",
-      "status": "available"
+      "status": "unavailable"
     },
     {
       "product_code": "997492943",
@@ -361,7 +361,7 @@
   "Combos": [
     {
       "combo_code": "900000101",
-      "combo_name": "Schezwan Firecracker Pizza + 330ml Diet Coke",
+      "combo_name": "Firecracker Fizz Combo",
       "combo_price": 309,
       "description": "Schezwan Firecracker Pizza paired with a chilled 330 ml Diet Coke.",
       "items_included": [
@@ -373,7 +373,7 @@
     },
     {
       "combo_code": "900000102",
-      "combo_name": "Schezwan Corn Crunch Pizza + 330ml Diet Coke",
+      "combo_name": "Corn Crunch Fizz Combo",
       "combo_price": 279,
       "description": "Schezwan Corn Crunch Pizza paired with a chilled 330 ml Diet Coke.",
       "items_included": [
@@ -385,7 +385,7 @@
     },
     {
       "combo_code": "900000103",
-      "combo_name": "Farmhouse Garden Pizza + 330ml Diet Coke",
+      "combo_name": "Farmhouse Fizz Combo",
       "combo_price": 289,
       "description": "Farmhouse Garden Pizza paired with a chilled 330 ml Diet Coke.",
       "items_included": [
