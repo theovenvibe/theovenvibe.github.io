@@ -791,3 +791,13 @@ offenders were phone-camera originals shipped raw: several 4096x3072 photos at
 A first attempt at this went too wide — it cropped square photos to 3:2 and
 resized the logo — and was reverted before commit. The rule that came out of
 it: shrinking bytes is safe, changing pixels is a design decision.
+## 2026-09-28 — Signature Pizza notification destination
+
+- Menu categories now have stable name-based anchors; /menu/#signature-pizza
+  opens and scrolls to Signature Pizza on initial navigation and hash changes.
+- No notification sent and no customer/test journey created. Kept on a feature
+  branch for the coordinated batch release; production is unchanged.
+- npm run build passed; rendered QA checked 29 pages, 19 valid JSON-LD blocks,
+  zero emoji. Built anchor uniqueness and initial/hash-change accordion opening
+  passed with unknown/malformed hash checks. Browser UI QA unavailable because
+  browser inventory failed with request-header policy error.

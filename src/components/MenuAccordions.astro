@@ -56,7 +56,7 @@ function comboDescription(combo: (typeof availableCombos)[number]): string {
 
 {
   categories.map(({ name, items }) => (
-    <AccordionItem title={name} subtitle={`${items.length} ${items.length === 1 ? 'item' : 'items'}`}>
+    <AccordionItem title={name} subtitle={`${items.length} ${items.length === 1 ? 'item' : 'items'}`} id={name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}>
       <div class="category-group">
         <div class="menu-items">
           {items.map((item) => (
