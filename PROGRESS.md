@@ -831,3 +831,7 @@ it: shrinking bytes is safe, changing pixels is a design decision.
 
 ## CI lockfile correction — 2026-09-29
 PR139 failed npm ci on Linux because Windows npm install omitted optional emnapi dependencies. Regenerated the lockfile in a fresh directory; Linux/x64 npm ci dry-run passes. No dependency source or workflow deploy change. Actual CI rerun pending.
+
+## 2026-09-29 — CI follow-up and multiple-photo check
+- PR139 second CI run failed npm ci. RCA: local npm11.6.2 accepted a lockfile that CI npm11.19.0 rejected. Regenerated in an isolated directory using npm11.19.0, Linux/x64; exact-version clean-install dry-run passes. Fresh actual CI confirmation pending after push.
+- Local browser Vegie Onion Capsicum Pizza loads both existing photos745802365.webp and745802365-2.webp. Make cover promotes photo2; discarded changes without Apply/Save. Upload accepts one file at a time, up to8 photos per item; no bulk file selection yet. No customer/order/PN/production change. Screenshot .artifacts/vegie-two-photos.png.
