@@ -4,7 +4,10 @@ import sharp from 'sharp';
 const fields={Menu_Items:['product_code','product_images'],Combos:['combo_code','combo_images'],Add_ons:['addon_code','add_on_images']};
 const safe=/^[A-Za-z0-9_-]{1,80}$/;
 /** All writes are source files inside an isolated Actions checkout. */
-export async function applyMenuBatch(manifest,root,fetchAsset){
+export async function applyMenuBatch(manifest,root,fetchAsset,fetchSource=async(sha,path)=>{
+  const response=await fetch('https://raw.githubusercontent.com/theovenvibe/theovenvibe.github.io/'+sha+'/'+path,{signal:AbortSignal.timeout(20000)});
+  if(!response.ok)throw new Error('Recorded source photo unavailable');return new Uint8Array(await response.arrayBuffer());
+}){
   if(!/^[a-f0-9]{40}$/.test(manifest.base_sha)||!Number.isSafeInteger(manifest.version))throw new Error('Invalid batch manifest');
   const previous=JSON.parse(await readFile(resolve(root,'menu.json'),'utf8'));
   const config=JSON.parse(await readFile(resolve(root,'site.config.json'),'utf8'));
@@ -22,11 +25,14 @@ export async function applyMenuBatch(manifest,root,fetchAsset){
     for(const ref of refs){
       let bytes;if(/^asset:[a-f0-9]{64}$/.test(ref)){bytes=Buffer.from(await fetchAsset(ref.slice(6)));total+=bytes.length;}
       else if(/^public\/static\/images\/(product_images|combo_images|add_on_images)\/[A-Za-z0-9_-]+\.webp$/.test(ref))bytes=await readFile(resolve(root,ref));
+      else if(/^source:[a-f0-9]{40}:public\/static\/images\/(product_images|combo_images|add_on_images)\/[A-Za-z0-9_-]+\.webp$/.test(ref)){const [,sha,...parts]=ref.split(':');bytes=Buffer.from(await fetchSource(sha,parts.join(':')));total+=bytes.length;}
       else throw new Error('Unsafe photo reference');
       if(bytes.length>512000||total>10485760)throw new Error('Photo budget exceeded');
-      const meta=await sharp(bytes,{limitInputPixels:240000,animated:false}).metadata();
-      if(meta.format!=='webp'||meta.width!==600||meta.height!==400||(meta.pages||1)!==1)throw new Error('Invalid photo format or dimensions');
-      images.push(bytes);
+      const isUpload=ref.startsWith('asset:');const meta=await sharp(bytes,{limitInputPixels:isUpload?240000:40000000,animated:false}).metadata();
+      if(meta.format!=='webp'||!meta.width||!meta.height||(isUpload&&(meta.width!==600||meta.height!==400))||(meta.pages||1)!==1)throw new Error('Invalid photo format or dimensions');
+      // Older published images include square add-ons and larger photos. Fit the
+      // whole source into the new frame instead of rejecting or cropping it.
+      images.push(await sharp(bytes).resize(600,400,{fit:'contain',background:'#111'}).webp({quality:86}).toBuffer());
     }
     const folder=resolve(root,'public/static/images',dir);await mkdir(folder,{recursive:true});
     for(let n=1;n<=8;n++)for(const format of ['webp','avif'])await unlink(resolve(folder,imageCode+(n===1?'':'-'+n)+'.'+format)).catch(e=>{if(e.code!=='ENOENT')throw e;});

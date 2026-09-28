@@ -835,3 +835,9 @@ PR139 failed npm ci on Linux because Windows npm install omitted optional emnapi
 ## 2026-09-29 — CI follow-up and multiple-photo check
 - PR139 second CI run failed npm ci. RCA: local npm11.6.2 accepted a lockfile that CI npm11.19.0 rejected. Regenerated in an isolated directory using npm11.19.0, Linux/x64; exact-version clean-install dry-run passes. Fresh actual CI confirmation pending after push.
 - Local browser Vegie Onion Capsicum Pizza loads both existing photos745802365.webp and745802365-2.webp. Make cover promotes photo2; discarded changes without Apply/Save. Upload accepts one file at a time, up to8 photos per item; no bulk file selection yet. No customer/order/PN/production change. Screenshot .artifacts/vegie-two-photos.png.
+
+## 2026-09-29 — Old-photo restore and CI proof
+- Website92a8e56 verified GitHub Actions run36483130025: npm ci/build/Lighthouse success; deploy skipped. Exact CI npm11.19.0 resolved the lockfile issue.
+- Added private History Restore revision: CAS creates a new saved revision, retains immutable IDs/operational fields, unlists newer published rows; old photo sources pinned source:<sha>:path, private uploads retained. Historical card preview now uses recorded source SHA. Builder can retrieve archived Git photos and normalizes older square/large sources by fitting the whole image rather than rejecting them.
+- Rollback pure tests and isolated historical-image builder tests pass. Actual local protected restore401/200, revision6 with45 galleries, then baseline restored via revision7. No customer/order/journey/PN or production change.
+- Phase6 still needs final recovery/race/workflow audit and stable stock recipe work before publication; full Phase4/5/7 UI/UAT pending. Next resume at stock audit; local draft version7. New follow-up commits will be shown by git log; their CI must be checked separately from92a8e56.

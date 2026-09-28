@@ -20,6 +20,13 @@ try{
   for(const suffix of ['.webp','.avif','-2.webp','-2.avif']){const metadata=await sharp(await readFile(stem+suffix)).metadata();assert.equal(metadata.width,600);assert.equal(metadata.height,400);}
   const og=await sharp(await readFile(join(root,'public/static/images/og/og-default.jpg'))).metadata();assert.equal(og.format,'jpeg');assert.equal(og.width,1200);assert.equal(og.height,630);
   await writeFile(join(root,'menu.json'),JSON.stringify(original));
+  const historic=structuredClone(original);historic._draft_photos={['Menu_Items:'+hero.product_code]:['source:'+'b'.repeat(40)+':public/static/images/product_images/removed-old-photo.webp']};
+  const legacySquare=await sharp({create:{width:1024,height:1024,channels:3,background:'#ddaa55'}}).webp().toBuffer();
+  let sourceRead=null;const historicalResult=await applyMenuBatch({menu:historic,base_sha:'a'.repeat(40),version:6},root,async()=>asset,async(sha,path)=>{sourceRead={sha,path};return legacySquare;});
+  assert.deepEqual(sourceRead,{sha:'b'.repeat(40),path:'public/static/images/product_images/removed-old-photo.webp'});assert.ok(historicalResult.Menu_Items.find(r=>r.product_code===hero.product_code).image_code.startsWith('OV-item-'));
+  const restoredImage=historicalResult.Menu_Items.find(r=>r.product_code===hero.product_code).image_code;
+  const restoredMetadata=await sharp(join(root,'public/static/images/product_images',restoredImage+'.webp')).metadata();assert.equal(restoredMetadata.width,600);assert.equal(restoredMetadata.height,400,'Legacy square photos are normalized for customer cards');
+  await writeFile(join(root,'menu.json'),JSON.stringify(original));
   const malicious=structuredClone(original);malicious._draft_photos={['Menu_Items:'+hero.product_code]:['../../outside.webp']};
   await assert.rejects(()=>applyMenuBatch({menu:malicious,base_sha:'a'.repeat(40),version:6},root,async()=>asset),/Unsafe photo/);
   console.log('Batch: isolated source writes, stable IDs, WebP/AVIF pairs, reordered photos, hero JPEG1200x630, late-night rename preservation and unsafe paths rejected.');
