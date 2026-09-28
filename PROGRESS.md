@@ -818,3 +818,4 @@ it: shrinking bytes is safe, changing pixels is a design decision.
   Final mobile matrix/owner manual UAT pending (backend TODO Phase7). No customer
   number/order/PN; local GET-only preview blocks POSTs; local controls restored.
 
+2026-09-29 follow-up: explicit tags/serving fall back independently to legacy size/spice metadata. Latest build and menu/pricing/Dough/cart checks passed. Release held.

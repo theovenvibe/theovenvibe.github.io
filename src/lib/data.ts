@@ -89,7 +89,10 @@ export function displayMeta(raw: string): string[] {
 /** Explicit metadata takes precedence; old catalogue markers remain the fallback. */
 export function entryMeta(entry: {tags?: string[];serving?: {amount:number;unit:string}}, raw: string): string[] {
   if (entry.tags === undefined && entry.serving === undefined) return displayMeta(raw);
-  const parts = [...(entry.serving ? [`${entry.serving.amount} ${entry.serving.unit}`] : []),...(entry.tags ?? [])];
+  const fallback = displayMeta(raw);
+  const size = entry.serving ? [`${entry.serving.amount} ${entry.serving.unit}`] : fallback.filter(p=>!['Spicy','Extra spicy'].includes(p));
+  const tags = entry.tags ?? fallback.filter(p=>['Spicy','Extra spicy'].includes(p));
+  const parts = [...size,...tags];
   return parts.map(displayName).filter(Boolean);
 }
 
