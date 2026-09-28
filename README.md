@@ -1,5 +1,7 @@
 # The Oven Vibe — Sundargarh, Odisha
 
+Current delivery and checkout policy: [docs/DELIVERY_PRICING.md](docs/DELIVERY_PRICING.md).
+
 Digital menu + lead-generation website for **The Oven Vibe**, a 100% pure
 vegetarian cloud kitchen in Sundargarh, Odisha (pin 770001). Live at
 [theovenvibe.github.io](https://theovenvibe.github.io).

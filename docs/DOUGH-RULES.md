@@ -1,7 +1,7 @@
 # Dough rules — the arithmetic, the bugs, and how not to repeat them
 
-Owner decisions, 25 Aug 2026. Every number here is enforced in code and
-covered by `npm run test:dough` (37 assertions, 120,000 randomised baskets).
+Owner decisions, 25 Aug 2026; delivery-minimum logic retired 28 Sept 2026.
+The current limits are enforced in code and covered by `npm run test:dough`.
 
 ## The rules
 
@@ -22,29 +22,16 @@ so the margin holds even if that rate climbs.
 
 ## The arithmetic
 
-Three limits, tightest wins, and **they measure different things**:
+Two limits, tightest wins:
 
 ```
-cap      = floor(spendable × 10%)      spendable = full-price food only
-headroom = max(0, foodTotal − minimum) foodTotal = the WHOLE order
-usable   = max(0, min(balance, cap, headroom))
+cap    = floor(spendable × 10%)
+usable = max(0, min(balance, cap))
 ```
 
-`spendable` excludes offer items and drinks. `foodTotal` does not. Confusing the
-two is the bug in §B below.
-
-Worked example — the owner's real basket, 25 Aug:
-
-| | |
-|---|---:|
-| 3 × Crunchy Capsicum @ ₹139 (**on offer**) | ₹417 |
-| 1 × Paneer Tikka Sandwich @ ₹169 | ₹169 |
-| **foodTotal** | **₹586** |
-| **spendable** (offer items excluded) | **₹169** |
-| cap = floor(169 × 10%) | ₹16 |
-| headroom = 586 − 299 pickup minimum | ₹287 |
-| balance | ₹7 |
-| **usable = min(7, 16, 287)** | **₹7** |
+`spendable` is full-price food only; offer items and drinks are excluded.
+There is no distance-based or late-night minimum to preserve after Dough is
+applied. On a ₹99 eligible basket with a ₹50 balance, ₹9 may be used.
 
 ---
 
@@ -67,7 +54,7 @@ written in `DOUGH_AND_REFERRALS.md` as an intention and never implemented at ite
 level. **A rule in a doc with no code and no test is not a rule.** It sat unenforced
 until the first offer went live and would have leaked from that day.
 
-### B · "You need a bigger basket" on a basket twice the minimum
+### B · Historical: the retired minimum blocked Dough
 
 **Symptom.** ₹586 order, ₹7 balance, told to add more. Reported by the owner
 within an hour of deploy.
@@ -76,8 +63,8 @@ within an hour of deploy.
 use it; **headroom must not.** ₹169 of spendable was compared against the ₹299
 pickup minimum, giving zero headroom on an order nearly twice that minimum.
 
-**Fix.** `usableDough(state, spendable, minimum, foodTotal)` — cap on
-`spendable`, headroom on `foodTotal`.
+**Former fix.** Headroom was computed against `foodTotal`. The minimum and
+headroom logic were removed in the 2026-09-28 delivery update.
 
 **Root cause.** One variable named `foodTotal` was silently redefined to mean
 something narrower. Every reader downstream kept the old meaning in their head.
@@ -139,13 +126,8 @@ is a working example.
 
 ## Guardrails now in place
 
-- `npm run test:dough` — 37 assertions plus 120,000 randomised baskets checking
-  five invariants that must never break:
-  1. never negative
-  2. never exceeds the balance
-  3. never exceeds 10% of spendable
-  4. never drags an order under its minimum
-  5. always an integer rupee
+- `npm run test:dough` checks nonnegative integer results, balance and 10%
+  caps, low-value baskets, and parity with the Worker spend cap.
 - A cross-check that the number checkout shows is always one the Worker will
   honour — bug B was exactly that disagreement.
 - The customer-facing sentence lives in **one** exported constant,
@@ -156,4 +138,4 @@ is a working example.
 
 1. `npm run test:dough` must pass.
 2. `npm run build` must pass.
-3. Ask which total each limit should use. That question is bug B.
+3. The 10% cap uses only eligible full-price food.

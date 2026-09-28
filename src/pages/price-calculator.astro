@@ -24,10 +24,8 @@ import Layout from '../layouts/Layout.astro';
 import {
   site,
   orderCatalogGroups,
-  quietHoursTimeRange,
   lateNightTimeRange,
   lateNightDeliveryBands,
-  maxDeliveryKm,
 } from '../lib/data';
 import { breadcrumbJsonLd } from '../lib/seo';
 import OrderOptions from '../components/OrderOptions.astro';
@@ -38,7 +36,6 @@ const d = site.delivery;
 
 const title = 'Delivery Price Calculator — The Oven Vibe';
 const description = `Pick your items, distance and time and see your exact ${site.business.name} delivery total instantly — itemised, with the rule behind every line.`;
-const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
 
 // The orderable catalogue (what is on the menu, and what of it survives the
 // late-night window) lives in src/lib/data.ts, shared with /checkout/ and the
@@ -93,9 +90,6 @@ const calcConfig = {
               <tr>
                 <th scope="col">Distance</th>
                 <th scope="col">Delivery charge</th>
-                <th scope="col">Afternoon rate</th>
-                <th scope="col">Minimum order</th>
-                <th scope="col">Afternoon minimum</th>
                 <th scope="col">Free above</th>
               </tr>
             </thead>
@@ -105,14 +99,7 @@ const calcConfig = {
                   <tr>
                     <th scope="row">{slab.label}</th>
                     <td>₹{slab.charge}</td>
-                    <td>
-                      {slab.label === d.quiet_hours.applies_to_slab
-                        ? `₹${d.quiet_hours.charge}`
-                        : '—'}
-                    </td>
-                    <td>₹{slab.min_order}</td>
-                    <td>₹{slab.min_order_quiet}</td>
-                    <td>₹{slab.free_above}</td>
+                    <td>{slab.free_above ? `₹${slab.free_above}` : '—'}</td>
                   </tr>
                 ))
               }
@@ -121,16 +108,11 @@ const calcConfig = {
         </div>
         <ul class="calc-rules-list">
           <li>
-            Afternoon rate: {quietHoursTimeRange}, {d.quiet_hours.days} — ₹{d.quiet_hours.charge} delivery
-            for {d.quiet_hours.applies_to_slab}, minimum order ₹{d.slabs[0].min_order_quiet}. {d.quiet_hours.note}
-          </li>
-          <li>
-            The <strong>Free above</strong> column applies during normal hours only — free
+            The <strong>Free above</strong> thresholds are inclusive for each distance band during normal hours — free
             delivery does not apply in the late-night window.
           </li>
           <li>
-            Late night ({lateNightTimeRange}) costs more, and the two charges are explained in
-            plain words just below this list.
+            Late night ({lateNightTimeRange}) adds one kitchen reopen surge, explained below.
           </li>
           {d.rain.active && <li>Rain surcharge active right now: +₹{d.rain.surcharge}. {d.rain.note}</li>}
           <li>
@@ -160,8 +142,7 @@ const calcConfig = {
           <p class="latenight-why__intro">
             We close at {site.business.hours.close === '23:30' ? '11:30 PM' : site.business.hours.close}.
             An order after that means opening the kitchen again, and that costs us real money —
-            so it costs you a bit more. There are only two extra charges, and this is what each
-            one pays for.
+            so it costs you a bit more. The kitchen reopen charge is added once; delivery uses the normal distance rate.
           </p>
 
           <div class="latenight-why__item">
@@ -186,22 +167,15 @@ const calcConfig = {
               </strong>
             </p>
             <p class="latenight-why__note">
-              Only if we deliver. This is the normal distance charge with the late-night part
-              already added in, so you see one number instead of two. Riding out at that hour
-              costs us more.{' '}
+              Only if we deliver. This is the normal distance charge.{' '}
               <strong>Collect it yourself and you don't pay this at all.</strong>
             </p>
-            <p class="latenight-why__note">
-              Free delivery on bigger orders does not apply after closing — the ride costs more
-              at that hour, not less, which is also why the window has its own ₹{d.late_night.min_order}{' '}
-              minimum.
-            </p>
+            <p class="latenight-why__note">Free delivery does not apply during the late-night window.</p>
           </div>
 
           <p class="latenight-why__foot">
-            Minimum order ₹{d.late_night.min_order}, paid online in advance — we need to know the
-            order is real before we light the oven. If it rains when we ride out,{' '}
-            ₹{d.rain.surcharge} is added on delivery. {d.late_night.menu_note}
+            Full advance payment of the final total is required, including delivery, the kitchen reopen
+            charge and any active ₹{d.rain.surcharge} rain surcharge. {d.late_night.menu_note}
           </p>
         </div>
       </div>
@@ -219,7 +193,7 @@ const calcConfig = {
 
         <h2 style="margin-bottom: 0.5rem;">Build your order</h2>
         <p class="lead" style="margin-bottom: 1rem;">
-          Tap + to add items. Your total updates as you go.
+          Tap + to add items. Your total updates as you go. Continuing to checkout replaces your basket with the items picked here.
         </p>
         {/* Filled by the client script from the chosen date/time: the kitchen
             is shut outside its hours, and only part of the menu is cooked in
@@ -275,7 +249,7 @@ const calcConfig = {
 
 <script>
   import { initOrderForm, type BasketRow, type OrderFormConfig } from '../lib/order-form';
-  import { getCart, setItemQty } from '../lib/cart';
+  import { replaceCart } from '../lib/cart';
 
   const configEl = document.getElementById('calc-config');
   const CFG: OrderFormConfig = JSON.parse(configEl?.textContent ?? '{}');
@@ -330,22 +304,23 @@ const calcConfig = {
     primaryAction: 'handoff',
     handoffHref: '/checkout/',
     onHandoff() {
-      // Write what was picked here into the basket, so checkout opens already
-      // filled in. Quantities are SET, not added: this screen is the basket the
-      // customer just built, and adding to whatever was already there would
-      // silently double it. Extras attached to a line at checkout survive,
-      // because setItemQty only touches the quantity.
-      const chosen = new Map<string, number>();
-      itemRows.forEach((row, i) => {
-        const qty = rows[i].getQty();
-        if (qty > 0) chosen.set(row.dataset.id as string, qty);
-      });
-      for (const line of getCart()) {
-        if (!chosen.has(line.id)) continue;
-        setItemQty(line.id, chosen.get(line.id) as number);
-        chosen.delete(line.id);
-      }
-      for (const [id, qty] of chosen) setItemQty(id, qty);
+      // Keep the selected conditions with the basket so checkout starts from
+      // the exact quote the customer just saw.
+      sessionStorage.setItem('ovenvibe.order_options.v1', JSON.stringify({
+        distance: document.querySelector<HTMLInputElement>('input[name="distance"]:checked')?.value,
+        km: (document.getElementById('kmInput') as HTMLInputElement).value,
+        preorder: (document.getElementById('preorderCheck') as HTMLInputElement).checked,
+        date: (document.getElementById('dateInput') as HTMLInputElement).value,
+        time: (document.getElementById('timeInput') as HTMLInputElement).value,
+        orderType: document.querySelector<HTMLInputElement>('input[name="orderType"]:checked')?.value,
+        prepaid: (document.getElementById('prepaidCheck') as HTMLInputElement).checked,
+        rain: (document.getElementById('rainCheck') as HTMLInputElement).checked,
+      }));
+      // Checkout must price exactly this basket, without unrelated items or
+      // attached extras from a previous visit changing the calculator total.
+      replaceCart(itemRows.map((row, i) => ({
+        id: row.dataset.id as string, qty: rows[i].getQty(), addons: {},
+      })).filter(line => line.qty > 0));
     },
   });
 

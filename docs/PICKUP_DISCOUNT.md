@@ -1,5 +1,10 @@
 # The pickup discount — retired 2026-08-19, and how to bring it back
 
+**Historical analysis:** delivery pricing v2 (2026-09-28) removes the retired
+pickup discount code and config keys. The restoration recipe below is archival,
+not a current implementation instruction. Read `docs/DELIVERY_PRICING.md` for
+the approved current policy; do not restore this promotion without owner approval.
+
 It was **₹30 off pickup orders over ₹299**. It is commented out, not deleted.
 
 ## Why it went

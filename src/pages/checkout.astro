@@ -788,60 +788,16 @@ const checkoutConfig = {
   void refreshDough();
 
   const form = initOrderForm(CFG, {
-    /**
-     * Apply Dough to a good quote.
-     *
-     * Two limits and the tighter wins: 10% of the food total, and never so much
-     * that the order falls under its own minimum — Dough should grow a basket,
-     * not shrink one. Whatever comes out of here is both what the customer
-     * reads and what the kitchen is sent, so they cannot disagree.
-     */
+    /** Apply Dough only to eligible full-price food. */
     adjustQuote: (result, basket) => {
       doughApplied = 0;
       if (!useDough || dough.balance <= 0) return result;
-      // Two different totals, and mixing them up is a real bug that shipped.
-      //
-      // `spendable` is the full-price food — what the 10% cap is taken on,
-      // since Dough may not touch an offer item or a drink. `foodTotal` is the
-      // whole order, and it is what the minimum-order check must use: the
-      // minimum applies to the order being placed, not to the slice Dough is
-      // allowed to touch.
-      const foodTotal = result.lines
-        .filter((l) => l.label === 'Food')
-        .reduce((sum, l) => sum + l.amount, 0);
       const spendable = basket.spendable;
-      const minimum = result.minimum ?? 0;
-      // A basket that is entirely offer items has nothing for Dough to touch.
-      // Silence there reads as a bug, so say the rule rather than show ₹0.
       if (spendable <= 0) {
-        return {
-          ...result,
-          notes: [...(result.notes ?? []), DOUGH_OFFER_RULE],
-        };
+        return { ...result, notes: [...(result.notes ?? []), DOUGH_OFFER_RULE] };
       }
-      const usable = usableDough(dough, spendable, minimum, foodTotal);
-      if (usable <= 0) {
-        // Silence here reads as a broken promise: they were told they have Rs40,
-        // they asked to spend it, and the total did not move. Say why, and say
-        // what unlocks it - a basket at exactly the delivery minimum has no
-        // headroom at all, which is the case this hits most often.
-        // Two different reasons for zero, and they need different advice.
-        // If the cap is what bit, the basket is big enough — it is just mostly
-        // offer items, and telling them to add more would be wrong.
-        if (Math.floor(spendable * dough.capPct) <= 0) {
-          return { ...result, notes: [...(result.notes ?? []), DOUGH_OFFER_RULE] };
-        }
-        const needed = Math.max(minimum + dough.balance, dough.balance * 10) - foodTotal;
-        return needed > 0
-          ? {
-              ...result,
-              notes: [
-                ...(result.notes ?? []),
-                `Your ₹${dough.balance} of Dough needs a slightly bigger basket — add ₹${needed} more and all of it comes off.`,
-              ],
-            }
-          : result;
-      }
+      const usable = usableDough(dough, spendable);
+      if (usable <= 0) return result;
       doughApplied = usable;
       return {
         ...result,
@@ -849,29 +805,9 @@ const checkoutConfig = {
         total: result.total - usable,
         notes: [
           ...(result.notes ?? []),
-          // Say which limit actually bit, not just that one did.
-          //
-          // This used to blame the 10% cap for every partial spend. On a ₹412
-          // basket at the 2–4 km minimum of ₹399 only ₹13 can come off — the
-          // minimum is the binding limit, not the cap — but the page said
-          // "up to 10% of an order", and 10% of ₹412 is ₹41. The customer does
-          // that arithmetic and concludes they were short-changed. The zero
-          // case already explained itself properly; this is the same courtesy
-          // for the non-zero one.
           usable >= dough.balance
             ? `Your full ₹${dough.balance} of Dough is on this order.`
-            : usable < Math.floor(spendable * dough.capPct)
-              ? `Using ₹${usable} of your ₹${dough.balance} — an order cannot drop below its ₹${minimum} minimum. ` +
-                // Same formula as the zero case below, and for the same
-                // reason: clearing the minimum alone is not enough, because
-                // the 10% cap then becomes the binding limit. Both have to be
-                // satisfied for the whole balance to come off, so this is the
-                // larger of the two requirements — quoting only the minimum
-                // would send them back for a second disappointment.
-                `Add ₹${Math.max(minimum + dough.balance, dough.balance * 10) - foodTotal} more and the rest comes off.`
-              : `Using ₹${usable} of your ₹${dough.balance} — up to 10% of an order.`,
-          // Only when something was actually left out, so a normal order does
-          // not carry a rule it never hit.
+            : `Using ₹${usable} of your ₹${dough.balance} — up to 10% of eligible food.`,
           ...(basket.hasExcluded ? [DOUGH_OFFER_RULE] : []),
         ],
       };
@@ -939,6 +875,32 @@ const checkoutConfig = {
       })),
     emptyMessage: 'Your basket is empty — add something from the menu to see your total.',
   });
+
+  const handedOff = sessionStorage.getItem('ovenvibe.order_options.v1');
+  if (handedOff) {
+    sessionStorage.removeItem('ovenvibe.order_options.v1');
+    try {
+      const selected = JSON.parse(handedOff);
+      const distance = document.querySelector<HTMLInputElement>(`input[name="distance"][value="${selected.distance}"]`);
+      const orderType = document.querySelector<HTMLInputElement>(`input[name="orderType"][value="${selected.orderType}"]`);
+      if (distance) distance.checked = true;
+      if (orderType) orderType.checked = true;
+      const preorder = document.getElementById('preorderCheck') as HTMLInputElement;
+      if (selected.preorder === true) {
+        preorder.checked = true;
+        preorder.dispatchEvent(new Event('change', { bubbles: true }));
+        (document.getElementById('dateInput') as HTMLInputElement).value = selected.date || '';
+        const time = document.getElementById('timeInput') as HTMLInputElement;
+        time.value = selected.time || '';
+        time.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+      (document.getElementById('kmInput') as HTMLInputElement).value = selected.km || '';
+      (document.getElementById('prepaidCheck') as HTMLInputElement).checked = selected.prepaid === true;
+      (document.getElementById('rainCheck') as HTMLInputElement).checked = selected.rain === true;
+      form.update();
+    } catch { /* A stale handoff should never prevent checkout. */ }
+  }
+
 
   // A returning customer arrives with their number already filled in, from the
   // details this page remembers on their device. They are exactly who the hint
@@ -1021,9 +983,7 @@ const checkoutConfig = {
   // is never held up; it never meant the order could be quietly discarded.
   // ---------------------------------------------------------------------------
 
-  const distanceRadios = Array.from(document.querySelectorAll<HTMLInputElement>('input[name="distance"]'));
   const orderTypeRadios = Array.from(document.querySelectorAll<HTMLInputElement>('input[name="orderType"]'));
-  const kmInput = document.getElementById('kmInput') as HTMLInputElement;
   const preorderCheck = document.getElementById('preorderCheck') as HTMLInputElement;
   const dateInput = document.getElementById('dateInput') as HTMLInputElement;
   const timeInput = document.getElementById('timeInput') as HTMLInputElement;

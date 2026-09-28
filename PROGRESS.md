@@ -1,3 +1,17 @@
+## 2026-09-28 — delivery pricing v2 release preparation
+
+- Owner policy: 0–2 km ₹39, 2–4 km ₹79, new 4–6 km ₹119; direct delivery
+  through 6 km. No distance or late-night minimums, afternoon special, or
+  separate late-night delivery premium. One ₹50 kitchen reopen surge per order.
+- Config, schema, shared calculator/checkout engine, form, handoff, banner,
+  FAQ, late-night article, Dough rules and current policy docs updated.
+  Inclusive normal free-delivery thresholds ₹499 / ₹899 / ₹1299 by band; rain +₹29 retained.
+- Worker feature branch contains full advance acceptance enforcement and
+  accurate itemised WhatsApp bills. See `docs/DELIVERY_PRICING.md` for payment
+  handling and manual QR limitations. Older entries below are historical.
+- Owner reviewed the local site and approved production release on 28 Sept.
+  Final checks precede feature/develop merges and production deployment.
+
 ## 2026-09-28 — Ultimate Cheese Meal Box Combo
 
 - Added the owner's Ultimate Cheese Meal Box Combo before Fiesta Pizza Combo

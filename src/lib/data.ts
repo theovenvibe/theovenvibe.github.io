@@ -208,67 +208,25 @@ export const addonCartId = (addonCode: string) => `addon-${addonCode}`;
    site.delivery — these helpers exist so that no page hand-formats a rupee
    or a time range on its own) ---------- */
 
-/** "₹29 for 0–2 km · ₹69 for 2–4 km" */
+/** All standard distance bands, directly from site.config.json. */
 export const deliverySlabLine = site.delivery.slabs.map((s) => `₹${s.charge} for ${s.label}`).join(' · ');
 
-/** "FREE above ₹499 within 2 km" for a given slab. */
+/** Free delivery is specific to this distance band. */
 export function slabFreeAboveLine(slab: SiteConfig['delivery']['slabs'][number]): string {
-  return `FREE above ₹${slab.free_above} within ${slab.km_to} km`;
+  return `FREE from ₹${slab.free_above} for ${slab.label}`;
 }
 
 /** Free-delivery line for the first (cheapest) slab — matches the banner's target wording. */
 export const deliveryFreeAboveLine = slabFreeAboveLine(site.delivery.slabs[0]);
 
-/** All slabs' free-delivery thresholds, e.g. for pages that list every slab. */
-export const deliveryFreeAboveLineAll = site.delivery.slabs.map(slabFreeAboveLine).join(' · ');
+/** Each band's inclusive threshold comes from the shared configuration. */
+export const deliveryFreeAboveLineAll = site.delivery.slabs.filter((slab) => slab.free_above !== undefined).map(slabFreeAboveLine).join(' · ');
+export const deliveryFreeAboveBannerLine = `Free delivery during normal hours: ${deliveryFreeAboveLineAll}`;
 
-/**
- * "FREE delivery above ₹499, within 2 km" — banner phrasing for the first
- * (cheapest) slab. Every price claim carries its condition (owner rule,
- * 2026-08-14): this line is meaningless without the "within X km" part.
- */
-export const deliveryFreeAboveBannerLine = `FREE delivery above ₹${site.delivery.slabs[0].free_above}, within ${site.delivery.slabs[0].km_to} km`;
-
-/**
- * "Minimum order ₹249 (₹399 beyond 2 km)" — assumes exactly two slabs, which
- * is the current shape of site.delivery.slabs; if a third slab is ever
- * added this line needs a rewrite, not just new numbers.
- */
-export const deliveryMinimumLine =
-  site.delivery.slabs.length >= 2
-    ? `Minimum order ₹${site.delivery.slabs[0].min_order} (₹${site.delivery.slabs[1].min_order} beyond ${site.delivery.slabs[0].km_to} km)`
-    : `Minimum order ₹${site.delivery.slabs[0].min_order}`;
-
-/** "Afternoons 12–4pm, Mon–Fri: ₹19 delivery, minimum order ₹199" — the ₹19 claim never appears without its unlocking minimum. */
-export const quietHoursLine = `Afternoons ${formatTimeRange(site.delivery.quiet_hours.from, site.delivery.quiet_hours.to)}, ${site.delivery.quiet_hours.days}: ₹${site.delivery.quiet_hours.charge} delivery, minimum order ₹${site.delivery.slabs[0].min_order_quiet}`;
-
-/* ---------- late night ----------
- *
- * The late-night rule used to be written out by hand in six places - the bill
- * labels, two banner lines, the FAQ, the calculator and the homepage - each in
- * its own words. That is how two pages end up disagreeing about the same
- * charge, which is exactly the bug that produced the Dough/delivery-fee
- * mismatch in August. Everything below is derived from site.config.json, so a
- * new band or a changed premium updates every surface at once.
- *
- * The customer is shown ONE delivery number per band, not the distance charge
- * and the late premium separately. They read two lines containing the word
- * "delivery" as being charged twice for delivery, and they said so
- * (owner, 22 Aug 2026, after a real customer asked). The split still exists in
- * the config and in what the kitchen earns - it just is not the customer's
- * problem.
- */
-
-/** What a late-night delivery costs per band: the distance charge with the premium already in it. */
-export const lateNightDeliveryBands = site.delivery.slabs.map((slab) => ({
-  label: slab.label,
-  amount: slab.charge + site.delivery.late_night.delivery_premium,
-}));
-
-/** "₹59 within 2 km, ₹99 for 2–4 km" — reads as prose however many bands exist. */
-export const lateNightDeliveryLine = lateNightDeliveryBands
-  .map((b, i) => (i === 0 ? `₹${b.amount} within ${b.label.split('–')[1]}` : `₹${b.amount} for ${b.label}`))
-  .join(', ');
+/* ---------- late night ---------- */
+/** Late night uses the same delivery rates as every other time. */
+export const lateNightDeliveryBands = site.delivery.slabs.map((slab) => ({ label: slab.label, amount: slab.charge }));
+export const lateNightDeliveryLine = lateNightDeliveryBands.map((b) => `₹${b.amount} for ${b.label}`).join(', ');
 
 /**
  * Why it costs more, in the owner's own reasons (22 Aug 2026).
@@ -282,7 +240,6 @@ export const lateNightDeliveryLine = lateNightDeliveryBands
 export const lateNightReasons = [
   'the oven has to come back up to temperature from cold, which takes time and a real amount of electricity',
   'someone who has already finished their shift has to come back and work it',
-  'and if we deliver, we pay more for a ride at that hour',
 ];
 
 
@@ -290,9 +247,9 @@ export const lateNightReasons = [
  * Banner disclosure lines (owner rule, 2026-08-14): a surcharge is never
  * advertised without a way to see the real number before ordering — both
  * of these are always paired with the calculator link wherever they render.
- * "Late night after 11:30pm: +₹79, minimum ₹399, prepaid"
+ * The surcharge, standard delivery, and full advance rule come from config.
  */
-export const lateNightBannerLine = `Late night after ${formatTime(site.delivery.late_night.from)}: ₹${site.delivery.late_night.kitchen_charge} kitchen reopen, delivery from ₹${lateNightDeliveryBands[0].amount}, minimum ₹${site.delivery.late_night.min_order}, prepaid`;
+export const lateNightBannerLine = `Late night after ${formatTime(site.delivery.late_night.from)}: normal delivery charges + ₹${site.delivery.late_night.kitchen_charge} kitchen reopen · full advance payment required`;
 
 /**
  * Rain is a standing POLICY disclosure — it stays on the banner regardless
@@ -309,7 +266,6 @@ export const surchargesCompactLine = 'Late-night and rain orders cost extra';
 /** Furthest distance served directly (the last slab's km_to) — beyond this, Zomato/Swiggy. */
 export const maxDeliveryKm = site.delivery.slabs[site.delivery.slabs.length - 1].km_to;
 
-export const quietHoursTimeRange = formatTimeRange(site.delivery.quiet_hours.from, site.delivery.quiet_hours.to);
 export const lateNightTimeRange = formatTimeRange(site.delivery.late_night.from, site.delivery.late_night.to);
 
 /* ---------- images ---------- */
