@@ -8,9 +8,7 @@ import MenuAccordions from '../components/MenuAccordions.astro';
 import {
   site,
   deliverySlabLine,
-  deliveryMinimumLine,
   deliveryFreeAboveBannerLine,
-  quietHoursLine,
   lateNightBannerLine,
   rainBannerLine,
   surchargesCompactLine,
@@ -73,16 +71,10 @@ const localPhone = site.business.phone.replace('+91', '');
             {site.delivery.hook}
           </p>
           <p style="margin-bottom: 0.4rem; font-size: 1rem; color: var(--color-text-muted);">
-            {deliverySlabLine} · {deliveryMinimumLine}
+            {deliverySlabLine}
           </p>
           <p style="margin-bottom: 0.4rem; font-size: 1rem; color: var(--color-text-muted);">
             {deliveryFreeAboveBannerLine}
-          </p>
-          <p style="margin-bottom: 0.4rem; font-size: 1rem; color: var(--color-primary); font-weight: 700;">
-            {quietHoursLine}
-          </p>
-          <p style="margin-bottom: 0.4rem; font-size: 1rem; color: var(--color-text-muted);">
-            Beyond {maxDeliveryKm} km: order on Zomato or Swiggy
           </p>
 
           {/* Late-night and rain are surcharges disclosed here so nobody meets them for

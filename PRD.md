@@ -1,5 +1,8 @@
 # PRD — The Oven Vibe: Digital Menu & Lead-Gen Website (v2 rebuild)
 
+> Current delivery policy supersedes the original pricing assumptions in this
+> historical PRD: see `docs/DELIVERY_PRICING.md` (2026-09-28).
+
 > **Status:** Approved 2026-07-29. This document is binding. Read `PROGRESS.md` for current phase state.
 > **Owner:** Milan Behera · **Repo:** this repo (in-place rewrite; git history and `theovenvibe.github.io` URL preserved).
 

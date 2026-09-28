@@ -1,5 +1,12 @@
 # MEMORY.md
 
+## Current delivery policy (2026-09-28)
+
+The historical pricing notes below describe prior releases. The current policy
+is in `docs/DELIVERY_PRICING.md`: ₹39 / ₹79 / ₹119 through 6 km, no order
+minimums or afternoon special, standard delivery late night plus one ₹50
+kitchen reopen surge, full advance payment, and ₹29 rain while active.
+
 Durable notes for this repo. Read before touching `menu.json`.
 
 ## What this repo is

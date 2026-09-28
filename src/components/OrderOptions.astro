@@ -25,14 +25,18 @@ const d = site.delivery;
       <div class="calc-radio-row">
         <label class="calc-radio">
           <input type="radio" name="distance" value="under2" checked />
-          Under 2 km
+          0–2 km
         </label>
         <label class="calc-radio">
           <input type="radio" name="distance" value="2to4" />
           2–4 km
         </label>
         <label class="calc-radio">
-          <input type="radio" name="distance" value="beyond4" />
+          <input type="radio" name="distance" value="4to6" />
+          4–6 km
+        </label>
+        <label class="calc-radio">
+          <input type="radio" name="distance" value="beyond6" />
           More than {maxDeliveryKm} km
         </label>
       </div>
@@ -89,7 +93,7 @@ const d = site.delivery;
             Astro deletes a whitespace-only text node that spans a line break
             between inline nodes, which had been rendering "runsMon–Fri" on the
             live site since Phase 3. See PROGRESS.md's Phase 3 entry. */}
-        Order date (auto-filled with today — the afternoon rate only runs {d.quiet_hours.days})
+        Order date (auto-filled with today)
         <input type="date" id="dateInput" />
       </label>
       <label class="calc-field" for="timeInput">

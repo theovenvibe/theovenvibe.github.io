@@ -1,5 +1,9 @@
 # AGENTS.md — The Oven Vibe (theovenvibe.github.io)
 
+**Current delivery policy (2026-09-28):** read `docs/DELIVERY_PRICING.md` before
+touching delivery or payment rules. Older examples in this primer and PRD are
+historical; the site now has a Worker backend and a 6 km direct-delivery area.
+
 Cold-start primer for ANY agent or model working in this repo — including
 small local LLMs. Read this fully before changing anything.
 (Finalized Phase 5, PRD §10. Requirements: PRD.md. State: PROGRESS.md.)
