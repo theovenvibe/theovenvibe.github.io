@@ -1,5 +1,28 @@
 # Delivery pricing v2 — implementation and release report
 
+## Production release evidence — 2026-09-28
+
+- Website commits `2dc5ea1` (pricing), `e3765a2` (menu); stack #133 merged
+  via PRs #131/#132 to develop `134bffe`. Release PR #134 merged to main
+  `5cd72fb76f3650156fd27870cc2c86395ad20b4d`.
+- Current Actions run [36400891025](https://github.com/theovenvibe/theovenvibe.github.io/actions/runs/36400891025)
+  succeeded, including build/Lighthouse and production deploy. The separate
+  legacy Jekyll Pages job still fails as documented; it is not the live deploy.
+- Worker commit `2ba1241`, integration PR #69, release PR #70, main `68e62e9`;
+  deployed version `3eca3d25-85fa-42be-8d07-230a8379ccc9`. Production
+  `https://api.theovenvibe.com/healthz` returned `{ "ok": true }`.
+- Marketing commit `6485300`, PR #1, main `099322d`; source and policy
+  pointers pushed/merged, with no campaign/PDF publication.
+- Live HTTP assertions passed for current config/slabs/free thresholds,
+  kitchen50/rain29, retired-field removal, menu names, toast unavailability,
+  six bread descriptions, hero copy and customer routes.
+- Chrome displayed current homepage and calculator after refresh. The live
+  calculator produced Food ₹618, Delivery ₹39, one kitchen surge ₹50, total
+  ₹707. Existing browser caches may require refresh after this release.
+- All three repository working trees were clean after implementation release.
+  This post-release documentation is a follow-up on develop; production code
+  remains the verified release above. No customer test order or message sent.
+
 ## Documentation reviewed
 
 Website: AGENTS.md, CLAUDE.md, MEMORY.md, README.md, bootstrap-session.md,

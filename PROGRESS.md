@@ -1,5 +1,10 @@
 ## 2026-09-28 — delivery pricing v2 release preparation
 
+- Released with owner approval: PR #134, main `5cd72fb`, successful current
+  Actions run `36400891025`. Live config/menu/pages and ₹707 late calculator
+  example verified. Backend version `3eca3d25-85fa-42be-8d07-230a8379ccc9`
+  deployed and healthy. Full release evidence is in DELIVERY_PRICING_V2_REPORT.
+
 - Owner policy: 0–2 km ₹39, 2–4 km ₹79, new 4–6 km ₹119; direct delivery
   through 6 km. No distance or late-night minimums, afternoon special, or
   separate late-night delivery premium. One ₹50 kitchen reopen surge per order.
