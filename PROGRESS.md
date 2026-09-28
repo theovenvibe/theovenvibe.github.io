@@ -828,3 +828,6 @@ it: shrinking bytes is safe, changing pixels is a design decision.
 - Phase6 NOT complete: implement/test rollback-to-new-revision (including old source photos), robust retry/recovery and final Actions/security/race audit. Mandatory stock classifier fix remains: stock currently derives from display names, and combo quantities are not accounted. Need server-captured stable stock recipe for order/counter/giveaway workflows; read completion/cancel/delete paths before changes. Dough existing MRP codes remain stable; new packaged-drink policy must be audited.
 - Phase4/5 final UI matrices pending; browser file chooser blocked by extension file-URL permission. Actual Android/POCO/manual owner UAT and owner secrets/config/approval remain pending. Do not enable publishing or make remote feature calls.
 - No customer number,order,journey or PN created. No production migration, deployment or merge. Old disposable local asset test blobs retained (40KB including a decodable zero-filled variant); unreferenced TTL cleanup exists. Actual catalogue local draft still revision5.
+
+## CI lockfile correction — 2026-09-29
+PR139 failed npm ci on Linux because Windows npm install omitted optional emnapi dependencies. Regenerated the lockfile in a fresh directory; Linux/x64 npm ci dry-run passes. No dependency source or workflow deploy change. Actual CI rerun pending.
