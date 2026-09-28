@@ -1,10 +1,12 @@
-// ── the two implementations under test, copied verbatim from the shipped code ──
+import { usableDough as actualUsableDough } from '../src/lib/dough.ts';
+
+// Exercise the actual checkout helper; Worker arithmetic below is a reference.
 const CAP_PCT = 0.1;
 const MRP = new Set(['900000001','900000002']);
 const bare = c => c.replace(/^(item|combo|addon)-/,'');
 
-const usableDough = (bal, spendable, minimum, foodTotal) =>
-  Math.max(0, Math.min(bal, Math.floor(spendable*CAP_PCT), Math.max(0, foodTotal-minimum)));
+const usableDough = (bal, spendable) =>
+  actualUsableDough({ balance: bal, capPct: CAP_PCT, expires_at: null }, spendable);
 
 const spendableBase = (lines, offers) => Math.max(0, lines.reduce((s,l)=>{
   const c = bare(l.catalog_id);
@@ -24,40 +26,30 @@ const t=(name,got,want)=>{
 };
 
 console.log('=== 1. INVARIANTS: brute force 100k random baskets ===');
-let neg=0, overBal=0, overCap=0, underMin=0, nonInt=0;
+let neg=0, overBal=0, overCap=0, nonInt=0;
 for(let i=0;i<100000;i++){
   const bal = Math.floor(Math.random()*500);
   const spendable = Math.floor(Math.random()*2000);
-  const foodTotal = spendable + Math.floor(Math.random()*2000);
-  const minimum = Math.floor(Math.random()*400);
-  const u = usableDough(bal, spendable, minimum, foodTotal);
+  const u = usableDough(bal, spendable);
   if(u<0) neg++;
   if(u>bal) overBal++;
   if(u>Math.floor(spendable*CAP_PCT)) overCap++;
-  if(foodTotal-u < minimum && u>0) underMin++;
   if(!Number.isInteger(u)) nonInt++;
 }
 t('never negative', neg, 0);
 t('never exceeds balance', overBal, 0);
 t('never exceeds 10% of spendable', overCap, 0);
-t('never drags order under its minimum', underMin, 0);
 t('always an integer rupee', nonInt, 0);
 
-console.log('\n=== 2. THE OWNER-REPORTED BUG ===');
-t("3x Crunchy@139 (offer) + Paneer Tikka 169, Rs7 bal, Rs299 min", usableDough(7,169,299,586), 7);
-t("...and the broken version returned", Math.max(0,Math.min(7,16,Math.max(0,169-299))), 0);
-
-console.log('\n=== 3. BOUNDARIES ===');
-t('balance 0', usableDough(0,1000,0,1000), 0);
-t('spendable 0 (all offers)', usableDough(50,0,0,1000), 0);
-t('foodTotal exactly at minimum -> 0 headroom', usableDough(50,500,299,299), 0);
-t('foodTotal 1 above minimum', usableDough(50,500,299,300), 1);
-t('spendable 9 -> floor to 0', usableDough(50,9,0,500), 0);
-t('spendable 10 -> exactly 1', usableDough(50,10,0,500), 1);
-t('spendable 19 -> floors to 1', usableDough(50,19,0,500), 1);
-t('minimum 0', usableDough(7,169,0,586), 7);
-t('balance exactly equals cap', usableDough(16,169,0,586), 16);
-t('balance 1 over cap', usableDough(17,169,0,586), 16);
+console.log('\n=== 2. NO DISTANCE MINIMUM ===');
+t('Dough can reduce a ₹99 basket', usableDough(50,99), 9);
+t('Dough can reduce a ₹249 basket', usableDough(50,249), 24);
+t('balance 0', usableDough(0,1000), 0);
+t('spendable 0 (all offers)', usableDough(50,0), 0);
+t('spendable 9 -> floor to 0', usableDough(50,9), 0);
+t('spendable 10 -> exactly 1', usableDough(50,10), 1);
+t('balance exactly equals cap', usableDough(16,169), 16);
+t('balance 1 over cap', usableDough(17,169), 16);
 
 console.log('\n=== 4. spendableBase / earnableBase ===');
 const OFF = new Set(['745802364','745802381']);
@@ -96,8 +88,7 @@ let mismatch=0;
 for(let i=0;i<20000;i++){
   const bal=Math.floor(Math.random()*200);
   const spendable=Math.floor(Math.random()*1500);
-  const foodTotal=spendable+Math.floor(Math.random()*1500);
-  const front=usableDough(bal,spendable,0,foodTotal);   // minimum 0 = pickup/no gate
+  const front=usableDough(bal,spendable);
   const worker=spendCap(spendable,Math.min(front,bal));
   if(worker!==front) mismatch++;
 }

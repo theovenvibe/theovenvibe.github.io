@@ -1,5 +1,10 @@
 # Cart and checkout — how it works
 
+**Current pricing:** `docs/DELIVERY_PRICING.md` (2026-09-28) supersedes the
+historical pricing examples below. Calculator and checkout share standard
+₹39/₹79/₹119 delivery through 6 km, no delivery minimums or afternoon rate,
+and one ₹50 late-night kitchen reopen surge with full advance payment.
+
 Branch: `feature/cart-and-checkout` (cut from `origin/develop`, 2026-08-15)
 
 Ordering used to mean one of two things: message WhatsApp and describe what you

@@ -243,9 +243,7 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
   /** After closing the only thing left in "Other" is rain, which a pickup never pays. */
   const rainOffForLate = (orderType: string) => orderType === 'pickup';
 
-  // Date and time default to "now" from the browser clock, but both stay
-  // editable: the afternoon rate is weekday-only, so quoting a Saturday
-  // order on a Wednesday (or vice versa) needs the day, not just the time.
+  // Date and time default to now; pre-orders use the customer's chosen slot.
   const pad = (n: number) => String(n).padStart(2, '0');
   const dateStr = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
   const timeStr = (d: Date) => `${pad(d.getHours())}:${pad(d.getMinutes())}`;
@@ -439,7 +437,7 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
       return Number(kmInput.value) > delivery.slabs[delivery.slabs.length - 1].km_to;
     }
     const checked = distanceRadios.find((r) => r.checked);
-    return checked?.value === 'beyond4';
+    return checked?.value === 'beyond6';
   }
 
   function distanceKm(): number | null {
@@ -448,6 +446,7 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
     if (!checked) return null;
     if (checked.value === 'under2') return 1;
     if (checked.value === '2to4') return 3;
+    if (checked.value === '4to6') return 5;
     return null;
   }
 
@@ -462,8 +461,8 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
    * normalisation as `canonicalBand` in the Worker's delivery-distance.ts.
    */
   function bandLabel(value: string): string | null {
-    if (value === 'beyond4') return 'beyond 4 km';
-    const slab = value === 'under2' ? delivery.slabs[0] : delivery.slabs[1];
+    if (value === 'beyond6') return 'beyond 6 km';
+    const slab = value === 'under2' ? delivery.slabs[0] : value === '2to4' ? delivery.slabs[1] : delivery.slabs[2];
     return slab ? slab.label.replace(/[\u2012-\u2015]/g, '-') : null;
   }
 
@@ -474,7 +473,7 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
     return {
       band: checked ? bandLabel(checked.value) : null,
       // Only a number the customer actually typed. `distanceKm()` above answers
-      // 1 for "under 2 km" and 3 for "2–4 km" so the quote has something to
+      // 1 for "0–2 km" and 3 for "2–4 km" so the quote has something to
       // price with, but writing those into the database would record a distance
       // nobody ever gave — and this feature offers it back to them next time.
       km: km !== null && Number.isFinite(km) && km > 0 ? km : null,
@@ -525,11 +524,11 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
 
   function apply(choice: { band: string; km: number | null }): void {
     const value =
-      choice.band === 'beyond 4 km'
-        ? 'beyond4'
+      choice.band === 'beyond 6 km' || choice.band === 'beyond 4 km'
+        ? 'beyond6'
         : bandLabel('under2') === choice.band
           ? 'under2'
-          : '2to4';
+          : bandLabel('2to4') === choice.band ? '2to4' : '4to6';
     for (const radio of distanceRadios) radio.checked = radio.value === value;
     // The exact number too, when we have one — it is what the quote prices
     // against, and it is more specific than the band. Cleared when we do not,
@@ -550,8 +549,6 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
 
     if (state === 'closed') return `Kitchen closed — opens ${formatOpen()}`;
     if (state === 'late_night') return 'Late-night (limited menu)';
-    if (isTimeInRange(time, delivery.quiet_hours.from, delivery.quiet_hours.to))
-      return 'Afternoon rate (weekdays only)';
     return 'Standard';
   }
 
@@ -607,10 +604,6 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
       // The copied text is sent BY the customer TO the kitchen, so it uses the
       // quote-voice variants: facts about the order, not instructions to pay.
       for (const n of result.quoteNotes ?? []) lines.push(n);
-    } else if (result.kind === 'below_minimum') {
-      lines.push(
-        `My order is below the ₹${result.minimum} minimum — I need to add ${rupee(result.short)} more.`,
-      );
     } else {
       lines.push('I am beyond your delivery range, so I will order through Zomato or Swiggy.');
     }
@@ -679,27 +672,6 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
       output.appendChild(textEl('p', 'calc-note calc-note--warn', result.note));
       disableActions();
       showBeyondActions(true);
-      return;
-    }
-
-    if (result.kind === 'below_minimum') {
-      output.appendChild(
-        textEl(
-          'p',
-          'calc-note calc-note--warn',
-          `Add ${rupee(result.short)} more to reach the ₹${result.minimum} minimum for this order.`,
-        ),
-      );
-      if (result.quietAlt) {
-        output.appendChild(
-          textEl(
-            'p',
-            'calc-note',
-            `Or order between ${result.quietAlt.window} — the minimum there is only ₹${result.quietAlt.minimum}.`,
-          ),
-        );
-      }
-      disableActions();
       return;
     }
 
@@ -774,7 +746,7 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
     // "Later" is now the customer's own declaration, not a guess from the clock.
     const later = preorderCheck.checked;
 
-    // Paying up front only changes the price by waiving rain, and a pickup has
+    // Paying up front locks out later rain adjustments, and a pickup has
     // no ride to rain on — so the control cannot move a single rupee here and
     // is hidden outright rather than sitting there claiming to "lock" a price.
     // The prepaid tick is only a choice outside the late-night window. After
@@ -785,19 +757,26 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
     prepaidCheck.disabled = isPickup || lateNow;
     otherGroup.hidden = isPickup || (lateNow && rainOffForLate(orderType));
     const prepaid = prepaidCheck.checked && !isPickup && !lateNow;
-    const rainBoxUsable = !isPickup && !later && !prepaid;
+    const rainBoxUsable = !isPickup && !later;
 
-    rainCheck.disabled = !rainBoxUsable;
-    rainLabel.classList.toggle('calc-check--off', !rainBoxUsable);
+    if (delivery.rain.active) rainCheck.checked = true;
+    rainCheck.disabled = !rainBoxUsable || delivery.rain.active;
+    rainLabel.classList.toggle('calc-check--off', rainCheck.disabled);
     rainHint.hidden = !isPickup;
-    rainLabel.hidden = isPickup ? false : later || prepaid;
+    rainLabel.hidden = isPickup ? false : later;
 
     if (isPickup) {
       weatherNote.hidden = true;
+    } else if (lateNow && later) {
+      weatherNote.hidden = false;
+      weatherNote.className = 'calc-note calc-note--warn';
+      weatherNote.textContent = `If rain adds ₹${delivery.rain.surcharge}, we will confirm the final total and collect it in full before preparing your late-night order.`;
     } else if (prepaid) {
       weatherNote.hidden = false;
       weatherNote.className = 'calc-note calc-note--good';
-      weatherNote.textContent = delivery.rain.prepaid_note;
+      weatherNote.textContent = rainCheck.checked
+        ? `The active ₹${delivery.rain.surcharge} rain charge is included. Paying the final total now locks out any later weather adjustment.`
+        : delivery.rain.prepaid_note;
     } else if (later) {
       weatherNote.hidden = false;
       weatherNote.className = 'calc-note calc-note--warn';
@@ -875,7 +854,7 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
     const km = Number(raw);
     if (!Number.isFinite(km) || km < 0) return;
     const slab = delivery.slabs.find((s) => km <= s.km_to);
-    const value = !slab ? 'beyond4' : slab === delivery.slabs[0] ? 'under2' : '2to4';
+    const value = !slab ? 'beyond6' : slab === delivery.slabs[0] ? 'under2' : slab === delivery.slabs[1] ? '2to4' : '4to6';
     for (const radio of distanceRadios) radio.checked = radio.value === value;
   }
 

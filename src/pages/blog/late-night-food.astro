@@ -92,11 +92,9 @@ const path = '/blog/late-night-food/';
       It costs more, and here is exactly why rather than a vague "surcharge". Closing time means the
       oven goes cold and the kitchen goes home. A late order means firing it again and someone coming
       back to work it, so there is a <strong>₹{lateNight.kitchen_charge} kitchen charge</strong> —
-      and it applies to pickup too, because collecting it yourself still reopens the kitchen. If we
-      deliver, riding out at that hour costs more, so delivery starts at
-      <strong>₹{lateNightDeliveryBands[0].amount}</strong> instead of the usual rate. The minimum
-      order is <strong>₹{lateNight.min_order}</strong> and late-night orders are
-      <strong>paid online in advance</strong>.
+      and it applies to pickup too, because collecting it yourself still reopens the kitchen. Delivery uses the normal distance rates, starting at
+      <strong>₹{lateNightDeliveryBands[0].amount}</strong>. Late-night orders require
+      <strong>full advance payment of the final total</strong>.
     </p>
 
     <h2>What is off the menu in the late-night window</h2>
@@ -149,7 +147,7 @@ const path = '/blog/late-night-food/';
         <li>Order before {site.business.hours.display.split('–')[1].trim()} and it is a normal order at normal prices.</li>
         <li>
           {lateNightTimeRange}: ₹{lateNight.kitchen_charge} kitchen charge, delivery from ₹{lateNightDeliveryBands[0].amount},
-          minimum ₹{lateNight.min_order}, paid online in advance.
+          full final total paid online in advance.
         </li>
         <li><strong>No pasta or Maggi late</strong> — everything else is on.</li>
         <li>

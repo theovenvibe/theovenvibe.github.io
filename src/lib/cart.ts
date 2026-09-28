@@ -156,6 +156,11 @@ export function clearCart(): void {
   commit([]);
 }
 
+/** Transfer the calculator's exact basket, including removal of old extras. */
+export function replaceCart(cart: Cart): Cart {
+  return commit(sanitise(cart));
+}
+
 /**
  * Subscribe to changes. Fires for changes made on this page, and — via the
  * `storage` event — for changes made in another tab, so two open tabs cannot

@@ -62,24 +62,11 @@ export const siteConfigSchema = z.object({
           km_from: z.number().nonnegative('km_from must be 0 or more'),
           km_to: z.number().positive('km_to must be a positive number of km'),
           charge: z.number().int().nonnegative('slab charge must be 0 or more rupees'),
-          min_order: z.number().int().positive('min_order must be a positive rupee amount'),
-          min_order_quiet: z
-            .number()
-            .int()
-            .positive('min_order_quiet must be a positive rupee amount'),
-          free_above: z.number().int().positive('free_above must be a positive rupee amount'),
+          free_above: z.number().int().positive('free_above must be a positive rupee amount').optional(),
         }),
       )
       .min(1, 'delivery.slabs must list at least one slab'),
     beyond_note: z.string().min(1),
-    quiet_hours: z.object({
-      from: z.string().regex(/^\d{2}:\d{2}$/, "quiet_hours.from must be 24h 'HH:MM', e.g. '12:00'"),
-      to: z.string().regex(/^\d{2}:\d{2}$/, "quiet_hours.to must be 24h 'HH:MM', e.g. '16:00'"),
-      days: z.string().min(1),
-      charge: z.number().int().nonnegative('quiet_hours.charge must be 0 or more rupees'),
-      applies_to_slab: z.string().min(1),
-      note: z.string().min(1),
-    }),
     late_night: z.object({
       from: z.string().regex(/^\d{2}:\d{2}$/, "late_night.from must be 24h 'HH:MM', e.g. '23:30'"),
       to: z.string().regex(/^\d{2}:\d{2}$/, "late_night.to must be 24h 'HH:MM', e.g. '01:00'"),
@@ -87,12 +74,7 @@ export const siteConfigSchema = z.object({
         .number()
         .int()
         .nonnegative('late_night.kitchen_charge must be 0 or more rupees — it covers reopening the kitchen'),
-      delivery_premium: z
-        .number()
-        .int()
-        .nonnegative('late_night.delivery_premium must be 0 or more rupees — the extra cost of riding out late'),
       _charge_comment: z.string().optional(),
-      min_order: z.number().int().positive('late_night.min_order must be a positive rupee amount'),
       explain_note: z
         .string()
         .min(1, 'late_night.explain_note is shown on the bill — say why a late order costs more'),
@@ -137,7 +119,6 @@ export const siteConfigSchema = z.object({
         .positive('rain.now_window_minutes must be a whole number of minutes'),
       _comment: z.string().optional(),
     }),
-    pickup_discount: z.number().int().nonnegative('pickup_discount must be 0 or more rupees'),
     pickup_note_quote: z.string().min(1),
     _quote_voice_comment: z.string().optional(),
     preorder: z.object({
@@ -149,11 +130,6 @@ export const siteConfigSchema = z.object({
       earliest_note: z.string().min(1),
       _comment: z.string().optional(),
     }),
-    pickup_min_order: z
-      .number()
-      .int()
-      .nonnegative('pickup_min_order must be a rupee amount — the basket size the pickup discount needs'),
-    _pickup_comment: z.string().optional(),
     _localities_comment: z.string().optional(),
     /**
      * Delivery areas, for the backend admin panel's locality dropdown (read
@@ -176,10 +152,6 @@ export const siteConfigSchema = z.object({
         .positive('bulk.notice_minutes must be a whole number of minutes'),
       prepaid: z.boolean(),
     }),
-    max_delivery_charge: z
-      .number()
-      .int()
-      .positive('max_delivery_charge must be a positive rupee amount'),
     regulars: z.object({
       min_orders: z.number().int().positive('regulars.min_orders must be a positive whole number'),
       free_above: z.number().int().positive('regulars.free_above must be a positive rupee amount'),

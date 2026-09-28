@@ -85,41 +85,9 @@ export async function fetchDough(worker: string, deviceId: string, phone: string
   }
 }
 
-/**
- * How much may be used on this basket.
- *
- * Two limits, and the tighter one wins: 10% of the basket, and never so much
- * that the order falls under its own delivery minimum. The second is what stops
- * Dough shrinking a basket the kitchen would rather grow.
- */
-/**
- * How much Dough this order can actually take off.
- *
- * Three limits, tightest wins, and they measure different things:
- *
- * - **balance** — what they have.
- * - **cap** — 10% of `spendableTotal`, the full-price food only. Items on
- *   offer and drinks are excluded, so a basket of offer pizzas plus one
- *   full-price dish is capped against that one dish.
- * - **headroom** — how far the WHOLE order can fall before it breaches its own
- *   minimum. This is deliberately measured on `foodTotal`, not on
- *   `spendableTotal`: the minimum applies to the order the customer is placing,
- *   not to the slice Dough happens to be allowed to touch.
- *
- * Getting that last one wrong is not theoretical — it shipped. A ₹586 basket
- * with ₹169 of full-price food was compared against the ₹299 pickup minimum,
- * came out with zero headroom, and told the customer to add more to a basket
- * already twice the minimum (owner, 2026-08-25).
- */
-export function usableDough(
-  state: DoughState,
-  spendableTotal: number,
-  minimum: number,
-  foodTotal: number,
-): number {
-  const cap = Math.floor(spendableTotal * state.capPct);
-  const headroom = Math.max(0, foodTotal - minimum);
-  return Math.max(0, Math.min(state.balance, cap, headroom));
+/** Dough is limited to the available balance and 10% of eligible food. */
+export function usableDough(state: DoughState, spendableTotal: number): number {
+  return Math.max(0, Math.min(state.balance, Math.floor(spendableTotal * state.capPct)));
 }
 
 /**

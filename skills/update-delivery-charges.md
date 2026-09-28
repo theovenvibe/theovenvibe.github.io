@@ -8,21 +8,13 @@ inside a page component.
 
 `site.config.json` (repo root). Find the `"delivery"` object.
 
-## 2. Current shape (for reference — yours may have different numbers)
+## 2. Current shape
 
-```json
-"delivery": {
-  "hook": "Delivery starts at just ₹29",
-  "slabs": [
-    { "label": "0–2 km", "charge": 29 },
-    { "label": "2–4 km", "charge": 59 },
-    { "label": "4–8 km", "charge": 99 }
-  ],
-  "free_above": 599,
-  "free_above_note": "FREE delivery on orders above ₹599 (within 0–8 km)",
-  "radius_note": "We deliver within 8 km of Sundargarh town. Also on Zomato & Swiggy."
-}
-```
+The approved delivery policy is in `docs/DELIVERY_PRICING.md`. The current
+config has three contiguous slabs: 0–2 km ₹39, 2–4 km ₹79 and 4–6 km ₹119.
+The slabs have `free_above` thresholds of 499, 899 and 1299 respectively;
+these are inclusive during normal hours. There are no minimum-order or afternoon-rate
+fields. Late night uses the same slab charges plus one `kitchen_charge: 50`.
 
 ## 3. What each field controls
 
@@ -31,34 +23,20 @@ inside a page component.
 | `hook` | The short marketing line shown near CTAs | `"Delivery starts at just ₹35"` |
 | `slabs[].charge` | The rupee amount for that distance band | `29` → `35` |
 | `slabs[].label` | The distance band text | `"0–2 km"` |
-| `free_above` | The rupee threshold for free delivery | `599` → `699` |
-| `free_above_note` | The sentence shown for the free-delivery rule | keep it consistent with `free_above` — see step 4 |
-| `radius_note` | The delivery-area sentence on `/sundargarh/` and elsewhere | `"We deliver within 8 km..."` |
+| `slabs[].free_above` | Inclusive free-delivery threshold for that band | `899` → `999` |
+| `radius_note` | The delivery-area sentence on `/sundargarh/` and elsewhere | `"We deliver up to 6 km..."` |
 
 **Adding or removing a slab:** `slabs` is a list — add a new
 `{ "label": "...", "charge": ... }` object (comma-separated) or delete one
 entirely, following the same JSON list-editing rules as
 `skills/add-menu-item.md` step 3. At least one slab must remain.
 
-## 4. IMPORTANT — keep free_above and free_above_note in sync
+## 4. Keep the policy and all customer surfaces aligned
 
-If you change `free_above` from `599` to `699`, also update
-`free_above_note` to say `699`, e.g.
-`"FREE delivery on orders above ₹699 (within 0–8 km)"`. These are two
-separate text fields — the build does NOT auto-generate one from the
-other, so a mismatch here is a silent content bug, not a build error.
-
-**Before:**
-```json
-"free_above": 599,
-"free_above_note": "FREE delivery on orders above ₹599 (within 0–8 km)",
-```
-
-**After (raised to 699):**
-```json
-"free_above": 699,
-"free_above_note": "FREE delivery on orders above ₹699 (within 0–8 km)",
-```
+A distance-band change also affects the shared order form and the Worker admin's
+distance correction. Follow `docs/DELIVERY_PRICING.md`, update the band radios
+in `src/components/OrderOptions.astro`, and run the delivery test matrix. Do not
+add a separate late-night delivery table or a minimum-order field.
 
 ## 5. Verify
 
@@ -70,7 +48,7 @@ Expect: `Result (N files): 0 errors`.
 Validation rules (what fails the build):
 - `slabs[].charge` must be a whole number, 0 or more.
 - `free_above` must be a whole positive number.
-- `hook`, `free_above_note`, `radius_note` must not be empty strings.
+- `hook` and `radius_note` must not be empty strings.
 
 Example error:
 ```
@@ -97,8 +75,7 @@ Then merge per `skills/release-manager.md` §5.
 
 1. Go to `https://github.com/theovenvibe/theovenvibe.github.io`.
 2. Open `site.config.json`, tap the pencil icon.
-3. Edit the `delivery` block (remember step 4's free_above/free_above_note
-   pairing).
+3. Edit the `delivery` block and update the current policy documentation.
 4. Scroll down → "Commit changes" → **"Create a new branch for this
    commit and start a pull request"** → **Propose changes** → **Create
    pull request**.
