@@ -29,7 +29,7 @@ try{
   let sourceRead=null;const historicalResult=await applyMenuBatch({menu:historic,base_sha:'a'.repeat(40),version:6},root,async()=>asset,async(sha,path)=>{sourceRead={sha,path};return legacySquare;});
   assert.deepEqual(sourceRead,{sha:'b'.repeat(40),path:'public/static/images/product_images/removed-old-photo.webp'});assert.ok(historicalResult.Menu_Items.find(r=>r.product_code===hero.product_code).image_code.startsWith('OV-item-'));
   const restoredImage=historicalResult.Menu_Items.find(r=>r.product_code===hero.product_code).image_code;
-  const restoredMetadata=await sharp(join(root,'public/static/images/product_images',restoredImage+'.webp')).metadata();assert.equal(restoredMetadata.width,600);assert.equal(restoredMetadata.height,400,'Legacy square photos are normalized for customer cards');
+  const restoredMetadata=await sharp(await readFile(join(root,'public/static/images/product_images',restoredImage+'.webp'))).metadata();assert.equal(restoredMetadata.width,600);assert.equal(restoredMetadata.height,400,'Legacy square photos are normalized for customer cards');
   await writeFile(join(root,'menu.json'),JSON.stringify(original));
   const malicious=structuredClone(original);malicious._draft_photos={['Menu_Items:'+hero.product_code]:['../../outside.webp']};
   await assert.rejects(()=>applyMenuBatch({menu:malicious,base_sha:'a'.repeat(40),version:6},root,async()=>asset),/Unsafe photo/);

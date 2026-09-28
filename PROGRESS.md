@@ -851,3 +851,5 @@ PR139 failed npm ci on Linux because Windows npm install omitted optional emnapi
 - Website head3c81617 passed GitHub runs36484240964 and36484235366. Stock follow-up needs its own CI proof. Backend verify and website build pass locally.
 - Publishing History now exposes Stop batch with confirmation. No workflow dispatched, production migration, deploy, merge or PN.
 - Still outstanding: Phase6 final race/recovery and free-tier photo CPU audit; Phase4/5 comprehensive UI matrix and upload/crop manual UAT (browser extension file access disabled); Phase7 regression/UAT and owner POCO verification; Phase8 explicit coordinated-release approval.
+
+- Windows test cleanup RCA: Sharp metadata from a file path retained a generated WebP handle. Read bytes first; batch test now exits0. Stopped only identified own batch-test processes/npm wrapper. Automatic approval review rejected leftover temporary-folder deletion (blocked by policy); left folders in place.
