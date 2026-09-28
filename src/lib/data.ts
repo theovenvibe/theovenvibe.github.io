@@ -8,6 +8,7 @@ import { z } from 'astro/zod';
 import { menuSchema, type Menu, type MenuItem, type Combo, type Addon } from '../schemas/menu';
 import { siteConfigSchema, type SiteConfig } from '../schemas/site-config';
 import { formatTime, formatTimeRange } from './pricing';
+import { allowedAddonCodes } from './menu-mappings';
 
 function loadJson<T>(file: string, schema: z.ZodType<T>): T {
   let raw: unknown;
@@ -85,6 +86,13 @@ export function displayMeta(raw: string): string[] {
   return meta;
 }
 
+/** Explicit metadata takes precedence; old catalogue markers remain the fallback. */
+export function entryMeta(entry: {tags?: string[];serving?: {amount:number;unit:string}}, raw: string): string[] {
+  if (entry.tags === undefined && entry.serving === undefined) return displayMeta(raw);
+  const parts = [...(entry.serving ? [`${entry.serving.amount} ${entry.serving.unit}`] : []),...(entry.tags ?? [])];
+  return parts.map(displayName).filter(Boolean);
+}
+
 /** Strip catalogue markers like "[Veg preparation]" for display copy. */
 export function displayDescription(item: { description: string }): string {
   return tidy(item.description.replace(/\[[^\]]*\]/g, '').replace(EMOJI, ''));
@@ -130,6 +138,8 @@ export interface OrderableRow {
   lateNight: boolean;
   /** The heading this belongs under — a category name, "Combos" or "Add-ons". */
   group: string;
+  /** Allowed extras for this item; absent means all extras (legacy combo behavior). */
+  addonIds?: string[];
 }
 
 const lateNightOffCategories = new Set(site.delivery.late_night.unavailable_categories);
@@ -153,6 +163,7 @@ export const orderCatalog: OrderableRow[] = [
       price: i.price,
       lateNight: servedLateNight(name, i.item_name),
       group: name,
+      addonIds: allowedAddonCodes(i.product_code,name,availableAddons.map(a=>a.addon_code),menu.Addon_Mappings).map(code=>`addon-${code}`),
     })),
   ),
   ...availableCombos.map((c) => ({

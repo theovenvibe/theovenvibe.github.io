@@ -1,3 +1,5 @@
+## 2026-09-29 — Menu editor Phase 3 compatibility (unreleased)
+Schema retains legacy fields, validates stable IDs/references and accepts tags/serving/combo quantities/add-on mappings. Cards use explicit metadata with legacy fallback. Checkout respects category defaults and item overrides including []. Existing menu.json untouched. Build, pricing, Dough32, gallery38, cart and menu schema/mapping checks passed; generated QA19 JSON-LD/zero emoji. No deploy/merge; owner UAT pending.
 ## 2026-09-28 — delivery pricing v2 release preparation
 
 - Released with owner approval: PR #134, main `5cd72fb`, successful current
@@ -815,3 +817,4 @@ it: shrinking bytes is safe, changing pixels is a design decision.
 - Build/test:delivery passed, gallery38/38; rendered29 pages/19 JSON-LD/zero emoji.
   Final mobile matrix/owner manual UAT pending (backend TODO Phase7). No customer
   number/order/PN; local GET-only preview blocks POSTs; local controls restored.
+

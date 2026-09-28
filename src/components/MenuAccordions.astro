@@ -14,7 +14,7 @@ import {
   availableCombos,
   galleryFor,
   displayName,
-  displayMeta,
+  entryMeta,
   displayDescription,
   itemCartId,
   comboCartId,
@@ -43,7 +43,7 @@ function comboDescription(combo: (typeof availableCombos)[number]): string {
           <MenuCard
             img={galleryFor(c)}
             title={displayName(c.combo_name)}
-            meta={displayMeta(c.combo_name)}
+            meta={entryMeta(c,c.combo_name)}
             description={comboDescription(c)}
             price={c.combo_price}
             cartId={comboCartId(c.combo_code)}
@@ -63,7 +63,7 @@ function comboDescription(combo: (typeof availableCombos)[number]): string {
             <MenuCard
               img={galleryFor(item)}
               title={displayName(item.display_name || item.item_name)}
-              meta={displayMeta(item.display_name || item.item_name)}
+              meta={entryMeta(item,item.display_name || item.item_name)}
               description={displayDescription(item)}
               price={item.price}
               cartId={itemCartId(item.product_code)}
