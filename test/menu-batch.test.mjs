@@ -13,9 +13,13 @@ try{
   const asset=await readFile('public/static/images/product_images/745802351-2.webp');
   menu._draft_photos={['Menu_Items:'+hero.product_code]:['asset:'+'a'.repeat(64),source]};
   const pasta=menu.Menu_Items.find(r=>config.delivery.late_night.unavailable_categories.includes(r.category));assert.ok(pasta,'Actual unavailable station required');pasta.category='Renamed station';pasta.display_name='Renamed vegetarian dish';
+  const sandwich=menu.Menu_Items.find(r=>/sandwich/i.test(r.item_name));sandwich.item_name='Vegetarian Toast';sandwich.category='Toasts';sandwich.serving={amount:8,unit:'pieces'};
+  menu.Combos[0].items_included=[sandwich.product_code,hero.product_code];menu.Combos[0].item_quantities={[sandwich.product_code]:2,[hero.product_code]:3};
   const result=await applyMenuBatch({menu,base_sha:'a'.repeat(40),version:5},root,async()=>asset);
   assert.equal(result._draft_photos,undefined);assert.deepEqual(result.Menu_Items.map(r=>r.product_code),original.Menu_Items.map(r=>r.product_code));
   assert.equal(result.Menu_Items.find(r=>r.product_code===pasta.product_code).late_night_available,false,'Category/name edits must not reopen a boiling station');
+  assert.deepEqual(result.Menu_Items.find(r=>r.product_code===sandwich.product_code).stock_recipe,[{dish:'sandwich',units:1}],'Rename and serving labels must not change ingredients');
+  assert.deepEqual(result.Combos[0].stock_recipe,[{dish:'sandwich',units:2},{dish:'pizza',units:3}],'Combos consume every component quantity');
   const editedHero=result.Menu_Items.find(r=>r.product_code===hero.product_code),stem=join(root,'public/static/images/product_images',editedHero.image_code);
   for(const suffix of ['.webp','.avif','-2.webp','-2.avif']){const metadata=await sharp(await readFile(stem+suffix)).metadata();assert.equal(metadata.width,600);assert.equal(metadata.height,400);}
   const og=await sharp(await readFile(join(root,'public/static/images/og/og-default.jpg'))).metadata();assert.equal(og.format,'jpeg');assert.equal(og.width,1200);assert.equal(og.height,630);

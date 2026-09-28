@@ -841,3 +841,13 @@ PR139 failed npm ci on Linux because Windows npm install omitted optional emnapi
 - Added private History Restore revision: CAS creates a new saved revision, retains immutable IDs/operational fields, unlists newer published rows; old photo sources pinned source:<sha>:path, private uploads retained. Historical card preview now uses recorded source SHA. Builder can retrieve archived Git photos and normalizes older square/large sources by fitting the whole image rather than rejecting them.
 - Rollback pure tests and isolated historical-image builder tests pass. Actual local protected restore401/200, revision6 with45 galleries, then baseline restored via revision7. No customer/order/journey/PN or production change.
 - Phase6 still needs final recovery/race/workflow audit and stable stock recipe work before publication; full Phase4/5/7 UI/UAT pending. Next resume at stock audit; local draft version7. New follow-up commits will be shown by git log; their CI must be checked separately from92a8e56.
+
+## 2026-09-29 — Stable stock recipes and multi-photo mobile QA
+
+- Menu batch freezes item/add-on recipes using published identities and rebuilds combo recipes from component quantities. Serving labels never change ingredients.
+- Append-only 0057 captures trusted published recipes on website orders (including extras), counter sales and giveaways. Applied locally only. Legacy rows retain name fallback; unavailable public menu cannot refuse an order.
+- Order/giveaway undo restores actual original stock deductions and marks those moves undone atomically, including partial-stock cases and repeated undo. SQLite integration tests exercise both paths without customers or push.
+- Vegie Onion Capsicum Pizza retains both existing photos. Verified 393px Android-sized gallery: page width393, dialog width393, two photos, cover/reorder/remove/upload controls, visible footer. Screenshot `.artifacts/vegie-two-photos-mobile.png`. No edits saved. Chooser adds one file at a time; gallery supports8.
+- Website head3c81617 passed GitHub runs36484240964 and36484235366. Stock follow-up needs its own CI proof. Backend verify and website build pass locally.
+- Publishing History now exposes Stop batch with confirmation. No workflow dispatched, production migration, deploy, merge or PN.
+- Still outstanding: Phase6 final race/recovery and free-tier photo CPU audit; Phase4/5 comprehensive UI matrix and upload/crop manual UAT (browser extension file access disabled); Phase7 regression/UAT and owner POCO verification; Phase8 explicit coordinated-release approval.
