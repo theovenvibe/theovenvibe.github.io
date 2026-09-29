@@ -15,8 +15,10 @@ try{
   const pasta=menu.Menu_Items.find(r=>config.delivery.late_night.unavailable_categories.includes(r.category));assert.ok(pasta,'Actual unavailable station required');pasta.category='Renamed station';pasta.display_name='Renamed vegetarian dish';
   const sandwich=menu.Menu_Items.find(r=>/sandwich/i.test(r.item_name));sandwich.item_name='Vegetarian Toast';sandwich.category='Toasts';sandwich.serving={amount:8,unit:'pieces'};
   menu.Combos[0].items_included=[sandwich.product_code,hero.product_code];menu.Combos[0].item_quantities={[sandwich.product_code]:2,[hero.product_code]:3};
+  menu.Menu_Categories=['Private empty category',...new Set(menu.Menu_Items.map(r=>r.category))];
   const result=await applyMenuBatch({menu,base_sha:'a'.repeat(40),version:5},root,async()=>asset);
   assert.equal(result._draft_photos,undefined);assert.deepEqual(result.Menu_Items.map(r=>r.product_code),original.Menu_Items.map(r=>r.product_code));
+  assert.deepEqual(result.Menu_Categories,menu.Menu_Categories,'Publishing retains the owner category registry and order');
   assert.equal(result.Menu_Items.find(r=>r.product_code===pasta.product_code).late_night_available,false,'Category/name edits must not reopen a boiling station');
   assert.deepEqual(result.Menu_Items.find(r=>r.product_code===sandwich.product_code).stock_recipe,[{dish:'sandwich',units:1}],'Rename and serving labels must not change ingredients');
   assert.deepEqual(result.Combos[0].stock_recipe,[{dish:'sandwich',units:2},{dish:'pizza',units:3}],'Combos consume every component quantity');

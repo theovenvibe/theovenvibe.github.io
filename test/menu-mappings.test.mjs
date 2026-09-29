@@ -1,4 +1,7 @@
 import assert from 'node:assert/strict';
+import {groupMenuCategories} from '../src/lib/menu-categories.ts';
+const grouped=groupMenuCategories([{category:'Classic',status:'available',code:'one'},{category:'Signature',status:'available',code:'two'},{category:'Private',status:'unavailable',code:'three'}],['Empty','Signature','Classic','Private']);
+assert.deepEqual(grouped.map(r=>r.name),['Signature','Classic'],'Explicit order respected; empty and unlisted-only sections stay hidden');assert.equal(grouped[0].items[0].code,'two');assert.deepEqual(groupMenuCategories([{category:'Legacy',status:'available'}]).map(r=>r.name),['Legacy'],'Legacy menus keep item-derived categories');
 import {allowedAddonCodes} from '../src/lib/menu-mappings.ts';
 import {menuSchema} from '../src/schemas/menu.ts';
 import {readFileSync} from 'node:fs';

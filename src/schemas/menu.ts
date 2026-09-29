@@ -67,6 +67,7 @@ export const menuSchema = z
     Menu_Items: z.array(menuItemSchema).min(1),
     Combos: z.array(comboSchema),
     Add_ons: z.array(addonSchema),
+    Menu_Categories: z.array(z.string().trim().min(1).max(100)).max(100).optional(),
     Addon_Mappings: z.object({
       categories: z.record(z.string(), z.array(code)).optional(),
       items: z.record(z.string(), z.array(code)).optional(),
@@ -104,7 +105,8 @@ export const menuSchema = z
       for (const ref of Object.keys(combo.item_quantities ?? {})) if (!combo.items_included.includes(ref)) issue(['Combos',i,'item_quantities',ref],'Quantity must reference an included item');
     });
     const addonCodes = new Set(menu.Add_ons.map(a=>a.addon_code));
-    const categories = new Set(menu.Menu_Items.map(i=>i.category));
+    const categories = new Set(menu.Menu_Categories??menu.Menu_Items.map(i=>i.category));
+    if(menu.Menu_Categories){if(new Set(menu.Menu_Categories.map(c=>c.toLowerCase())).size!==menu.Menu_Categories.length)issue(['Menu_Categories'],'Category names must be unique');for(const row of menu.Menu_Items)if(!categories.has(row.category))issue(['Menu_Categories'],'Include every item category');}
     for (const kind of ['items','categories'] as const) for (const [target,refs] of Object.entries(menu.Addon_Mappings?.[kind] ?? {})) {
       const path = ['Addon_Mappings',kind,target];
       if (!(kind === 'items' ? codes : categories).has(target)) issue(path,'Unknown mapping target');

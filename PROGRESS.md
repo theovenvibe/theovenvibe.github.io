@@ -1,3 +1,5 @@
+## 2026-09-29 — Category registry (unreleased)
+Optional Menu_Categories stores owner-created empty categories/order in menu.json; schema checks uniqueness and referenced categories, including category add-on defaults. Shared grouping respects explicit order and omits empty/unlisted-only sections, with legacy fallback. Build and test:menu pass, including grouping/batch preservation checks. Backend category creation/rename/save and new-item selection verified locally; restored test draft baseline. No deployment/merge.
 ## 2026-09-29 — Explicit menu Dough classification (unreleased)
 Published item/add-on dough_excluded metadata drives the shared Dough helper and checkout; known packaged codes include both Diet Coke variants, while prepared shakes remain eligible. Batch builder preserves explicit classification and excludes known packaged drinks. Build, test:dough and test:menu pass. Backend captures trusted classification via local-only0058; owner UAT/release hold remains. No deployment, merge or PN.
 ## 2026-09-29 — Menu editor Phase 3 compatibility (unreleased)

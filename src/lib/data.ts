@@ -9,6 +9,7 @@ import { menuSchema, type Menu, type MenuItem, type Combo, type Addon } from '..
 import { siteConfigSchema, type SiteConfig } from '../schemas/site-config';
 import { formatTime, formatTimeRange } from './pricing';
 import { allowedAddonCodes } from './menu-mappings';
+import { groupMenuCategories } from './menu-categories';
 
 function loadJson<T>(file: string, schema: z.ZodType<T>): T {
   let raw: unknown;
@@ -106,14 +107,7 @@ export const availableCombos = menu.Combos.filter((c) => c.status === 'available
 export const availableAddons = menu.Add_ons.filter((a) => a.status === 'available');
 
 /** Categories in menu.json order, each with its available items. */
-export const categories: { name: string; items: MenuItem[] }[] = (() => {
-  const map = new Map<string, MenuItem[]>();
-  for (const item of availableItems) {
-    if (!map.has(item.category)) map.set(item.category, []);
-    map.get(item.category)!.push(item);
-  }
-  return [...map.entries()].map(([name, items]) => ({ name, items }));
-})();
+export const categories: { name: string; items: MenuItem[] }[] = groupMenuCategories(menu.Menu_Items,menu.Menu_Categories);
 
 export const heroDish: MenuItem =
   availableItems.find((i) => i.product_code === site.hero_dish_code) ??
