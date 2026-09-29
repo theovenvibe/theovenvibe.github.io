@@ -15,7 +15,8 @@
     "test:dough": "node test/dough-rules.test.mjs",
     "test:gallery": "node test/menu-gallery.test.mjs",
     "test:delivery": "node test/delivery-pricing.test.mjs",
-    "test:cart": "node test/cart-handoff.test.mjs"
+    "test:cart": "node test/cart-handoff.test.mjs",
+    "test:menu": "node test/menu-mappings.test.mjs && node test/menu-batch.test.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
@@ -25,6 +26,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
+    "sharp": "^0.35.4",
     "typescript": "^6.0.3"
   }
 }

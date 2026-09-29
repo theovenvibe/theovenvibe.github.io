@@ -174,6 +174,23 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
+  // Campaign links can land directly on a menu category, including on an
+  // already-open page reused by the service worker after a notification tap.
+  function openMenuHash() {
+    if (!window.location.hash) return;
+    var id;
+    try { id = decodeURIComponent(window.location.hash.slice(1)); } catch (_) { return; }
+    var item = document.getElementById(id);
+    if (!item || !item.matches('#menu .accordion-item')) return;
+    var content = item.querySelector('.accordion-content');
+    if (!content) return;
+    item.classList.add('active');
+    content.style.maxHeight = content.scrollHeight + 'px';
+    item.scrollIntoView({ block: 'start' });
+  }
+  openMenuHash();
+  window.addEventListener('hashchange', openMenuHash);
+
   // ===============================
   // Lead events for Umami (Phase 5) — no-op when analytics is off, since
   // Layout.astro only loads the Umami script when site.config.json's

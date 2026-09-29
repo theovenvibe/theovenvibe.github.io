@@ -1,0 +1,16 @@
+import {execFileSync} from 'node:child_process';
+import {readFile,writeFile} from 'node:fs/promises';
+const id=process.env.MENU_JOB_ID;
+if(!/^[a-f0-9-]{36}$/.test(id||''))throw new Error('Invalid batch ID');
+const git=(...args)=>execFileSync('git',args,{encoding:'utf8'}).trim();
+const batch=JSON.parse(await readFile('/tmp/ov-menu-batch.json','utf8'));
+const latest=git('ls-remote','origin','refs/heads/main').split(/\s/)[0];
+if(latest!==batch.base_sha)throw new Error('Published source changed during validation. Batch was not pushed.');
+const branch='feature/menu-batch-'+id;
+git('checkout','-b',branch);git('config','user.name','OV Kitchen');git('config','user.email','ov-kitchen@users.noreply.github.com');
+git('add','menu.json','site.config.json','public/static/images','PROGRESS.md');
+git('commit','-m','feat(menu): owner batch revision '+batch.version);
+const sha=git('rev-parse','HEAD');git('push','origin','HEAD:refs/heads/'+branch);
+const r=await fetch('https://api.github.com/repos/theovenvibe/theovenvibe.github.io/pulls',{method:'POST',headers:{Authorization:'Bearer '+process.env.GH_TOKEN,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2026-03-10'},body:JSON.stringify({title:'Menu batch: revision '+batch.version,head:branch,base:'develop',draft:true,body:'Owner menu edits and photos prepared atomically. Build, menu/gallery/cart/Dough/delivery tests and Lighthouse budgets passed. Review the exact commit before the coordinated release. No production deployment is performed by this workflow.'})});
+if(!r.ok)throw new Error('Review PR creation failed ('+r.status+'). Branch remains for inspection.');
+const pr=await r.json();await writeFile('/tmp/ov-menu-result.json',JSON.stringify({commit_sha:sha,pr_number:pr.number}));

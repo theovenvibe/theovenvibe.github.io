@@ -379,10 +379,14 @@ const calcConfig = {
       .then((d) => {
         if (!d || !d.ok) return;
         form.setSoldOut(Object.keys(d.sold_out ?? {}));
+        form.setDeliveryAvailability(d.delivery);
+        form.setKitchenAvailability(d.store);
         applyOffers(d.offers ?? {});
         form.update();
       })
       .catch(() => {
+        form.setDeliveryAvailability(null);
+        form.setKitchenAvailability(null);
         // Everything stays orderable. AGENTS.md rule 5 - a backend that cannot
         // be reached must never stop somebody ordering.
       });

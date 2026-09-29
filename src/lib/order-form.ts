@@ -20,6 +20,7 @@ import { computeQuote, isTimeInRange, type QuoteResult, type QuoteOk } from './p
 import { publishNtfy, makeOnce } from './notify';
 import { MRP_CODES } from './dough';
 import type { SiteConfig } from '../schemas/site-config';
+import { deliveryPaused, deliveryPauseMessage, type DeliveryAvailability } from './delivery-availability';
 
 /**
  * An extra ordered on top of a basket line — "extra cheese, on that pizza".
@@ -174,6 +175,8 @@ export interface OrderFormHooks {
 }
 
 export interface OrderForm {
+  setDeliveryAvailability(value?: import('./delivery-availability').DeliveryAvailability | null): void;
+  setKitchenAvailability(value?: { open: boolean; until?: string | null } | null): void;
   /** Recalculate now — call after the page mutates the basket. */
   update(): void;
   /**
@@ -222,6 +225,35 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
   const dateInput = document.getElementById('dateInput') as HTMLInputElement;
   const timeRuleNote = document.getElementById('timeRuleNote') as HTMLElement;
   const orderTypeRadios = Array.from(document.querySelectorAll<HTMLInputElement>('input[name="orderType"]'));
+  let deliveryAvailability: DeliveryAvailability = { available: true };
+  let kitchenAvailability: { open: boolean; until?: string | null } = { open: true };
+  let switchedToPickup = false;
+  const deliveryNote = document.createElement('p');
+  deliveryNote.id = 'deliveryPauseNote';
+  deliveryNote.className = 'calc-note calc-note--warn';
+  deliveryNote.setAttribute('role', 'status');
+  deliveryNote.hidden = true;
+  orderTypeRadios[0]?.closest('fieldset')?.appendChild(deliveryNote);
+  function updateDeliveryChoice() {
+    const paused = deliveryPaused(deliveryAvailability);
+    const deliveryRadio = orderTypeRadios.find((r) => r.value === 'delivery');
+    const pickupRadio = orderTypeRadios.find((r) => r.value === 'pickup');
+    if (deliveryRadio) {
+      deliveryRadio.disabled = paused;
+      const label = deliveryRadio.closest('label');
+      if (label) label.hidden = paused;
+      if (paused && deliveryRadio.checked && pickupRadio) {
+        deliveryRadio.checked = false;
+        pickupRadio.checked = true;
+        switchedToPickup = true;
+      }
+    }
+    deliveryNote.hidden = !paused;
+    deliveryNote.textContent = paused
+      ? deliveryPauseMessage(deliveryAvailability) + (switchedToPickup ? ' Your order type changed to Pickup; your basket is unchanged.' : '')
+      : '';
+    if (!paused) switchedToPickup = false;
+  }
   const prepaidCheck = document.getElementById('prepaidCheck') as HTMLInputElement;
   const pastNote = document.getElementById('pastNote') as HTMLParagraphElement;
   const preorderCheck = document.getElementById('preorderCheck') as HTMLInputElement;
@@ -258,7 +290,8 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
   function earliest(): Date {
     const n = new Date();
     if (!preorderCheck.checked) return n;
-    return new Date(n.getTime() + delivery.preorder.min_hours_ahead * 3600000);
+    return new Date(Math.max(n.getTime() + delivery.preorder.min_hours_ahead * 3600000,
+      kitchenAvailability.open ? 0 : Date.parse(kitchenAvailability.until || '') || 0));
   }
 
   function applyEarliest() {
@@ -311,6 +344,11 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
   /** Late night wins over opening hours: the window deliberately starts at
    *  closing time, when the kitchen reopens only for what it can still cook. */
   function kitchenState(time: string): KitchenState {
+    if (!kitchenAvailability.open &&
+        (!kitchenAvailability.until || Date.parse(kitchenAvailability.until) > Date.now())) {
+      const chosen = Date.parse(dateInput.value + 'T' + time + ':00+05:30');
+      if (!preorderCheck.checked || (kitchenAvailability.until && chosen < Date.parse(kitchenAvailability.until))) return 'closed';
+    }
     if (isTimeInRange(time, delivery.late_night.from, delivery.late_night.to)) return 'late_night';
     if (isTimeInRange(time, CFG.hours.open, CFG.hours.close)) return 'open';
     return 'closed';
@@ -358,7 +396,10 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
     if (state === 'closed') {
       availabilityNote.hidden = false;
       availabilityNote.className = 'calc-availability calc-availability--closed';
-      availabilityNote.textContent = preorderCheck.checked
+      availabilityNote.textContent = !kitchenAvailability.open &&
+        (!kitchenAvailability.until || Date.parse(kitchenAvailability.until) > Date.now())
+        ? 'The kitchen is temporarily closed. Choose a pre-order for after it reopens; your basket is unchanged.'
+        : preorderCheck.checked
         ? `That time is still outside our hours — we open at ${formatOpen()}. Pick a later time to see your total; nothing in your basket is lost.`
         : `Kitchen is closed right now — we open at ${formatOpen()}. Tick "Pre-order" below and choose a time after we open; we'll confirm your order once the kitchen's back. Nothing in your basket is lost.`;
     } else if (state === 'late_night') {
@@ -734,6 +775,7 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
   }
 
   function update() {
+    updateDeliveryChoice();
     const orderType = (orderTypeRadios.find((r) => r.checked)?.value ?? 'delivery') as 'delivery' | 'pickup';
     const time = timeInput.value || '12:00';
     const state = kitchenState(time);
@@ -743,6 +785,8 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
     //   ordering for later -> nobody knows the weather; state the rule instead
     //   paid online        -> price locked, no doorstep surcharge is possible
     const isPickup = orderType === 'pickup';
+    const distanceGroup = distanceRadios[0]?.closest('fieldset');
+    if (distanceGroup) distanceGroup.hidden = isPickup;
     // "Later" is now the customer's own declaration, not a guess from the clock.
     const later = preorderCheck.checked;
 
@@ -799,7 +843,10 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
         textEl(
           'p',
           'calc-note calc-note--warn',
-          preorderCheck.checked
+          !kitchenAvailability.open && (!kitchenAvailability.until || Date.parse(kitchenAvailability.until) > Date.now())
+            ? 'The kitchen is temporarily closed. Choose a pre-order for after ' +
+              (kitchenAvailability.until ? new Date(kitchenAvailability.until).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) : 'the kitchen reopens; we will confirm your chosen time') + '.'
+            : preorderCheck.checked
             ? `${time} is still outside our hours — we open at ${formatOpen()}. Choose a later time to see your total.`
             : `Kitchen is closed at ${time} — we open at ${formatOpen()}. Tick "Pre-order" above to schedule this for when we're open; we'll confirm it then.`,
         ),
@@ -1026,6 +1073,14 @@ export function initOrderForm(CFG: OrderFormConfig, hooks: OrderFormHooks): Orde
   update();
 
   return {
+    setKitchenAvailability(value) {
+      kitchenAvailability = value ?? { open: true };
+      update();
+    },
+    setDeliveryAvailability(value) {
+      deliveryAvailability = value ?? { available: true };
+      update();
+    },
     update,
     currentQuote: () => ({ text: quoteText, total: quoteTotal }),
     distance: currentDistance,

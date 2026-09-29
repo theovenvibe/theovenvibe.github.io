@@ -1,0 +1,48 @@
+name: Prepare menu batch
+run-name: Menu batch ${{ inputs.job_id }}
+on:
+  workflow_dispatch:
+    inputs:
+      job_id:
+        required: true
+        type: string
+      backend_url:
+        required: true
+        type: string
+permissions:
+  contents: write
+  pull-requests: write
+concurrency:
+  group: ov-menu-batch
+  cancel-in-progress: false
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      MENU_JOB_ID: ${{ inputs.job_id }}
+      MENU_BUILD_KEY: ${{ secrets.OV_MENU_BUILD_KEY }}
+      MENU_BACKEND_URL: ${{ inputs.backend_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: node scripts/menu-publish-job.mjs prepare
+      - run: npm run build
+      - run: npm run test:delivery && npm run test:dough && npm run test:gallery && npm run test:cart && npm run test:menu
+      - name: Lighthouse budgets
+        uses: treosh/lighthouse-ci-action@v11
+        with:
+          configPath: ./.lighthouserc.json
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+      - name: Create review branch and draft PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/menu-review-pr.mjs
+      - run: node scripts/menu-publish-job.mjs result
+      - if: failure()
+        run: node scripts/menu-publish-job.mjs failed

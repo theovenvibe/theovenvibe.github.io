@@ -416,7 +416,7 @@ const checkoutConfig = {
       if (!isAddon(entry.id)) {
         for (const [addonId, aqty] of Object.entries(entry.addons)) {
           const addon = catalog.get(addonId);
-          if (!addon) {
+          if (!addon || (row.addonIds !== undefined && !row.addonIds.includes(addonId))) {
             setAddonQty(entry.id, addonId, 0);
             continue;
           }
@@ -475,6 +475,7 @@ const checkoutConfig = {
     const list = document.createElement('div');
     list.className = 'cart-extras-list';
     for (const addon of addons) {
+      if (row.addonIds !== undefined && !row.addonIds.includes(addon.id)) continue;
       // Anything already on the line has its own stepper above; no duplicates.
       if (entry.addons[addon.id]) continue;
       const btn = document.createElement('button');
@@ -485,7 +486,7 @@ const checkoutConfig = {
       list.appendChild(btn);
     }
     if (!list.childElementCount) {
-      list.appendChild(textEl('p', 'calc-note', 'Every extra is already on this item.'));
+      list.appendChild(textEl('p', 'calc-note', row.addonIds?.length === 0 ? 'No extras for this item.' : 'Every available extra is already on this item.'));
     }
     details.appendChild(list);
     return details;
@@ -504,6 +505,8 @@ const checkoutConfig = {
   }
 
   function changeAddon(lineId: string, addonId: string, qty: number) {
+    const row = catalog.get(lineId);
+    if (qty > 0 && row?.addonIds !== undefined && !row.addonIds.includes(addonId)) return;
     setAddonQty(lineId, addonId, qty);
     renderCart();
     form.update();
@@ -539,11 +542,15 @@ const checkoutConfig = {
         if (!d || !d.ok) return;
         const raised = applyOffers(d.offers ?? {});
         form.setSoldOut(Object.keys(d.sold_out ?? {}));
+        form.setDeliveryAvailability(d.delivery);
+        form.setKitchenAvailability(d.store);
         renderCart();
         form.update();
         showOfferChanges(raised);
       })
       .catch(() => {
+        form.setDeliveryAvailability(null);
+        form.setKitchenAvailability(null);
         // Normal prices stand. Nothing to tell the customer: they were never
         // shown a discount this page could not honour.
       });

@@ -1,5 +1,25 @@
 # Current release status (2026-09-28)
 
+**Completed and verified live.** Website release PR #134 merged at `5cd72fb`;
+GitHub Actions deploy run `36400891025` succeeded (build + deploy). Live
+`https://theovenvibe.com/` config, pages and menu were checked, and the live
+calculator produced the requested ₹618 + ₹39 + ₹50 = ₹707 late-night total.
+Backend release PR #70 merged at `68e62e9`; Wrangler version
+`3eca3d25-85fa-42be-8d07-230a8379ccc9` deployed; `/healthz` returned ok.
+Marketing PR #1 merged at `099322d`; print-generator source matches current
+config, but no PDF/social artwork was published. All implementation changes
+are committed and pushed. Website stack #133 (PRs #131/#132) was merged and
+synced; local feature layers were pruned.
+
+Existing browser caches may show the previous version until refresh. Refresh
+verified the current homepage and calculator in Chrome. No real customer test
+order, payment or WhatsApp message was submitted.
+
+Remaining optional work: regenerate and visually inspect printed/social artwork
+before distribution. No delivery implementation or production release remains
+pending. Payment receipt is manually verified in admin, since no gateway exists.
+This post-release evidence is logged on develop; it does not change live code.
+
 Owner explicitly resumed and approved push, merge and production deployment after
 local preview review, including the final sandwich descriptions. The pause and
 no-release notes below are historical checkpoints, superseded by this approval.
