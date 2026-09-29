@@ -5,6 +5,7 @@
  * readable error; the live site keeps serving the last good deploy.
  */
 import { z } from 'astro/zod';
+import {categoryAnchor} from '../lib/menu-categories.ts';
 
 const price = z
   .number({ message: 'price must be a number (no quotes, no ₹ symbol)' })
@@ -107,6 +108,7 @@ export const menuSchema = z
     const addonCodes = new Set(menu.Add_ons.map(a=>a.addon_code));
     const categories = new Set(menu.Menu_Categories??menu.Menu_Items.map(i=>i.category));
     if(menu.Menu_Categories){if(new Set(menu.Menu_Categories.map(c=>c.toLowerCase())).size!==menu.Menu_Categories.length)issue(['Menu_Categories'],'Category names must be unique');for(const row of menu.Menu_Items)if(!categories.has(row.category))issue(['Menu_Categories'],'Include every item category');}
+    const anchors=[...categories].map(categoryAnchor);if(anchors.some(c=>!c||['menu','sec-combos'].includes(c))||new Set(anchors).size!==anchors.length)issue(['Menu_Categories'],'Category names must create unique menu links');
     for (const kind of ['items','categories'] as const) for (const [target,refs] of Object.entries(menu.Addon_Mappings?.[kind] ?? {})) {
       const path = ['Addon_Mappings',kind,target];
       if (!(kind === 'items' ? codes : categories).has(target)) issue(path,'Unknown mapping target');

@@ -867,3 +867,6 @@ PR139 failed npm ci on Linux because Windows npm install omitted optional emnapi
 - SQLite/mock-GitHub tests now exercise edits during validation, scoped export revocation, late callbacks after cancellation, repeated cancellation, cancelled-state preservation during concurrent success polling, and expired-token/job recovery. No external writes or customer data.
 
 - Publishing build now counts all referenced photo bytes toward10MB; corrupt correct-size/signature candidate rejected by actual decoder. Schema quantity1–99 matches editor/backend. Website build and test:menu pass.
+
+## 2026-09-29 — Coordinated release authorized
+Owner requested all delivery/menu features live together; manual verification follows deployment. Build/menu tests/rendered QA passed. Centralized category anchors and reject duplicate/reserved section URLs; existing signature-pizza link preserved. Backend upload/crop browser UAT remains unverified due debugger disconnect. Release in progress, no PN/customer test data.

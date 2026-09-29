@@ -8,6 +8,7 @@
  */
 import AccordionItem from './AccordionItem.astro';
 import MenuCard from './MenuCard.astro';
+import {categoryAnchor} from '../lib/menu-categories';
 import {
   menu,
   categories,
@@ -56,7 +57,7 @@ function comboDescription(combo: (typeof availableCombos)[number]): string {
 
 {
   categories.map(({ name, items }) => (
-    <AccordionItem title={name} subtitle={`${items.length} ${items.length === 1 ? 'item' : 'items'}`} id={name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}>
+    <AccordionItem title={name} subtitle={`${items.length} ${items.length === 1 ? 'item' : 'items'}`} id={categoryAnchor(name)}>
       <div class="category-group">
         <div class="menu-items">
           {items.map((item) => (
