@@ -23,11 +23,11 @@ export async function applyMenuBatch(manifest,root,fetchAsset,fetchSource=async(
     const images=[];
     // Read every source before writing; promotion must not overwrite its source.
     for(const ref of refs){
-      let bytes;if(/^asset:[a-f0-9]{64}$/.test(ref)){bytes=Buffer.from(await fetchAsset(ref.slice(6)));total+=bytes.length;}
+      let bytes;if(/^asset:[a-f0-9]{64}$/.test(ref)){bytes=Buffer.from(await fetchAsset(ref.slice(6)));}
       else if(/^public\/static\/images\/(product_images|combo_images|add_on_images)\/[A-Za-z0-9_-]+\.webp$/.test(ref))bytes=await readFile(resolve(root,ref));
-      else if(/^source:[a-f0-9]{40}:public\/static\/images\/(product_images|combo_images|add_on_images)\/[A-Za-z0-9_-]+\.webp$/.test(ref)){const [,sha,...parts]=ref.split(':');bytes=Buffer.from(await fetchSource(sha,parts.join(':')));total+=bytes.length;}
+      else if(/^source:[a-f0-9]{40}:public\/static\/images\/(product_images|combo_images|add_on_images)\/[A-Za-z0-9_-]+\.webp$/.test(ref)){const [,sha,...parts]=ref.split(':');bytes=Buffer.from(await fetchSource(sha,parts.join(':')));}
       else throw new Error('Unsafe photo reference');
-      if(bytes.length>512000||total>10485760)throw new Error('Photo budget exceeded');
+      total+=bytes.length;if(bytes.length>512000||total>10485760)throw new Error('Photo budget exceeded');
       const isUpload=ref.startsWith('asset:');const meta=await sharp(bytes,{limitInputPixels:isUpload?240000:40000000,animated:false}).metadata();
       if(meta.format!=='webp'||!meta.width||!meta.height||(isUpload&&(meta.width!==600||meta.height!==400))||(meta.pages||1)!==1)throw new Error('Invalid photo format or dimensions');
       // Older published images include square add-ons and larger photos. Fit the

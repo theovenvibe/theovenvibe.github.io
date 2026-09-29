@@ -853,3 +853,13 @@ PR139 failed npm ci on Linux because Windows npm install omitted optional emnapi
 - Still outstanding: Phase6 final race/recovery and free-tier photo CPU audit; Phase4/5 comprehensive UI matrix and upload/crop manual UAT (browser extension file access disabled); Phase7 regression/UAT and owner POCO verification; Phase8 explicit coordinated-release approval.
 
 - Windows test cleanup RCA: Sharp metadata from a file path retained a generated WebP handle. Read bytes first; batch test now exits0. Stopped only identified own batch-test processes/npm wrapper. Automatic approval review rejected leftover temporary-folder deletion (blocked by policy); left folders in place.
+
+## 2026-09-29 — Resumed publishing safety audit
+
+- Owner resumed from continue.md. Release hold unchanged: no production migrations, deployments, merges, workflows dispatched or notifications.
+- Removed Worker WASM pixel decoder/dependency: free-tier CPU feasibility lacked reliable headroom. Browser cropper decodes/re-encodes; Worker validates bounded still-WebP containers before private storage; mandatory GitHub build fully decodes and re-encodes every candidate before creating a review commit. PRD records the validation boundary. Corrupt correct-size/signature candidate is rejected by the actual publishing transformer test. Private storage explicitly reports publish-build-required.
+- Publish job insertion now atomically checks the selected draft version after source/photo validation, preventing stale validation from queuing a replaced draft.
+- Combo quantity bounds now match the editor (1–99) in backend and website schema.
+- SQLite/mock-GitHub tests now exercise edits during validation, scoped export revocation, late callbacks after cancellation, repeated cancellation, cancelled-state preservation during concurrent success polling, and expired-token/job recovery. No external writes or customer data.
+
+- Publishing build now counts all referenced photo bytes toward10MB; corrupt correct-size/signature candidate rejected by actual decoder. Schema quantity1–99 matches editor/backend. Website build and test:menu pass.

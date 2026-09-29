@@ -33,6 +33,9 @@ try{
   await writeFile(join(root,'menu.json'),JSON.stringify(original));
   const malicious=structuredClone(original);malicious._draft_photos={['Menu_Items:'+hero.product_code]:['../../outside.webp']};
   await assert.rejects(()=>applyMenuBatch({menu:malicious,base_sha:'a'.repeat(40),version:6},root,async()=>asset),/Unsafe photo/);
+  const corrupt=Buffer.alloc(26);corrupt.write('RIFF');corrupt.writeUInt32LE(18,4);corrupt.write('WEBPVP8L',8);corrupt.writeUInt32LE(5,16);corrupt[20]=0x2f;corrupt.writeUInt32LE(599+(399<<14),21);
+  const privateCandidate=structuredClone(original);privateCandidate._draft_photos={['Menu_Items:'+hero.product_code]:['asset:'+'c'.repeat(64)]};
+  await assert.rejects(()=>applyMenuBatch({menu:privateCandidate,base_sha:'a'.repeat(40),version:6},root,async()=>corrupt),undefined,'Correct dimensions and signature cannot certify pixel data');
   console.log('Batch: isolated source writes, stable IDs, WebP/AVIF pairs, reordered photos, hero JPEG1200x630, late-night rename preservation and unsafe paths rejected.');
 }finally{
   const absolute=resolve(root),parent=resolve(tmpdir());if(!absolute.startsWith(parent+requireSeparator())||!absolute.split(requireSeparator()).at(-1).startsWith('ov-menu-batch-'))throw new Error('Unsafe cleanup path');

@@ -45,7 +45,7 @@ export const comboSchema = z.object({
   combo_price: price,
   description: z.string().min(1),
   items_included: z.array(code).min(1),
-  item_quantities: z.record(z.string(), z.number().int().positive()).optional(),
+  item_quantities: z.record(z.string(), z.number().int().min(1).max(99)).optional(),
   image_code: code,
   status,
   ...metadata,
