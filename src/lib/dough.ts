@@ -9,6 +9,7 @@
  * they commit. The Worker recomputes it from the stored basket and takes the
  * smaller of the two, so nothing here needs to be trusted.
  */
+import catalogue from '../../menu.json' with {type:'json'};
 export interface DoughState {
   balance: number;
   expires_at: string | null;
@@ -101,7 +102,10 @@ export const DOUGH_OFFER_RULE =
   'Dough works on full-price items. Items already on offer, and drinks, are not included — one discount at a time.';
 
 /** Catalogue codes Dough never touches: drinks sell at MRP. Mirrors the Worker. */
-export const MRP_CODES = new Set(['900000001', '900000002']);
+export function doughExcludedCodes(menu:{Menu_Items?:{product_code:string|number;dough_excluded?:boolean}[];Add_ons?:{addon_code:string|number;dough_excluded?:boolean}[]}):Set<string>{
+  return new Set(['900000001','900000002','900000014','900000015',...(menu.Menu_Items||[]).filter(r=>r.dough_excluded===true).map(r=>String(r.product_code)),...(menu.Add_ons||[]).filter(r=>r.dough_excluded===true).map(r=>String(r.addon_code))]);
+}
+export const MRP_CODES = doughExcludedCodes(catalogue);
 
 /** Strips the `item-` / `combo-` / `addon-` prefix the cart puts on a code. */
 export const bareCode = (id: string): string => id.replace(/^(item|combo|addon)-/, '');

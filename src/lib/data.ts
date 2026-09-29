@@ -8,6 +8,8 @@ import { z } from 'astro/zod';
 import { menuSchema, type Menu, type MenuItem, type Combo, type Addon } from '../schemas/menu';
 import { siteConfigSchema, type SiteConfig } from '../schemas/site-config';
 import { formatTime, formatTimeRange } from './pricing';
+import { allowedAddonCodes } from './menu-mappings';
+import { groupMenuCategories } from './menu-categories';
 
 function loadJson<T>(file: string, schema: z.ZodType<T>): T {
   let raw: unknown;
@@ -85,6 +87,16 @@ export function displayMeta(raw: string): string[] {
   return meta;
 }
 
+/** Explicit metadata takes precedence; old catalogue markers remain the fallback. */
+export function entryMeta(entry: {tags?: string[];serving?: {amount:number;unit:string}}, raw: string): string[] {
+  if (entry.tags === undefined && entry.serving === undefined) return displayMeta(raw);
+  const fallback = displayMeta(raw);
+  const size = entry.serving ? [`${entry.serving.amount} ${entry.serving.unit}`] : fallback.filter(p=>!['Spicy','Extra spicy'].includes(p));
+  const tags = entry.tags ?? fallback.filter(p=>['Spicy','Extra spicy'].includes(p));
+  const parts = [...size,...tags];
+  return parts.map(displayName).filter(Boolean);
+}
+
 /** Strip catalogue markers like "[Veg preparation]" for display copy. */
 export function displayDescription(item: { description: string }): string {
   return tidy(item.description.replace(/\[[^\]]*\]/g, '').replace(EMOJI, ''));
@@ -95,14 +107,7 @@ export const availableCombos = menu.Combos.filter((c) => c.status === 'available
 export const availableAddons = menu.Add_ons.filter((a) => a.status === 'available');
 
 /** Categories in menu.json order, each with its available items. */
-export const categories: { name: string; items: MenuItem[] }[] = (() => {
-  const map = new Map<string, MenuItem[]>();
-  for (const item of availableItems) {
-    if (!map.has(item.category)) map.set(item.category, []);
-    map.get(item.category)!.push(item);
-  }
-  return [...map.entries()].map(([name, items]) => ({ name, items }));
-})();
+export const categories: { name: string; items: MenuItem[] }[] = groupMenuCategories(menu.Menu_Items,menu.Menu_Categories);
 
 export const heroDish: MenuItem =
   availableItems.find((i) => i.product_code === site.hero_dish_code) ??
@@ -130,6 +135,8 @@ export interface OrderableRow {
   lateNight: boolean;
   /** The heading this belongs under — a category name, "Combos" or "Add-ons". */
   group: string;
+  /** Allowed extras for this item; absent means all extras (legacy combo behavior). */
+  addonIds?: string[];
 }
 
 const lateNightOffCategories = new Set(site.delivery.late_night.unavailable_categories);
@@ -151,22 +158,23 @@ export const orderCatalog: OrderableRow[] = [
       id: `item-${i.product_code}`,
       name: displayName(i.display_name || i.item_name),
       price: i.price,
-      lateNight: servedLateNight(name, i.item_name),
+      lateNight: i.late_night_available ?? servedLateNight(name, i.item_name),
       group: name,
+      addonIds: allowedAddonCodes(i.product_code,name,availableAddons.map(a=>a.addon_code),menu.Addon_Mappings).map(code=>`addon-${code}`),
     })),
   ),
   ...availableCombos.map((c) => ({
     id: `combo-${c.combo_code}`,
     name: displayName(c.combo_name),
     price: c.combo_price,
-    lateNight: !lateNightOffItems.has(c.combo_name),
+    lateNight: c.late_night_available ?? !lateNightOffItems.has(c.combo_name),
     group: 'Combos',
   })),
   ...availableAddons.map((a) => ({
     id: `addon-${a.addon_code}`,
     name: displayName(a.addon_name),
     price: a.addon_price,
-    lateNight: !lateNightOffItems.has(a.addon_name),
+    lateNight: a.late_night_available ?? !lateNightOffItems.has(a.addon_name),
     group: 'Add-ons',
   })),
 ];

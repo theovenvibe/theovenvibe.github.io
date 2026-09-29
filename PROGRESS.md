@@ -1,3 +1,9 @@
+## 2026-09-29 — Category registry (unreleased)
+Optional Menu_Categories stores owner-created empty categories/order in menu.json; schema checks uniqueness and referenced categories, including category add-on defaults. Shared grouping respects explicit order and omits empty/unlisted-only sections, with legacy fallback. Build and test:menu pass, including grouping/batch preservation checks. Backend category creation/rename/save and new-item selection verified locally; restored test draft baseline. No deployment/merge.
+## 2026-09-29 — Explicit menu Dough classification (unreleased)
+Published item/add-on dough_excluded metadata drives the shared Dough helper and checkout; known packaged codes include both Diet Coke variants, while prepared shakes remain eligible. Batch builder preserves explicit classification and excludes known packaged drinks. Build, test:dough and test:menu pass. Backend captures trusted classification via local-only0058; owner UAT/release hold remains. No deployment, merge or PN.
+## 2026-09-29 — Menu editor Phase 3 compatibility (unreleased)
+Schema retains legacy fields, validates stable IDs/references and accepts tags/serving/combo quantities/add-on mappings. Cards use explicit metadata with legacy fallback. Checkout respects category defaults and item overrides including []. Existing menu.json untouched. Build, pricing, Dough32, gallery38, cart and menu schema/mapping checks passed; generated QA19 JSON-LD/zero emoji. No deploy/merge; owner UAT pending.
 ## 2026-09-28 — delivery pricing v2 release preparation
 
 - Released with owner approval: PR #134, main `5cd72fb`, successful current
@@ -791,3 +797,76 @@ offenders were phone-camera originals shipped raw: several 4096x3072 photos at
 A first attempt at this went too wide — it cropped square photos to 3:2 and
 resized the logo — and was reverted before commit. The rule that came out of
 it: shrinking bytes is safe, changing pixels is a design decision.
+## 2026-09-28 — Signature Pizza notification destination
+
+- Menu categories now have stable name-based anchors; /menu/#signature-pizza
+  opens and scrolls to Signature Pizza on initial navigation and hash changes.
+- No notification sent and no customer/test journey created. Kept on a feature
+  branch for the coordinated batch release; production is unchanged.
+- npm run build passed; rendered QA checked 29 pages, 19 valid JSON-LD blocks,
+  zero emoji. Built anchor uniqueness and initial/hash-change accordion opening
+  passed with unknown/malformed hash checks. Browser UI QA unavailable because
+  browser inventory failed with request-header policy error.
+## 2026-09-28 — Delivery pause website integration (phase 2)
+
+- Shared calculator/checkout form consumes live delivery availability, offers
+  Pickup only during a pause, preserves basket and explains type changes.
+- Public cart/menu banner shows reason/message and return timing; current poll
+  and focus refresh apply state to existing tabs. Expiry is evaluated locally;
+  failed availability requests fail open. No real orders, PN or production changes.
+- Feature stack keeps pending Signature Pizza link as its base. Release held
+  until both Delivery pause/Menu editor and owner QA/UAT approval are complete.
+- Manual kitchen closure reaches shared form too. Local browser saw358->319 and
+  checkout319 for one269 pizza at late night; future noon pickup269; basket kept.
+- Build/test:delivery passed, gallery38/38; rendered29 pages/19 JSON-LD/zero emoji.
+  Final mobile matrix/owner manual UAT pending (backend TODO Phase7). No customer
+  number/order/PN; local GET-only preview blocks POSTs; local controls restored.
+
+2026-09-29 follow-up: explicit tags/serving fall back independently to legacy size/spice metadata. Latest build and menu/pricing/Dough/cart checks passed. Release held.
+
+## 2026-09-29 — Phase6 publishing foundations in progress (unreleased)
+- Backend feature/menu-publishing, append-only0056 applied ONLY locally: immutable job snapshots, one active batch, source-SHA conflicts, explicit draft refresh retaining History, disabled publish gate, job-scoped expiring build export, workflow/result verification, live proof from matching menu blob plus successful current-main deploy job. No merge or deploy endpoint.
+- Build access uses HMAC from a separate owner-provisioned build key, mirrored only as GitHub repository secret; workflow dispatch inputs contain job ID/origin, never a bearer token. Worker publishing credential requires Actions read/write for the website repo only. MENU_PUBLISH_ENABLED remains unset.
+- Website feature/menu-batch-build: isolated batch transformation, deterministic per-item image codes to separate shared photos, WebP+AVIF pairs, safe source cleanup, hero JPEG1200x630 regeneration, late-night eligibility preserved through category/name edits, build/regression/Lighthouse gates, draft PR into develop. Workflow never merges or deploys.
+- Evidence: backend verify and actual local asset HTTP pass; mocked GitHub tests cover503 hold,409 source conflict,502 dispatch failure, one active job, secret redaction, scoped manifest/photos, running vs ready vs live deployment proof. Website build0errors/0warnings/9hints; delivery/Dough32/gallery38/cart/menu and isolated image-batch tests pass. Fixed Windows Sharp file-handle lock by reading hero into a buffer. Local isolated site preview refreshed after build;19 JSON-LD/zero emoji.
+- Phase6 NOT complete: implement/test rollback-to-new-revision (including old source photos), robust retry/recovery and final Actions/security/race audit. Mandatory stock classifier fix remains: stock currently derives from display names, and combo quantities are not accounted. Need server-captured stable stock recipe for order/counter/giveaway workflows; read completion/cancel/delete paths before changes. Dough existing MRP codes remain stable; new packaged-drink policy must be audited.
+- Phase4/5 final UI matrices pending; browser file chooser blocked by extension file-URL permission. Actual Android/POCO/manual owner UAT and owner secrets/config/approval remain pending. Do not enable publishing or make remote feature calls.
+- No customer number,order,journey or PN created. No production migration, deployment or merge. Old disposable local asset test blobs retained (40KB including a decodable zero-filled variant); unreferenced TTL cleanup exists. Actual catalogue local draft still revision5.
+
+## CI lockfile correction — 2026-09-29
+PR139 failed npm ci on Linux because Windows npm install omitted optional emnapi dependencies. Regenerated the lockfile in a fresh directory; Linux/x64 npm ci dry-run passes. No dependency source or workflow deploy change. Actual CI rerun pending.
+
+## 2026-09-29 — CI follow-up and multiple-photo check
+- PR139 second CI run failed npm ci. RCA: local npm11.6.2 accepted a lockfile that CI npm11.19.0 rejected. Regenerated in an isolated directory using npm11.19.0, Linux/x64; exact-version clean-install dry-run passes. Fresh actual CI confirmation pending after push.
+- Local browser Vegie Onion Capsicum Pizza loads both existing photos745802365.webp and745802365-2.webp. Make cover promotes photo2; discarded changes without Apply/Save. Upload accepts one file at a time, up to8 photos per item; no bulk file selection yet. No customer/order/PN/production change. Screenshot .artifacts/vegie-two-photos.png.
+
+## 2026-09-29 — Old-photo restore and CI proof
+- Website92a8e56 verified GitHub Actions run36483130025: npm ci/build/Lighthouse success; deploy skipped. Exact CI npm11.19.0 resolved the lockfile issue.
+- Added private History Restore revision: CAS creates a new saved revision, retains immutable IDs/operational fields, unlists newer published rows; old photo sources pinned source:<sha>:path, private uploads retained. Historical card preview now uses recorded source SHA. Builder can retrieve archived Git photos and normalizes older square/large sources by fitting the whole image rather than rejecting them.
+- Rollback pure tests and isolated historical-image builder tests pass. Actual local protected restore401/200, revision6 with45 galleries, then baseline restored via revision7. No customer/order/journey/PN or production change.
+- Phase6 still needs final recovery/race/workflow audit and stable stock recipe work before publication; full Phase4/5/7 UI/UAT pending. Next resume at stock audit; local draft version7. New follow-up commits will be shown by git log; their CI must be checked separately from92a8e56.
+
+## 2026-09-29 — Stable stock recipes and multi-photo mobile QA
+
+- Menu batch freezes item/add-on recipes using published identities and rebuilds combo recipes from component quantities. Serving labels never change ingredients.
+- Append-only 0057 captures trusted published recipes on website orders (including extras), counter sales and giveaways. Applied locally only. Legacy rows retain name fallback; unavailable public menu cannot refuse an order.
+- Order/giveaway undo restores actual original stock deductions and marks those moves undone atomically, including partial-stock cases and repeated undo. SQLite integration tests exercise both paths without customers or push.
+- Vegie Onion Capsicum Pizza retains both existing photos. Verified 393px Android-sized gallery: page width393, dialog width393, two photos, cover/reorder/remove/upload controls, visible footer. Screenshot `.artifacts/vegie-two-photos-mobile.png`. No edits saved. Chooser adds one file at a time; gallery supports8.
+- Website head3c81617 passed GitHub runs36484240964 and36484235366. Stock follow-up needs its own CI proof. Backend verify and website build pass locally.
+- Publishing History now exposes Stop batch with confirmation. No workflow dispatched, production migration, deploy, merge or PN.
+- Still outstanding: Phase6 final race/recovery and free-tier photo CPU audit; Phase4/5 comprehensive UI matrix and upload/crop manual UAT (browser extension file access disabled); Phase7 regression/UAT and owner POCO verification; Phase8 explicit coordinated-release approval.
+
+- Windows test cleanup RCA: Sharp metadata from a file path retained a generated WebP handle. Read bytes first; batch test now exits0. Stopped only identified own batch-test processes/npm wrapper. Automatic approval review rejected leftover temporary-folder deletion (blocked by policy); left folders in place.
+
+## 2026-09-29 — Resumed publishing safety audit
+
+- Owner resumed from continue.md. Release hold unchanged: no production migrations, deployments, merges, workflows dispatched or notifications.
+- Removed Worker WASM pixel decoder/dependency: free-tier CPU feasibility lacked reliable headroom. Browser cropper decodes/re-encodes; Worker validates bounded still-WebP containers before private storage; mandatory GitHub build fully decodes and re-encodes every candidate before creating a review commit. PRD records the validation boundary. Corrupt correct-size/signature candidate is rejected by the actual publishing transformer test. Private storage explicitly reports publish-build-required.
+- Publish job insertion now atomically checks the selected draft version after source/photo validation, preventing stale validation from queuing a replaced draft.
+- Combo quantity bounds now match the editor (1–99) in backend and website schema.
+- SQLite/mock-GitHub tests now exercise edits during validation, scoped export revocation, late callbacks after cancellation, repeated cancellation, cancelled-state preservation during concurrent success polling, and expired-token/job recovery. No external writes or customer data.
+
+- Publishing build now counts all referenced photo bytes toward10MB; corrupt correct-size/signature candidate rejected by actual decoder. Schema quantity1–99 matches editor/backend. Website build and test:menu pass.
+
+## 2026-09-29 — Coordinated release authorized
+Owner requested all delivery/menu features live together; manual verification follows deployment. Build/menu tests/rendered QA passed. Centralized category anchors and reject duplicate/reserved section URLs; existing signature-pizza link preserved. Backend upload/crop browser UAT remains unverified due debugger disconnect. Release in progress, no PN/customer test data.

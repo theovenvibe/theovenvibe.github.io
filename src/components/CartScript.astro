@@ -41,6 +41,7 @@ const { showFab = true } = Astro.props;
   import { addItem, cartCount, onCartChange } from '../lib/cart';
   import { reportStage } from '../lib/campaign';
   import { getDeviceId } from '../lib/device';
+  import { deliveryPaused, deliveryPauseMessage, type DeliveryAvailability } from '../lib/delivery-availability';
 
   /* A friend's link lands as ?r=OV4F2K. Stored rather than read at checkout,
    * because the customer will browse, leave and come back before they order —
@@ -117,6 +118,21 @@ const { showFab = true } = Astro.props;
   let store: { open: boolean; reason: string | null; message: string | null; until: string | null } = {
     open: true, reason: null, message: null, until: null,
   };
+  let deliveryAvailability: DeliveryAvailability = { available: true };
+
+  function paintDeliveryBanner() {
+    let banner = document.getElementById('deliveryPausedBanner');
+    if (!deliveryPaused(deliveryAvailability)) { banner?.remove(); return; }
+    if (!banner) {
+      banner = document.createElement('div');
+      banner.id = 'deliveryPausedBanner';
+      banner.className = 'kitchen-closed';
+      banner.setAttribute('role', 'status');
+      document.querySelector('main')?.prepend(banner);
+    }
+    banner.textContent = deliveryPauseMessage(deliveryAvailability) +
+      (store.open ? '' : ' The kitchen is closed right now; pickup is available as a pre-order.');
+  }
 
   /**
    * Items the owner has marked as not cooked during the late-night window
@@ -643,11 +659,15 @@ const { showFab = true } = Astro.props;
         // An older Worker has no `store` key; absent means open, which is the
         // safe direction and what the site did before this existed.
         store = d.store ?? { open: true, reason: null, message: null, until: null };
+        deliveryAvailability = d.delivery ?? { available: true };
         lateNightOff = Array.isArray(d.late_night_off) ? d.late_night_off : [];
         paintButtons();
         paintClosedBanner();
+        paintDeliveryBanner();
       })
       .catch(() => {
+        deliveryAvailability = { available: true };
+        paintDeliveryBanner();
         // Silence is correct here: everything stays as it is, which means
         // available. AGENTS.md rule 5 — never block a customer from ordering.
       });
@@ -661,6 +681,7 @@ const { showFab = true } = Astro.props;
   // rather than trusting whatever was true at page load. The Worker caches
   // /availability for 20s, so a minute here costs it very little.
   window.setInterval(() => {
+    paintDeliveryBanner();
     paintButtons();
     refreshAvailability();
   }, 60000);

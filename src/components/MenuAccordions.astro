@@ -8,13 +8,14 @@
  */
 import AccordionItem from './AccordionItem.astro';
 import MenuCard from './MenuCard.astro';
+import {categoryAnchor} from '../lib/menu-categories';
 import {
   menu,
   categories,
   availableCombos,
   galleryFor,
   displayName,
-  displayMeta,
+  entryMeta,
   displayDescription,
   itemCartId,
   comboCartId,
@@ -43,7 +44,7 @@ function comboDescription(combo: (typeof availableCombos)[number]): string {
           <MenuCard
             img={galleryFor(c)}
             title={displayName(c.combo_name)}
-            meta={displayMeta(c.combo_name)}
+            meta={entryMeta(c,c.combo_name)}
             description={comboDescription(c)}
             price={c.combo_price}
             cartId={comboCartId(c.combo_code)}
@@ -56,14 +57,14 @@ function comboDescription(combo: (typeof availableCombos)[number]): string {
 
 {
   categories.map(({ name, items }) => (
-    <AccordionItem title={name} subtitle={`${items.length} ${items.length === 1 ? 'item' : 'items'}`}>
+    <AccordionItem title={name} subtitle={`${items.length} ${items.length === 1 ? 'item' : 'items'}`} id={categoryAnchor(name)}>
       <div class="category-group">
         <div class="menu-items">
           {items.map((item) => (
             <MenuCard
               img={galleryFor(item)}
               title={displayName(item.display_name || item.item_name)}
-              meta={displayMeta(item.display_name || item.item_name)}
+              meta={entryMeta(item,item.display_name || item.item_name)}
               description={displayDescription(item)}
               price={item.price}
               cartId={itemCartId(item.product_code)}
