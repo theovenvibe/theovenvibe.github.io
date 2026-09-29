@@ -1,3 +1,5 @@
+## 2026-09-29 — Explicit menu Dough classification (unreleased)
+Published item/add-on dough_excluded metadata drives the shared Dough helper and checkout; known packaged codes include both Diet Coke variants, while prepared shakes remain eligible. Batch builder preserves explicit classification and excludes known packaged drinks. Build, test:dough and test:menu pass. Backend captures trusted classification via local-only0058; owner UAT/release hold remains. No deployment, merge or PN.
 ## 2026-09-29 — Menu editor Phase 3 compatibility (unreleased)
 Schema retains legacy fields, validates stable IDs/references and accepts tags/serving/combo quantities/add-on mappings. Cards use explicit metadata with legacy fallback. Checkout respects category defaults and item overrides including []. Existing menu.json untouched. Build, pricing, Dough32, gallery38, cart and menu schema/mapping checks passed; generated QA19 JSON-LD/zero emoji. No deploy/merge; owner UAT pending.
 ## 2026-09-28 — delivery pricing v2 release preparation

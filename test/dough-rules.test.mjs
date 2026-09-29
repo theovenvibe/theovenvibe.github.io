@@ -1,4 +1,8 @@
-import { usableDough as actualUsableDough } from '../src/lib/dough.ts';
+import { usableDough as actualUsableDough, doughExcludedCodes, spendableTotal } from '../src/lib/dough.ts';
+import assert from 'node:assert/strict';
+const classified=doughExcludedCodes({Menu_Items:[{product_code:'NEW-BOTTLE',dough_excluded:true},{product_code:'NEW-SHAKE',dough_excluded:false}]});
+assert.equal(classified.has('NEW-BOTTLE'),true);assert.equal(classified.has('NEW-SHAKE'),false);assert.equal(classified.has('900000014'),true);assert.equal(classified.has('900000015'),true);
+assert.equal(spendableTotal([{id:'item-900000014',price:50,qty:1},{id:'item-900000012',price:159,qty:1}],new Set()),159,'Diet Coke excluded; prepared shake remains eligible');
 
 // Exercise the actual checkout helper; Worker arithmetic below is a reference.
 const CAP_PCT = 0.1;

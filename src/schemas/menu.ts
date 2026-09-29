@@ -17,6 +17,7 @@ const status = z.enum(['available', 'unavailable'], {
 
 const code = z.union([z.string(), z.number().int()]).transform(String).pipe(z.string().regex(/^[A-Za-z0-9_-]{1,80}$/, 'safe catalogue code required'));
 const metadata = {
+  dough_excluded: z.boolean().optional(),
   late_night_available: z.boolean().optional(),
   tags: z.array(z.string().trim().min(1).max(40)).max(12).optional(),
   serving: z.object({ amount: z.number().int().positive(), unit: z.string().trim().min(1).max(40) }).optional(),
