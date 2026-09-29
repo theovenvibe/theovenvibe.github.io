@@ -870,3 +870,6 @@ PR139 failed npm ci on Linux because Windows npm install omitted optional emnapi
 
 ## 2026-09-29 — Coordinated release authorized
 Owner requested all delivery/menu features live together; manual verification follows deployment. Build/menu tests/rendered QA passed. Centralized category anchors and reject duplicate/reserved section URLs; existing signature-pizza link preserved. Backend upload/crop browser UAT remains unverified due debugger disconnect. Release in progress, no PN/customer test data.
+
+## 2026-09-29 — Customer-site production release verified
+Owner authorized coordinated release and manual verification after live. Stack137 atomic merge249d034; releasePR140 main820f48dacdf9debbb20c5ea176a6e1e5c37e2b50. Actions36553730032 build/Lighthouse/deploy success. Legacy Jekyll36553729569 failed, but actual Astro deployment succeeded; attempted Pages setting update returned404, settings unchanged. Live /menu/ responds200 with signature-pizza anchor. Integrated build, delivery/Dough/gallery/cart/menu tests and19JSONLD/noemoji/nonveg checks passed. No customer number, order or PN. Upload/crop/installed Android owner UAT remains unverified. Automatic menu publishing waits for owner credential setup.
