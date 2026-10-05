@@ -870,3 +870,13 @@ PR139 failed npm ci on Linux because Windows npm install omitted optional emnapi
 
 ## 2026-09-29 — Coordinated release authorized
 Owner requested all delivery/menu features live together; manual verification follows deployment. Build/menu tests/rendered QA passed. Centralized category anchors and reject duplicate/reserved section URLs; existing signature-pizza link preserved. Backend upload/crop browser UAT remains unverified due debugger disconnect. Release in progress, no PN/customer test data.
+
+## 2026-09-29 — Customer-site production release verified
+Owner authorized coordinated release and manual verification after live. Stack137 atomic merge249d034; releasePR140 main820f48dacdf9debbb20c5ea176a6e1e5c37e2b50. Actions36553730032 build/Lighthouse/deploy success. Legacy Jekyll36553729569 failed, but actual Astro deployment succeeded; attempted Pages setting update returned404, settings unchanged. Live /menu/ responds200 with signature-pizza anchor. Integrated build, delivery/Dough/gallery/cart/menu tests and19JSONLD/noemoji/nonveg checks passed. No customer number, order or PN. Upload/crop/installed Android owner UAT remains unverified. Automatic menu publishing waits for owner credential setup.
+
+## 2026-10-05 — Jumbo sandwich refresh
+
+- Owner authorized removing the three discontinued regular sandwiches and deploying the three jumbo sandwiches with approved Mega Jumbo Melt names and descriptions specifying 2 bread slices, approximately7 inches diagonally, cut into4 triangular pieces: one sandwich per serving.
+- Replaced all three cover photos with latest v2 images arranging four quarters as one sandwich, fitted to the existing 600x400 card frame and encoded as WebP/AVIF pairs. Existing product codes and all remaining menu prices preserved: chilli cheese129, corn149, paneer169. Offers remain a separate owner action.
+- Validation and deployment verification recorded below after release.
+- Feature validation passed: build0 errors; menu mapping/batch tests; gallery38 passed; rendered QA19JSON-LD blocks, accurate ratings, no emoji/non-veg copy, metadata/alt and serving checks. Explicit stock recipes retain one sandwich per order despite display-name changes. All surviving prices and combos/add-ons verified unchanged.
