@@ -160,66 +160,51 @@
       "item_id": 17,
       "category": "Grilled Sandwiches",
       "subcategory": "Sandwiches",
-      "item_name": "Fiery Chilli Cheese Jumbo Melt Sandwich [2 slices]",
-      "display_name": "Fiery Chilli Cheese Jumbo Melt Sandwich [2 slices] 🌶️ 🌶️",
+      "item_name": "Fiery Chilli Cheese Mega Jumbo Melt",
+      "display_name": "Fiery Chilli Cheese Mega Jumbo Melt",
       "price": 129,
-      "description": "[veg preparation] A grilled sandwich made with jumbo bread, filled with spicy chilli and melted cheese.",
-      "status": "available"
+      "description": "[veg preparation] Made with 2 slices of our biggest bread, each measuring approximately 7 inches diagonally, filled with melted cheese, creamy white cheese spread and fiery green chilli. Butter-grilled until golden and crisp, cut into 4 triangular pieces and served hot. One sandwich per serving. 100% pure veg, no egg.",
+      "status": "available",
+      "stock_recipe": [
+        {
+          "dish": "sandwich",
+          "units": 1
+        }
+      ]
     },
     {
       "product_code": "752623131",
       "item_id": 18,
       "category": "Grilled Sandwiches",
       "subcategory": "Sandwiches",
-      "item_name": "Paneer Tikka Jumbo Melt Sandwich [2 slices]",
-      "display_name": "Paneer Tikka Jumbo Melt Sandwich [2 slices]",
+      "item_name": "Paneer Tikka Mega Jumbo Melt",
+      "display_name": "Paneer Tikka Mega Jumbo Melt",
       "price": 169,
-      "description": "[veg preparation] A grilled sandwich made with jumbo bread, packed with seasoned paneer tikka filling.",
-      "status": "available"
+      "description": "[veg preparation] Made with 2 slices of our biggest bread, each measuring approximately 7 inches diagonally, filled with paneer, onion, capsicum, carrot, a little cabbage, creamy tandoori mayo and melted cheese. Butter-grilled until golden and crisp, cut into 4 triangular pieces and served hot. One sandwich per serving. 100% pure veg, no egg.",
+      "status": "available",
+      "stock_recipe": [
+        {
+          "dish": "sandwich",
+          "units": 1
+        }
+      ]
     },
     {
       "product_code": "900000011",
       "item_id": 44,
       "category": "Grilled Sandwiches",
       "subcategory": "Sandwiches",
-      "item_name": "Cheesy Corn Jumbo Melt Sandwich [2 slices]",
-      "display_name": "Cheesy Corn Jumbo Melt Sandwich [2 slices]",
+      "item_name": "Cheesy Corn Mega Jumbo Melt",
+      "display_name": "Cheesy Corn Mega Jumbo Melt",
       "price": 149,
-      "description": "[veg preparation] A grilled sandwich made with jumbo bread, loaded with sweet corn and melted cheese.",
-      "status": "available"
-    },
-    {
-      "product_code": "900000008",
-      "item_id": 41,
-      "category": "Grilled Sandwiches",
-      "subcategory": "Sandwiches",
-      "item_name": "Fiery Chilli Cheese Melt Sandwich [2 slices]",
-      "display_name": "Fiery Chilli Cheese Melt Sandwich [2 slices] 🌶️ 🌶️",
-      "price": 99,
-      "description": "[veg preparation] A grilled sandwich made with regular sandwich bread, filled with spicy chilli and melted cheese.",
-      "status": "available"
-    },
-    {
-      "product_code": "900000009",
-      "item_id": 42,
-      "category": "Grilled Sandwiches",
-      "subcategory": "Sandwiches",
-      "item_name": "Paneer Tikka Melt Sandwich [2 slices]",
-      "display_name": "Paneer Tikka Melt Sandwich [2 slices]",
-      "price": 129,
-      "description": "[veg preparation] A grilled sandwich made with regular sandwich bread, packed with seasoned paneer tikka filling.",
-      "status": "available"
-    },
-    {
-      "product_code": "900000010",
-      "item_id": 43,
-      "category": "Grilled Sandwiches",
-      "subcategory": "Sandwiches",
-      "item_name": "Cheesy Corn Melt Sandwich [2 slices]",
-      "display_name": "Cheesy Corn Melt Sandwich [2 slices]",
-      "price": 119,
-      "description": "[veg preparation] A grilled sandwich made with regular sandwich bread, loaded with sweet corn and melted cheese.",
-      "status": "available"
+      "description": "[veg preparation] Made with 2 slices of our biggest bread, each measuring approximately 7 inches diagonally, filled with sweet corn, melted cheese, creamy white cheese spread and a touch of chilli flakes. Butter-grilled until golden and crisp, cut into 4 triangular pieces and served hot. One sandwich per serving. 100% pure veg, no egg.",
+      "status": "available",
+      "stock_recipe": [
+        {
+          "dish": "sandwich",
+          "units": 1
+        }
+      ]
     },
     {
       "product_code": "760595845",

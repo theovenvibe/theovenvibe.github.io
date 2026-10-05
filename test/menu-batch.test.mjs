@@ -13,7 +13,7 @@ try{
   const asset=await readFile('public/static/images/product_images/745802351-2.webp');
   menu._draft_photos={['Menu_Items:'+hero.product_code]:['asset:'+'a'.repeat(64),source]};
   const pasta=menu.Menu_Items.find(r=>config.delivery.late_night.unavailable_categories.includes(r.category));assert.ok(pasta,'Actual unavailable station required');pasta.category='Renamed station';pasta.display_name='Renamed vegetarian dish';
-  const sandwich=menu.Menu_Items.find(r=>/sandwich/i.test(r.item_name));sandwich.item_name='Vegetarian Toast';sandwich.category='Toasts';sandwich.serving={amount:8,unit:'pieces'};
+  const sandwich=menu.Menu_Items.find(r=>r.stock_recipe?.some(part=>part.dish==='sandwich')||/sandwich/i.test(r.category));assert.ok(sandwich,'Actual sandwich recipe required');sandwich.item_name='Vegetarian Toast';sandwich.category='Toasts';sandwich.serving={amount:8,unit:'pieces'};
   menu.Combos[0].items_included=[sandwich.product_code,hero.product_code];menu.Combos[0].item_quantities={[sandwich.product_code]:2,[hero.product_code]:3};
   menu.Menu_Categories=['Private empty category',...new Set(menu.Menu_Items.map(r=>r.category))];
   const result=await applyMenuBatch({menu,base_sha:'a'.repeat(40),version:5},root,async()=>asset);
