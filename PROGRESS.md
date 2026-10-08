@@ -1,3 +1,14 @@
+## 2026-10-09 — Stock retirement integrated on develop
+
+PR142 merged as82a685d after both build/Lighthouse checks passed. Post-merge
+local build and rendered QA passed:29 HTML files,19 valid JSON-LD blocks,
+config-matching ratings and no emoji/non-veg/image-alt failures. A393px local
+browser carried the unchanged jumbo melt and129 price into checkout with
+external services unreachable. No customer details entered or order sent.
+Backend PR81/82/83 are integrated and full merged verify passes. Main and live
+production remain unchanged; coordinated batch release and Cloudflare real-data
+baseline are pending. No menu publication, customer writes or pushes performed.
+
 ## 2026-10-08 — Retire ingredient stock metadata (pending release)
 
 Owner approved backend stock retirement. Removed only stock_recipe from the three active jumbo menu rows and stopped generating recipes during menu publication. Older draft/revision publication also strips retired metadata. Stable IDs, combo component quantities, Dough exclusions, late-night policy, photos and rollback sources are preserved. Existing menu names, prices, portions, categories and descriptions are unchanged.
