@@ -1,3 +1,11 @@
+> **9 October 2026 — stock retirement is live.** The website publishes no
+> stock_recipe; legacy draft/rollback publication strips it. Menu names, prices,
+> descriptions, component quantities and photos are unchanged. Manual sold-out
+> and late-night controls, waitlists and dish costing remain. Dough classification
+> uses trusted catalogue metadata independently of counts. See the backend's
+> [operating policy](https://github.com/theovenvibe/the-oven-vibe-backend/blob/develop/docs/STOCK_RETIREMENT.md) and
+> [verified release](https://github.com/theovenvibe/the-oven-vibe-backend/blob/develop/docs/STOCK_RETIREMENT_RELEASE.md).
+
 # TODO
 
 Things we have decided to do but have not done. One line per item, with enough

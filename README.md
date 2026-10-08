@@ -1,3 +1,11 @@
+> **9 October 2026 — stock retirement is live.** The website publishes no
+> stock_recipe; legacy draft/rollback publication strips it. Menu names, prices,
+> descriptions, component quantities and photos are unchanged. Manual sold-out
+> and late-night controls, waitlists and dish costing remain. Dough classification
+> uses trusted catalogue metadata independently of counts. See the backend's
+> [operating policy](https://github.com/theovenvibe/the-oven-vibe-backend/blob/develop/docs/STOCK_RETIREMENT.md) and
+> [verified release](https://github.com/theovenvibe/the-oven-vibe-backend/blob/develop/docs/STOCK_RETIREMENT_RELEASE.md).
+
 # The Oven Vibe — Sundargarh, Odisha
 
 Current delivery and checkout policy: [docs/DELIVERY_PRICING.md](docs/DELIVERY_PRICING.md).
@@ -6,16 +14,16 @@ Digital menu + lead-generation website for **The Oven Vibe**, a 100% pure
 vegetarian cloud kitchen in Sundargarh, Odisha (pin 770001). Live at
 [theovenvibe.github.io](https://theovenvibe.github.io).
 
-The site is not an ordering platform — there is no backend, no payments,
-no accounts. It's a fast, honest, mobile-first menu whose entire job is to
-turn a visitor into a phone call or a WhatsApp order.
+The Astro frontend is static; a separate Cloudflare Worker records direct
+orders and serves the protected kitchen console. Checkout hands off to WhatsApp,
+with no payment gateway. Backend outages never block that hand-off.
 
 ## What this repo is (v2 rebuild)
 
 This is a from-scratch rebuild of the original static HTML/CSS/JS site,
-on Astro + Tailwind, currently **in progress on the `develop` branch**.
-`main` still serves the live v1 site and stays untouched until the
-one-shot v2 launch — see **Branch model** below before pushing anything.
+on Astro + Tailwind, now live from `main`. Changes integrate on `develop`;
+production releases are approved batches. See **Branch model** below before
+pushing anything and skills/release-manager.md §8 for post-launch rules.
 
 The full requirements and every binding decision live in `PRD.md`. Current
 phase status and the session-by-session history live in `PROGRESS.md`.
@@ -91,19 +99,18 @@ PROGRESS.md                ← phase checklist + session log (read this first ea
 AGENTS.md                  ← cold-start primer for any agent/model working in this repo
 ```
 
-## Branch model (binding during the v2 rebuild)
+## Branch model (post-launch)
 
 ```
-main      = PRODUCTION, the live v1 site. FROZEN until the one-shot v2
-            launch merge. Nobody commits here directly.
-develop   = integration branch. All v2 work lands here via feature branches.
+main      = PRODUCTION. Approved batched releases arrive from develop.
+            Deploys on each push; do not commit documentation here directly.
+develop   = integration branch. Work lands here via feature branches.
 feature/* = cut fresh from origin/develop, one purpose each, deleted after merge.
 ```
 
 Full workflow (branch → verify → commit → merge, plus what to do when it
 goes wrong): `skills/release-manager.md` + `skills/release-recovery.md`.
-Post-launch, the branch model unfreezes to a normal
-feature → develop → release-PR-to-main flow — see
+Use the feature → develop → release-PR-to-main flow — see
 `skills/release-manager.md` §8.
 
 ## Deploy model

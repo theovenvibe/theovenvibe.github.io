@@ -95,10 +95,10 @@ tapped; if it becomes worth knowing, add the source to the beacon in
 
 ## The related number
 
-`stock_moves.channel` in the backend (migration 0018) records whether each used
-pizza base went to our own order, Zomato or Swiggy. That is the honest measure
-of whether this change moved anything: watch the split in the admin's Stock tab
-over the next few weeks.
+Historical note: stock_moves.channel recorded manual ingredient movements
+before stock retirement. Since 9 October 2026 it is an archive, and the Stock
+tab no longer exists. Measure channel sales from actual direct orders and
+Zomato/Swiggy exports; do not infer current sales from the retired ledger.
 
 ---
 
