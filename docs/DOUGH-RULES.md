@@ -7,10 +7,10 @@ The current limits are enforced in code and covered by `npm run test:dough`.
 
 | # | Rule | Where |
 |---|---|---|
-| 1 | **Earn 5% on everything**, offer items included. | `admin.ts` |
+| 1 | **Earn 5% on eligible prepared items**, offer items included. | backend captured catalogue policy + `admin.ts` |
 | 2 | **Dough cannot be spent on items running an offer.** | `dough.ts` `spendableBase()` |
 | 3 | **Mixed basket splits** — Dough applies only to the full-price part. | same |
-| 4 | **Drinks are excluded from spending AND earning.** | `MRP_CODES` |
+| 4 | **Packaged drinks are excluded from spending AND earning; prepared shakes remain eligible.** | trusted published/captured `dough_excluded`; known packaged-code fallback |
 | 5 | **Never two offers on one item.** | schema: `product_code` is the PK |
 
 **Why rule 1 survives rule 2.** ₹3,335 of Dough has been credited and ₹183 ever

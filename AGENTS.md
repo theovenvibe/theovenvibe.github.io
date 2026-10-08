@@ -1,3 +1,11 @@
+> **9 October 2026 — stock retirement is live.** The website publishes no
+> stock_recipe; legacy draft/rollback publication strips it. Menu names, prices,
+> descriptions, component quantities and photos are unchanged. Manual sold-out
+> and late-night controls, waitlists and dish costing remain. Dough classification
+> uses trusted catalogue metadata independently of counts. See the backend's
+> [operating policy](https://github.com/theovenvibe/the-oven-vibe-backend/blob/develop/docs/STOCK_RETIREMENT.md) and
+> [verified release](https://github.com/theovenvibe/the-oven-vibe-backend/blob/develop/docs/STOCK_RETIREMENT_RELEASE.md).
+
 # AGENTS.md — The Oven Vibe (theovenvibe.github.io)
 
 **Current delivery policy (2026-09-28):** read `docs/DELIVERY_PRICING.md` before
@@ -19,7 +27,9 @@ do.
 
 Digital menu + lead-gen site for The Oven Vibe, a 100% pure vegetarian
 cloud kitchen in Sundargarh, Odisha. Leads = phone calls and WhatsApp
-orders. No backend, no payments. Astro (v7+) static site on GitHub Pages.
+orders. Astro (v7+) static site on GitHub Pages, with a separate Cloudflare
+Worker for direct-order records and the protected kitchen console. No payment
+gateway; backend outages must not block the WhatsApp hand-off.
 
 ## Golden rules
 
@@ -28,9 +38,9 @@ orders. No backend, no payments. Astro (v7+) static site on GitHub Pages.
 2. **`site.config.json` IS the business.** Delivery charges, hours, phone,
    rating, announcement banner, Umami analytics ID. Pages never hard-code
    these values.
-3. **`main` is FROZEN during the v2 rebuild** — live v1 site. All work goes
-   feature branch → develop (skills/release-manager.md). Post-launch this
-   unfreezes to a normal flow — see skills/release-manager.md §8.
+3. **`main` is production.** Work goes feature branch → develop; approved
+   batches merge develop → main and deploy. The v2 freeze ended at launch.
+   See skills/release-manager.md §8.
 4. **Verify before commit:** `npm run build` (= `astro check && astro build`).
    A Zod error tells you the exact file + field to fix. Never bypass it.
 5. **Never invent ratings/reviews.** rating values in site.config.json must

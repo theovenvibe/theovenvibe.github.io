@@ -1,3 +1,14 @@
+## 2026-10-09 — Complete post-release documentation audit
+
+Stock retirement remains live at Worker637de108-c54e-49e6-a355-0e5c53f13e63
+and website mainb36b6f5/run37843039738. Updated the remaining pending-release
+amendments, UAT scope, archive contracts and cross-repo memory/continuation
+notes. docs/STOCK_RETIREMENT_RELEASE.md records exact production hashes,
+real-D1 baseline, live checks, authorization recovery and rollback limits.
+Older dated checkpoints, migrations and archived guides remain historical.
+No application code, menu/business fields, customer data, warehouse, generated
+artwork or production deployment was changed by this documentation task.
+
 ## 2026-10-09 — Stock retirement deployed and verified
 
 Owner approved the coordinated release. PR143 merged to main b36b6f5;
