@@ -45,15 +45,12 @@ export async function applyMenuBatch(manifest,root,fetchAsset,fetchSource=async(
     row.image_code=imageCode;
   }
   delete menu._draft_photos;
-  // Freeze each dish's ingredient recipe independently of editable names and
-  // serving labels. Combos are rebuilt from their selected component quantities.
-  const recipeFor=name=>/sandwich/i.test(name)?[{dish:'sandwich',units:1}]:/garlic bread/i.test(name)?[{dish:'garlic_bread',units:1}]:/pizza/i.test(name)?[{dish:'pizza',units:1}]:[];
-  for(const [key,[codeKey]] of Object.entries(fields))if(key!=='Combos')for(const row of menu[key]){
-    const old=previous[key].find(r=>String(r[codeKey])===String(row[codeKey]));
-    row.stock_recipe=old?.stock_recipe??recipeFor(String(old?.item_name||old?.addon_name||row.item_name||row.addon_name)+' '+String(old?.category||row.category||''));
-    row.dough_excluded=['900000001','900000002','900000014','900000015'].includes(String(row[codeKey]))||row.dough_excluded===true;
+  // Old drafts/revisions may carry retired stock metadata. Never republish it.
+  // Keep rewards classification independent of names and ingredient counting.
+  for(const [key,[codeKey]] of Object.entries(fields))for(const row of menu[key]){
+    delete row.stock_recipe;
+    if(key!=='Combos')row.dough_excluded=['900000001','900000002','900000014','900000015'].includes(String(row[codeKey]))||row.dough_excluded===true;
   }
-  for(const row of menu.Combos){const totals=new Map();for(const code of row.items_included)for(const part of menu.Menu_Items.find(r=>String(r.product_code)===String(code)).stock_recipe){const qty=row.item_quantities?.[String(code)]||1;totals.set(part.dish,(totals.get(part.dish)||0)+part.units*qty);}row.stock_recipe=Array.from(totals,([dish,units])=>({dish,units}));}
   // Preserve late-night station policy through category/name edits.
   for(const row of menu.Menu_Items){
     const old=previous.Menu_Items.find(r=>String(r.product_code)===String(row.product_code));

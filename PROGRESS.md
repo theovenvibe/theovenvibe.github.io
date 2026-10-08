@@ -1,3 +1,20 @@
+## 2026-10-09 — Stock retirement integrated on develop
+
+PR142 merged as82a685d after both build/Lighthouse checks passed. Post-merge
+local build and rendered QA passed:29 HTML files,19 valid JSON-LD blocks,
+config-matching ratings and no emoji/non-veg/image-alt failures. A393px local
+browser carried the unchanged jumbo melt and129 price into checkout with
+external services unreachable. No customer details entered or order sent.
+Backend PR81/82/83 are integrated and full merged verify passes. Main and live
+production remain unchanged; coordinated batch release and Cloudflare real-data
+baseline are pending. No menu publication, customer writes or pushes performed.
+
+## 2026-10-08 — Retire ingredient stock metadata (pending release)
+
+Owner approved backend stock retirement. Removed only stock_recipe from the three active jumbo menu rows and stopped generating recipes during menu publication. Older draft/revision publication also strips retired metadata. Stable IDs, combo component quantities, Dough exclusions, late-night policy, photos and rollback sources are preserved. Existing menu names, prices, portions, categories and descriptions are unchanged.
+
+Validation: npm run build passed (81 files, zero errors/warnings, nine pre-existing hints); menu/Dough/cart/delivery/gallery suites passed. Rendered QA:29 HTML files,19 valid JSON-LD blocks, config-matching ratings and zero emoji/non-veg/image-alt failures. No production publication/workflow dispatch or customer writes. Companion backend change has full Worker/admin checks; batch release remains held.
+
 ## 2026-09-29 — Category registry (unreleased)
 Optional Menu_Categories stores owner-created empty categories/order in menu.json; schema checks uniqueness and referenced categories, including category add-on defaults. Shared grouping respects explicit order and omits empty/unlisted-only sections, with legacy fallback. Build and test:menu pass, including grouping/batch preservation checks. Backend category creation/rename/save and new-item selection verified locally; restored test draft baseline. No deployment/merge.
 ## 2026-09-29 — Explicit menu Dough classification (unreleased)
@@ -880,3 +897,4 @@ Owner authorized coordinated release and manual verification after live. Stack13
 - Replaced all three cover photos with latest v2 images arranging four quarters as one sandwich, fitted to the existing 600x400 card frame and encoded as WebP/AVIF pairs. Existing product codes and all remaining menu prices preserved: chilli cheese129, corn149, paneer169. Offers remain a separate owner action.
 - Validation and deployment verification recorded below after release.
 - Feature validation passed: build0 errors; menu mapping/batch tests; gallery38 passed; rendered QA19JSON-LD blocks, accurate ratings, no emoji/non-veg copy, metadata/alt and serving checks. Explicit stock recipes retain one sandwich per order despite display-name changes. All surviving prices and combos/add-ons verified unchanged.
+- Released through PR141, production3406f0b25e0eb3cc5d314afaffd7b14d84748267. Actions37336093883 build/Lighthouse/Pages deployment succeeded. Live /menu/ and /menu.json verified200; exactly3 jumbo sandwiches, discontinued entries absent, unchanged prices129/149/169, latest serving copy and all six WebP/AVIF files match release hashes. No offer changes. Legacy Jekyll job failed as previously documented; actual Astro deployment succeeded.
