@@ -1,3 +1,9 @@
+## 2026-10-08 — Retire ingredient stock metadata (pending release)
+
+Owner approved backend stock retirement. Removed only stock_recipe from the three active jumbo menu rows and stopped generating recipes during menu publication. Older draft/revision publication also strips retired metadata. Stable IDs, combo component quantities, Dough exclusions, late-night policy, photos and rollback sources are preserved. Existing menu names, prices, portions, categories and descriptions are unchanged.
+
+Validation: npm run build passed (81 files, zero errors/warnings, nine pre-existing hints); menu/Dough/cart/delivery/gallery suites passed. Rendered QA:29 HTML files,19 valid JSON-LD blocks, config-matching ratings and zero emoji/non-veg/image-alt failures. No production publication/workflow dispatch or customer writes. Companion backend change has full Worker/admin checks; batch release remains held.
+
 ## 2026-09-29 — Category registry (unreleased)
 Optional Menu_Categories stores owner-created empty categories/order in menu.json; schema checks uniqueness and referenced categories, including category add-on defaults. Shared grouping respects explicit order and omits empty/unlisted-only sections, with legacy fallback. Build and test:menu pass, including grouping/batch preservation checks. Backend category creation/rename/save and new-item selection verified locally; restored test draft baseline. No deployment/merge.
 ## 2026-09-29 — Explicit menu Dough classification (unreleased)
