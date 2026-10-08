@@ -1,3 +1,18 @@
+## 2026-10-09 — Stock retirement deployed and verified
+
+Owner approved the coordinated release. PR143 merged to main b36b6f5;
+Astro build, Lighthouse and Pages deploy all succeeded in Actions run37843039738
+at2026-10-08T21:00:12Z (9 October India time). Live menu.json returned200,
+contained no stock_recipe and exactly matched the released source. Comparison
+against former main3406f0b confirms every other catalogue JSON field unchanged.
+Backend PR84/main adb9eda deployed once as Worker
+637de108-c54e-49e6-a355-0e5c53f13e63. Protected live console has no Stock/expiry
+counts; Inventory, Insights and stale-link fallback work. Read-only real D1
+baseline and unchanged archive totals are logged in backend PROGRESS.md.
+No migrations, production test journeys, customer records, push sends or
+manual menu batches were created for verification. Release documentation stays
+on develop; no second production deployment was triggered.
+
 ## 2026-10-09 — Stock retirement integrated on develop
 
 PR142 merged as82a685d after both build/Lighthouse checks passed. Post-merge
