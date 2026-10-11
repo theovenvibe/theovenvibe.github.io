@@ -22,6 +22,8 @@ import {
 } from '../lib/data';
 
 const codeToName = new Map<string, string>();
+const specialCategory = categories.find(({ name }) => name === 'Navaratri Special');
+const remainingCategories = categories.filter(({ name }) => name !== 'Navaratri Special');
 for (const item of menu.Menu_Items) {
   codeToName.set(item.product_code, displayName(item.display_name || item.item_name));
 }
@@ -35,6 +37,35 @@ function comboDescription(combo: (typeof availableCombos)[number]): string {
   return `Includes: ${readable}`;
 }
 ---
+
+<nav class="menu-category-nav" aria-label="Menu categories">
+  {specialCategory && <a data-navaratri-special href={`#${categoryAnchor(specialCategory.name)}`}>{specialCategory.name}</a>}
+  {availableCombos.length > 0 && <a href="#sec-combos">Combos</a>}
+  {remainingCategories.map(({ name }) => <a href={`#${categoryAnchor(name)}`}>{name}</a>)}
+</nav>
+
+{
+  specialCategory && (
+    <div data-navaratri-special>
+    <AccordionItem title={specialCategory.name} subtitle={`${specialCategory.items.length} ${specialCategory.items.length === 1 ? 'item' : 'items'}`} id={categoryAnchor(specialCategory.name)}>
+      <div class="category-group">
+        <div class="menu-items">
+          {specialCategory.items.map((item) => (
+            <MenuCard
+              img={galleryFor(item)}
+              title={displayName(item.display_name || item.item_name)}
+              meta={entryMeta(item,item.display_name || item.item_name)}
+              description={displayDescription(item)}
+              price={item.price}
+              cartId={itemCartId(item.product_code)}
+            />
+          ))}
+        </div>
+      </div>
+    </AccordionItem>
+    </div>
+  )
+}
 
 {
   availableCombos.length > 0 && (
@@ -56,7 +87,7 @@ function comboDescription(combo: (typeof availableCombos)[number]): string {
 }
 
 {
-  categories.map(({ name, items }) => (
+  remainingCategories.map(({ name, items }) => (
     <AccordionItem title={name} subtitle={`${items.length} ${items.length === 1 ? 'item' : 'items'}`} id={categoryAnchor(name)}>
       <div class="category-group">
         <div class="menu-items">
@@ -75,3 +106,41 @@ function comboDescription(combo: (typeof availableCombos)[number]): string {
     </AccordionItem>
   ))
 }
+
+<style>
+  .menu-category-nav {
+    display: flex;
+    gap: .55rem;
+    overflow-x: auto;
+    padding: .5rem .25rem 1rem;
+    margin-bottom: .75rem;
+    scrollbar-width: thin;
+  }
+  .menu-category-nav a {
+    flex: none;
+    border: 1px solid rgba(255,255,255,.25);
+    border-radius: 999px;
+    padding: .5rem .9rem;
+    color: inherit;
+    text-decoration: none;
+    white-space: nowrap;
+    font-size: .9rem;
+  }
+  .menu-category-nav a:first-child {
+    border-color: #c8341f;
+    color: #c8341f;
+    font-weight: 700;
+  }
+  .menu-category-nav a:hover,
+  .menu-category-nav a:focus-visible { border-color: #c8341f; }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLAnchorElement>('.menu-category-nav a').forEach((link) => {
+    link.addEventListener('click', () => {
+      const section = document.getElementById(link.hash.slice(1));
+      const header = section?.querySelector<HTMLButtonElement>('.accordion-header');
+      if (header && !section?.classList.contains('active')) header.click();
+    });
+  });
+</script>

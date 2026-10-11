@@ -1,3 +1,40 @@
+## 2026-10-11 — Navaratri Special menu review branch
+
+Added seven local website menu items in the new first category, Navaratri Special,
+with unique item IDs/product codes and full-frame 600×400 WebP/AVIF photos.
+Added a category navigation row with Navaratri Special first, and put its menu
+accordion ahead of Combos while retaining the prior order of all existing
+categories and items. The old 29 menu rows and every other menu.json field
+compare unchanged with origin/develop. `npm run build`, `test:menu`,
+`test:gallery`, rendered QA, and local desktop/mobile menu inspection passed.
+This is a review branch; no merge to develop/main or deployment was made.
+
+## 2026-10-09 — Complete post-release documentation audit
+
+Stock retirement remains live at Worker637de108-c54e-49e6-a355-0e5c53f13e63
+and website mainb36b6f5/run37843039738. Updated the remaining pending-release
+amendments, UAT scope, archive contracts and cross-repo memory/continuation
+notes. docs/STOCK_RETIREMENT_RELEASE.md records exact production hashes,
+real-D1 baseline, live checks, authorization recovery and rollback limits.
+Older dated checkpoints, migrations and archived guides remain historical.
+No application code, menu/business fields, customer data, warehouse, generated
+artwork or production deployment was changed by this documentation task.
+
+## 2026-10-09 — Stock retirement deployed and verified
+
+Owner approved the coordinated release. PR143 merged to main b36b6f5;
+Astro build, Lighthouse and Pages deploy all succeeded in Actions run37843039738
+at2026-10-08T21:00:12Z (9 October India time). Live menu.json returned200,
+contained no stock_recipe and exactly matched the released source. Comparison
+against former main3406f0b confirms every other catalogue JSON field unchanged.
+Backend PR84/main adb9eda deployed once as Worker
+637de108-c54e-49e6-a355-0e5c53f13e63. Protected live console has no Stock/expiry
+counts; Inventory, Insights and stale-link fallback work. Read-only real D1
+baseline and unchanged archive totals are logged in backend PROGRESS.md.
+No migrations, production test journeys, customer records, push sends or
+manual menu batches were created for verification. Release documentation stays
+on develop; no second production deployment was triggered.
+
 ## 2026-10-09 — Stock retirement integrated on develop
 
 PR142 merged as82a685d after both build/Lighthouse checks passed. Post-merge

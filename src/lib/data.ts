@@ -10,6 +10,7 @@ import { siteConfigSchema, type SiteConfig } from '../schemas/site-config';
 import { formatTime, formatTimeRange } from './pricing';
 import { allowedAddonCodes } from './menu-mappings';
 import { groupMenuCategories } from './menu-categories';
+import { NAVARATRI_CODES, navaratriExpired } from './navaratri-window';
 
 function loadJson<T>(file: string, schema: z.ZodType<T>): T {
   let raw: unknown;
@@ -30,7 +31,12 @@ function loadJson<T>(file: string, schema: z.ZodType<T>): T {
   return result.data;
 }
 
-export const menu: Menu = loadJson('menu.json', menuSchema);
+const sourceMenu: Menu = loadJson('menu.json', menuSchema);
+// Static deployments after the festival build the ordinary menu automatically.
+// The source retains the seven campaign records for audit and easy review.
+export const menu: Menu = navaratriExpired()
+  ? { ...sourceMenu, Menu_Items: sourceMenu.Menu_Items.filter((item) => !NAVARATRI_CODES.has(item.product_code)) }
+  : sourceMenu;
 export const site: SiteConfig = loadJson('site.config.json', siteConfigSchema);
 
 /* ---------- derived helpers ---------- */

@@ -2,6 +2,76 @@
   "_comment": "Menu data organized exactly as per Zomato catalogue",
   "Menu_Items": [
     {
+      "product_code": "NAV2026001",
+      "item_id": 49,
+      "category": "Navaratri Special",
+      "item_name": "Sabudana Khichdi Bowl",
+      "display_name": "Sabudana Khichdi Bowl",
+      "price": 259,
+      "description": "Sabudana pearls with potato, roasted peanuts, cumin and herbs. Prepared without onion and garlic.",
+      "status": "available"
+    },
+    {
+      "product_code": "NAV2026002",
+      "item_id": 50,
+      "category": "Navaratri Special",
+      "item_name": "Double Cheese Royale Pizza",
+      "display_name": "Double Cheese Royale Pizza",
+      "price": 199,
+      "description": "A Navaratri special pizza inspired by our Ultimate Cheese Delight: double mozzarella, red paprika and black olives over our house tomato sauce made without onion or garlic.",
+      "status": "available"
+    },
+    {
+      "product_code": "NAV2026003",
+      "item_id": 51,
+      "category": "Navaratri Special",
+      "item_name": "Garden Paneer Pepper Pizza",
+      "display_name": "Garden Paneer Pepper Pizza",
+      "price": 249,
+      "description": "A Navaratri special pizza with plain paneer, green capsicum, red pepper, black olives and mozzarella over our house tomato sauce made without onion or garlic.",
+      "status": "available"
+    },
+    {
+      "product_code": "NAV2026004",
+      "item_id": 52,
+      "category": "Navaratri Special",
+      "item_name": "Golden Corn Paneer Melt Pizza",
+      "display_name": "Golden Corn Paneer Melt Pizza",
+      "price": 229,
+      "description": "A Navaratri special pizza with sweet corn, plain paneer, black olives, jalapeños and mozzarella over our house tomato sauce made without onion or garlic.",
+      "status": "available"
+    },
+    {
+      "product_code": "NAV2026005",
+      "item_id": 53,
+      "category": "Navaratri Special",
+      "item_name": "Navatari Special Chilli Cheese Mega Jumbo Melt",
+      "display_name": "Navatari Special Chilli Cheese Mega Jumbo Melt",
+      "price": 129,
+      "description": "A Navatari special sandwich made without onion or garlic. Two large bread slices filled with melted cheese, creamy white cheese spread and green chilli, butter-grilled and cut into four pieces. Pure veg, no egg.",
+      "status": "available"
+    },
+    {
+      "product_code": "NAV2026006",
+      "item_id": 54,
+      "category": "Navaratri Special",
+      "item_name": "Navatari Special Cheesy Corn Mega Jumbo Melt",
+      "display_name": "Navatari Special Cheesy Corn Mega Jumbo Melt",
+      "price": 149,
+      "description": "A Navatari special sandwich made without onion or garlic. Two large bread slices filled with sweet corn, melted cheese, creamy white cheese spread and a touch of chilli flakes, butter-grilled and cut into four pieces. Pure veg, no egg.",
+      "status": "available"
+    },
+    {
+      "product_code": "NAV2026007",
+      "item_id": 55,
+      "category": "Navaratri Special",
+      "item_name": "Navatari Special Paneer Capsicum Mega Jumbo Melt",
+      "display_name": "Navatari Special Paneer Capsicum Mega Jumbo Melt",
+      "price": 169,
+      "description": "A Navatari special sandwich made without onion or garlic. Two large bread slices filled with plain paneer, green capsicum, cabbage, melted cheese and creamy white cheese spread, butter-grilled and cut into four pieces. Pure veg, no egg.",
+      "status": "available"
+    },
+    {
       "product_code": "745802369",
       "item_id": 6,
       "category": "Classic Favorite Pizza",

@@ -14,7 +14,7 @@
  * Nothing here is secret — it is the public menu, already in every page.
  */
 import type { APIRoute } from 'astro';
-import menu from '../../menu.json';
+import { menu } from '../lib/data';
 
 export const GET: APIRoute = () =>
   new Response(JSON.stringify(menu), {

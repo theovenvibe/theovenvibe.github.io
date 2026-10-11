@@ -213,6 +213,7 @@ const checkoutConfig = {
   } from '../lib/dough';
   import { queueOrder, watchOutbox } from '../lib/order-outbox';
   import { markOrderJustSent } from '../lib/push-signal';
+  import { navaratriExpired, isNavaratriCatalogId } from '../lib/navaratri-window';
 
   interface CheckoutConfig extends OrderFormConfig {
     catalog: OrderableRow[];
@@ -220,6 +221,9 @@ const checkoutConfig = {
 
   const configEl = document.getElementById('calc-config');
   const CFG: CheckoutConfig = JSON.parse(configEl?.textContent ?? '{}');
+  if (navaratriExpired()) {
+    CFG.catalog = CFG.catalog.filter((row) => !isNavaratriCatalogId(row.id));
+  }
   const deviceId = getDeviceId();
 
   // An order stranded by a dropped connection last time gets another go now.
