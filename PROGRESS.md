@@ -1,3 +1,14 @@
+## 2026-10-11 — Navaratri Special menu review branch
+
+Added seven local website menu items in the new first category, Navaratri Special,
+with unique item IDs/product codes and full-frame 600×400 WebP/AVIF photos.
+Added a category navigation row with Navaratri Special first, and put its menu
+accordion ahead of Combos while retaining the prior order of all existing
+categories and items. The old 29 menu rows and every other menu.json field
+compare unchanged with origin/develop. `npm run build`, `test:menu`,
+`test:gallery`, rendered QA, and local desktop/mobile menu inspection passed.
+This is a review branch; no merge to develop/main or deployment was made.
+
 ## 2026-10-09 — Complete post-release documentation audit
 
 Stock retirement remains live at Worker637de108-c54e-49e6-a355-0e5c53f13e63

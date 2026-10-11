@@ -34,6 +34,7 @@ import PwaInstall from '../components/PwaInstall.astro';
 import PushSubscribe from '../components/PushSubscribe.astro';
 import Seo, { type OgImage } from '../components/Seo.astro';
 import { site } from '../lib/data';
+import { NAVARATRI_END_UTC } from '../lib/navaratri-window';
 
 interface Props {
   title: string;
@@ -81,6 +82,34 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
     <link rel="manifest" href="/manifest.webmanifest" />
     <meta name="theme-color" content="#e63946" />
     <meta name="generator" content={Astro.generator} />
+    <meta name="navaratri-end-utc" content={NAVARATRI_END_UTC} />
+    <style is:global>
+      html.navaratri-expired [data-navaratri-special] { display: none !important; }
+    </style>
+    <script is:inline>
+      (() => {
+        const end = Date.parse(document.querySelector('meta[name="navaratri-end-utc"]')?.getAttribute('content') || '');
+        if (!Number.isFinite(end)) return;
+        let loadedBeforeExpiry = Date.now() < end;
+        const expire = () => {
+          if (Date.now() >= end) {
+            document.documentElement.classList.add('navaratri-expired');
+            // Reload open order forms so their inlined catalogues drop the
+            // specials as well as hiding their menu cards.
+            if (loadedBeforeExpiry) {
+              loadedBeforeExpiry = false;
+              location.reload();
+            }
+          } else {
+            setTimeout(expire, Math.min(end - Date.now() + 20, 2147483647));
+          }
+        };
+        expire();
+        document.addEventListener('visibilitychange', () => {
+          if (!document.hidden) expire();
+        });
+      })();
+    </script>
     {
       site.analytics.umami_website_id && (
         <script

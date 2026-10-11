@@ -205,7 +205,7 @@ const calcConfig = {
           <div class="calc-items">
             {
               itemGroups.map((group) => (
-                <fieldset class="calc-group">
+                <fieldset class="calc-group" data-navaratri-special={group.name === 'Navaratri Special' ? '' : undefined}>
                   <legend>{group.name}</legend>
                   {group.rows.map((row) => (
                     <div class="item-row" data-id={row.id} data-name={row.name} data-price={row.price} data-late-night={String(row.lateNight)}>
@@ -250,6 +250,7 @@ const calcConfig = {
 <script>
   import { initOrderForm, type BasketRow, type OrderFormConfig } from '../lib/order-form';
   import { replaceCart } from '../lib/cart';
+  import { navaratriExpired } from '../lib/navaratri-window';
 
   const configEl = document.getElementById('calc-config');
   const CFG: OrderFormConfig = JSON.parse(configEl?.textContent ?? '{}');
@@ -258,7 +259,8 @@ const calcConfig = {
   // a row exists even at quantity zero. (Checkout's basket is the opposite:
   // only what the customer actually added.) This adapter is the ONLY thing the
   // two pages do differently — everything past it is shared by order-form.ts.
-  const itemRows = Array.from(document.querySelectorAll<HTMLElement>('.item-row'));
+  const itemRows = Array.from(document.querySelectorAll<HTMLElement>('.item-row'))
+    .filter((row) => !navaratriExpired() || !row.closest('[data-navaratri-special]'));
 
   const qtyEl = (row: HTMLElement) => row.querySelector('.qty-value') as HTMLElement;
   const minusOf = (row: HTMLElement) => row.querySelector('.qty-minus') as HTMLButtonElement;
