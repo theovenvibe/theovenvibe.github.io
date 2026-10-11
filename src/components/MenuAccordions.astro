@@ -22,7 +22,8 @@ import {
 } from '../lib/data';
 
 const codeToName = new Map<string, string>();
-const [firstCategory, ...remainingCategories] = categories;
+const specialCategory = categories.find(({ name }) => name === 'Navaratri Special');
+const remainingCategories = categories.filter(({ name }) => name !== 'Navaratri Special');
 for (const item of menu.Menu_Items) {
   codeToName.set(item.product_code, displayName(item.display_name || item.item_name));
 }
@@ -38,17 +39,18 @@ function comboDescription(combo: (typeof availableCombos)[number]): string {
 ---
 
 <nav class="menu-category-nav" aria-label="Menu categories">
-  {categories.length > 0 && <a href={`#${categoryAnchor(firstCategory.name)}`}>{firstCategory.name}</a>}
+  {specialCategory && <a data-navaratri-special href={`#${categoryAnchor(specialCategory.name)}`}>{specialCategory.name}</a>}
   {availableCombos.length > 0 && <a href="#sec-combos">Combos</a>}
   {remainingCategories.map(({ name }) => <a href={`#${categoryAnchor(name)}`}>{name}</a>)}
 </nav>
 
 {
-  firstCategory && (
-    <AccordionItem title={firstCategory.name} subtitle={`${firstCategory.items.length} ${firstCategory.items.length === 1 ? 'item' : 'items'}`} id={categoryAnchor(firstCategory.name)}>
+  specialCategory && (
+    <div data-navaratri-special>
+    <AccordionItem title={specialCategory.name} subtitle={`${specialCategory.items.length} ${specialCategory.items.length === 1 ? 'item' : 'items'}`} id={categoryAnchor(specialCategory.name)}>
       <div class="category-group">
         <div class="menu-items">
-          {firstCategory.items.map((item) => (
+          {specialCategory.items.map((item) => (
             <MenuCard
               img={galleryFor(item)}
               title={displayName(item.display_name || item.item_name)}
@@ -61,6 +63,7 @@ function comboDescription(combo: (typeof availableCombos)[number]): string {
         </div>
       </div>
     </AccordionItem>
+    </div>
   )
 }
 
