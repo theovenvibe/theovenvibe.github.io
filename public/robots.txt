@@ -1,4 +1,15 @@
 User-agent: *
 Allow: /
 
+# Public search/retrieval access. These inherit the same public-page policy.
+# OAI-SearchBot and Claude-SearchBot are distinct from model-training crawlers.
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
 Sitemap: https://theovenvibe.com/sitemap-index.xml

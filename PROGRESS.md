@@ -935,3 +935,11 @@ Owner authorized coordinated release and manual verification after live. Stack13
 - Validation and deployment verification recorded below after release.
 - Feature validation passed: build0 errors; menu mapping/batch tests; gallery38 passed; rendered QA19JSON-LD blocks, accurate ratings, no emoji/non-veg copy, metadata/alt and serving checks. Explicit stock recipes retain one sandwich per order despite display-name changes. All surviving prices and combos/add-ons verified unchanged.
 - Released through PR141, production3406f0b25e0eb3cc5d314afaffd7b14d84748267. Actions37336093883 build/Lighthouse/Pages deployment succeeded. Live /menu/ and /menu.json verified200; exactly3 jumbo sandwiches, discontinued entries absent, unchanged prices129/149/169, latest serving copy and all six WebP/AVIF files match release hashes. No offer changes. Legacy Jekyll job failed as previously documented; actual Astro deployment succeeded.
+
+
+## 2026-10-17 — AI-search foundation (review branch)
+
+- Owner requested Bhuk Lagla-equivalent SEO/AEO/GEO/LLMO for this business, explicitly excluding Umami changes and WhatsApp communication.
+- Synced local develop by fast-forward to main's existing release merge (no content difference). Foundation uses stable menu-section/item/combination IDs with actual HTML anchors, connected page entities, normalized canonicals and honest sitemap dates. Explicit public search crawler access supplements existing wildcard Allow; training-bot policy is unchanged.
+- Added rendered search QA for catalogue/schema/price parity, internal fragments, metadata, indexability, pure-veg/emoji/ratings honesty. No catalogue, business config, checkout, backend or analytics changes.
+- Feature remains under review; release evidence follows after actual verification/approval. No ranking/citation claim.

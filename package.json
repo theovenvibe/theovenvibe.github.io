@@ -12,6 +12,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "selectors": "node scripts/dump-selectors.mjs",
+    "test:search": "node scripts/audit-search-build.mjs",
     "test:dough": "node test/dough-rules.test.mjs",
     "test:gallery": "node test/menu-gallery.test.mjs",
     "test:delivery": "node test/delivery-pricing.test.mjs",

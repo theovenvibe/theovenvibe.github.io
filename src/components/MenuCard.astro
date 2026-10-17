@@ -39,7 +39,7 @@ const photos = Array.isArray(img) ? img : [img];
 const hasGallery = photos.length > 1;
 ---
 
-<article class:list={['menu-card', extraClass]}>
+<article id={cartId ? `dish-${cartId}` : undefined} class:list={['menu-card', extraClass]}>
   <div class="menu-card-inner">
     {
       hasGallery ? (

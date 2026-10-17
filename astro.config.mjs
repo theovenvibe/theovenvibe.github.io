@@ -33,14 +33,10 @@ export default defineConfig({
       // page grants Rs 100 of Dough, and the campaign only works because the
       // link is handed out deliberately. Indexed, anyone could search for it
       // and claim.
-      filter: (page) =>
-        !page.includes('/checkout') &&
-        !page.includes('/offer') &&
-        !page.includes('/claim') &&
-        !page.endsWith('/r/'),
-      // lastmod = build time: pages are regenerated wholesale each deploy,
-      // so the build date is the honest per-URL modification signal here.
-      serialize: (item) => ({ ...item, lastmod: new Date().toISOString() }),
+      filter: (page) => !['/checkout', '/offer', '/claim', '/r', '/404'].includes(new URL(page).pathname.replace(/\/$/, '')),
+      // Builds alone are not substantive page edits. Do not advance lastmod
+      // on every deployment; genuine article edit dates live with the article.
+      serialize: (item) => ({ ...item, url: `${item.url.replace(/\/$/, '')}/` }),
     }),
   ],
 });
