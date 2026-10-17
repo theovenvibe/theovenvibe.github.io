@@ -1,0 +1,15 @@
+# Search follow-up
+
+17 October 2026. Check AI_SEARCH_HANDOFF.md for actual release status.
+
+- [ ] Owner review of the visible draft before develop/main merges, per release-manager. Umami excluded.
+- [ ] After approved release: verify Pages deploy, all public pages and the new guide/standards pages. Then send the one-time IndexNow notification, retain the receipt, and verify Google's/Bing's actual sitemap processing in the correct Oven Vibe account.
+- [ ] Search Console: check property ownership, indexing/snippet eligibility and current generative-AI inclusion control, manual actions/security. Do not infer these from a live website or Bhuk Lagla's account state.
+- [ ] Bing: record the existing site, sitemap and AI Performance baseline if accessible. Do not create a duplicate account/property or claim citation growth without data.
+- [ ] Reconfirm existing dated Google rating/count against actual profile evidence; this task does not invent or refresh ratings.
+- [ ] Genuine founder/chef story, first-hand observations, event case study or customer quote: obtain real source material and publication permission. No invented narrative or forced interview/statistics filler.
+- [ ] Owner-confirmed first-party photographs can support future genuine kitchen stories, but a food photograph alone is not evidence of an event, sales result or testimonial.
+- [ ] Monthly: review Search health run and actual search queries/clicks/impressions/citations. GitHub can disable public-repo schedules after 60 days of inactivity. Re-enable if needed.
+- [ ] On menu changes: run build + test:search, review comparative notes and FAQ facts, verify serving sizes/availability. Direct website and Zomato prices remain separate.
+- [ ] Before festival changes: check the actual campaign window and food requirements; no universal fasting/Jain certification inferred from no-onion/no-garlic wording.
+- [ ] Quarterly: check mobile navigation, broken links and real customer questions. Yearly: review official search guidance and dependencies.

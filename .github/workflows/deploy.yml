@@ -29,6 +29,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build # astro check && astro build (Zod validates menu.json + site.config.json)
+      - name: Rendered search and catalogue checks
+        run: npm run test:search
       - name: Lighthouse CI budgets (PRD §10.2 Gate 3, skills/deploy-cicd.md §8)
         uses: treosh/lighthouse-ci-action@v11
         with:

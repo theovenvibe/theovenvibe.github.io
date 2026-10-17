@@ -952,3 +952,10 @@ Owner authorized coordinated release and manual verification after live. Stack13
 - Added /content-standards/ and business bylines/sources on the six existing articles. Owner explicitly confirmed on 17 October that ALL Oven Vibe images are their own photographs, not AI-generated; recorded this separately from Bhuk Lagla. No source image was altered.
 - Reworked five stale articles, corrected allergy context in the sixth, retained original publication dates and recorded actual edits on 17 October. Removed unsupported popularity statistics, old competitor price guesses, discontinued dishes and blanket 7-inch claims. Website prices remain direct-order prices; Zomato prices are not imported.
 - Added guide links to menu/footer; current menu and business configuration, analytics, payment/delivery engine and backend remain unchanged. Review/verification required before release.
+
+
+## 2026-10-17 — Search maintenance (stack layer 3, review only)
+
+- Added build search QA to deployment CI and a monthly/manual read-only live audit. Added a public IndexNow ownership file and explicit helper (default dry-run); no notification submitted before release.
+- Replaced outdated July SEO instructions with a current evidence-based playbook, preserving the old file under docs/archive. Added AI_SEARCH.md, SEARCH_TODO.md and release handoff. A focused public search found existing canonical pages, including stale cached delivery information; it does not establish current Google index counts or Claude/Gemini citations.
+- All original menu, config, images, analytics and quote-engine files remain unchanged. No backend deployment, message or customer form submission.
