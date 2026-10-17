@@ -1,0 +1,28 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import BlogPostLayout from '../../components/BlogPostLayout.astro';
+import { site, availableItems, availableCombos, displayName, displayDescription, galleryFor, heroDish, deliverySlabLine, deliveryFreeAboveLineAll } from '../../lib/data';
+import { abs, blogPostingJsonLd, breadcrumbJsonLd, itemUrl } from '../../lib/seo';
+const path='/blog/diwali-party-menu/';
+const headline='Diwali 2026 Food Planning in Sundargarh | The Oven Vibe';
+const description='Plan a pure veg Diwali gathering with actual pizzas, jumbo melts and combos, then confirm dietary needs, timing and your final order quote.';
+const image={url:abs('/static/images/og/og-default.jpg'),width:1200,height:630,alt:'The Oven Vibe food, photographed by our team'};
+const photo=galleryFor(heroDish)[0];
+const picks=availableItems.filter(i=>['752649876','900000007','900000011','751793935','997492943'].includes(i.product_code));
+const combos=availableCombos.filter(c=>['900000104','900000103'].includes(c.combo_code));
+---
+<Layout title={headline} description={description} ogType="article" image={image} jsonLd={[blogPostingJsonLd({headline,description,path,image:image.url,datePublished:'2026-10-17'}),breadcrumbJsonLd([{name:'Blog',path:'/blog/'},{name:'Diwali food planning',path}])]}>
+ <BlogPostLayout line1="DIWALI," lineGradient="AT YOUR TABLE." subtitle="Plan the food around your guests, your timing and the actual menu.">
+  <picture>{photo.avif && <source type="image/avif" srcset={photo.avif}/>}<img src={photo.webp} alt={displayName(heroDish.display_name)} class="blog-img" width="600" height="400" loading="lazy"/></picture>
+  <p>For a Diwali evening at home or a small office gathering in {site.business.address.locality}, a useful food plan starts with what your guests want to eat. The Oven Vibe is a pure vegetarian, egg-free cloud kitchen for takeaway and delivery; the current menu gives you pizzas, grilled sandwiches, pasta, fries and drinks to compare.</p>
+  <p>Diwali falls on <strong>Sunday, 8 November 2026</strong> in the <a href="https://www.iirs.gov.in/holidaycalender" target="_blank" rel="noopener noreferrer">Government of India's IIRS holiday calendar</a>. Confirm your own gathering date and the kitchen's availability before treating any slot as booked.</p>
+  <h2>Start with a menu mix</h2><p>Ask your guests about flavour preferences and appetite before choosing quantities. One cheese-focused pizza, one vegetable or paneer option and a side can give people choices. This is a planning example; confirm the number of portions needed for your own group.</p>
+  <h2>Current dishes to consider</h2><ul>{picks.map(i=><li><a href={itemUrl(i.product_code)}><strong>{displayName(i.display_name)}</strong></a> — ₹{i.price}. {displayDescription(i)}</li>)}</ul>
+  <p>Regular Classic Favorite pizzas are listed as 7-inch. Regular Signature pizzas describe an 8-inch pizza with four slices. A Mega Jumbo Melt is one sandwich, made from two large bread slices and cut into four pieces. Count actual servings when deciding quantities.</p>
+  <h2>Compare the exact combo contents</h2><ul>{combos.map(c=><li><strong>{displayName(c.combo_name)}</strong> — ₹{c.combo_price}. {displayDescription(c)}</li>)}</ul><p>Match the drink and side size against the items you want. A combo may suit the gathering, but its food subtotal still needs delivery and any applicable charges added. The website's direct-order prices and app prices can differ.</p>
+  <h2>Ask about ingredients before finalising</h2><p>Pure veg and egg-free do not mean vegan, nut-free or no-onion/no-garlic. Menu descriptions include ingredients such as milk, cheese, wheat and nuts. Ask the kitchen about a specific requirement before ordering. October's seasonal no-onion/no-garlic menu should not be assumed to continue into Diwali.</p>
+  <h2>Pickup, delivery and the order time</h2><p>Standard direct-delivery rates are {deliverySlabLine}. {deliveryFreeAboveLineAll} during normal hours. The late-night window has separate conditions, including a kitchen reopen charge even for pickup. Use the <a href="/price-calculator/">calculator</a> for the actual date, time, distance and basket.</p>
+  <h2>A checklist for a group quote</h2><ol><li>Share the gathering date and the time food is needed.</li><li>Give the headcount, dish preferences and dietary requirements.</li><li>Confirm quantities, included sizes, pickup or delivery details and the final total.</li><li>For a scheduled pre-order, allow at least {site.delivery.preorder.min_hours_ahead} hours' notice. Larger requests still need kitchen confirmation; the minimum notice does not guarantee capacity.</li><li>Wait for acceptance and follow the kitchen's payment instructions.</li></ol>
+  <div class="highlight-box"><h2>Plan your Diwali order</h2><p><a href="/choose/">Compare the current food options</a>, then <a href="/price-calculator/">check your basket and order total</a>. For a larger gathering, <a href="/contact/">request a group quote</a>.</p></div>
+ </BlogPostLayout>
+</Layout>

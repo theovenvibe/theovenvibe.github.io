@@ -1,10 +1,11 @@
 ---
 // Blog index — v1's blog.html layout with Phase 4 copy/SEO.
 import Layout from '../../layouts/Layout.astro';
-import { site } from '../../lib/data';
+import { site, heroDish, galleryFor, displayName } from '../../lib/data';
 import { abs, breadcrumbJsonLd, organization } from '../../lib/seo';
 
 const title = 'Sundargarh Food Stories & Guides | The Oven Vibe';
+const festivalPhoto = galleryFor(heroDish)[0];
 const description =
   'Local food guides from Sundargarh: budget pizza picks, late-night options, how cloud kitchens work, and why The Oven Vibe cooks 100% pure veg.';
 
@@ -51,6 +52,7 @@ const blogJsonLd = {
       <div class="container">
         <h2 class="sr-only">All stories</h2>
         <div class="blog-grid">
+          {[{title:'Diwali 2026: plan the food for your gathering',path:'/blog/diwali-party-menu/',text:'Compare real menu choices, servings, ingredient preferences and the final group-order quote.'},{title:'Durga Puja: choose food around your preferences',path:'/blog/durga-puja-food/',text:'Current seasonal dishes, ingredient preferences, and collection or delivery planning.'}].map(post=><article class="blog-card"><div class="blog-card-img-wrapper"><img src={festivalPhoto.webp} alt={displayName(heroDish.display_name)} class="blog-card-img" width="600" height="400" loading="lazy"/></div><div class="blog-card-content"><h3>{post.title}</h3><p>{post.text}</p><a href={post.path} class="read-more">Read the guide →</a></div></article>)}
           <!-- Blog Card 5 (Newest) -->
           <article class="blog-card animate-on-scroll delay-200">
             <div class="blog-card-img-wrapper">

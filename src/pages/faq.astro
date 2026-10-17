@@ -23,5 +23,15 @@ const description = 'Direct answers about pure veg food, pizza sizes, combos, de
       </section>
       <aside class="guide-note"><h2>Need a quote for your own basket?</h2><p><a href="/price-calculator/">Use the price calculator</a> for distance, pickup and your selected time. <a href="/contact/">Contact the kitchen</a> for dietary questions or a group order.</p></aside>
     </div>
+    <script>
+      function revealAnswer() {
+        let id: string;
+        try { id=decodeURIComponent(location.hash.slice(1)); } catch { return; }
+        const answer=document.getElementById(id);
+        if(answer instanceof HTMLDetailsElement) answer.open=true;
+      }
+      revealAnswer();
+      window.addEventListener('hashchange',revealAnswer);
+    </script>
   </main>
 </Layout>

@@ -959,3 +959,10 @@ Owner authorized coordinated release and manual verification after live. Stack13
 - Added build search QA to deployment CI and a monthly/manual read-only live audit. Added a public IndexNow ownership file and explicit helper (default dry-run); no notification submitted before release.
 - Replaced outdated July SEO instructions with a current evidence-based playbook, preserving the old file under docs/archive. Added AI_SEARCH.md, SEARCH_TODO.md and release handoff. A focused public search found existing canonical pages, including stale cached delivery information; it does not establish current Google index counts or Claude/Gemini citations.
 - All original menu, config, images, analytics and quote-engine files remain unchanged. No backend deployment, message or customer form submission.
+
+## 2026-10-17 — Publication approved; festival extension
+
+- Owner approved the initial preview for publication, then requested Durga Puja/Diwali blogs and new leads/orders. Selected website/search plus preparation of organic Google Business/Instagram content. No paid ads or external posts have been sent.
+- Added two distinct festival guides using existing first-party photos, current menu data and order-calculator/contact links. Diwali date checked against the IIRS government calendar (8 November 2026). October specials follow their existing expiry and are not promised for Diwali.
+- Final QA found dish hashes inside closed menu accordions were not revealed by the category-only handler. Expanded that handler to open a dish's containing category; analytics handlers are unchanged. FAQ hashes open the matching native answer.
+- Large combined shell commands were rejected by automatic review before execution; used explicit workspace file patches instead. No rejected mutation is claimed complete.
