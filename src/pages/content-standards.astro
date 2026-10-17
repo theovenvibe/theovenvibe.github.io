@@ -1,0 +1,24 @@
+---
+import Layout from '../layouts/Layout.astro';
+import '../styles/search-guides.css';
+import { site } from '../lib/data';
+import { SEARCH_REVIEW_DATE } from '../lib/answers';
+import { breadcrumbJsonLd, restaurantJsonLd } from '../lib/seo';
+const title = 'Our Content, Sources & Photos | The Oven Vibe';
+const description = 'Who publishes The Oven Vibe website, where menu and ordering facts come from, our own food photographs, and how to request a correction.';
+---
+<Layout title={title} description={description} jsonLd={[restaurantJsonLd({withMenu:false}),breadcrumbJsonLd([{name:'Content standards',path:'/content-standards/'}])]}>
+ <main class="main search-guide">
+  <header class="container guide-intro"><p class="guide-eyebrow">The Oven Vibe · Publishing standards</p><h1>Food information you can check.</h1><p class="lead">This website is published by {site.business.name}, the pure vegetarian cloud kitchen in {site.business.address.locality}, {site.business.address.region}. We describe our own menu and ordering service.</p><p class="guide-meta">Updated <time datetime={SEARCH_REVIEW_DATE}>17 October 2026</time></p></header>
+  <div class="container guide-body">
+   <section><h2>Who is speaking</h2><p>Our guides are business-authored explanations of our own food and service. They are not independent restaurant reviews or expert medical and nutritional advice. We identify the kitchen as publisher instead of assigning an invented chef, journalist or expert biography.</p></section>
+   <section><h2>Where the facts come from</h2><p>Dish names, descriptions, serving information, prices, combo contents and published availability come from the same catalogue used by the <a href="/menu/">menu</a>. Address, contact details, hours and direct-delivery rules come from our business settings. The <a href="/price-calculator/">calculator</a> applies the selected ordering conditions.</p><p>Website prices describe direct orders. Delivery apps can have different prices, fees, promotions and serviceability. A description of our own delivery area does not guarantee an app will deliver to a particular address.</p></section>
+   <section><h2>Our food photographs</h2><p>All images on The Oven Vibe website are photographs taken by our own team, not AI-generated images.</p><p>Photos show presentation examples. Use the written item details for the actual portion, number of pieces, toppings and included drink; a prop in a photograph is not automatically part of an order. We do not present catalogue photographs as proof of a customer's event or testimonial.</p></section>
+   <section><h2>Comparisons and examples</h2><p>The <a href="/choose/">menu guide</a> compares the published ingredients, serving information and direct prices of our own items. It does not rank competitors or claim independent taste testing. Group-order examples illustrate a decision and are not claimed as completed events.</p><p>We do not invent reviews, customer quotes, sales results, expert interviews or research statistics. A founder story or customer case study needs real source material and any necessary permission before publication.</p></section>
+   <section><h2>Dates and updates</h2><p>Articles retain their original publication dates. An updated date records a substantive edit; rebuilding or redeploying the website does not automatically make an old article new. Menu facts are drawn from the current catalogue whenever the site is built, while live availability can change before an order is accepted.</p></section>
+   <section><h2>AI assistance and responsibility</h2><p>AI tools may assist with site code, editing and organising information. The approved menu and business information remain the sources for factual claims. Generated text is not evidence of first-hand experience, research, a review or a quotation. Our food photographs are taken by our team.</p></section>
+   <section><h2>Ask for a correction</h2><p>If a page differs from the menu or your confirmed order, <a href={`mailto:${site.business.email}`}>email {site.business.email}</a> or <a href="/contact/">contact the kitchen</a>. Include the page link, the statement and what needs correcting. Please do not send payment credentials or other sensitive details to report a website error.</p></section>
+   <nav class="guide-links" aria-label="Related information"><a href="/faq/">Customer answers</a><a href="/choose/">Compare the menu</a><a href="/menu/">Current menu</a></nav>
+  </div>
+ </main>
+</Layout>
