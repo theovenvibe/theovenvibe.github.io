@@ -40,6 +40,7 @@ const itemCount = categories.reduce((n, c) => n + c.items.length, 0);
       path,
       image: image.url,
       datePublished: '2026-08-31',
+      dateModified: '2026-10-17',
     }),
     breadcrumbJsonLd([
       { name: 'Blog', path: '/blog/' },
@@ -76,6 +77,8 @@ const itemCount = categories.reduce((n, c) => n + c.items.length, 0);
       and every single item is eggless.</strong> All {itemCount} of them. There is no asterisk.
     </p>
 
+    <h2>Egg-free is not the same as allergen-free</h2>
+    <p>Our menu includes dairy, wheat and ingredients such as nuts. Published descriptions are not a full allergen list. Contact the kitchen before ordering if you need to avoid a particular ingredient; we do not promise an allergen-free preparation environment. <a href="/faq/#allergens">Read the allergen answer</a>.</p>
     <h2>What "eggless" means here</h2>
     <p>
       Egg hides in more places than people expect, which is why "veg" on its own is not an answer.
@@ -101,7 +104,7 @@ const itemCount = categories.reduce((n, c) => n + c.items.length, 0);
     <p>
       <strong>Nothing non-veg has ever been cooked here.</strong> Not on a different shelf, not on a
       different day, not for a special order. There is one kitchen and one set of pans, so there is
-      nothing to keep separate and nothing to get wrong on a busy night.
+      no separate non-vegetarian cooking line. This does not make the kitchen allergen-free.
     </p>
 
     <div class="highlight-box">
@@ -110,7 +113,7 @@ const itemCount = categories.reduce((n, c) => n + c.items.length, 0);
         <li>100% pure vegetarian — every item, always</li>
         <li>Completely <strong>eggless</strong> — base, mayo, dips and sauces</li>
         <li>No non-veg has ever been cooked in this kitchen</li>
-        <li>Nothing shared, so nothing to cross-contaminate</li>
+        <li>No separate non-vegetarian cooking line; allergen requirements still need checking</li>
       </ul>
       <p style="margin-top: 10px; font-weight: 700; color: #ad210a">
         Order at any hour without asking the question first.
@@ -135,7 +138,7 @@ const itemCount = categories.reduce((n, c) => n + c.items.length, 0);
     <h2>The last bite</h2>
     <p>
       A pure veg kitchen should not be a thing you have to investigate. Ours is the whole business,
-      not a section of it — so order the paneer pizza at 1 AM and think about nothing else.
+      not a section of it. Check the actual menu, charges and kitchen confirmation before ordering.
     </p>
 
     <a href={`tel:${site.business.phone}`} class="cta">

@@ -1,0 +1,45 @@
+---
+import Layout from '../layouts/Layout.astro';
+import '../styles/search-guides.css';
+import { site, categories, availableItems, availableCombos, menu, displayName, displayDescription, entryMeta, orderCatalog, itemCartId } from '../lib/data';
+import { categoryAnchor } from '../lib/menu-categories';
+import { SEARCH_REVIEW_DATE } from '../lib/answers';
+import { breadcrumbJsonLd, restaurantJsonLd, itemUrl, comboUrl } from '../lib/seo';
+const title = 'Compare Pizzas, Melts & Combos | The Oven Vibe';
+const description = 'Compare the actual ingredients, sizes and direct-order prices of The Oven Vibe menu in Sundargarh, with clear pizza and combo choices.';
+const pairs = [
+ { heading:'Cheese or corn?', left:'745802358', right:'745802385', why:'Start with the named toppings: mozzarella-focused Ultimate Cheese Delight, or corn with olives and paprika in Golden Corn Classic.' },
+ { heading:'Two paneer pizzas, different flavours', left:'745802364', right:'752649876', why:'Herb Paneer Delight describes smoky paneer tikka with jalapeños and paprika. Paneer Makhni Royale describes paneer in creamy makhni sauce with cashew paste. Choose by the sauce and toppings you want.' },
+ { heading:'Two Schezwan signatures', left:'900000003', right:'900000004', why:'Firecracker includes paneer tikka, jalapeños and gherkins; Corn Crunch uses corn and black olives. Both describe an 8-inch, four-slice pizza. The listed ingredients matter as much as the category name.' },
+ { heading:'Chilli cheese or cheesy corn melt?', left:'752623130', right:'900000011', why:'The chilli cheese melt lists green chilli; the corn melt lists sweet corn and a touch of chilli flakes. Both are one two-slice sandwich cut into four pieces.' },
+ { heading:'White sauce or tomato sauce?', left:'751793935', right:'752770847', why:'Creamy Alfredo is fusilli with white sauce. Classic Red Sauce is penne with tomato sauce. Sauce and pasta shape are the useful differences; this is not a nutrition comparison.' },
+].map(p=>({...p,left:availableItems.find(i=>i.product_code===p.left),right:availableItems.find(i=>i.product_code===p.right)})).filter(p=>p.left && p.right);
+const componentName = (code:string) => {
+ const item=menu.Menu_Items.find(i=>i.product_code===code);
+ return item ? displayName(item.display_name || item.item_name) : 'See combo description';
+};
+const lateNight = (code:string) => orderCatalog.find(i=>i.id===itemCartId(code))?.lateNight;
+---
+<Layout title={title} description={description} jsonLd={[restaurantJsonLd({withMenu:false}),breadcrumbJsonLd([{name:'Choose your food',path:'/choose/'}])]}>
+ <main class="main search-guide">
+  <header class="container guide-intro">
+   <p class="guide-eyebrow">The Oven Vibe · Menu guide</p>
+   <h1>Choose by what is inside.</h1>
+   <p class="lead">A comparison of our {availableItems.length} available dishes and drinks, plus {availableCombos.length} combos. Read the sauce, toppings and serving details before comparing the price.</p>
+   <p class="guide-meta">Reviewed <time datetime={SEARCH_REVIEW_DATE}>17 October 2026</time> · Published by {site.business.name}</p>
+   <nav class="guide-links" aria-label="Menu guidance"><a href="/menu/">Order from the full menu</a><a href="/faq/">Food and delivery answers</a><a href="/content-standards/">Sources and photographs</a></nav>
+  </header>
+  <div class="container guide-body">
+   <aside class="guide-note"><h2>Three decisions before ordering</h2><ol><li>Choose a format: pizza, sandwich, pasta, noodles, side or drink.</li><li>Check the actual ingredients and serving size. A regular Classic Favorite pizza is 7-inch; the regular signatures describe 8-inch pizzas with four slices. Seasonal items use their own descriptions.</li><li>Compare the same basket, then include delivery and any applicable charges in the final quote.</li></ol><p>These are menu comparisons from our own kitchen, not independent reviews, nutrition scores or claims that a dish suits a particular allergy. <a href="/faq/#allergens">Ask about allergens before ordering.</a></p></aside>
+   <section aria-labelledby="compare-heading"><h2 id="compare-heading">Useful side-by-side choices</h2><div class="guide-cards">{pairs.map(p=><article><h3>{p.heading}</h3><p><a href={itemUrl(p.left!.product_code)}>{displayName(p.left!.display_name)}</a> — ₹{p.left!.price}<br/><a href={itemUrl(p.right!.product_code)}>{displayName(p.right!.display_name)}</a> — ₹{p.right!.price}</p><p>{p.why}</p></article>)}</div></section>
+   <nav class="guide-links" aria-label="Compare categories">{categories.map(c=><a href={`#${categoryAnchor(c.name)}`}>{c.name}</a>)}<a href="#combos">Combos</a></nav>
+   {categories.map(c=><section id={categoryAnchor(c.name)} data-navaratri-special={c.name==='Navaratri Special' ? '' : undefined}>
+    <h2>{c.name}</h2>
+    <p>{c.items.length} available {c.items.length===1?'item':'items'} · Direct-order prices. <a href={`/menu/#${categoryAnchor(c.name)}`}>View this category on the menu</a>.</p>
+    <div class="guide-table-wrap"><table class="guide-table"><caption class="sr-only">{c.name}: dishes, descriptions and current website prices</caption><thead><tr><th scope="col">Item</th><th scope="col">What the menu describes</th><th scope="col">Price</th></tr></thead><tbody>{c.items.map(i=><tr><th scope="row"><a href={itemUrl(i.product_code)}>{displayName(i.display_name || i.item_name)}</a><small>{entryMeta(i,i.display_name || i.item_name).join(' · ')}</small></th><td>{displayDescription(i)}<small>{lateNight(i.product_code) ? 'Listed for the late-night window; confirm availability.' : 'Not available in the late-night window.'}</small></td><td class="guide-price">₹{i.price}</td></tr>)}</tbody></table></div>
+   </section>)}
+   <section id="combos"><h2>Combos: compare the included items</h2><p>Compare exact drink and side sizes. The written description controls any alternative drink choice. We do not label a combo as a saving without matching it to the same individual items and quantities.</p><div class="guide-table-wrap"><table class="guide-table"><caption class="sr-only">Available combos and their contents</caption><thead><tr><th scope="col">Combo</th><th scope="col">Included items</th><th scope="col">Price</th></tr></thead><tbody>{availableCombos.map(c=><tr><th scope="row"><a href={comboUrl(c.combo_code)}>{displayName(c.combo_name)}</a></th><td><p>{displayDescription(c)}</p><small>Included quantities: {c.items_included.map(code=>`${c.item_quantities?.[code] ?? 1} × ${componentName(code)}`).join('; ')}.</small></td><td class="guide-price">₹{c.combo_price}</td></tr>)}</tbody></table></div></section>
+   <section><h2>An example for two different preferences</h2><p>If one person wants cheese-focused toppings and another wants vegetables, compare Ultimate Cheese Delight with a listed vegetable pizza, then decide whether to add fries separately or choose a matching combo. This is a planning example, not a customer story or a claim about how many people one pizza feeds.</p><p>For a larger group, <a href="/faq/#party">request a quote with the date, time, headcount and dietary requirements</a>. For your own basket, <a href="/price-calculator/">calculate the final direct-order total</a>.</p></section>
+  </div>
+ </main>
+</Layout>

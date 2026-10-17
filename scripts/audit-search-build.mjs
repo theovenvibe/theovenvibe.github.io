@@ -61,11 +61,28 @@ for (const url of urls) {
 for (const [path, html] of docs) {
   for (const m of html.matchAll(/<a\b[^>]*href="([^"<>]+)"/g)) {
     const href = m[1].replaceAll('&amp;', '&');
-    if (!href.startsWith('/') && !href.startsWith('#')) continue;
+    if (!href.startsWith('/') && !href.startsWith('#') && !href.startsWith(origin + '/')) continue;
     const target = new URL(href, `${origin}${path}`);
     if (!target.hash || !docs.has(target.pathname)) continue;
     const id = decodeURIComponent(target.hash.slice(1));
     assert.ok(docs.get(target.pathname).includes(`id="${id}"`), `Fragment ${path} -> ${href}`);
+  }
+}
+if (docs.has('/choose/')) {
+  const guide=docs.get('/choose/');
+  for (const entry of expected) assert.ok(guide.includes(`${origin}/menu/#dish-${entry.kind}-${entry.code}`), 'Every available menu entry is in the comparison guide');
+  const faq=docs.get('/faq/');
+  const faqNode=graphs(faq).find(n=>n['@type']==='FAQPage');
+  assert.equal(faqNode.mainEntity.length,(faq.match(/<details\b/g)??[]).length,'Visible questions and FAQ schema agree');
+  const decode=value=>value.replaceAll('&amp;','&').replaceAll('&#39;',"'").replaceAll('&quot;','"').replaceAll('&gt;','>').replaceAll('&lt;','<');
+  const visible=[...faq.matchAll(/<details\b[^>]*>\s*<summary>([\s\S]*?)<\/summary>\s*<p>([\s\S]*?)<\/p>/g)].map(m=>({q:decode(m[1]),a:decode(m[2])}));
+  assert.deepEqual(visible,faqNode.mainEntity.map(q=>({q:q.name,a:q.acceptedAnswer.text})),'FAQ content equals visible answers');
+  for (const [path,html] of docs) for (const post of graphs(html).filter(n=>n['@type']==='BlogPosting')) {
+    for (const date of [post.datePublished,post.dateModified].filter(Boolean)) {
+      assert.ok(html.includes(`datetime="${date}"`),`Visible article date: ${path}`);
+      assert.ok(date<=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Kolkata',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date()),'No future editorial date');
+    }
+    assert.ok(!post.dateModified || post.dateModified>=post.datePublished,'Edit follows publication');
   }
 }
 console.log(JSON.stringify({result:'passed',pages:urls.length,menuEntries:expected.length,checks:'metadata, canonical, sitemap exclusions, JSON-LD, source price parity, menu anchors, internal fragments, ratings, alt text, business identity and pure-veg/emoji policy'},null,2));

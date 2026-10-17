@@ -943,3 +943,12 @@ Owner authorized coordinated release and manual verification after live. Stack13
 - Synced local develop by fast-forward to main's existing release merge (no content difference). Foundation uses stable menu-section/item/combination IDs with actual HTML anchors, connected page entities, normalized canonicals and honest sitemap dates. Explicit public search crawler access supplements existing wildcard Allow; training-bot policy is unchanged.
 - Added rendered search QA for catalogue/schema/price parity, internal fragments, metadata, indexability, pure-veg/emoji/ratings honesty. No catalogue, business config, checkout, backend or analytics changes.
 - Feature remains under review; release evidence follows after actual verification/approval. No ranking/citation claim.
+
+
+## 2026-10-17 — Customer answer content (stack layer 2, review only)
+
+- Added 26 anchored native-HTML customer answers from current configuration and published catalogue; matching FAQPage content does not claim Google FAQ rich results.
+- Added /choose/ with all available dishes/drinks and six combos, exact descriptions/prices/serving metadata, five specific ingredient comparisons and carefully labelled planning examples. Reuses catalogue codes, ordinary menu links and existing calculator; does not change ordering logic.
+- Added /content-standards/ and business bylines/sources on the six existing articles. Owner explicitly confirmed on 17 October that ALL Oven Vibe images are their own photographs, not AI-generated; recorded this separately from Bhuk Lagla. No source image was altered.
+- Reworked five stale articles, corrected allergy context in the sixth, retained original publication dates and recorded actual edits on 17 October. Removed unsupported popularity statistics, old competitor price guesses, discontinued dishes and blanket 7-inch claims. Website prices remain direct-order prices; Zomato prices are not imported.
+- Added guide links to menu/footer; current menu and business configuration, analytics, payment/delivery engine and backend remain unchanged. Review/verification required before release.

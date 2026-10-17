@@ -117,6 +117,7 @@ export const organization = {
   name: site.business.name,
   url: `${SITE_URL}/`,
   email: site.business.email,
+  publishingPrinciples: abs('/content-standards/'),
   sameAs: [LINKS.instagram, LINKS.gbp, LINKS.zomato, LINKS.swiggy],
   logo: { '@type': 'ImageObject', url: LOGO_IMAGE, width: 2362, height: 2362 },
 };
