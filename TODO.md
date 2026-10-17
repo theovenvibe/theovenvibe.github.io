@@ -74,6 +74,10 @@ next. When an item ships, delete it here and write it up there.
 
 ## Housekeeping
 
+- [ ] **After Durga Puja ends:** remove its active home/blog promotion and archive the guide in place. Follow `skills/remove-durga-puja-promotion/SKILL.md`; preserve Diwali until its own end.
+- [ ] **21 October 2026, 06:00 IST:** verify Navaratri expiry/rebuild and retire the seven source records without deleting them. Follow `skills/remove-navaratri-special/SKILL.md`; a successful skipped scheduled run is not live expiry evidence.
+- [ ] **After the owner-confirmed Diwali campaign end:** remove home/blog promotion and archive the guide, retaining regular food. Follow `skills/remove-diwali-promotion/SKILL.md`. Current guide date: 8 November 2026; campaign closing time is not yet specified.
+
 - [ ] **Move the remaining repos to the `theovenvibe` account.** `theovenvibe`
       is the business and the rightful owner; Milan should be a collaborator.
       Already correct: `theovenvibe.github.io` (and it cannot move — a
