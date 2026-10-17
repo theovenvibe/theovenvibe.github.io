@@ -966,3 +966,9 @@ Owner authorized coordinated release and manual verification after live. Stack13
 - Added two distinct festival guides using existing first-party photos, current menu data and order-calculator/contact links. Diwali date checked against the IIRS government calendar (8 November 2026). October specials follow their existing expiry and are not promised for Diwali.
 - Final QA found dish hashes inside closed menu accordions were not revealed by the category-only handler. Expanded that handler to open a dish's containing category; analytics handlers are unchanged. FAQ hashes open the matching native answer.
 - Large combined shell commands were rejected by automatic review before execution; used explicit workspace file patches instead. No rejected mutation is claimed complete.
+
+## 2026-10-17 — Integrated release approval and verification
+
+- Core preview and subsequent festival preview explicitly approved. PRs146–149 merged bottom-up to develop (5bed461). Integrated build/search/cart/delivery checks passed; 19 proposed indexable pages, 41 menu entities, eight articles. Gallery38/38 and browser hash revelation confirmed. Original menu/config/images/quote engine and Umami are unchanged.
+- Correct Google account/property verified: owner, generative-AI Include already enabled, robots valid; pre-release overview49 web clicks and14 indexed/six not-indexed pages. Further search account statuses and actual production rollout must be checked separately.
+- Organic Google Business/Instagram copy prepared in the parent output folder. No social publication, ad spend, order, enquiry or push notification submitted. Release PR and actual deployment/audit evidence follow in the workspace checkpoint and GitHub Actions.
