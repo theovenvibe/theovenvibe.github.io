@@ -13,13 +13,18 @@
  * rather than "fixed", per the Phase 3 pixel-parity mandate; every other
  * post passes `false` (the default).
  */
+import { editorialDates } from '../lib/editorial';
+import { site } from '../lib/data';
+const articleDate = editorialDates[`${Astro.url.pathname.replace(/\/$/,'')}/`];
+const formatDate=(value:string)=>new Intl.DateTimeFormat('en-IN',{dateStyle:'long',timeZone:'Asia/Kolkata'}).format(new Date(`${value}T00:00:00+05:30`));
+
 interface Props {
   line1: string;
   lineGradient: string;
   subtitle: string;
   doubleWrapHeroContainer?: boolean;
 }
-const { line1, lineGradient, subtitle, doubleWrapHeroContainer = false } = Astro.props;
+const { line1, lineGradient, subtitle, doubleWrapHeroContainer = false } = Astro.props as Props;
 ---
 
 <!-- HERO SECTION -->
@@ -57,8 +62,20 @@ const { line1, lineGradient, subtitle, doubleWrapHeroContainer = false } = Astro
   <section class="section">
     <div class="container" style="max-width: 800px;">
       <article>
+        <p class="article-byline">
+          Published by <a href="/content-standards/">{site.business.name}</a>
+          {articleDate && <span> · Published <time datetime={articleDate.published}>{formatDate(articleDate.published)}</time></span>}
+          {articleDate?.modified && <span> · Updated <time datetime={articleDate.modified}>{formatDate(articleDate.modified)}</time></span>}
+        </p>
         <slot />
+        <aside class="article-sources"><p>Menu and ordering facts come from our published catalogue and business settings. Our team takes the food photographs. <a href="/content-standards/">Read our publishing standards</a> or <a href="/contact/">request a correction</a>.</p></aside>
       </article>
     </div>
   </section>
 </main>
+
+<style>
+.article-byline { font-size:.9rem; color:var(--color-text-muted); line-height:1.8; margin-bottom:1.5rem; }
+.article-sources { border-top:1px solid #ddd; margin-top:2rem; padding-top:1.25rem; font-size:.9rem; }
+.article-byline a, .article-sources a { text-decoration:underline; }
+</style>

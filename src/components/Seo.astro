@@ -48,6 +48,17 @@ const websiteNode = {
   inLanguage: 'en-IN',
   publisher: { '@id': `${abs('/')}#organization` },
 };
+const pageNode = {
+  '@type': 'WebPage',
+  '@id': `${canonical}#webpage`,
+  url: canonical,
+  name: title,
+  description,
+  inLanguage: 'en-IN',
+  isPartOf: { '@id': websiteNode['@id'] },
+  publisher: { '@id': organization['@id'] },
+  about: { '@id': `${abs('/')}#restaurant` },
+};
 ---
 
 {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
@@ -81,5 +92,5 @@ const websiteNode = {
 <script
   type="application/ld+json"
   is:inline
-  set:html={JSON.stringify(graph([websiteNode, organization, ...jsonLd]))}
+  set:html={JSON.stringify(graph([websiteNode, organization, pageNode, ...jsonLd]))}
 />

@@ -1,0 +1,27 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import BlogPostLayout from '../../components/BlogPostLayout.astro';
+import { site, categories, displayName, displayDescription, galleryFor, heroDish } from '../../lib/data';
+import { abs, blogPostingJsonLd, breadcrumbJsonLd, itemUrl } from '../../lib/seo';
+const path='/blog/durga-puja-food/';
+const headline='Durga Puja Food Choices in Sundargarh | The Oven Vibe';
+const description='A practical guide to pure veg food during Durga Puja: current seasonal dishes, ingredient preferences, pickup and planning a confirmed order.';
+const image={url:abs('/static/images/og/og-default.jpg'),width:1200,height:630,alt:'The Oven Vibe food, photographed by our team'};
+const photo=galleryFor(heroDish)[0];
+const specials=categories.find(c=>c.name==='Navaratri Special')?.items ?? [];
+---
+<Layout title={headline} description={description} ogType="article" image={image} jsonLd={[blogPostingJsonLd({headline,description,path,image:image.url,datePublished:'2026-10-17'}),breadcrumbJsonLd([{name:'Blog',path:'/blog/'},{name:'Durga Puja food choices',path}])]}>
+ <BlogPostLayout line1="PUJA PLANS," lineGradient="FOOD CHOICES." subtitle="Check ingredients, serving details and your collection or delivery plan.">
+  <picture>{photo.avif && <source type="image/avif" srcset={photo.avif}/>}<img src={photo.webp} alt={displayName(heroDish.display_name)} class="blog-img" width="600" height="400" loading="lazy"/></picture>
+  <p>During Durga Puja in {site.business.address.locality}, different households can have different food preferences. Some want the regular vegetarian menu; others avoid onion or garlic, and fasting requirements can be more specific. Start by asking what your group needs.</p>
+  <h2>Pure veg is the kitchen policy</h2><p>The Oven Vibe is a pure vegetarian, egg-free kitchen. Regular menu items can still contain onion, garlic, wheat, dairy and nuts. Vegetarian does not automatically mean vegan, Jain, allergy-safe or suitable for someone's fast.</p>
+  <h2>What the current seasonal menu says</h2>
+  {specials.length ? <><p>The current Navaratri Special section lists these items with their own ingredient descriptions. Confirm availability when ordering. This October campaign is separate from any future Diwali menu.</p><ul>{specials.map(i=><li><a href={itemUrl(i.product_code)}><strong>{displayName(i.display_name)}</strong></a> — ₹{i.price}. {displayDescription(i)}</li>)}</ul></> : <p>The October 2026 seasonal selection is no longer listed in the current menu. Browse the regular menu and ask the kitchen about your requirements.</p>}
+  <h2>Questions worth asking before paying</h2><ul><li>Does the specific dish meet your household's ingredient preferences?</li><li>What is the serving size and how many portions do you actually need?</li><li>Are substitutions possible for that order? Confirm them with the kitchen.</li><li>Is the food being collected or delivered, and at what agreed time?</li></ul>
+  <h2>Planning around an outing or a gathering</h2><p>If you want food before leaving home, choose a realistic collection or delivery time and allow for your own travel plans. If you want it later, use the scheduled pre-order option with at least {site.delivery.preorder.min_hours_ahead} hours' notice, then confirm the slot with the kitchen.</p>
+  <p>For several people, share the headcount, preferred dishes and dietary requirements, then agree quantities and the final quote.</p>
+  <h2>Keep the final total clear</h2><p>The menu shows direct-order food prices. Delivery distance, the selected time and applicable surcharges can change the final quote. App prices and offers are separate. <a href="/faq/#late-night">Read the late-night conditions</a> if you plan to order after normal closing.</p>
+  <div class="highlight-box"><h2>Choose food for your Puja plans</h2><p><a href="/menu/">Check the current menu</a>, <a href="/price-calculator/">calculate your basket</a>, or <a href="/contact/">ask the kitchen about your group and ingredient needs</a>.</p></div>
+  <p>Planning for the next gathering? Read our <a href="/blog/diwali-party-menu/">Diwali food planning guide</a>.</p>
+ </BlogPostLayout>
+</Layout>

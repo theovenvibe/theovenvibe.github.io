@@ -21,6 +21,7 @@ import {
   imageFor,
   maxDeliveryKm,
 } from './data';
+import { categoryAnchor } from './menu-categories';
 
 /**
  * The canonical origin still lives in exactly one place — `SITE_URL` in
@@ -57,6 +58,9 @@ export const LINKS = {
 } as const;
 
 export const abs = (path: string) => new URL(path, SITE_URL).toString();
+/** Stable public menu anchors use catalogue codes, never a dish's editable name. */
+export const itemUrl = (code: string) => abs(`/menu/#dish-item-${code}`);
+export const comboUrl = (code: string) => abs(`/menu/#dish-combo-${code}`);
 
 /** The face of the brand (PRD §3) — default OG image for every page. */
 export const HERO_IMAGE = {
@@ -112,6 +116,9 @@ export const organization = {
   '@id': `${SITE_URL}/#organization`,
   name: site.business.name,
   url: `${SITE_URL}/`,
+  email: site.business.email,
+  publishingPrinciples: abs('/content-standards/'),
+  sameAs: [LINKS.instagram, LINKS.gbp, LINKS.zomato, LINKS.swiggy],
   logo: { '@type': 'ImageObject', url: LOGO_IMAGE, width: 2362, height: 2362 },
 };
 
@@ -127,9 +134,13 @@ export function menuJsonLd() {
     hasMenuSection: [
       ...categories.map(({ name, items }) => ({
         '@type': 'MenuSection',
+        '@id': abs(`/menu/#${categoryAnchor(name)}`),
+        url: abs(`/menu/#${categoryAnchor(name)}`),
         name,
         hasMenuItem: items.map((item) => ({
           '@type': 'MenuItem',
+          '@id': itemUrl(item.product_code),
+          url: itemUrl(item.product_code),
           name: displayName(item.display_name || item.item_name),
           description: displayDescription(item),
           image: abs(imageFor(item).webp),
@@ -144,9 +155,13 @@ export function menuJsonLd() {
       })),
       {
         '@type': 'MenuSection',
+        '@id': abs('/menu/#sec-combos'),
+        url: abs('/menu/#sec-combos'),
         name: 'Combos & Offers',
         hasMenuItem: availableCombos.map((combo) => ({
           '@type': 'MenuItem',
+          '@id': comboUrl(combo.combo_code),
+          url: comboUrl(combo.combo_code),
           name: displayName(combo.combo_name),
           description: displayDescription(combo),
           image: abs(imageFor(combo).webp),
@@ -172,8 +187,9 @@ export function restaurantJsonLd(opts: { withMenu?: boolean } = {}) {
     '@id': `${SITE_URL}/#restaurant`,
     name: site.business.name,
     alternateName: `${site.business.name} Sundargarh`,
-    description: `100% pure vegetarian cloud kitchen in Sundargarh, Odisha ${site.business.address.postal_code}. Oven-baked pizza, burgers, fried rice, pasta, grilled sandwiches and snacks for takeaway and delivery.`,
+    description: `100% pure vegetarian cloud kitchen in ${site.business.address.locality}, ${site.business.address.region} ${site.business.address.postal_code}. Pizza, pasta, grilled sandwiches, Maggi, fries and drinks for takeaway and delivery.`,
     url: `${SITE_URL}/`,
+    parentOrganization: { '@id': organization['@id'] },
     image: [HERO_IMAGE.url, LOGO_IMAGE],
     logo: LOGO_IMAGE,
     telephone: site.business.phone,
@@ -186,8 +202,6 @@ export function restaurantJsonLd(opts: { withMenu?: boolean } = {}) {
     servesCuisine: [
       'Vegetarian',
       'Pizza',
-      'Burger',
-      'Fried Rice',
       'Pasta',
       'Sandwich',
       'Fries',
@@ -251,6 +265,7 @@ export function breadcrumbJsonLd(trail: { name: string; path: string }[]) {
 }
 
 export interface Qa {
+  id?: string;
   q: string;
   /** Plain text — must match what the page visibly says (Google requirement). */
   a: string;
@@ -260,6 +275,9 @@ export function faqPageJsonLd(pageUrl: string, qas: Qa[]) {
   return {
     '@type': 'FAQPage',
     '@id': `${pageUrl}#faq`,
+    url: pageUrl,
+    about: { '@id': `${SITE_URL}/#restaurant` },
+    publisher: { '@id': organization['@id'] },
     mainEntity: qas.map(({ q, a }) => ({
       '@type': 'Question',
       name: q,
@@ -274,6 +292,7 @@ export function blogPostingJsonLd(post: {
   path: string;
   image: string;
   datePublished: string;
+  dateModified?: string;
 }) {
   return {
     '@type': 'BlogPosting',
@@ -285,6 +304,7 @@ export function blogPostingJsonLd(post: {
     image: post.image,
     inLanguage: 'en-IN',
     datePublished: post.datePublished,
+    ...(post.dateModified ? { dateModified: post.dateModified } : {}),
     author: organization,
     publisher: organization,
     isPartOf: { '@type': 'Blog', '@id': `${SITE_URL}/blog/#blog`, name: `${site.business.name} Blog` },

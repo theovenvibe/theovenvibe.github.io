@@ -180,13 +180,15 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!window.location.hash) return;
     var id;
     try { id = decodeURIComponent(window.location.hash.slice(1)); } catch (_) { return; }
-    var item = document.getElementById(id);
-    if (!item || !item.matches('#menu .accordion-item')) return;
+    var target = document.getElementById(id);
+    if (!target) return;
+    var item = target.matches('#menu .accordion-item') ? target : target.closest('#menu .accordion-item');
+    if (!item) return;
     var content = item.querySelector('.accordion-content');
     if (!content) return;
     item.classList.add('active');
     content.style.maxHeight = content.scrollHeight + 'px';
-    item.scrollIntoView({ block: 'start' });
+    target.scrollIntoView({ block: 'start' });
   }
   openMenuHash();
   window.addEventListener('hashchange', openMenuHash);

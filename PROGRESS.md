@@ -935,3 +935,40 @@ Owner authorized coordinated release and manual verification after live. Stack13
 - Validation and deployment verification recorded below after release.
 - Feature validation passed: build0 errors; menu mapping/batch tests; gallery38 passed; rendered QA19JSON-LD blocks, accurate ratings, no emoji/non-veg copy, metadata/alt and serving checks. Explicit stock recipes retain one sandwich per order despite display-name changes. All surviving prices and combos/add-ons verified unchanged.
 - Released through PR141, production3406f0b25e0eb3cc5d314afaffd7b14d84748267. Actions37336093883 build/Lighthouse/Pages deployment succeeded. Live /menu/ and /menu.json verified200; exactly3 jumbo sandwiches, discontinued entries absent, unchanged prices129/149/169, latest serving copy and all six WebP/AVIF files match release hashes. No offer changes. Legacy Jekyll job failed as previously documented; actual Astro deployment succeeded.
+
+
+## 2026-10-17 — AI-search foundation (review branch)
+
+- Owner requested Bhuk Lagla-equivalent SEO/AEO/GEO/LLMO for this business, explicitly excluding Umami changes and WhatsApp communication.
+- Synced local develop by fast-forward to main's existing release merge (no content difference). Foundation uses stable menu-section/item/combination IDs with actual HTML anchors, connected page entities, normalized canonicals and honest sitemap dates. Explicit public search crawler access supplements existing wildcard Allow; training-bot policy is unchanged.
+- Added rendered search QA for catalogue/schema/price parity, internal fragments, metadata, indexability, pure-veg/emoji/ratings honesty. No catalogue, business config, checkout, backend or analytics changes.
+- Feature remains under review; release evidence follows after actual verification/approval. No ranking/citation claim.
+
+
+## 2026-10-17 — Customer answer content (stack layer 2, review only)
+
+- Added 26 anchored native-HTML customer answers from current configuration and published catalogue; matching FAQPage content does not claim Google FAQ rich results.
+- Added /choose/ with all available dishes/drinks and six combos, exact descriptions/prices/serving metadata, five specific ingredient comparisons and carefully labelled planning examples. Reuses catalogue codes, ordinary menu links and existing calculator; does not change ordering logic.
+- Added /content-standards/ and business bylines/sources on the six existing articles. Owner explicitly confirmed on 17 October that ALL Oven Vibe images are their own photographs, not AI-generated; recorded this separately from Bhuk Lagla. No source image was altered.
+- Reworked five stale articles, corrected allergy context in the sixth, retained original publication dates and recorded actual edits on 17 October. Removed unsupported popularity statistics, old competitor price guesses, discontinued dishes and blanket 7-inch claims. Website prices remain direct-order prices; Zomato prices are not imported.
+- Added guide links to menu/footer; current menu and business configuration, analytics, payment/delivery engine and backend remain unchanged. Review/verification required before release.
+
+
+## 2026-10-17 — Search maintenance (stack layer 3, review only)
+
+- Added build search QA to deployment CI and a monthly/manual read-only live audit. Added a public IndexNow ownership file and explicit helper (default dry-run); no notification submitted before release.
+- Replaced outdated July SEO instructions with a current evidence-based playbook, preserving the old file under docs/archive. Added AI_SEARCH.md, SEARCH_TODO.md and release handoff. A focused public search found existing canonical pages, including stale cached delivery information; it does not establish current Google index counts or Claude/Gemini citations.
+- All original menu, config, images, analytics and quote-engine files remain unchanged. No backend deployment, message or customer form submission.
+
+## 2026-10-17 — Publication approved; festival extension
+
+- Owner approved the initial preview for publication, then requested Durga Puja/Diwali blogs and new leads/orders. Selected website/search plus preparation of organic Google Business/Instagram content. No paid ads or external posts have been sent.
+- Added two distinct festival guides using existing first-party photos, current menu data and order-calculator/contact links. Diwali date checked against the IIRS government calendar (8 November 2026). October specials follow their existing expiry and are not promised for Diwali.
+- Final QA found dish hashes inside closed menu accordions were not revealed by the category-only handler. Expanded that handler to open a dish's containing category; analytics handlers are unchanged. FAQ hashes open the matching native answer.
+- Large combined shell commands were rejected by automatic review before execution; used explicit workspace file patches instead. No rejected mutation is claimed complete.
+
+## 2026-10-17 — Integrated release approval and verification
+
+- Core preview and subsequent festival preview explicitly approved. PRs146–149 merged bottom-up to develop (5bed461). Integrated build/search/cart/delivery checks passed; 19 proposed indexable pages, 41 menu entities, eight articles. Gallery38/38 and browser hash revelation confirmed. Original menu/config/images/quote engine and Umami are unchanged.
+- Correct Google account/property verified: owner, generative-AI Include already enabled, robots valid; pre-release overview49 web clicks and14 indexed/six not-indexed pages. Further search account statuses and actual production rollout must be checked separately.
+- Organic Google Business/Instagram copy prepared in the parent output folder. No social publication, ad spend, order, enquiry or push notification submitted. Release PR and actual deployment/audit evidence follow in the workspace checkpoint and GitHub Actions.
