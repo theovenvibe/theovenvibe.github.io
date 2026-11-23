@@ -204,6 +204,39 @@
       "status": "available"
     },
     {
+      "product_code": "SIG2026001",
+      "item_id": 56,
+      "category": "Signature Pizza",
+      "subcategory": "New Signature Pizzas",
+      "item_name": "Creamy Mushroom Delight Pizza",
+      "display_name": "Creamy Mushroom Delight Pizza",
+      "price": 269,
+      "description": "[veg preparation] Creamy white sauce pizza topped with fresh mushrooms, mozzarella, rich white cheese sauce, onion, garlic and aromatic Italian herbs. 8-inch, 4 slices. No egg.",
+      "status": "available"
+    },
+    {
+      "product_code": "SIG2026002",
+      "item_id": 57,
+      "category": "Signature Pizza",
+      "subcategory": "New Signature Pizzas",
+      "item_name": "Mexican Heatwave Pizza",
+      "display_name": "Mexican Heatwave Pizza",
+      "price": 249,
+      "description": "[veg preparation] Spicy Mexican-style pizza loaded with golden sweet corn, red and yellow bell peppers, mozzarella, onion, jalapeños, black olives and a flavourful blend of Mexican herbs. 8-inch, 4 slices. No egg.",
+      "status": "available"
+    },
+    {
+      "product_code": "SIG2026003",
+      "item_id": 58,
+      "category": "Signature Pizza",
+      "subcategory": "New Signature Pizzas",
+      "item_name": "Smoky Tandoori Mushroom Pizza",
+      "display_name": "Smoky Tandoori Mushroom Pizza",
+      "price": 259,
+      "description": "[veg preparation] Smoky tandoori-style pizza topped with freshly marinated mushrooms, mozzarella, creamy white cheese sauce, onion, colourful bell peppers and a delicious drizzle of creamy mayo. 8-inch, 4 slices. No egg.",
+      "status": "available"
+    },
+    {
       "product_code": "751793935",
       "item_id": 14,
       "category": "Pasta",
