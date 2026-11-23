@@ -13,4 +13,7 @@
 - [ ] Monthly: review Search health run and actual search queries/clicks/impressions/citations. GitHub can disable public-repo schedules after 60 days of inactivity. Re-enable if needed.
 - [ ] On menu changes: run build + test:search, review comparative notes and FAQ facts, verify serving sizes/availability. Direct website and Zomato prices remain separate.
 - [ ] Before festival changes: check the actual campaign window and food requirements; no universal fasting/Jain certification inferred from no-onion/no-garlic wording.
+- [ ] After Durga Puja: use `skills/remove-durga-puja-promotion/SKILL.md` to remove active homepage/blog promotion; retain the archived canonical article.
+- [ ] After 21 October 2026, 06:00 IST: use `skills/remove-navaratri-special/SKILL.md` to verify seven seasonal records disappear from published catalogue, UI and schema; retain source history.
+- [ ] After the owner-confirmed Diwali campaign end: use `skills/remove-diwali-promotion/SKILL.md`; remove active links/cards, retain the archive and ordinary menu. These are manual runbooks, not newly scheduled jobs.
 - [ ] Quarterly: check mobile navigation, broken links and real customer questions. Yearly: review official search guidance and dependencies.

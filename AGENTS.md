@@ -157,6 +157,9 @@ PRD.md / PROGRESS.md     ← requirements / current state — read at session st
 | Hours / phone / WhatsApp / address / Instagram | skills/update-hours-or-contact.md |
 | Update the star rating / review count | skills/update-rating.md |
 | Add a new blog post | skills/add-blog-post.md |
+| Retire Durga Puja promotion after the campaign | skills/remove-durga-puja-promotion/SKILL.md |
+| Retire the seven Navaratri Special dishes after expiry | skills/remove-navaratri-special/SKILL.md |
+| Retire Diwali promotion after the campaign | skills/remove-diwali-promotion/SKILL.md |
 | Turn on Umami analytics | skills/setup-analytics.md |
 | Turn on order alerts (ntfy) so the kitchen hears an order | skills/setup-order-alerts.md |
 | Change the cart, checkout, or the shared order form | docs/CART_AND_CHECKOUT.md |

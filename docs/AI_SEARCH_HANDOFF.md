@@ -42,6 +42,12 @@ The required owner preview approvals are complete, including festival copy. Do n
 
 ## Files and recovery
 
+### Festival retirement checkpoint (17 October 2026)
+
+Owner requested three reusable cleanup skills, not immediate removal. They are `skills/remove-durga-puja-promotion/SKILL.md`, `skills/remove-navaratri-special/SKILL.md` and `skills/remove-diwali-promotion/SKILL.md`, with shared GitHub/QA steps in `skills/festival-retirement-release.md`. Routing is in AGENTS.md; outstanding actions are in TODO.md and SEARCH_TODO.md. Current festival promotions and menu remain unchanged by this documentation work.
+
+Navaratri already expires at 21 October 2026, 06:00 IST, with browser guards, a build-time filter and scheduled rebuild. Its scheduled workflow's one-time guard ends 22 October 00:00 UTC; verify actual published JSON/HTML/schema, not just a green skipped workflow. Durga Puja and Diwali homepage links have no automatic expiry. Run their skills after the relevant campaign ends. Diwali's current guide is for 8 November; a multi-day campaign closing time is not yet specified. Preserve canonical article URLs as clearly ended guides, regular dishes, first-party photos and Umami. No new scheduler or social posting is configured.
+
 Canonical site: https://theovenvibe.com/. Site/menu/guide data sources and boundaries are in AGENTS.md, AI_SEARCH.md, SEO_PLAYBOOK.md and SEARCH_TODO.md.
 Screenshots and baseline receipt are outside public source at D:/Workbench/The Oven Vibe/outputs/2026-10-17-ai-search. Preview is http://127.0.0.1:4331/choose/ (server session 29335 at checkpoint; may require restart). No permanent background monitoring is promised.
 
